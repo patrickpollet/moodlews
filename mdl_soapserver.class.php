@@ -265,77 +265,6 @@
                         'sectionRecord',
                         'no sections found');
         }
-    /**
-     * Find and return a list of student grade values.
-     * OK PP tested with php5 5 and python clients
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $userid The user ID number of the student.
-     * @param array $courseids An array of input course id values.
-     * @param string $idfield course's field (default = idnumber)
-     * @return array An array of grade records.
-     */
-     public function get_grades($client, $sesskey, $userid, $courseids,$idfield = 'idnumber') {
-            $rgrades = array();
-
-            if ($grades = parent::get_grades($client, $sesskey, $userid, $courseids,$idfield)) {
-                foreach ($grades as $grade) {
-                    if (!empty($grade->error)) {
-                        $rgrade             = array();
-                        $rgrade['error']    = $grade->error;
-                        $rgrade['courseid'] = $grade->courseid;
-                        $rgrade['stats']    = $this->blank_array('gradeStatsRecord');
-                        $rgrade['grades']   = $this->blank_array('gradeRecord');
-
-                    } else {
-                        $rgrade             = array();
-                        $rgrade['error']    = '';
-                        $rgrade['courseid'] = $grade->courseid;
-                        $stats              = array();
-                        $mygrades           = array();
-
-                        if (!empty($grade->grades)) {
-                            while ($mygrade = current($grade->grades)) {
-                                if (key($grade->grades) == 'stats') {
-                                    $stats = array(
-                                        'gradeItems'  => (int)$mygrade['grade_items'],
-                                        'allgrades'   => $mygrade['allgrades'],
-                                        'points'      => (int)$mygrade['points'],
-                                        'totalpoints' => (int)$mygrade['totalpoints'],
-                                        'percent'     => (float)$mygrade['percent'],
-                                        'weight'      => (float)$mygrade['weight'],
-                                        'weighted'    => (float)$mygrade['weighted'],
-                                    );
-
-                                } else {
-                                    $graded = array(
-                                        'name'      => key($grade->grades),
-                                        'maxgrade'  => (int)$mygrade['maxgrade'],
-                                        'grade'     => $mygrade['grade'],
-                                        'percent'   => (float)$mygrade['percent'],
-                                        'weight'    => (float)$mygrade['weight'],
-                                        'weighted'  => (float)$mygrade['weighted'],
-                                        'sortOrder' => (int)$mygrade['sort_order']
-                                    );
-
-                                    $mygrades[] = $graded;
-                                }
-
-                                next($grade->grades);
-                            }
-                        }
-
-                        $rgrade['stats']  = $stats;
-                        $rgrade['grades'] = $mygrades;
-                    }
-
-                    $rgrades['grades'][] = $rgrade;
-                }
-            }
-
-            return $rgrades;
-        }
-
 
     /**
      * Enrol users as a student in the given course.
@@ -368,145 +297,67 @@
 
     /**
      * Sends an fatal error response back to the client.
-     *
+     *  @override server
      * @param string $msg The error message to return.
      * @return An error message string.
      */
-       private function error($msg) {
+       function error($msg) {
   	    parent::error($msg); //log in error msg
             throw new SoapFault("Server", $msg);
         }
 
 
-/*ATI added function see */
 
-    /**
-     * Assigns instructors in the given course. (ATI Function)
-     * prerequisite : corresponding instructors records MUST exist in Moodle
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $courseid The course ID number to enrol students in. (caution idnumber, not Moodle id)
-     * @param array $userids An array of input user idnumber values for assignment.
-     * @param string $idfield instructor identifier, default idnumber
-     * @param string $lmsrole role for the instructor, default instructor
-     * @param string $enrol operation is enrol or unenrol, default enrol
-     * @return array Return data (user_student records) to be converted into a
-     *               specific data format for sending to the client.
-     */
-     public function assign_instructors($client, $sesskey, $courseid, $userids, $idfield='idnumber', $lmsrole = 3, $enrol = true) {
-            $rstudents = array();
-
-            if ($students = parent::assign_instructors($client, $sesskey, $courseid, $userids, $idfield, $lmsrole, $enrol)) {
-                    $rstudents['error']    = $students->error;
-                    $rstudents['students'] = array();
-            foreach ($students-> students as $r)
-                        $rstudents['students'][] = $this->to_soap($r,'studentRecord');
-
-            } else {
-               $rstudents['error']    = '??????';
-               $rstudents['students'] = array();
-            }
-            return $rstudents;
-        }
 
 
 /**
-*   Assigns/Unassigns a user to/from a group in a course    (ATI Function)
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $courseid The course ID number that the group exists in
-     * @param string $userid input user
-     * @param string $idfield instructor identifier, default idnumber
-     * @param string $atigroup group to enrol in, default 0 (no group)
-     * @param boolean $assign operation is assign or unassign, default assign
-     * @return boolean true = successful
-*/
-
-   public function set_group_member($client, $sesskey, $courseid, $userid, $atigroup, $assign = true) {
-
-        $breturn = true;
-
-            if ($breturn = parent::set_group_member($client, $sesskey, $courseid, $userid, $atigroup, $assign)) {
-                return true;
-            }else{
-                return false;
-            }
-
-        }
-
-/**
-     * Find and return student grade value for a course (ATI Function)
+     * Find and return student grades for currently enrolled courses  (moodle 1.9)
      *
      * @uses $CFG
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
      * @param string $userid The ATIStudentID number of the student.
-     * @param string $courseid The short coursename
-     * @return float $freturn The student grade
-     *
-*/
-
-   public function get_grade($client, $sesskey, $userid, $courseid) {
-
-        $freturn = 0.0; // can be removed when error handling is properly implemented (tbd...)
-
-        $freturn = parent::get_grade($client, $sesskey, $userid, $courseid);
-
-        return $freturn;
-
-        }
-
-
-/**
-     * Find and return student grades for currently enrolled courses    (ATI Function)
-     *
-     * @uses $CFG
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $userid The ATIStudentID number of the student.
-     * @param string $courseids Array of short coursenames
+     * @param string $courseids Array of course idnumber
      * @return userGrade [] $ugareturn The student grades
      *
 */
 
-   public function get_user_grades($client, $sesskey, $userid, $courseids) {
+   public function get_grades($client, $sesskey, $userid, $courseids,$idfield="idnumber") {
 
-        $ugareturn = parent::get_user_grades($client, $sesskey, $userid, $courseids);
 
-        return $ugareturn;
+          return $this->to_soap_array(
+                        parent::get_grades($client, $sesskey,$userid,$courseids,$idfield),
+                        'grades',
+                        'gradeRecord',
+                        'no grades  found');
+
 
         }
 
 
-/**
-*   Resets a course (ATI Function)
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $courseid The course ID number that the group exists in
-     * @param string $newstartdate The new course start date
-     * @param boolean $allincat All courses in the same category will be reset if true
-     * @param boolean $stuonly Only the students will be unenrolled, not the instructors if true
-     * @return boolean true = successful
-*/
+ public function get_user_grades($client, $sesskey, $userid,$idfield="idnumber") {
 
-   public function reset_course($client, $sesskey, $courseid, $newstartdate = 0, $allincat = true, $stuonly = false) {
 
-        $breturn = true;
+          return $this->to_soap_array(
+                        parent::get_user_grades($client, $sesskey,$userid,$idfield),
+                        'grades',
+                        'gradeRecord',
+                        'no grades  found');
 
-            if ($breturn = parent::reset_course($client, $sesskey, $courseid, $newstartdate, $allincat, $stuonly)) {
-                return true;
-            }else{
-                return false;
-            }
 
         }
 
+ public function get_course_grades($client, $sesskey, $courseid,$idfield="idnumber") {
 
 
+          return $this->to_soap_array(
+                        parent::get_course_grades($client, $sesskey,$courseid,$idfield),
+                        'grades',
+                        'gradeRecord',
+                        "no grades  found for course $courseid");
 
-/*end ATI */
 
-
+        }
 
 /**
 *   get one user record with idfield=userinfo.

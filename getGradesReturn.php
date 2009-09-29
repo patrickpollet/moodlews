@@ -7,7 +7,7 @@
  */
 class getGradesReturn {
 	/** 
-	* @var  (studentGradeRecords) array of studentGradeRecord
+	* @var  (gradeRecords) array of gradeRecord
 	*/
 	public $grades;
 	 public function getGradesReturn() {

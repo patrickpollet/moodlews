@@ -9,96 +9,70 @@ class gradeRecord {
 	/** 
 	* @var  string
 	*/
-	public $name;
-	/** 
-	* @var  integer
-	*/
-	public $maxgrade;
+	public $error;
 	/** 
 	* @var  string
 	*/
-	public $grade;
+	public $courseid;
+	/** 
+	* @var  float
+	*/
+	public $usergrade;
 	/** 
 	* @var  string
 	*/
-	public $percent;
+	public $str_grade;
 	/** 
-	* @var  float
+	* @var  string
 	*/
-	public $weight;
-	/** 
-	* @var  float
-	*/
-	public $weighted;
-	/** 
-	* @var  integer
-	*/
-	public $sortOrder;
+	public $feedback;
 	 public function gradeRecord() {
-		 $this->name='';
-		 $this->maxgrade=0;
-		 $this->grade='';
-		 $this->percent='';
-		 $this->weight=0.0;
-		 $this->weighted=0.0;
-		 $this->sortOrder=0;
+		 $this->error='';
+		 $this->courseid='';
+		 $this->usergrade=0.0;
+		 $this->str_grade='';
+		 $this->feedback='';
 	}
 	/* get accessors */
-	public function getName(){
-		 return $this->name;
+	public function getError(){
+		 return $this->error;
 	}
 
-	public function getMaxgrade(){
-		 return $this->maxgrade;
+	public function getCourseid(){
+		 return $this->courseid;
 	}
 
-	public function getGrade(){
-		 return $this->grade;
+	public function getUsergrade(){
+		 return $this->usergrade;
 	}
 
-	public function getPercent(){
-		 return $this->percent;
+	public function getStr_grade(){
+		 return $this->str_grade;
 	}
 
-	public function getWeight(){
-		 return $this->weight;
-	}
-
-	public function getWeighted(){
-		 return $this->weighted;
-	}
-
-	public function getSortOrder(){
-		 return $this->sortOrder;
+	public function getFeedback(){
+		 return $this->feedback;
 	}
 
 	/*set accessors */
-	public function setName($name){
-		$this->name=$name;
+	public function setError($error){
+		$this->error=$error;
 	}
 
-	public function setMaxgrade($maxgrade){
-		$this->maxgrade=$maxgrade;
+	public function setCourseid($courseid){
+		$this->courseid=$courseid;
 	}
 
-	public function setGrade($grade){
-		$this->grade=$grade;
+	public function setUsergrade($usergrade){
+		$this->usergrade=$usergrade;
 	}
 
-	public function setPercent($percent){
-		$this->percent=$percent;
+	public function setStr_grade($str_grade){
+		$this->str_grade=$str_grade;
 	}
 
-	public function setWeight($weight){
-		$this->weight=$weight;
-	}
-
-	public function setWeighted($weighted){
-		$this->weighted=$weighted;
-	}
-
-	public function setSortOrder($sortOrder){
-		$this->sortOrder=$sortOrder;
+	public function setFeedback($feedback){
+		$this->feedback=$feedback;
 	}
 
 }

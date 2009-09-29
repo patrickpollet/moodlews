@@ -39,10 +39,6 @@ require_once 'courseDatum.php';
  */
 require_once 'gradeRecord.php';
 /**
- * gradeStatsRecord class
- */
-require_once 'gradeStatsRecord.php';
-/**
  * studentRecord class
  */
 require_once 'studentRecord.php';
@@ -66,10 +62,6 @@ require_once 'categoryRecord.php';
  * resourceRecord class
  */
 require_once 'resourceRecord.php';
-/**
- * studentGradeRecord class
- */
-require_once 'studentGradeRecord.php';
 /**
  * loginReturn class
  */
@@ -306,10 +298,6 @@ require_once 'getAllAssignmentsReturn.php';
  * getAllDatabasesReturn class
  */
 require_once 'getAllDatabasesReturn.php';
-/**
- * userCourseID class
- */
-require_once 'userCourseID.php';
 /**
  * userGrade class
  */
@@ -559,9 +547,9 @@ class MoodleWS {
    * @param integer $client
    * @param string $sesskey
    * @param string $userid
-   * @param (getGradesInput) array of string $courseids
+   * @param (getCoursesInput) array of string $courseids
    * @param string $idfield
-   * @return float
+   * @return getGradesReturn
    */
   public function get_grades($client, $sesskey, $userid, $courseids, $idfield) {
     $res= $this->client->__call('get_grades', array(
@@ -576,55 +564,7 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-   return $res;
-  }
-
-  /**
-   * MoodleWS: Get User Grade 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param string $userid
-   * @param string $courseid
-   * @return float
-   */
-  public function get_grade($client, $sesskey, $userid, $courseid) {
-    $res= $this->client->__call('get_grade', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($userid, 'userid'),
-            new SoapParam($courseid, 'courseid')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-   return $res;
-  }
-
-  /**
-   * MoodleWS: Get User Grades 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param string $userid
-   * @param (userCourseIDs) array of userCourseID $courseids
-   * @return userGradesReturn
-   */
-  public function get_user_grades($client, $sesskey, $userid, $courseids) {
-    $res= $this->client->__call('get_user_grades', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($userid, 'userid'),
-            new SoapParam($courseids, 'courseids')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-   return $res;
+  return $this->castTo ('getGradesReturn',$res);
   }
 
   /**
@@ -644,36 +584,6 @@ class MoodleWS {
             new SoapParam($courseid, 'courseid'),
             new SoapParam($userids, 'userids'),
             new SoapParam($idfield, 'idfield')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-  return $this->castTo ('enrolStudentsReturn',$res);
-  }
-
-  /**
-   * MoodleWS: Assign instructors to a course 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param string $courseid
-   * @param (enrolStudentsInput) array of string $userids
-   * @param string $idfield
-   * @param integer $lmsrole
-   * @param boolean $enrol
-   * @return enrolStudentsReturn
-   */
-  public function assign_instructors($client, $sesskey, $courseid, $userids, $idfield, $lmsrole, $enrol) {
-    $res= $this->client->__call('assign_instructors', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($userids, 'userids'),
-            new SoapParam($idfield, 'idfield'),
-            new SoapParam($lmsrole, 'lmsrole'),
-            new SoapParam($enrol, 'enrol')
       ),
       array(
             'uri' => $this->uri ,
@@ -888,64 +798,6 @@ class MoodleWS {
            )
       );
   return $this->castTo ('getRolesReturn',$res);
-  }
-
-  /**
-   * MoodleWS: assign-unassign user as a member of 
-   * a group in course 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param string $courseid
-   * @param string $userid
-   * @param integer $atigroup
-   * @param boolean $assign
-   * @return boolean
-   */
-  public function set_group_member($client, $sesskey, $courseid, $userid, $atigroup, $assign) {
-    $res= $this->client->__call('set_group_member', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($userid, 'userid'),
-            new SoapParam($atigroup, 'atigroup'),
-            new SoapParam($assign, 'assign')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-   return $res;
-  }
-
-  /**
-   * MoodleWS: performs a moodle reset of a course 
-   * 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param string $courseid
-   * @param string $newstartdate
-   * @param boolean $allincat
-   * @param boolean $stuonly
-   * @return boolean
-   */
-  public function reset_course($client, $sesskey, $courseid, $newstartdate, $allincat, $stuonly) {
-    $res= $this->client->__call('reset_course', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($newstartdate, 'newstartdate'),
-            new SoapParam($allincat, 'allincat'),
-            new SoapParam($stuonly, 'stuonly')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-   return $res;
   }
 
   /**

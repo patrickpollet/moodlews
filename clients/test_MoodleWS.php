@@ -138,42 +138,17 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param integer $client
 * @param string $sesskey
 * @param string $userid
-* @param (getGradesInput) array of string $courseids
+* @param (getCoursesInput) array of string $courseids
 * @param string $idfield
-* @return float
+* @return getGradesReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
 $res=$moodle->get_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids,'');
-print($res);
-$moodle->logout($lr->getClient(),$lr->getSessionKey());
-
-/**test code for MoodleWS: Get User Grade
-* @param integer $client
-* @param string $sesskey
-* @param string $userid
-* @param string $courseid
-* @return float
-*/
-
-$lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_grade($lr->getClient(),$lr->getSessionKey(),'','');
-print($res);
-$moodle->logout($lr->getClient(),$lr->getSessionKey());
-
-/**test code for MoodleWS: Get User Grades
-* @param integer $client
-* @param string $sesskey
-* @param string $userid
-* @param (userCourseIDs) array of userCourseID $courseids
-* @return userGradesReturn
-*/
-
-$lr=$moodle->login(LOGIN,PASSWORD);
-$courseids=array();
-$res=$moodle->get_user_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids);
 print_r($res);
+print($res->getGrades());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Enrol students in a course
@@ -188,26 +163,6 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 $lr=$moodle->login(LOGIN,PASSWORD);
 $userids=array();
 $res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'',$userids,'');
-print_r($res);
-print($res->getError());
-print($res->getStudents());
-
-$moodle->logout($lr->getClient(),$lr->getSessionKey());
-
-/**test code for MoodleWS: Assign instructors to a course
-* @param integer $client
-* @param string $sesskey
-* @param string $courseid
-* @param (enrolStudentsInput) array of string $userids
-* @param string $idfield
-* @param integer $lmsrole
-* @param boolean $enrol
-* @return enrolStudentsReturn
-*/
-
-$lr=$moodle->login(LOGIN,PASSWORD);
-$userids=array();
-$res=$moodle->assign_instructors($lr->getClient(),$lr->getSessionKey(),'',$userids,'',0,false);
 print_r($res);
 print($res->getError());
 print($res->getStudents());
@@ -342,36 +297,6 @@ $res=$moodle->get_role_byname($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
 print($res->getRoles());
 
-$moodle->logout($lr->getClient(),$lr->getSessionKey());
-
-/**test code for MoodleWS: assign-unassign user as a member of a group in course
-* @param integer $client
-* @param string $sesskey
-* @param string $courseid
-* @param string $userid
-* @param integer $atigroup
-* @param boolean $assign
-* @return boolean
-*/
-
-$lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->set_group_member($lr->getClient(),$lr->getSessionKey(),'','',0,false);
-print($res);
-$moodle->logout($lr->getClient(),$lr->getSessionKey());
-
-/**test code for MoodleWS: performs a moodle reset of a course
-* @param integer $client
-* @param string $sesskey
-* @param string $courseid
-* @param string $newstartdate
-* @param boolean $allincat
-* @param boolean $stuonly
-* @return boolean
-*/
-
-$lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->reset_course($lr->getClient(),$lr->getSessionKey(),'','',false,false);
-print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Get  Moodle  course categories

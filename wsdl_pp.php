@@ -224,26 +224,13 @@
 
       <xsd:complexType name="gradeRecord">
         <xsd:all>
-          <xsd:element name="name" type="xsd:string" />
-          <xsd:element name="maxgrade" type="xsd:integer" />
-          <xsd:element name="grade" type="xsd:string" />
-          <xsd:element name="percent" type="xsd:string" />
-          <xsd:element name="weight" type="xsd:float" />
-          <xsd:element name="weighted" type="xsd:float" />
-          <xsd:element name="sortOrder" type="xsd:integer" />
+           <xsd:element name="error" type="xsd:string" />
+           <xsd:element name="courseid" type="xsd:string" />
+          <xsd:element name="usergrade" type="xsd:float" /> <xsd:element name="str_grade" type="xsd:string" />
+            <xsd:element name="feedback" type="xsd:string" />
         </xsd:all>
       </xsd:complexType>
-      <xsd:complexType name="gradeStatsRecord">
-        <xsd:all>
-          <xsd:element name="gradeItems" type="xsd:integer" />
-          <xsd:element name="allgrades" type="xsd:string" />
-          <xsd:element name="points" type="xsd:integer" />
-          <xsd:element name="totalpoints" type="xsd:integer" />
-          <xsd:element name="percent" type="xsd:float" />
-          <xsd:element name="weight" type="xsd:float" />
-          <xsd:element name="weighted" type="xsd:float" />
-        </xsd:all>
-      </xsd:complexType>
+
 
       <xsd:complexType name="studentRecord">
         <xsd:all>
@@ -417,22 +404,7 @@
         </xsd:complexContent>
       </xsd:complexType>
 
-      <xsd:complexType name="studentGradeRecord">
-        <xsd:all>
-          <xsd:element name="error" type="xsd:string" />
-          <xsd:element name="courseid" type="xsd:string" />
-          <xsd:element name="stats" type="tns:gradeStatsRecord" />
-          <xsd:element name="grades" type="tns:gradeRecords" />
-        </xsd:all>
-      </xsd:complexType>
-      <xsd:complexType name="studentGradeRecords">
-        <xsd:complexContent>
-          <xsd:restriction base="SOAP-ENC:Array">
-            <xsd:attribute ref="SOAP-ENC:arrayType"
-              wsdl:arrayType="tns:studentGradeRecord[]" />
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
+
       <xsd:complexType name="studentRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -533,18 +505,11 @@
         </xsd:all>
       </xsd:complexType>
 
-     <xsd:complexType name="getGradesInput">
-        <xsd:complexContent>
-          <xsd:restriction base="SOAP-ENC:Array">
-            <xsd:attribute ref="SOAP-ENC:arrayType"
-              wsdl:arrayType="xsd:string[]" />
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
+
 
       <xsd:complexType name="getGradesReturn">
         <xsd:all>
-          <xsd:element name="grades" type="tns:studentGradeRecords" />
+          <xsd:element name="grades" type="tns:gradeRecords" />
         </xsd:all>
       </xsd:complexType>
 
@@ -1283,25 +1248,11 @@
 
       <!-- /TYPES FROM LILLE -->
       <!-- TYPES from SIS integration -->
-    <xsd:complexType name="userCourseID">
-        <xsd:all>
-          <xsd:element name="courseid" type="xsd:string" />
-        </xsd:all>
-      </xsd:complexType>
 
-
-     <xsd:complexType name="userCourseIDs">
-        <xsd:complexContent>
-          <xsd:restriction base="SOAP-ENC:Array">
-            <xsd:attribute ref="SOAP-ENC:arrayType"
-              wsdl:arrayType="tns:userCourseID[]" />
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
 
      <xsd:complexType name="userGrade">
         <xsd:all>
-          <xsd:element name="usergrade" type="xsd:float" />
+
         </xsd:all>
       </xsd:complexType>
 
@@ -1456,23 +1407,8 @@
     <part name="sesskey" type="xsd:string" />
     <part name="groupid" type="xsd:integer" />
   </message>
- <message name="set_group_memberRequest">
-    <part name="client" type="xsd:integer" />
-    <part name="sesskey" type="xsd:string" />
-    <part name="courseid" type="xsd:string" />
-    <part name="userid" type="xsd:string" />
-    <part name="atigroup" type="xsd:integer" />
-    <part name="assign" type="xsd:boolean" />
-  </message>
 
-  <message name="reset_courseRequest">
-    <part name="client" type="xsd:integer" />
-    <part name="sesskey" type="xsd:string" />
-    <part name="courseid" type="xsd:string" />
-    <part name="newstartdate" type="xsd:string" />
-    <part name="allincat" type="xsd:boolean" />
-    <part name="stuonly" type="xsd:boolean" />
-  </message>
+
 
 
   <message name="get_courseRequest">
@@ -1508,7 +1444,7 @@
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
     <part name="userid" type="xsd:string" />
-    <part name="courseids" type="tns:getGradesInput" />
+    <part name="courseids" type="tns:getCoursesInput" />
     <part name="idfield" type="xsd:string" />
   </message>
 
@@ -1516,23 +1452,7 @@
     <part name="return" type="tns:getGradesReturn" />
   </message>
 
-   <message name="get_gradeRequest">
-    <part name="client" type="xsd:integer" />
-    <part name="sesskey" type="xsd:string" />
-    <part name="userid" type="xsd:string" />
-    <part name="courseid" type="xsd:string" />
-  </message>
 
-  <message name="get_user_gradesRequest">
-    <part name="client" type="xsd:integer" />
-    <part name="sesskey" type="xsd:string" />
-    <part name="userid" type="xsd:string" />
-    <part name="courseids" type="tns:userCourseIDs" />
-  </message>
-
-  <message name="get_user_gradesResponse">
-    <part name="return" type="tns:userGradesReturn" />
-  </message>
 
 
   <message name="enrol_studentsRequest">
@@ -1546,18 +1466,7 @@
     <part name="return" type="tns:enrolStudentsReturn" />
   </message>
 
-  <message name="assign_instructorsRequest">
-    <part name="client" type="xsd:integer" />
-    <part name="sesskey" type="xsd:string" />
-    <part name="courseid" type="xsd:string" />
-    <part name="userids" type="tns:enrolStudentsInput" />
-    <part name="idfield" type="xsd:string" />
-    <part name="lmsrole" type="xsd:integer" />
-    <part name="enrol" type="xsd:boolean" />
-  </message>
-  <message name="assign_instructorsResponse">
-    <part name="return" type="tns:enrolStudentsReturn" />
-  </message>
+
 
   <message name="get_rolesResponse">
     <part name="return" type="tns:getRolesReturn" />
@@ -2082,23 +1991,20 @@
 
 
     <operation name="get_grades">
-      <documentation>MoodleWS: Get User Grades</documentation>
+      <documentation>MoodleWS: Get User Grades in some courses</documentation>
       <input message="tns:get_gradesRequest" />
-      <output message="tns:floatResponse" />
+      <output message="tns:get_gradesResponse" />
+    </operation>
+    <operation name="get_course_grades">
+      <documentation>MoodleWS: Get all Users  Grades in one course</documentation>
+      <input message="tns:valueAndIdRequest" />
+      <output message="tns:get_gradesResponse" />
     </operation>
 
-    <operation name="get_grade">
-      <documentation>MoodleWS: Get User Grade</documentation>
-      <input message="tns:get_gradeRequest" />
-      <output message="tns:floatResponse" />
-    </operation>
-
-    <operation name="get_user_grades">
-      <documentation>MoodleWS: Get User Grades</documentation>
-      <input message="tns:get_user_gradesRequest" />
-      <output message="tns:get_user_gradesResponse" />
-
-
+     <operation name="get_user_grades">
+      <documentation>MoodleWS: Get User Grades in all courses</documentation>
+      <input message="tns:valueAndIdRequest" />
+      <output message="tns:get_gradesResponse" />
     </operation>
 
     <operation name="enrol_students">
@@ -2108,14 +2014,6 @@
       <input message="tns:enrol_studentsRequest" />
       <output message="tns:enrol_studentsResponse" />
     </operation>
-    <operation name="assign_instructors">
-      <documentation>
-        MoodleWS: Assign instructors to a course
-      </documentation>
-      <input message="tns:assign_instructorsRequest" />
-      <output message="tns:assign_instructorsResponse" />
-    </operation>
-
 
     <operation name="get_roles">
       <documentation>MoodleWS: Get All roles defined in Moodle</documentation>
@@ -2232,17 +2130,8 @@
       <input message="tns:get_group_membersRequest" />
       <output message="tns:get_usersResponse" />
     </operation>
-          <operation name="set_group_member">
-      <documentation>MoodleWS: assign-unassign user as a member of a group in course</documentation>
-      <input message="tns:set_group_memberRequest" />
-      <output message="tns:booleanResponse" />
-    </operation>
 
-    <operation name="reset_course">
-      <documentation>MoodleWS: performs a moodle reset of a course</documentation>
-      <input message="tns:reset_courseRequest" />
-      <output message="tns:booleanResponse" />
-    </operation>
+
 
 
    <operation name="get_my_group">
@@ -2623,22 +2512,7 @@
       </output>
     </operation>
 
-      <operation name="get_grade">
-      <soap:operation
-        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_grade"
-        style="rpc" />
-      <input>
-        <soap:body use="encoded"
-          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </input>
-      <output>
-        <soap:body use="encoded"
-          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </output>
-    </operation>
-    <operation name="get_user_grades">
+     <operation name="get_user_grades">
       <soap:operation
         soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_user_grades"
         style="rpc" />
@@ -2653,8 +2527,21 @@
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
       </output>
     </operation>
-
-
+<operation name="get_course_grades">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_course_grades"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
     <operation name="enrol_students">
       <soap:operation
         soapAction="' . $CFG->wwwroot . '/wspp/wsdl#enrol_students"
@@ -2671,21 +2558,7 @@
       </output>
     </operation>
 
-    <operation name="assign_instructors">
-      <soap:operation
-        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#assign_instructors"
-        style="rpc" />
-      <input>
-        <soap:body use="encoded"
-          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </input>
-      <output>
-        <soap:body use="encoded"
-          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </output>
-    </operation>
+
 
     <operation name="get_last_changes">
       <soap:operation
@@ -2833,37 +2706,8 @@
       </output>
      </operation>
 
-    <operation name="set_group_member">
-      <soap:operation
-        soapAction="'. $CFG->wwwroot . '/wspp/wsdl#set_group_member"
-        style="rpc" />
-      <input>
-        <soap:body use="encoded"
-          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </input>
-      <output>
-        <soap:body use="encoded"
-          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </output>
-    </operation>
 
-    <operation name="reset_course">
-      <soap:operation
-        soapAction="'. $CFG->wwwroot . '/wspp/wsdl#reset_course"
-        style="rpc" />
-      <input>
-        <soap:body use="encoded"
-          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </input>
-      <output>
-        <soap:body use="encoded"
-          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
-          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-      </output>
-    </operation>
+
 
 
     <operation name="get_categories">

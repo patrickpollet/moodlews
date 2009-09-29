@@ -39,10 +39,6 @@ require_once 'courseDatum.php';
  */
 require_once 'gradeRecord.php';
 /**
- * gradeStatsRecord class
- */
-require_once 'gradeStatsRecord.php';
-/**
  * studentRecord class
  */
 require_once 'studentRecord.php';
@@ -66,10 +62,6 @@ require_once 'categoryRecord.php';
  * resourceRecord class
  */
 require_once 'resourceRecord.php';
-/**
- * studentGradeRecord class
- */
-require_once 'studentGradeRecord.php';
 /**
  * loginReturn class
  */
@@ -306,10 +298,6 @@ require_once 'getAllAssignmentsReturn.php';
  * getAllDatabasesReturn class
  */
 require_once 'getAllDatabasesReturn.php';
-/**
- * userCourseID class
- */
-require_once 'userCourseID.php';
 /**
  * userGrade class
  */
