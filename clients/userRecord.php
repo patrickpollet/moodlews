@@ -15,6 +15,10 @@ class userRecord {
 	*/
 	public $id;
 	/** 
+	* @var  string
+	*/
+	public $auth;
+	/** 
 	* @var  integer
 	*/
 	public $confirmed;
@@ -50,6 +54,10 @@ class userRecord {
 	* @var  string
 	*/
 	public $icq;
+	/** 
+	* @var  integer
+	*/
+	public $emailstop;
 	/** 
 	* @var  string
 	*/
@@ -103,9 +111,17 @@ class userRecord {
 	*/
 	public $timezone;
 	/** 
+	* @var  integer
+	*/
+	public $mnethostid;
+	/** 
 	* @var  string
 	*/
 	public $lastip;
+	/** 
+	* @var  string
+	*/
+	public $theme;
 	/** 
 	* @var  string
 	*/
@@ -115,9 +131,10 @@ class userRecord {
 	*/
 	public $role;
 	/* full constructor */
-	 public function userRecord($error='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$description='',$role=0){
+	 public function userRecord($error='',$id=0,$auth='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$emailstop=0,$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$mnethostid=0,$lastip='',$theme='',$description='',$role=0){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
+		 $this->auth=$auth   ;
 		 $this->confirmed=$confirmed   ;
 		 $this->policyagreed=$policyagreed   ;
 		 $this->deleted=$deleted   ;
@@ -127,6 +144,7 @@ class userRecord {
 		 $this->lastname=$lastname   ;
 		 $this->email=$email   ;
 		 $this->icq=$icq   ;
+		 $this->emailstop=$emailstop   ;
 		 $this->skype=$skype   ;
 		 $this->yahoo=$yahoo   ;
 		 $this->aim=$aim   ;
@@ -140,7 +158,9 @@ class userRecord {
 		 $this->country=$country   ;
 		 $this->lang=$lang   ;
 		 $this->timezone=$timezone   ;
+		 $this->mnethostid=$mnethostid   ;
 		 $this->lastip=$lastip   ;
+		 $this->theme=$theme   ;
 		 $this->description=$description   ;
 		 $this->role=$role   ;
 	}
@@ -151,6 +171,10 @@ class userRecord {
 
 	public function getId(){
 		 return $this->id;
+	}
+
+	public function getAuth(){
+		 return $this->auth;
 	}
 
 	public function getConfirmed(){
@@ -187,6 +211,10 @@ class userRecord {
 
 	public function getIcq(){
 		 return $this->icq;
+	}
+
+	public function getEmailstop(){
+		 return $this->emailstop;
 	}
 
 	public function getSkype(){
@@ -241,8 +269,16 @@ class userRecord {
 		 return $this->timezone;
 	}
 
+	public function getMnethostid(){
+		 return $this->mnethostid;
+	}
+
 	public function getLastip(){
 		 return $this->lastip;
+	}
+
+	public function getTheme(){
+		 return $this->theme;
 	}
 
 	public function getDescription(){
@@ -260,6 +296,10 @@ class userRecord {
 
 	public function setId($id){
 		$this->id=$id;
+	}
+
+	public function setAuth($auth){
+		$this->auth=$auth;
 	}
 
 	public function setConfirmed($confirmed){
@@ -296,6 +336,10 @@ class userRecord {
 
 	public function setIcq($icq){
 		$this->icq=$icq;
+	}
+
+	public function setEmailstop($emailstop){
+		$this->emailstop=$emailstop;
 	}
 
 	public function setSkype($skype){
@@ -350,8 +394,16 @@ class userRecord {
 		$this->timezone=$timezone;
 	}
 
+	public function setMnethostid($mnethostid){
+		$this->mnethostid=$mnethostid;
+	}
+
 	public function setLastip($lastip){
 		$this->lastip=$lastip;
+	}
+
+	public function setTheme($theme){
+		$this->theme=$theme;
 	}
 
 	public function setDescription($description){

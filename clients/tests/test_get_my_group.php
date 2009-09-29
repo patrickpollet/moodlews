@@ -6,8 +6,8 @@ require_once ('../auth.php');
 /**test code for MoodleWS: Get user group in course
 * @param integer $client
 * @param string $sesskey
-* @param integer $courseid
 * @param integer $uid
+* @param integer $courseid
 * @return getGroupsReturn
 */
 

@@ -140,15 +140,40 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param string $userid
 * @param (getGradesInput) array of string $courseids
 * @param string $idfield
-* @return getGradesReturn
+* @return float
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
 $res=$moodle->get_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids,'');
-print_r($res);
-print($res->getGrades());
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: Get User Grade
+* @param integer $client
+* @param string $sesskey
+* @param string $userid
+* @param string $courseid
+* @return float
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_grade($lr->getClient(),$lr->getSessionKey(),'','');
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get User Grades
+* @param integer $client
+* @param string $sesskey
+* @param string $userid
+* @param (userCourseIDs) array of userCourseID $courseids
+* @return userGradesReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$courseids=array();
+$res=$moodle->get_user_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids);
+print_r($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Enrol students in a course
@@ -163,6 +188,26 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 $lr=$moodle->login(LOGIN,PASSWORD);
 $userids=array();
 $res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'',$userids,'');
+print_r($res);
+print($res->getError());
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Assign instructors to a course
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param (enrolStudentsInput) array of string $userids
+* @param string $idfield
+* @param integer $lmsrole
+* @param boolean $enrol
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->assign_instructors($lr->getClient(),$lr->getSessionKey(),'',$userids,'',0,false);
 print_r($res);
 print($res->getError());
 print($res->getStudents());
@@ -297,6 +342,36 @@ $res=$moodle->get_role_byname($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
 print($res->getRoles());
 
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: assign-unassign user as a member of a group in course
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $userid
+* @param integer $atigroup
+* @param boolean $assign
+* @return boolean
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->set_group_member($lr->getClient(),$lr->getSessionKey(),'','',0,false);
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: performs a moodle reset of a course
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $newstartdate
+* @param boolean $allincat
+* @param boolean $stuonly
+* @return boolean
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->reset_course($lr->getClient(),$lr->getSessionKey(),'','',false,false);
+print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Get  Moodle  course categories
@@ -544,8 +619,8 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 /**test code for MoodleWS: Get user group in course
 * @param integer $client
 * @param string $sesskey
-* @param integer $courseid
 * @param integer $uid
+* @param integer $courseid
 * @return getGroupsReturn
 */
 
@@ -662,6 +737,453 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->count_activities($lr->getClient(),$lr->getSessionKey(),'','','','');
 print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Label Information
+* @param integer $client
+* @param string $sesskey
+* @param editLabelsInput $labels
+* @return editLabelsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$labels= new editLabelsInput();
+$labels->setLabels(array());
+$res=$moodle->edit_labels($lr->getClient(),$lr->getSessionKey(),$labels);
+print_r($res);
+print($res->getLabels());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Groups Information
+* @param integer $client
+* @param string $sesskey
+* @param editGroupsInput $groups
+* @return editGroupsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$groups= new editGroupsInput();
+$groups->setGroups(array());
+$res=$moodle->edit_groups($lr->getClient(),$lr->getSessionKey(),$groups);
+print_r($res);
+print($res->getGroups());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Assignment Information
+* @param integer $client
+* @param string $sesskey
+* @param editAssignmentsInput $assignments
+* @return editAssignmentsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$assignments= new editAssignmentsInput();
+$assignments->setAssignments(array());
+$res=$moodle->edit_assignments($lr->getClient(),$lr->getSessionKey(),$assignments);
+print_r($res);
+print($res->getAssignments());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit databases Information
+* @param integer $client
+* @param string $sesskey
+* @param editDatabasesInput $databases
+* @return editDatabasesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$databases= new editDatabasesInput();
+$databases->setDatabases(array());
+$res=$moodle->edit_databases($lr->getClient(),$lr->getSessionKey(),$databases);
+print_r($res);
+print($res->getDatabases());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Categories Information
+* @param integer $client
+* @param string $sesskey
+* @param editCategoriesInput $categories
+* @return editCategoriesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$categories= new editCategoriesInput();
+$categories->setCategories(array());
+$res=$moodle->edit_categories($lr->getClient(),$lr->getSessionKey(),$categories);
+print_r($res);
+print($res->getCategories());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit section Information
+* @param integer $client
+* @param string $sesskey
+* @param editSectionsInput $sections
+* @return editSectionsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$sections= new editSectionsInput();
+$sections->setSections(array());
+$res=$moodle->edit_sections($lr->getClient(),$lr->getSessionKey(),$sections);
+print_r($res);
+print($res->getSections());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Forum Information
+* @param integer $client
+* @param string $sesskey
+* @param editForumsInput $forums
+* @return editForumsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$forums= new editForumsInput();
+$forums->setForums(array());
+$res=$moodle->edit_forums($lr->getClient(),$lr->getSessionKey(),$forums);
+print_r($res);
+print($res->getForums());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Wikis Information
+* @param integer $client
+* @param string $sesskey
+* @param editWikisInput $wikis
+* @return editWikisOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$wikis= new editWikisInput();
+$wikis->setWikis(array());
+$res=$moodle->edit_wikis($lr->getClient(),$lr->getSessionKey(),$wikis);
+print_r($res);
+print($res->getWikis());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Page of Wiki Information
+* @param integer $client
+* @param string $sesskey
+* @param editPagesWikiInput $pagesWiki
+* @return editPagesWikiOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$pagesWiki= new editPagesWikiInput();
+$pagesWiki->setPagesWiki(array());
+$res=$moodle->edit_pagesWiki($lr->getClient(),$lr->getSessionKey(),$pagesWiki);
+print_r($res);
+print($res->getPagesWiki());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect Course To Category
+* @param integer $client
+* @param string $sesskey
+* @param integer $courseid
+* @param integer $categoryid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_course_to_category($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect Label to Section
+* @param integer $client
+* @param string $sesskey
+* @param integer $labelid
+* @param integer $sectionid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_label_to_section($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect Forum to Section
+* @param integer $client
+* @param string $sesskey
+* @param integer $forumid
+* @param integer $sectionid
+* @param integer $groupmode
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_forum_to_section($lr->getClient(),$lr->getSessionKey(),0,0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect Section To Course
+* @param integer $client
+* @param string $sesskey
+* @param integer $sectionid
+* @param integer $courseid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_section_to_course($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a user to group
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $groupid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_user_to_group($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a group to course
+* @param integer $client
+* @param string $sesskey
+* @param integer $groupid
+* @param integer $coursid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_group_to_course($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a wiki to section
+* @param integer $client
+* @param string $sesskey
+* @param integer $wikiid
+* @param integer $sectionid
+* @param integer $groupmode
+* @param integer $visible
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_wiki_to_section($lr->getClient(),$lr->getSessionKey(),0,0,0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a database to section
+* @param integer $client
+* @param string $sesskey
+* @param integer $databaseid
+* @param integer $sectionid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_database_to_section($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a section to assignment
+* @param integer $client
+* @param string $sesskey
+* @param integer $assignmentid
+* @param integer $sectionid
+* @param integer $groupmode
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_assignment_to_section($lr->getClient(),$lr->getSessionKey(),0,0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect user to the course
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $courseid
+* @param string $rolename
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_user_to_course($lr->getClient(),$lr->getSessionKey(),0,0,'');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a page of wiki to a wiki
+* @param integer $client
+* @param string $sesskey
+* @param integer $pageid
+* @param integer $wikiid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_pageWiki_to_wiki($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Remove the role specified of the user in the course
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $courseid
+* @param string $rolename
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_userRole_from_course($lr->getClient(),$lr->getSessionKey(),0,0,'');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Groups
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getGroupsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_groups($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getGroups());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Forums
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllForumsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_forums($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getForums());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Labels
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllLabelsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_labels($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getLabels());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All wikis
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllWikisReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_wikis($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getWikis());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Pages Wikis
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllPagesWikiReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_pagesWiki($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getPageswiki());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Assignments
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllAssignmentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_assignments($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getAssignments());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All Databases
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllDatabasesReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_databases($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getDatabases());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

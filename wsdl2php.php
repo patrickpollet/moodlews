@@ -60,9 +60,9 @@
 */
 
 
-define (PACKAGE,'MoodleWS');
-define (AUTHOR,'Patrick Pollet :<patrick.pollet@insa-lyon.fr>');
-define (COPYRIGHT,'(c) P.Pollet 2007 under GPL');
+define ('PACKAGE','MoodleWS');
+define ('AUTHOR','Patrick Pollet :<patrick.pollet@insa-lyon.fr>');
+define ('COPYRIGHT','(c) P.Pollet 2007 under GPL');
 
 ini_set('soap.wsdl_cache_enabled', 0); // disable WSDL cache
 

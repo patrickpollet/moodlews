@@ -29,11 +29,7 @@ class groupRecord {
 	/** 
 	* @var  string
 	*/
-	public $lang;
-	/** 
-	* @var  string
-	*/
-	public $theme;
+	public $enrolmentkey;
 	/** 
 	* @var  integer
 	*/
@@ -56,8 +52,7 @@ class groupRecord {
 		 $this->courseid=0;
 		 $this->name='';
 		 $this->description='';
-		 $this->lang='';
-		 $this->theme='';
+		 $this->enrolmentkey='';
 		 $this->picture=0;
 		 $this->hidepicture=0;
 		 $this->timecreated=0;
@@ -84,12 +79,8 @@ class groupRecord {
 		 return $this->description;
 	}
 
-	public function getLang(){
-		 return $this->lang;
-	}
-
-	public function getTheme(){
-		 return $this->theme;
+	public function getEnrolmentkey(){
+		 return $this->enrolmentkey;
 	}
 
 	public function getPicture(){
@@ -129,12 +120,8 @@ class groupRecord {
 		$this->description=$description;
 	}
 
-	public function setLang($lang){
-		$this->lang=$lang;
-	}
-
-	public function setTheme($theme){
-		$this->theme=$theme;
+	public function setEnrolmentkey($enrolmentkey){
+		$this->enrolmentkey=$enrolmentkey;
 	}
 
 	public function setPicture($picture){

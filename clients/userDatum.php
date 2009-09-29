@@ -51,6 +51,10 @@ class userDatum {
 	*/
 	public $email;
 	/** 
+	* @var  integer
+	*/
+	public $emailstop;
+	/** 
 	* @var  string
 	*/
 	public $icq;
@@ -113,13 +117,17 @@ class userDatum {
 	/** 
 	* @var  string
 	*/
+	public $theme;
+	/** 
+	* @var  string
+	*/
 	public $description;
 	/** 
 	* @var  integer
 	*/
 	public $mnethostid;
 	/* full constructor */
-	 public function userDatum($action='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$description='',$mnethostid=0){
+	 public function userDatum($action='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
 		 $this->action=$action   ;
 		 $this->confirmed=$confirmed   ;
 		 $this->policyagreed=$policyagreed   ;
@@ -131,6 +139,7 @@ class userDatum {
 		 $this->firstname=$firstname   ;
 		 $this->lastname=$lastname   ;
 		 $this->email=$email   ;
+		 $this->emailstop=$emailstop   ;
 		 $this->icq=$icq   ;
 		 $this->skype=$skype   ;
 		 $this->yahoo=$yahoo   ;
@@ -146,6 +155,7 @@ class userDatum {
 		 $this->lang=$lang   ;
 		 $this->timezone=$timezone   ;
 		 $this->lastip=$lastip   ;
+		 $this->theme=$theme   ;
 		 $this->description=$description   ;
 		 $this->mnethostid=$mnethostid   ;
 	}
@@ -192,6 +202,10 @@ class userDatum {
 
 	public function getEmail(){
 		 return $this->email;
+	}
+
+	public function getEmailstop(){
+		 return $this->emailstop;
 	}
 
 	public function getIcq(){
@@ -254,6 +268,10 @@ class userDatum {
 		 return $this->lastip;
 	}
 
+	public function getTheme(){
+		 return $this->theme;
+	}
+
 	public function getDescription(){
 		 return $this->description;
 	}
@@ -305,6 +323,10 @@ class userDatum {
 
 	public function setEmail($email){
 		$this->email=$email;
+	}
+
+	public function setEmailstop($emailstop){
+		$this->emailstop=$emailstop;
 	}
 
 	public function setIcq($icq){
@@ -365,6 +387,10 @@ class userDatum {
 
 	public function setLastip($lastip){
 		$this->lastip=$lastip;
+	}
+
+	public function setTheme($theme){
+		$this->theme=$theme;
 	}
 
 	public function setDescription($description){

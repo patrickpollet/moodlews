@@ -3,31 +3,31 @@
 /**
  * This file creates a WSDL file for the web service interfaced running on
  * this server with URL paths relative to the currently running server.
- * 
+ *
  * When referring to this file, you must call it as:
- * 
+ *
  * http://www.yourhost.com/ ... /wspp/wsdl_pp.php
- * 
+ *
  * Where ... is the path to your Moodle root.  This is so that your web server
  * will process the PHP statemtents within the file, which returns a WSDL
  * file to the web services call (or your browser).
- * 
+ *
  * @version $Id: wsdl.php,v 1.4 2007/04/24 04:05:36 jfilip Exp $
  * @author Justin Filip <jfilip@oktech.ca>
- * @author Open Knowledge Technologies - http://www.oktech.ca/  
- * @author PP 
+ * @author Open Knowledge Technologies - http://www.oktech.ca/
+ * @author PP
  *           removed the mdl_soapserver. )
  *           added extra API calls
- *           added plural when an array of whatever is required 
- *           so defined get_xxx with ONE id and return one record 
- *               and get_xxxs with array of id and  return array of record             
+ *           added plural when an array of whatever is required
+ *           so defined get_xxx with ONE id and return one record
+ *               and get_xxxs with array of id and  return array of record
  * when modifiying this file to add new API calls, run the provided
- * wsdl2php.php utility (or mkclasses.sh script) to generate uptodate 
+ * wsdl2php.php utility (or mkclasses.sh script) to generate uptodate
  * class names files (needed by PHP5 clients AND server) and MoodleWS class
- * (needed only by PHP5 clients) 
+ * (needed only by PHP5 clients)
  * rev 1.5.9 :
- *   corrected wrong parameters in get_my_courses_by* calls (removed extraneous idfield if get_my_coursesRequest) 
- *   added has_primaryrole_incourse 
+ *   corrected wrong parameters in get_my_courses_by* calls (removed extraneous idfield if get_my_coursesRequest)
+ *   added has_primaryrole_incourse
  */
 
 
@@ -35,7 +35,7 @@
 
 
   header('Content-Type: application/xml; charset=UTF-8');
-//  text/xml is required by jdeveloper UDDI       
+//  text/xml is required by jdeveloper UDDI
 //  header('Content-Type: text/xml; charset=UTF-8');
 
   header('Content-Disposition: attachment; filename="moodlews.wsdl"');
@@ -58,7 +58,7 @@
       <xsd:complexType name="userRecord">
         <xsd:all>
           <xsd:element name="error" type="xsd:string" />
-          <xsd:element name="id" type="xsd:integer" />
+          <xsd:element name="id" type="xsd:integer" />  <xsd:element name="auth" type="xsd:string" />
           <xsd:element name="confirmed" type="xsd:integer" />
           <xsd:element name="policyagreed" type="xsd:integer" />
           <xsd:element name="deleted" type="xsd:integer" />
@@ -67,7 +67,7 @@
           <xsd:element name="firstname" type="xsd:string" />
           <xsd:element name="lastname" type="xsd:string" />
           <xsd:element name="email" type="xsd:string" />
-          <xsd:element name="icq" type="xsd:string" />
+          <xsd:element name="icq" type="xsd:string" />  <xsd:element name="emailstop" type="xsd:integer" />
           <xsd:element name="skype" type="xsd:string" />
           <xsd:element name="yahoo" type="xsd:string" />
           <xsd:element name="aim" type="xsd:string" />
@@ -80,8 +80,9 @@
           <xsd:element name="city" type="xsd:string" />
           <xsd:element name="country" type="xsd:string" />
           <xsd:element name="lang" type="xsd:string" />
-          <xsd:element name="timezone" type="xsd:integer" />
-          <xsd:element name="lastip" type="xsd:string" />
+          <xsd:element name="timezone" type="xsd:integer" />  <xsd:element name="mnethostid" type="xsd:integer" />
+          <xsd:element name="lastip" type="xsd:string" /> <xsd:element name="theme" type="xsd:string" />
+
           <xsd:element name="description" type="xsd:string" nillable="true" />
           <xsd:element name="role" type="xsd:integer" />
         </xsd:all>
@@ -99,6 +100,7 @@
 	  <xsd:element name="hidepicture" type="xsd:integer"/>
 	  <xsd:element name="timecreated" type="xsd:integer" />
 	  <xsd:element name="timemodified" type="xsd:integer" />
+      <xsd:element name="enrolmentkey" type="xsd:string" />
        </xsd:all>
       </xsd:complexType>
 <xsd:complexType name="sectionRecord">
@@ -161,7 +163,8 @@
           <xsd:element name="idnumber" type="xsd:string" />
           <xsd:element name="firstname" type="xsd:string" />
           <xsd:element name="lastname" type="xsd:string" />
-          <xsd:element name="email" type="xsd:string" />
+          <xsd:element name="email" type="xsd:string" />   <xsd:element name="emailstop" type="xsd:integer" />
+
           <xsd:element name="icq" type="xsd:string" />
           <xsd:element name="skype" type="xsd:string" />
           <xsd:element name="yahoo" type="xsd:string" />
@@ -176,7 +179,8 @@
           <xsd:element name="country" type="xsd:string" />
           <xsd:element name="lang" type="xsd:string" />
           <xsd:element name="timezone" type="xsd:integer" />
-          <xsd:element name="lastip" type="xsd:string" />
+          <xsd:element name="lastip" type="xsd:string" /> <xsd:element name="theme" type="xsd:string" />
+
           <xsd:element name="description" type="xsd:string" />
           <xsd:element name="mnethostid" type="xsd:integer" />
         </xsd:all>
@@ -217,7 +221,7 @@
           <xsd:element name="metacourse" type="xsd:integer" />
         </xsd:all>
       </xsd:complexType>
-      
+
       <xsd:complexType name="gradeRecord">
         <xsd:all>
           <xsd:element name="name" type="xsd:string" />
@@ -240,7 +244,7 @@
           <xsd:element name="weighted" type="xsd:float" />
         </xsd:all>
       </xsd:complexType>
-      
+
       <xsd:complexType name="studentRecord">
         <xsd:all>
           <xsd:element name="userid" type="xsd:integer" />
@@ -251,7 +255,7 @@
           <xsd:element name="enrol" type="xsd:string" />
         </xsd:all>
       </xsd:complexType>
-      
+
       <xsd:complexType name="eventRecord">
         <xsd:all>
           <xsd:element name="error" type="xsd:string" />
@@ -349,7 +353,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-       
+
 <xsd:complexType name="sectionRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -357,8 +361,8 @@
               wsdl:arrayType="tns:sectionRecord[]" />
           </xsd:restriction>
         </xsd:complexContent>
-      </xsd:complexType>         
-      
+      </xsd:complexType>
+
       <xsd:complexType name="userRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -367,7 +371,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-      
+
    <xsd:complexType name="groupRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -385,7 +389,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-     
+
       <xsd:complexType name="courseRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -394,7 +398,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-     
+
       <xsd:complexType name="courseData">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -403,7 +407,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-      
+
       <xsd:complexType name="gradeRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -412,7 +416,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-      
+
       <xsd:complexType name="studentGradeRecord">
         <xsd:all>
           <xsd:element name="error" type="xsd:string" />
@@ -470,7 +474,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-     
+
       <xsd:complexType name="loginReturn">
         <xsd:all>
           <xsd:element name="client" type="xsd:integer" />
@@ -651,6 +655,668 @@
         </xsd:all>
       </xsd:complexType>
 
+            <!-- TYPES FROM LILLE -->
+
+          <!-- general -->
+
+              <xsd:complexType name="affectRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="status" type="xsd:boolean" />
+                </xsd:all>
+              </xsd:complexType>
+
+          <!-- /general -->
+
+        <!-- edit_labels -->
+              <xsd:complexType name="editLabelsInput">
+                <xsd:all>
+                  <xsd:element name="labels" type="tns:labelData" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="labelData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:labelDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="labelDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="content" type="xsd:string" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editLabelsOutput">
+                <xsd:all>
+                  <xsd:element name="labels" type="tns:labelRecords" />
+                </xsd:all>
+              </xsd:complexType>
+               <xsd:complexType name="labelRecords">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:labelRecord[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="labelRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="content" type="xsd:string" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_labels -->
+
+          <!-- edit_groups -->
+              <xsd:complexType name="editGroupsInput">
+                <xsd:all>
+                  <xsd:element name="groups" type="tns:groupData" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="groupData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:groupDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="groupDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="courseid" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="enrolmentkey" type="xsd:string" />
+                  <xsd:element name="picture" type="xsd:integer"/>
+                  <xsd:element name="hidepicture" type="xsd:integer"/>
+                  <xsd:element name="timecreated" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editGroupsOutput">
+                <xsd:all>
+                  <xsd:element name="groups" type="tns:groupRecords" />
+                </xsd:all>
+              </xsd:complexType>
+             <xsd:complexType name="groupRecords">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:groupRecord[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="groupRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="courseid" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="enrolmentkey" type="xsd:string" />
+                  <xsd:element name="picture" type="xsd:integer"/>
+                  <xsd:element name="hidepicture" type="xsd:integer"/>
+                  <xsd:element name="timecreated" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+
+          <!-- edit_groups -->
+
+          <!-- edit_categories -->
+              <xsd:complexType name="editCategoriesInput">
+                <xsd:all>
+                  <xsd:element name="categories" type="tns:categoryData" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="categoryData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:categoryDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="categoryDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="parent" type="xsd:integer" />
+                  <xsd:element name="sortorder" type="xsd:integer" />
+                  <xsd:element name="coursecount" type="xsd:integer" />
+                  <xsd:element name="visible" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                  <xsd:element name="depth" type="xsd:integer" />
+                  <xsd:element name="path" type="xsd:string" />
+                  <xsd:element name="theme" type="xsd:string" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editCategoriesOutput">
+                <xsd:all>
+                  <xsd:element name="categories" type="tns:categoryRecords" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_categories -->
+
+
+
+          <!-- edit_sections -->
+              <xsd:complexType name="editSectionsInput">
+                <xsd:all>
+                  <xsd:element name="sections" type="tns:sectionData" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="sectionData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:sectionDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="sectionDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="section" type="xsd:integer" />
+                  <xsd:element name="summary" type="xsd:string" />
+                  <xsd:element name="sequence" type="xsd:string" />
+                  <xsd:element name="visible" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editSectionsOutput">
+                <xsd:all>
+                  <xsd:element name="sections" type="tns:sectionRecords" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_sections -->
+
+          <!-- edit_forums -->
+              <xsd:complexType name="editForumsInput">
+                <xsd:all>
+                  <xsd:element name="forums" type="tns:forumData" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="forumData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:forumDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="forumDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="type" type="xsd:string" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="intro" type="xsd:string" />
+                  <xsd:element name="assessed" type="xsd:integer" />
+                  <xsd:element name="assesstimestart" type="xsd:integer" />
+                  <xsd:element name="assesstimefinish" type="xsd:integer" />
+                  <xsd:element name="scale" type="xsd:integer" />
+                  <xsd:element name="maxbytes" type="xsd:integer" />
+                  <xsd:element name="forcesubscribe" type="xsd:integer" />
+                  <xsd:element name="trackingtype" type="xsd:integer" />
+                  <xsd:element name="rsstype" type="xsd:integer" />
+                  <xsd:element name="rssarticles" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                  <xsd:element name="warnafter" type="xsd:integer" />
+                  <xsd:element name="blockafter" type="xsd:integer" />
+                  <xsd:element name="blockperiod" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editForumsOutput">
+                <xsd:all>
+                  <xsd:element name="forums" type="tns:forumRecords" />
+                </xsd:all>
+              </xsd:complexType>
+               <xsd:complexType name="forumRecords">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:forumRecord[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="forumRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="type" type="xsd:string" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="intro" type="xsd:string" />
+                  <xsd:element name="assessed" type="xsd:integer" />
+                  <xsd:element name="assesstimestart" type="xsd:integer" />
+                  <xsd:element name="assesstimefinish" type="xsd:integer" />
+                  <xsd:element name="scale" type="xsd:integer" />
+                  <xsd:element name="maxbytes" type="xsd:integer" />
+                  <xsd:element name="forcesubscribe" type="xsd:integer" />
+                  <xsd:element name="trackingtype" type="xsd:integer" />
+                  <xsd:element name="rsstype" type="xsd:integer" />
+                  <xsd:element name="rssarticles" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                  <xsd:element name="warnafter" type="xsd:integer" />
+                  <xsd:element name="blockafter" type="xsd:integer" />
+                  <xsd:element name="blockperiod" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_forums -->
+
+          <!-- edit_assignment -->
+            <xsd:complexType name="editAssignmentsInput">
+                <xsd:all>
+                  <xsd:element name="assignments" type="tns:assignmentData" />
+                </xsd:all>
+             </xsd:complexType>
+            <xsd:complexType name="assignmentData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:assignmentDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+            <xsd:complexType name="assignmentDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="format" type="xsd:integer" />
+                  <xsd:element name="assignmenttype" type="xsd:string"/>
+                  <xsd:element name="resubmit" type="xsd:integer" />
+                  <xsd:element name="preventlate" type="xsd:integer" />
+                  <xsd:element name="emailteachers" type="xsd:integer" />
+                  <xsd:element name="var1" type="xsd:integer" />
+                  <xsd:element name="var2" type="xsd:integer" />
+                  <xsd:element name="var3" type="xsd:integer" />
+                  <xsd:element name="var4" type="xsd:integer" />
+                  <xsd:element name="var5" type="xsd:integer" />
+                  <xsd:element name="maxbytes" type="xsd:integer" />
+                  <xsd:element name="timedue" type="xsd:integer" />
+                  <xsd:element name="timeavailable" type="xsd:integer" />
+                  <xsd:element name="grade" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+             <xsd:complexType name="editAssignmentsOutput">
+                <xsd:all>
+                  <xsd:element name="assignments" type="tns:assignmentRecords" />
+                </xsd:all>
+             </xsd:complexType>
+             <xsd:complexType name="assignmentRecords">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:assignmentRecord[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="assignmentRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="format" type="xsd:integer" />
+                  <xsd:element name="assignmenttype" type="xsd:string"/>
+                  <xsd:element name="resubmit" type="xsd:integer" />
+                  <xsd:element name="preventlate" type="xsd:integer" />
+                  <xsd:element name="emailteachers" type="xsd:integer" />
+                  <xsd:element name="var1" type="xsd:integer" />
+                  <xsd:element name="var2" type="xsd:integer" />
+                  <xsd:element name="var3" type="xsd:integer" />
+                  <xsd:element name="var4" type="xsd:integer" />
+                  <xsd:element name="var5" type="xsd:integer" />
+                  <xsd:element name="maxbytes" type="xsd:integer" />
+                  <xsd:element name="timedue" type="xsd:integer" />
+                  <xsd:element name="timeavailable" type="xsd:integer" />
+                  <xsd:element name="grade" type="xsd:integer" />
+                  <xsd:element name="timemodified" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_assignment -->
+
+          <!-- edit_databases -->
+          <xsd:complexType name="editDatabasesInput">
+            <xsd:all>
+              <xsd:element name="databases" type="tns:databaseData" />
+            </xsd:all>
+          </xsd:complexType>
+            <xsd:complexType name="databaseData">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:databaseDatum[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+            <xsd:complexType name="databaseDatum">
+                <xsd:all>
+                  <xsd:element name="action" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="intro" type="xsd:string" />
+                  <xsd:element name="comments" type="xsd:integer" />
+                  <xsd:element name="timeavailablefrom" type="xsd:integer" />
+                  <xsd:element name="timeavailableto" type="xsd:integer"/>
+                  <xsd:element name="timeviewfrom" type="xsd:integer" />
+                  <xsd:element name="timeviewto" type="xsd:integer" />
+                  <xsd:element name="requiredentries" type="xsd:integer" />
+                  <xsd:element name="requiredentriestoview" type="xsd:integer" />
+                  <xsd:element name="maxentries" type="xsd:integer" />
+                  <xsd:element name="ressarticles" type="xsd:integer" />
+                  <xsd:element name="singletemplate" type="xsd:string" />
+                  <xsd:element name="listtemplate" type="xsd:string" />
+                  <xsd:element name="listtemplateheader" type="xsd:string" />
+                  <xsd:element name="listtemplatefooter" type="xsd:string" />
+                  <xsd:element name="addtemplatee" type="xsd:string" />
+                  <xsd:element name="rsstemplate" type="xsd:string" />
+                  <xsd:element name="rsstitletemplate" type="xsd:string" />
+                  <xsd:element name="csstemplate" type="xsd:string" />
+                  <xsd:element name="jstemplate" type="xsd:string" />
+                  <xsd:element name="asearchtemplate" type="xsd:string" />
+                  <xsd:element name="approval" type="xsd:integer" />
+                  <xsd:element name="scale" type="xsd:integer" />
+                  <xsd:element name="assessed" type="xsd:integer" />
+                  <xsd:element name="defaultsort" type="xsd:integer" />
+                  <xsd:element name="defaultsortdir" type="xsd:integer" />
+                  <xsd:element name="editany" type="xsd:integer" />
+                  <xsd:element name="notification" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="editDatabasesOutput">
+                <xsd:all>
+                  <xsd:element name="databases" type="tns:databaseRecords" />
+                </xsd:all>
+              </xsd:complexType>
+              <xsd:complexType name="databaseRecords">
+                <xsd:complexContent>
+                  <xsd:restriction base="SOAP-ENC:Array">
+                    <xsd:attribute ref="SOAP-ENC:arrayType"
+                      wsdl:arrayType="tns:databaseRecord[]" />
+                  </xsd:restriction>
+                </xsd:complexContent>
+              </xsd:complexType>
+              <xsd:complexType name="databaseRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="course" type="xsd:integer" />
+                  <xsd:element name="name" type="xsd:string" />
+                  <xsd:element name="intro" type="xsd:string" />
+                  <xsd:element name="comments" type="xsd:integer" />
+                  <xsd:element name="timeavailablefrom" type="xsd:integer" />
+                  <xsd:element name="timeavailableto" type="xsd:integer"/>
+                  <xsd:element name="timeviewfrom" type="xsd:integer" />
+                  <xsd:element name="timeviewto" type="xsd:integer" />
+                  <xsd:element name="requiredentries" type="xsd:integer" />
+                  <xsd:element name="requiredentriestoview" type="xsd:integer" />
+                  <xsd:element name="maxentries" type="xsd:integer" />
+                  <xsd:element name="ressarticles" type="xsd:integer" />
+                  <xsd:element name="singletemplate" type="xsd:string" />
+                  <xsd:element name="listtemplate" type="xsd:string" />
+                  <xsd:element name="listtemplateheader" type="xsd:string" />
+                  <xsd:element name="listtemplatefooter" type="xsd:string" />
+                  <xsd:element name="addtemplatee" type="xsd:string" />
+                  <xsd:element name="rsstemplate" type="xsd:string" />
+                  <xsd:element name="rsstitletemplate" type="xsd:string" />
+                  <xsd:element name="csstemplate" type="xsd:string" />
+                  <xsd:element name="jstemplate" type="xsd:string" />
+                  <xsd:element name="asearchtemplate" type="xsd:string" />
+                  <xsd:element name="approval" type="xsd:integer" />
+                  <xsd:element name="scale" type="xsd:integer" />
+                  <xsd:element name="assessed" type="xsd:integer" />
+                  <xsd:element name="defaultsort" type="xsd:integer" />
+                  <xsd:element name="defaultsortdir" type="xsd:integer" />
+                  <xsd:element name="editany" type="xsd:integer" />
+                  <xsd:element name="notification" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_databases -->
+
+          <!-- edit_wikis -->
+          <xsd:complexType name="editWikisInput">
+            <xsd:all>
+              <xsd:element name="wikis" type="tns:wikiData" />
+            </xsd:all>
+          </xsd:complexType>
+          <xsd:complexType name="wikiData">
+            <xsd:complexContent>
+              <xsd:restriction base="SOAP-ENC:Array">
+                <xsd:attribute ref="SOAP-ENC:arrayType"
+                  wsdl:arrayType="tns:wikiDatum[]" />
+              </xsd:restriction>
+            </xsd:complexContent>
+          </xsd:complexType>
+          <xsd:complexType name="wikiDatum">
+            <xsd:all>
+              <xsd:element name="action" type="xsd:string" />
+              <xsd:element name="id" type="xsd:integer" />
+              <xsd:element name="name" type="xsd:string" />
+              <xsd:element name="summary" type="xsd:string" />
+              <xsd:element name="wtype" type="xsd:string" />
+              <xsd:element name="ewikiacceptbinary" type="xsd:integer" />
+              <xsd:element name="course" type="xsd:integer" />
+              <xsd:element name="pagename" type="xsd:string" />
+              <xsd:element name="ewikiprinttitle" type="xsd:integer" />
+              <xsd:element name="htmlmode" type="xsd:integer" />
+              <xsd:element name="disablecamelcase" type="xsd:integer" />
+              <xsd:element name="setpageflags" type="xsd:integer" />
+              <xsd:element name="strippages" type="xsd:integer" />
+              <xsd:element name="removepages" type="xsd:integer" />
+              <xsd:element name="revertchanges" type="xsd:integer" />
+              <xsd:element name="initialcontent" type="xsd:string" />
+              <xsd:element name="timemodified" type="xsd:integer" />
+            </xsd:all>
+          </xsd:complexType>
+          <xsd:complexType name="editWikisOutput">
+            <xsd:all>
+              <xsd:element name="wikis" type="tns:wikiRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <xsd:complexType name="wikiRecords">
+            <xsd:complexContent>
+              <xsd:restriction base="SOAP-ENC:Array">
+                <xsd:attribute ref="SOAP-ENC:arrayType"
+                  wsdl:arrayType="tns:wikiRecord[]" />
+              </xsd:restriction>
+            </xsd:complexContent>
+          </xsd:complexType>
+          <xsd:complexType name="wikiRecord">
+            <xsd:all>
+              <xsd:element name="error" type="xsd:string" />
+              <xsd:element name="id" type="xsd:integer" />
+              <xsd:element name="name" type="xsd:string" />
+              <xsd:element name="summary" type="xsd:string" />
+              <xsd:element name="wtype" type="xsd:string" />
+              <xsd:element name="ewikiacceptbinary" type="xsd:integer" />
+              <xsd:element name="course" type="xsd:integer" />
+              <xsd:element name="pagename" type="xsd:string" />
+              <xsd:element name="ewikiprinttitle" type="xsd:integer" />
+              <xsd:element name="htmlmode" type="xsd:integer" />
+              <xsd:element name="disablecamelcase" type="xsd:integer" />
+              <xsd:element name="setpageflags" type="xsd:integer" />
+              <xsd:element name="strippages" type="xsd:integer" />
+              <xsd:element name="removepages" type="xsd:integer" />
+              <xsd:element name="revertchanges" type="xsd:integer" />
+              <xsd:element name="initialcontent" type="xsd:string" />
+              <xsd:element name="timemodified" type="xsd:integer" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /edit_wikis -->
+
+          <!-- edit_pagesWiki -->
+          <xsd:complexType name="editPagesWikiInput">
+            <xsd:all>
+              <xsd:element name="pagesWiki" type="tns:pageWikiData" />
+            </xsd:all>
+          </xsd:complexType>
+          <xsd:complexType name="pageWikiData">
+            <xsd:complexContent>
+              <xsd:restriction base="SOAP-ENC:Array">
+                <xsd:attribute ref="SOAP-ENC:arrayType"
+                  wsdl:arrayType="tns:pageWikiDatum[]" />
+              </xsd:restriction>
+            </xsd:complexContent>
+          </xsd:complexType>
+          <xsd:complexType name="pageWikiDatum">
+            <xsd:all>
+              <xsd:element name="action" type="xsd:string" />
+              <xsd:element name="id" type="xsd:integer" />
+              <xsd:element name="pagename" type="xsd:string" />
+              <xsd:element name="version" type="xsd:integer" />
+              <xsd:element name="flags" type="xsd:integer" />
+              <xsd:element name="content" type="xsd:string" />
+              <xsd:element name="author" type="xsd:string" />
+              <xsd:element name="userid" type="xsd:integer" />
+              <xsd:element name="created" type="xsd:integer" />
+              <xsd:element name="lastmodified" type="xsd:integer" />
+              <xsd:element name="refs" type="xsd:string" />
+              <xsd:element name="meta" type="xsd:string" />
+              <xsd:element name="hits" type="xsd:integer" />
+              <xsd:element name="wiki" type="xsd:integer" />
+            </xsd:all>
+          </xsd:complexType>
+           <xsd:complexType name="editPagesWikiOutput">
+                <xsd:all>
+                  <xsd:element name="pagesWiki" type="tns:pageWikiRecords" />
+                </xsd:all>
+           </xsd:complexType>
+           <xsd:complexType name="pageWikiRecords">
+            <xsd:complexContent>
+              <xsd:restriction base="SOAP-ENC:Array">
+                <xsd:attribute ref="SOAP-ENC:arrayType"
+                  wsdl:arrayType="tns:pageWikiRecord[]" />
+              </xsd:restriction>
+            </xsd:complexContent>
+           </xsd:complexType>
+            <xsd:complexType name="pageWikiRecord">
+                <xsd:all>
+                  <xsd:element name="error" type="xsd:string" />
+                  <xsd:element name="id" type="xsd:integer" />
+                  <xsd:element name="pagename" type="xsd:string" />
+                  <xsd:element name="version" type="xsd:integer" />
+                  <xsd:element name="flags" type="xsd:integer" />
+                  <xsd:element name="content" type="xsd:string" />
+                  <xsd:element name="author" type="xsd:string" />
+                  <xsd:element name="userid" type="xsd:integer" />
+                  <xsd:element name="created" type="xsd:integer" />
+                  <xsd:element name="lastmodified" type="xsd:integer" />
+                  <xsd:element name="refs" type="xsd:string" />
+                  <xsd:element name="meta" type="xsd:string" />
+                  <xsd:element name="hits" type="xsd:integer" />
+                  <xsd:element name="wiki" type="xsd:integer" />
+                </xsd:all>
+              </xsd:complexType>
+          <!-- /edit_pagesWiki -->
+
+          <!-- get_all_forums -->
+          <xsd:complexType name="getAllForumsReturn">
+            <xsd:all>
+              <xsd:element name="forums" type="tns:forumRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_forums -->
+
+          <!-- get_all_labels -->
+          <xsd:complexType name="getAllLabelsReturn">
+            <xsd:all>
+              <xsd:element name="labels" type="tns:labelRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_labels -->
+
+          <!-- get_all_wikis -->
+          <xsd:complexType name="getAllWikisReturn">
+            <xsd:all>
+              <xsd:element name="wikis" type="tns:wikiRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_wikis -->
+
+          <!-- get_all_pagesWiki -->
+          <xsd:complexType name="getAllPagesWikiReturn">
+            <xsd:all>
+              <xsd:element name="pageswiki" type="tns:pageWikiRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_pagesWiki -->
+
+          <!-- get_all_assignments -->
+          <xsd:complexType name="getAllAssignmentsReturn">
+            <xsd:all>
+              <xsd:element name="assignments" type="tns:assignmentRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_assignments -->
+
+          <!-- get_all_databases -->
+          <xsd:complexType name="getAllDatabasesReturn">
+            <xsd:all>
+              <xsd:element name="databases" type="tns:databaseRecords" />
+            </xsd:all>
+          </xsd:complexType>
+          <!-- /get_all_databases -->
+
+      <!-- /TYPES FROM LILLE -->
+      <!-- TYPES from SIS integration -->
+    <xsd:complexType name="userCourseID">
+        <xsd:all>
+          <xsd:element name="courseid" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+
+
+     <xsd:complexType name="userCourseIDs">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType"
+              wsdl:arrayType="tns:userCourseID[]" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+     <xsd:complexType name="userGrade">
+        <xsd:all>
+          <xsd:element name="usergrade" type="xsd:float" />
+        </xsd:all>
+      </xsd:complexType>
+
+
+     <xsd:complexType name="userGradesReturn">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType"
+              wsdl:arrayType="tns:userGrade[]" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <!-- /TYPES from SIS integration -->
+
     </xsd:schema>
   </types>
 
@@ -677,6 +1343,11 @@
   <message name="booleanResponse">
     <part name="return" type="xsd:boolean" />
   </message>
+
+   <message name="floatResponse">
+    <part name="return" type="xsd:float" />
+  </message>
+
 
   <message name="stringResponse">
     <part name="return" type="xsd:string" />
@@ -750,7 +1421,7 @@
     <part name="courseids" type="tns:getCoursesInput" />
     <part name="idfield" type="xsd:string" />
   </message>
-  
+
   <message name="get_coursesResponse">
     <part name="return" type="tns:getCoursesReturn" />
   </message>
@@ -768,7 +1439,7 @@
   </message>
 
 
-  
+
   <message name="get_groups_bycourseRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
@@ -785,6 +1456,24 @@
     <part name="sesskey" type="xsd:string" />
     <part name="groupid" type="xsd:integer" />
   </message>
+ <message name="set_group_memberRequest">
+    <part name="client" type="xsd:integer" />
+    <part name="sesskey" type="xsd:string" />
+    <part name="courseid" type="xsd:string" />
+    <part name="userid" type="xsd:string" />
+    <part name="atigroup" type="xsd:integer" />
+    <part name="assign" type="xsd:boolean" />
+  </message>
+
+  <message name="reset_courseRequest">
+    <part name="client" type="xsd:integer" />
+    <part name="sesskey" type="xsd:string" />
+    <part name="courseid" type="xsd:string" />
+    <part name="newstartdate" type="xsd:string" />
+    <part name="allincat" type="xsd:boolean" />
+    <part name="stuonly" type="xsd:boolean" />
+  </message>
+
 
   <message name="get_courseRequest">
     <part name="client" type="xsd:integer" />
@@ -826,6 +1515,26 @@
   <message name="get_gradesResponse">
     <part name="return" type="tns:getGradesReturn" />
   </message>
+
+   <message name="get_gradeRequest">
+    <part name="client" type="xsd:integer" />
+    <part name="sesskey" type="xsd:string" />
+    <part name="userid" type="xsd:string" />
+    <part name="courseid" type="xsd:string" />
+  </message>
+
+  <message name="get_user_gradesRequest">
+    <part name="client" type="xsd:integer" />
+    <part name="sesskey" type="xsd:string" />
+    <part name="userid" type="xsd:string" />
+    <part name="courseids" type="tns:userCourseIDs" />
+  </message>
+
+  <message name="get_user_gradesResponse">
+    <part name="return" type="tns:userGradesReturn" />
+  </message>
+
+
   <message name="enrol_studentsRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
@@ -837,6 +1546,18 @@
     <part name="return" type="tns:enrolStudentsReturn" />
   </message>
 
+  <message name="assign_instructorsRequest">
+    <part name="client" type="xsd:integer" />
+    <part name="sesskey" type="xsd:string" />
+    <part name="courseid" type="xsd:string" />
+    <part name="userids" type="tns:enrolStudentsInput" />
+    <part name="idfield" type="xsd:string" />
+    <part name="lmsrole" type="xsd:integer" />
+    <part name="enrol" type="xsd:boolean" />
+  </message>
+  <message name="assign_instructorsResponse">
+    <part name="return" type="tns:enrolStudentsReturn" />
+  </message>
 
   <message name="get_rolesResponse">
     <part name="return" type="tns:getRolesReturn" />
@@ -889,8 +1610,8 @@
    <message name="get_my_groupRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
-    <part name="courseid" type="xsd:integer" />
     <part name="uid" type="xsd:integer" />
+    <part name="courseid" type="xsd:integer" />
   </message>
 
   <message name="get_my_groupsRequest">
@@ -959,6 +1680,302 @@
   <message name="get_activitiesResponse">
     <part name="return" type="tns:getActivitiesReturn" />
   </message>
+
+
+    <!-- MESSAGES FROM LILLE -->
+
+      <!-- generics -->
+             <message name="affectResponse">
+               <part name="return" type="tns:affectRecord" />
+             </message>
+             <message name="get_genericRequest">
+                <part name="client" type="xsd:integer" />
+                <part name="sesskey" type="xsd:string" />
+                <part name="fieldname" type="xsd:string" />
+                <part name="fieldvalue" type="xsd:string" />
+             </message>
+      <!-- /generics -->
+
+      <!-- /general -->
+
+    <!-- edit_labels -->
+          <message name="edit_labelsRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="labels" type="tns:editLabelsInput" />
+          </message>
+
+          <message name="edit_labelsResponse">
+            <part name="return" type="tns:editLabelsOutput" />
+          </message>
+       <!-- /edit_labels -->
+
+      <!-- edit_groups -->
+            <message name="edit_groupsRequest">
+                <part name="client" type="xsd:integer" />
+                <part name="sesskey" type="xsd:string" />
+                <part name="groups" type="tns:editGroupsInput" />
+            </message>
+
+            <message name="edit_groupsResponse">
+                <part name="return" type="tns:editGroupsOutput" />
+            </message>
+      <!-- /edit_groups -->
+
+       <!-- edit_assignments -->
+          <message name="edit_assignmentsRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="assignments" type="tns:editAssignmentsInput" />
+          </message>
+
+          <message name="edit_assignmentsResponse">
+            <part name="return" type="tns:editAssignmentsOutput" />
+          </message>
+      <!-- /edit_assignments -->
+
+      <!-- edit_databases -->
+          <message name="edit_databasesRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="databases" type="tns:editDatabasesInput" />
+          </message>
+
+          <message name="edit_databasesResponse">
+            <part name="return" type="tns:editDatabasesOutput" />
+          </message>
+      <!-- /edit_databases -->
+
+      <!-- edit_categories -->
+          <message name="edit_categoriesRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="categories" type="tns:editCategoriesInput" />
+          </message>
+
+          <message name="edit_categoriesResponse">
+            <part name="return" type="tns:editCategoriesOutput" />
+          </message>
+       <!-- /edit_categories -->
+
+
+
+       <!-- edit_sections -->
+          <message name="edit_sectionsRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="sections" type="tns:editSectionsInput" />
+          </message>
+
+          <message name="edit_sectionsResponse">
+            <part name="return" type="tns:editSectionsOutput" />
+          </message>
+       <!-- /edit_sections -->
+
+       <!-- edit_forums -->
+          <message name="edit_forumsRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="forums" type="tns:editForumsInput" />
+          </message>
+
+          <message name="edit_forumsResponse">
+            <part name="return" type="tns:editForumsOutput" />
+          </message>
+       <!-- /edit_forums -->
+
+       <!-- edit_wikis -->
+          <message name="edit_wikisRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="wikis" type="tns:editWikisInput" />
+          </message>
+          <message name="edit_wikisResponse">
+            <part name="return" type="tns:editWikisOutput" />
+          </message>
+       <!-- /edit_wikis -->
+
+       <!-- edit_pagesWiki -->
+       <message name="edit_pagesWikiRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="pagesWiki" type="tns:editPagesWikiInput" />
+       </message>
+       <message name="edit_pagesWikiResponse">
+            <part name="return" type="tns:editPagesWikiOutput" />
+       </message>
+       <!-- /edit_pagesWiki -->
+
+       <!-- affect_course_to_category -->
+
+          <message name="affect_course_to_categoryRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="courseid" type="xsd:integer" />
+            <part name="categoryid" type="xsd:integer" />
+          </message>
+
+       <!-- /affect_course_to_category -->
+
+       <!-- affect_label_to_section -->
+
+          <message name="affect_label_to_sectionRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="labelid" type="xsd:integer" />
+            <part name="sectionid" type="xsd:integer" />
+          </message>
+
+       <!-- /affect_label_to_section -->
+
+        <!-- affect_forum_to_section -->
+          <message name="affect_forum_to_sectionRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="forumid" type="xsd:integer" />
+            <part name="sectionid" type="xsd:integer" />
+            <part name="groupmode" type="xsd:integer" />
+          </message>
+       <!-- /affect_forum_to_section -->
+
+       <!-- affect_section_to_course -->
+          <message name="affect_section_to_courseRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="sectionid" type="xsd:integer" />
+            <part name="courseid" type="xsd:integer" />
+          </message>
+       <!-- /affect_section_to_course -->
+
+       <!-- affect_user_to_group -->
+           <message name="affect_user_to_groupRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="userid" type="xsd:integer" />
+            <part name="groupid" type="xsd:integer" />
+          </message>
+          <message name="affect_user_to_groupResponse">
+            <part name="return" type="tns:affectRecord" />
+          </message>
+      <!-- /affect_user_to_group -->
+
+      <!-- affect_group_to_course -->
+          <message name="affect_group_to_courseRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="groupid" type="xsd:integer" />
+            <part name="coursid" type="xsd:integer" />
+          </message>
+          <message name="affect_group_to_courseResponse">
+            <part name="return" type="tns:affectRecord" />
+          </message>
+      <!-- /affect_group_to_course -->
+
+      <!-- affect_wiki_to_section -->
+          <message name="affect_wiki_to_sectionRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="wikiid" type="xsd:integer" />
+            <part name="sectionid" type="xsd:integer" />
+            <part name="groupmode" type="xsd:integer" />
+            <part name="visible" type="xsd:integer" />
+          </message>
+          <message name="affect_wiki_to_sectionResponse">
+            <part name="return" type="tns:affectRecord" />
+          </message>
+      <!-- /affect_wiki_to_section -->
+
+      <!-- affect_database_to_section -->
+          <message name="affect_database_to_sectionRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="databaseid" type="xsd:integer" />
+            <part name="sectionid" type="xsd:integer" />
+          </message>
+          <message name="affect_database_to_sectionResponse">
+            <part name="return" type="tns:affectRecord" />
+          </message>
+      <!-- /affect_database_to_section -->
+
+      <!-- affect_assignment_to_section -->
+          <message name="affect_assignment_to_sectionRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="assignmentid" type="xsd:integer" />
+            <part name="sectionid" type="xsd:integer" />
+            <part name="groupmode" type="xsd:integer" />
+          </message>
+          <message name="affect_assignment_to_sectionResponse">
+            <part name="return" type="tns:affectRecord" />
+          </message>
+      <!-- /affect_assignment_to_section -->
+
+      <!-- affect_user_to_course -->
+          <message name="affect_user_to_courseRequest">
+            <part name="client" type="xsd:integer" />
+            <part name="sesskey" type="xsd:string" />
+            <part name="userid" type="xsd:integer" />
+            <part name="courseid" type="xsd:integer" />
+            <part name="rolename" type="xsd:string"/>
+          </message>
+      <!-- /affect_user_to_course -->
+
+      <!-- affect_pageWiki_to_wiki -->
+      <message name="affect_pageWiki_to_wikiRequest">
+        <part name="client" type="xsd:integer" />
+        <part name="sesskey" type="xsd:string" />
+        <part name="pageid" type="xsd:integer" />
+        <part name="wikiid" type="xsd:integer" />
+      </message>
+      <!-- /affect_pageWiki_to_wiki -->
+
+      <!-- remove_userRole_from_course -->
+      <message name="remove_userRole_from_courseRequest">
+        <part name="client" type="xsd:integer" />
+        <part name="sesskey" type="xsd:string" />
+        <part name="userid" type="xsd:integer" />
+        <part name="courseid" type="xsd:integer" />
+        <part name="rolename" type="xsd:string"/>
+      </message>
+      <!-- /remove_user_from_course -->
+
+       <!-- get_all_forums -->
+          <message name="get_all_forumsResponse">
+            <part name="return" type="tns:getAllForumsReturn" />
+          </message>
+       <!-- /get_all_forums -->
+
+       <!-- get_all_labels -->
+          <message name="get_all_labelsResponse">
+            <part name="return" type="tns:getAllLabelsReturn" />
+          </message>
+       <!-- /get_all_labels -->
+
+       <!-- get_all_wikis -->
+          <message name="get_all_wikisResponse">
+            <part name="return" type="tns:getAllWikisReturn" />
+          </message>
+       <!-- /get_all_wikis -->
+
+       <!-- get_all_pagesWiki -->
+          <message name="get_all_pagesWikiResponse">
+            <part name="return" type="tns:getAllPagesWikiReturn" />
+          </message>
+       <!-- /get_all_pagesWiki -->
+
+       <!-- get_all_assignments -->
+          <message name="get_all_assignmentsResponse">
+            <part name="return" type="tns:getAllAssignmentsReturn" />
+          </message>
+       <!-- /get_all_assignments -->
+
+       <!-- get_all_databases -->
+          <message name="get_all_databasesResponse">
+            <part name="return" type="tns:getAllDatabasesReturn" />
+          </message>
+       <!-- /get_all_databases -->
+
+  <!-- /MESSAGES FROM LILLE -->
 
   <portType name="MoodleWSPortType">
     <operation name="login">
@@ -1067,7 +2084,21 @@
     <operation name="get_grades">
       <documentation>MoodleWS: Get User Grades</documentation>
       <input message="tns:get_gradesRequest" />
-      <output message="tns:get_gradesResponse" />
+      <output message="tns:floatResponse" />
+    </operation>
+
+    <operation name="get_grade">
+      <documentation>MoodleWS: Get User Grade</documentation>
+      <input message="tns:get_gradeRequest" />
+      <output message="tns:floatResponse" />
+    </operation>
+
+    <operation name="get_user_grades">
+      <documentation>MoodleWS: Get User Grades</documentation>
+      <input message="tns:get_user_gradesRequest" />
+      <output message="tns:get_user_gradesResponse" />
+
+
     </operation>
 
     <operation name="enrol_students">
@@ -1077,6 +2108,14 @@
       <input message="tns:enrol_studentsRequest" />
       <output message="tns:enrol_studentsResponse" />
     </operation>
+    <operation name="assign_instructors">
+      <documentation>
+        MoodleWS: Assign instructors to a course
+      </documentation>
+      <input message="tns:assign_instructorsRequest" />
+      <output message="tns:assign_instructorsResponse" />
+    </operation>
+
 
     <operation name="get_roles">
       <documentation>MoodleWS: Get All roles defined in Moodle</documentation>
@@ -1133,7 +2172,7 @@
       <input message="tns:get_my_coursesRequest" />
       <output message="tns:get_coursesResponse" />
     </operation>
-   
+
     <operation name="get_my_courses_byidnumber">
       <documentation>MoodleWS: Get Courses current user identified by idnumber is  member of </documentation>
       <input message="tns:get_my_courses_byRequest" />
@@ -1193,6 +2232,18 @@
       <input message="tns:get_group_membersRequest" />
       <output message="tns:get_usersResponse" />
     </operation>
+          <operation name="set_group_member">
+      <documentation>MoodleWS: assign-unassign user as a member of a group in course</documentation>
+      <input message="tns:set_group_memberRequest" />
+      <output message="tns:booleanResponse" />
+    </operation>
+
+    <operation name="reset_course">
+      <documentation>MoodleWS: performs a moodle reset of a course</documentation>
+      <input message="tns:reset_courseRequest" />
+      <output message="tns:booleanResponse" />
+    </operation>
+
 
    <operation name="get_my_group">
       <documentation>MoodleWS: Get user group in course</documentation>
@@ -1237,6 +2288,178 @@
       <output message="tns:integerResponse" />
     </operation>
 
+<!-- OPERATION FROM LILLE -->
+
+    <operation name="edit_labels">
+          <documentation>MoodleWS: Edit Label Information</documentation>
+          <input message="tns:edit_labelsRequest" />
+          <output message="tns:edit_labelsResponse" />
+        </operation>
+
+        <operation name="edit_groups">
+          <documentation>MoodleWS: Edit Groups Information</documentation>
+          <input message="tns:edit_groupsRequest" />
+          <output message="tns:edit_groupsResponse" />
+        </operation>
+
+        <operation name="edit_assignments">
+          <documentation>MoodleWS: Edit Assignment Information</documentation>
+          <input message="tns:edit_assignmentsRequest" />
+          <output message="tns:edit_assignmentsResponse" />
+        </operation>
+
+        <operation name="edit_databases">
+          <documentation>MoodleWS: Edit databases Information</documentation>
+          <input message="tns:edit_databasesRequest" />
+          <output message="tns:edit_databasesResponse" />
+        </operation>
+
+        <operation name="edit_categories">
+          <documentation>MoodleWS: Edit Categories Information</documentation>
+          <input message="tns:edit_categoriesRequest" />
+          <output message="tns:edit_categoriesResponse" />
+        </operation>
+
+
+        <operation name="edit_sections">
+          <documentation>MoodleWS: Edit section Information</documentation>
+          <input message="tns:edit_sectionsRequest" />
+          <output message="tns:edit_sectionsResponse" />
+        </operation>
+
+        <operation name="edit_forums">
+          <documentation>MoodleWS: Edit Forum Information</documentation>
+          <input message="tns:edit_forumsRequest" />
+          <output message="tns:edit_forumsResponse" />
+        </operation>
+
+        <operation name="edit_wikis">
+          <documentation>MoodleWS: Edit Wikis Information</documentation>
+          <input message="tns:edit_wikisRequest" />
+          <output message="tns:edit_wikisResponse" />
+        </operation>
+
+        <operation name="edit_pagesWiki">
+          <documentation>MoodleWS: Edit Page of Wiki Information</documentation>
+          <input message="tns:edit_pagesWikiRequest" />
+          <output message="tns:edit_pagesWikiResponse" />
+        </operation>
+
+        <operation name="affect_course_to_category">
+          <documentation>MoodleWS: Affect Course To Category</documentation>
+          <input message="tns:affect_course_to_categoryRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+         <operation name="affect_label_to_section">
+          <documentation>MoodleWS: Affect Label to Section</documentation>
+          <input message="tns:affect_label_to_sectionRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="affect_forum_to_section">
+          <documentation>MoodleWS: Affect Forum to Section</documentation>
+          <input message="tns:affect_forum_to_sectionRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="affect_section_to_course">
+          <documentation>MoodleWS: Affect Section To Course</documentation>
+          <input message="tns:affect_section_to_courseRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="affect_user_to_group">
+          <documentation>MoodleWS: Affect a user to group</documentation>
+          <input message="tns:affect_user_to_groupRequest" />
+          <output message="tns:affect_user_to_groupResponse" />
+        </operation>
+
+        <operation name="affect_group_to_course">
+          <documentation>MoodleWS: Affect a group to course</documentation>
+          <input message="tns:affect_group_to_courseRequest" />
+          <output message="tns:affect_group_to_courseResponse" />
+        </operation>
+
+        <operation name="affect_wiki_to_section">
+          <documentation>MoodleWS: Affect a wiki to section</documentation>
+          <input message="tns:affect_wiki_to_sectionRequest" />
+          <output message="tns:affect_wiki_to_sectionResponse" />
+        </operation>
+
+         <operation name="affect_database_to_section">
+          <documentation>MoodleWS: Affect a database to section</documentation>
+          <input message="tns:affect_database_to_sectionRequest" />
+          <output message="tns:affect_database_to_sectionResponse" />
+        </operation>
+
+        <operation name="affect_assignment_to_section">
+          <documentation>MoodleWS: Affect a section to assignment</documentation>
+          <input message="tns:affect_assignment_to_sectionRequest" />
+          <output message="tns:affect_assignment_to_sectionResponse" />
+        </operation>
+
+        <operation name="affect_user_to_course">
+          <documentation>MoodleWS: Affect user to the course</documentation>
+          <input message="tns:affect_user_to_courseRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="affect_pageWiki_to_wiki">
+          <documentation>MoodleWS: Affect a page of wiki to a wiki</documentation>
+          <input message="tns:affect_pageWiki_to_wikiRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="remove_userRole_from_course">
+          <documentation>MoodleWS: Remove the role specified of the user in the course</documentation>
+          <input message="tns:remove_userRole_from_courseRequest" />
+          <output message="tns:affectResponse" />
+        </operation>
+
+        <operation name="get_all_groups">
+          <documentation>MoodleWS: Get All Groups</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_groupsResponse" />
+        </operation>
+
+        <operation name="get_all_forums">
+          <documentation>MoodleWS: Get All Forums</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_forumsResponse" />
+        </operation>
+
+        <operation name="get_all_labels">
+          <documentation>MoodleWS: Get All Labels</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_labelsResponse" />
+        </operation>
+
+        <operation name="get_all_wikis">
+          <documentation>MoodleWS: Get All wikis</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_wikisResponse" />
+        </operation>
+
+        <operation name="get_all_pagesWiki">
+          <documentation>MoodleWS: Get All Pages Wikis</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_pagesWikiResponse" />
+        </operation>
+
+        <operation name="get_all_assignments">
+          <documentation>MoodleWS: Get All Assignments</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_assignmentsResponse" />
+        </operation>
+
+        <operation name="get_all_databases">
+          <documentation>MoodleWS: Get All Databases</documentation>
+          <input message="tns:get_genericRequest" />
+          <output message="tns:get_all_databasesResponse" />
+        </operation>
+
+    <!-- /OPERATION FROM LILLE -->
 
 
   </portType>
@@ -1399,6 +2622,39 @@
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
       </output>
     </operation>
+
+      <operation name="get_grade">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_grade"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+    <operation name="get_user_grades">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_user_grades"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+
     <operation name="enrol_students">
       <soap:operation
         soapAction="' . $CFG->wwwroot . '/wspp/wsdl#enrol_students"
@@ -1414,6 +2670,23 @@
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
       </output>
     </operation>
+
+    <operation name="assign_instructors">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#assign_instructors"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
     <operation name="get_last_changes">
       <soap:operation
         soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_last_changes"
@@ -1559,6 +2832,39 @@
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
       </output>
      </operation>
+
+    <operation name="set_group_member">
+      <soap:operation
+        soapAction="'. $CFG->wwwroot . '/wspp/wsdl#set_group_member"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+    <operation name="reset_course">
+      <soap:operation
+        soapAction="'. $CFG->wwwroot . '/wspp/wsdl#reset_course"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
 
     <operation name="get_categories">
       <soap:operation
@@ -1962,6 +3268,459 @@
       </output>
      </operation>
 
+  <!-- BINDING FROM LILLE -->
+
+    <operation name="edit_labels">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#edit_labels"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+        <operation name="edit_groups">
+          <soap:operation
+            soapAction="' . $CFG->wwwroot . '/wspp/wsdl#edit_groups"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+        </operation>
+
+        <operation name="edit_assignments">
+          <soap:operation
+            soapAction="' . $CFG->wwwroot . '/wspp/wsdl#edit_assignments"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+        </operation>
+
+        <operation name="edit_databases">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#edit_databases"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+        <operation name="edit_categories">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#edit_categories"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+
+
+         <operation name="edit_sections">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#edit_sections"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="edit_forums">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#edit_forums"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="edit_wikis">
+              <soap:operation
+                soapAction="' . $CFG->wwwroot . '/wspp/wsdl#edit_wikis"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+         </operation>
+
+         <operation name="edit_pagesWiki">
+              <soap:operation
+                soapAction="' . $CFG->wwwroot . '/wspp/wsdl#edit_pagesWiki"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+          </operation>
+
+         <operation name="affect_course_to_category">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_course_to_category"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="affect_label_to_section">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_label_to_section"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="affect_forum_to_section">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_forum_to_section"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+          <operation name="affect_section_to_course">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_section_to_course"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+        <operation name="affect_user_to_group">
+             <soap:operation
+                soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_user_to_group"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+        </operation>
+
+        <operation name="affect_group_to_course">
+             <soap:operation
+                soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_group_to_course"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+        </operation>
+
+        <operation name="affect_wiki_to_section">
+             <soap:operation
+                soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_wiki_to_section"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+         </operation>
+
+         <operation name="affect_database_to_section">
+             <soap:operation
+                soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_database_to_section"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+         </operation>
+
+         <operation name="affect_assignment_to_section">
+             <soap:operation
+                soapAction="'. $CFG->wwwroot . '/wspp/wsdl#affect_assignment_to_section"
+                style="rpc" />
+              <input>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </input>
+              <output>
+                <soap:body use="encoded"
+                  namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+                  encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+              </output>
+         </operation>
+
+        <operation name="affect_user_to_course">
+          <soap:operation
+            soapAction="' . $CFG->wwwroot . '/wspp/wsdl#affect_user_to_course"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+        </operation>
+
+        <operation name="affect_pageWiki_to_wiki">
+          <soap:operation
+            soapAction="' . $CFG->wwwroot . '/wspp/wsdl#affect_pageWiki_to_wiki"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+        <operation name="remove_userRole_from_course">
+          <soap:operation
+            soapAction="' . $CFG->wwwroot . '/wspp/wsdl#remove_userRole_from_course"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+        </operation>
+
+         <operation name="get_all_groups">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_groups"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_forums">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_forums"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_labels">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_labels"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_wikis">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_wikis"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_pagesWiki">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_pagesWiki"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_assignments">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_assignments"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+         <operation name="get_all_databases">
+          <soap:operation
+            soapAction="'. $CFG->wwwroot . '/wspp/wsdl#get_all_databases"
+            style="rpc" />
+          <input>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </input>
+          <output>
+            <soap:body use="encoded"
+              namespace="'. $CFG->wwwroot . '/wspp/wsdl"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+          </output>
+         </operation>
+
+     <!-- /BINDING FROM LILLE -->
 
   </binding>
   <service name="MoodleWS">

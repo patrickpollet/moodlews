@@ -51,6 +51,10 @@ class userDatum {
 	*/
 	public $email;
 	/** 
+	* @var  integer
+	*/
+	public $emailstop;
+	/** 
 	* @var  string
 	*/
 	public $icq;
@@ -113,6 +117,10 @@ class userDatum {
 	/** 
 	* @var  string
 	*/
+	public $theme;
+	/** 
+	* @var  string
+	*/
 	public $description;
 	/** 
 	* @var  integer
@@ -130,6 +138,7 @@ class userDatum {
 		 $this->firstname='';
 		 $this->lastname='';
 		 $this->email='';
+		 $this->emailstop=0;
 		 $this->icq='';
 		 $this->skype='';
 		 $this->yahoo='';
@@ -145,6 +154,7 @@ class userDatum {
 		 $this->lang='';
 		 $this->timezone=0;
 		 $this->lastip='';
+		 $this->theme='';
 		 $this->description='';
 		 $this->mnethostid=0;
 	}
@@ -191,6 +201,10 @@ class userDatum {
 
 	public function getEmail(){
 		 return $this->email;
+	}
+
+	public function getEmailstop(){
+		 return $this->emailstop;
 	}
 
 	public function getIcq(){
@@ -253,6 +267,10 @@ class userDatum {
 		 return $this->lastip;
 	}
 
+	public function getTheme(){
+		 return $this->theme;
+	}
+
 	public function getDescription(){
 		 return $this->description;
 	}
@@ -304,6 +322,10 @@ class userDatum {
 
 	public function setEmail($email){
 		$this->email=$email;
+	}
+
+	public function setEmailstop($emailstop){
+		$this->emailstop=$emailstop;
 	}
 
 	public function setIcq($icq){
@@ -364,6 +386,10 @@ class userDatum {
 
 	public function setLastip($lastip){
 		$this->lastip=$lastip;
+	}
+
+	public function setTheme($theme){
+		$this->theme=$theme;
 	}
 
 	public function setDescription($description){

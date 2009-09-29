@@ -9,15 +9,13 @@ require_once ('../auth.php');
 * @param string $userid
 * @param (getGradesInput) array of string $courseids
 * @param string $idfield
-* @return getGradesReturn
+* @return float
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
 $res=$moodle->get_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids,'');
-print_r($res);
-print($res->getGrades());
-
+print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

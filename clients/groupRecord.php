@@ -29,11 +29,7 @@ class groupRecord {
 	/** 
 	* @var  string
 	*/
-	public $lang;
-	/** 
-	* @var  string
-	*/
-	public $theme;
+	public $enrolmentkey;
 	/** 
 	* @var  integer
 	*/
@@ -51,14 +47,13 @@ class groupRecord {
 	*/
 	public $timemodified;
 	/* full constructor */
-	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$lang='',$theme='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0){
+	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$enrolmentkey='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
 		 $this->courseid=$courseid   ;
 		 $this->name=$name   ;
 		 $this->description=$description   ;
-		 $this->lang=$lang   ;
-		 $this->theme=$theme   ;
+		 $this->enrolmentkey=$enrolmentkey   ;
 		 $this->picture=$picture   ;
 		 $this->hidepicture=$hidepicture   ;
 		 $this->timecreated=$timecreated   ;
@@ -85,12 +80,8 @@ class groupRecord {
 		 return $this->description;
 	}
 
-	public function getLang(){
-		 return $this->lang;
-	}
-
-	public function getTheme(){
-		 return $this->theme;
+	public function getEnrolmentkey(){
+		 return $this->enrolmentkey;
 	}
 
 	public function getPicture(){
@@ -130,12 +121,8 @@ class groupRecord {
 		$this->description=$description;
 	}
 
-	public function setLang($lang){
-		$this->lang=$lang;
-	}
-
-	public function setTheme($theme){
-		$this->theme=$theme;
+	public function setEnrolmentkey($enrolmentkey){
+		$this->enrolmentkey=$enrolmentkey;
 	}
 
 	public function setPicture($picture){

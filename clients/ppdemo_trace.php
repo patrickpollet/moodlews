@@ -26,7 +26,7 @@ ini_set('soap.wsdl_cache_enabled', '0');  // Set to '0' for debugging.
 require("auth.php");
 require("MoodleWS.php");
 
-$moodle= new MoodleWS("http://localhost/moodle/wspp/wsdl_pp.php",
+$moodle= new MoodleWS("http://localhost/moodle.195/wspp/wsdl_pp.php",
                        null,
                        array('trace'=>1));
 
@@ -125,6 +125,7 @@ print_r_pre($moodle->get_user_byusername($lr->client,$lr->sessionkey,'pguy'),$mo
 
 heading ("get user by id 77");
 
+try {
 print_r_pre($moodle->get_user_byid($lr->client,$lr->sessionkey,77),$moodle);
 
 heading ("get user  by id -1 (unknown)");
@@ -137,8 +138,10 @@ print_r_pre($moodle->get_user_byid($lr->client,$lr->sessionkey,-1),$moodle);
 heading ("logout and bye");
 
 
-$moodle->logout($lr->client,$lr->sessionkey,$moodle);
-
+$moodle->logout($lr->client,$lr->sessionkey);
+} catch (Exception $e) {
+  print_r_pre($e,$moodle);
+}
 
 function heading ($msg) {
 	print "<h2>$msg</h2>\n";

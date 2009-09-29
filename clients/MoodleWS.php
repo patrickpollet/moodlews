@@ -142,6 +142,178 @@ require_once 'activityRecord.php';
  * getActivitiesReturn class
  */
 require_once 'getActivitiesReturn.php';
+/**
+ * affectRecord class
+ */
+require_once 'affectRecord.php';
+/**
+ * editLabelsInput class
+ */
+require_once 'editLabelsInput.php';
+/**
+ * labelDatum class
+ */
+require_once 'labelDatum.php';
+/**
+ * editLabelsOutput class
+ */
+require_once 'editLabelsOutput.php';
+/**
+ * labelRecord class
+ */
+require_once 'labelRecord.php';
+/**
+ * editGroupsInput class
+ */
+require_once 'editGroupsInput.php';
+/**
+ * groupDatum class
+ */
+require_once 'groupDatum.php';
+/**
+ * editGroupsOutput class
+ */
+require_once 'editGroupsOutput.php';
+/**
+ * groupRecord class
+ */
+require_once 'groupRecord.php';
+/**
+ * editCategoriesInput class
+ */
+require_once 'editCategoriesInput.php';
+/**
+ * categoryDatum class
+ */
+require_once 'categoryDatum.php';
+/**
+ * editCategoriesOutput class
+ */
+require_once 'editCategoriesOutput.php';
+/**
+ * editSectionsInput class
+ */
+require_once 'editSectionsInput.php';
+/**
+ * sectionDatum class
+ */
+require_once 'sectionDatum.php';
+/**
+ * editSectionsOutput class
+ */
+require_once 'editSectionsOutput.php';
+/**
+ * editForumsInput class
+ */
+require_once 'editForumsInput.php';
+/**
+ * forumDatum class
+ */
+require_once 'forumDatum.php';
+/**
+ * editForumsOutput class
+ */
+require_once 'editForumsOutput.php';
+/**
+ * forumRecord class
+ */
+require_once 'forumRecord.php';
+/**
+ * editAssignmentsInput class
+ */
+require_once 'editAssignmentsInput.php';
+/**
+ * assignmentDatum class
+ */
+require_once 'assignmentDatum.php';
+/**
+ * editAssignmentsOutput class
+ */
+require_once 'editAssignmentsOutput.php';
+/**
+ * assignmentRecord class
+ */
+require_once 'assignmentRecord.php';
+/**
+ * editDatabasesInput class
+ */
+require_once 'editDatabasesInput.php';
+/**
+ * databaseDatum class
+ */
+require_once 'databaseDatum.php';
+/**
+ * editDatabasesOutput class
+ */
+require_once 'editDatabasesOutput.php';
+/**
+ * databaseRecord class
+ */
+require_once 'databaseRecord.php';
+/**
+ * editWikisInput class
+ */
+require_once 'editWikisInput.php';
+/**
+ * wikiDatum class
+ */
+require_once 'wikiDatum.php';
+/**
+ * editWikisOutput class
+ */
+require_once 'editWikisOutput.php';
+/**
+ * wikiRecord class
+ */
+require_once 'wikiRecord.php';
+/**
+ * editPagesWikiInput class
+ */
+require_once 'editPagesWikiInput.php';
+/**
+ * pageWikiDatum class
+ */
+require_once 'pageWikiDatum.php';
+/**
+ * editPagesWikiOutput class
+ */
+require_once 'editPagesWikiOutput.php';
+/**
+ * pageWikiRecord class
+ */
+require_once 'pageWikiRecord.php';
+/**
+ * getAllForumsReturn class
+ */
+require_once 'getAllForumsReturn.php';
+/**
+ * getAllLabelsReturn class
+ */
+require_once 'getAllLabelsReturn.php';
+/**
+ * getAllWikisReturn class
+ */
+require_once 'getAllWikisReturn.php';
+/**
+ * getAllPagesWikiReturn class
+ */
+require_once 'getAllPagesWikiReturn.php';
+/**
+ * getAllAssignmentsReturn class
+ */
+require_once 'getAllAssignmentsReturn.php';
+/**
+ * getAllDatabasesReturn class
+ */
+require_once 'getAllDatabasesReturn.php';
+/**
+ * userCourseID class
+ */
+require_once 'userCourseID.php';
+/**
+ * userGrade class
+ */
+require_once 'userGrade.php';
 
 /**
  * MoodleWS class
@@ -156,9 +328,9 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://moodle.insa-lyon.fr/wspp/wsdl';
+  private $uri = 'http://prope.insa-lyon.fr/moodle.195/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://moodle.insa-lyon.fr/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://prope.insa-lyon.fr/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -389,7 +561,7 @@ class MoodleWS {
    * @param string $userid
    * @param (getGradesInput) array of string $courseids
    * @param string $idfield
-   * @return getGradesReturn
+   * @return float
    */
   public function get_grades($client, $sesskey, $userid, $courseids, $idfield) {
     $res= $this->client->__call('get_grades', array(
@@ -404,7 +576,55 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-  return $this->castTo ('getGradesReturn',$res);
+   return $res;
+  }
+
+  /**
+   * MoodleWS: Get User Grade 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $userid
+   * @param string $courseid
+   * @return float
+   */
+  public function get_grade($client, $sesskey, $userid, $courseid) {
+    $res= $this->client->__call('get_grade', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
+  }
+
+  /**
+   * MoodleWS: Get User Grades 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $userid
+   * @param (userCourseIDs) array of userCourseID $courseids
+   * @return userGradesReturn
+   */
+  public function get_user_grades($client, $sesskey, $userid, $courseids) {
+    $res= $this->client->__call('get_user_grades', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($courseids, 'courseids')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
   }
 
   /**
@@ -424,6 +644,36 @@ class MoodleWS {
             new SoapParam($courseid, 'courseid'),
             new SoapParam($userids, 'userids'),
             new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Assign instructors to a course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $idfield
+   * @param integer $lmsrole
+   * @param boolean $enrol
+   * @return enrolStudentsReturn
+   */
+  public function assign_instructors($client, $sesskey, $courseid, $userids, $idfield, $lmsrole, $enrol) {
+    $res= $this->client->__call('assign_instructors', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($idfield, 'idfield'),
+            new SoapParam($lmsrole, 'lmsrole'),
+            new SoapParam($enrol, 'enrol')
       ),
       array(
             'uri' => $this->uri ,
@@ -638,6 +888,64 @@ class MoodleWS {
            )
       );
   return $this->castTo ('getRolesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: assign-unassign user as a member of 
+   * a group in course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $userid
+   * @param integer $atigroup
+   * @param boolean $assign
+   * @return boolean
+   */
+  public function set_group_member($client, $sesskey, $courseid, $userid, $atigroup, $assign) {
+    $res= $this->client->__call('set_group_member', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($atigroup, 'atigroup'),
+            new SoapParam($assign, 'assign')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
+  }
+
+  /**
+   * MoodleWS: performs a moodle reset of a course 
+   * 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $newstartdate
+   * @param boolean $allincat
+   * @param boolean $stuonly
+   * @return boolean
+   */
+  public function reset_course($client, $sesskey, $courseid, $newstartdate, $allincat, $stuonly) {
+    $res= $this->client->__call('reset_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($newstartdate, 'newstartdate'),
+            new SoapParam($allincat, 'allincat'),
+            new SoapParam($stuonly, 'stuonly')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
   }
 
   /**
@@ -1044,16 +1352,16 @@ class MoodleWS {
    *
    * @param integer $client
    * @param string $sesskey
-   * @param integer $courseid
    * @param integer $uid
+   * @param integer $courseid
    * @return getGroupsReturn
    */
-  public function get_my_group($client, $sesskey, $courseid, $uid) {
+  public function get_my_group($client, $sesskey, $uid, $courseid) {
     $res= $this->client->__call('get_my_group', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($uid, 'uid')
+            new SoapParam($uid, 'uid'),
+            new SoapParam($courseid, 'courseid')
       ),
       array(
             'uri' => $this->uri ,
@@ -1251,6 +1559,673 @@ class MoodleWS {
            )
       );
    return $res;
+  }
+
+  /**
+   * MoodleWS: Edit Label Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editLabelsInput $labels
+   * @return editLabelsOutput
+   */
+  public function edit_labels($client, $sesskey, editLabelsInput $labels) {
+    $res= $this->client->__call('edit_labels', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($labels, 'labels')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editLabelsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Groups Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editGroupsInput $groups
+   * @return editGroupsOutput
+   */
+  public function edit_groups($client, $sesskey, editGroupsInput $groups) {
+    $res= $this->client->__call('edit_groups', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($groups, 'groups')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Assignment Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editAssignmentsInput $assignments
+   * @return editAssignmentsOutput
+   */
+  public function edit_assignments($client, $sesskey, editAssignmentsInput $assignments) {
+    $res= $this->client->__call('edit_assignments', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($assignments, 'assignments')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editAssignmentsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit databases Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editDatabasesInput $databases
+   * @return editDatabasesOutput
+   */
+  public function edit_databases($client, $sesskey, editDatabasesInput $databases) {
+    $res= $this->client->__call('edit_databases', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($databases, 'databases')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editDatabasesOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Categories Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editCategoriesInput $categories
+   * @return editCategoriesOutput
+   */
+  public function edit_categories($client, $sesskey, editCategoriesInput $categories) {
+    $res= $this->client->__call('edit_categories', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($categories, 'categories')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCategoriesOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit section Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editSectionsInput $sections
+   * @return editSectionsOutput
+   */
+  public function edit_sections($client, $sesskey, editSectionsInput $sections) {
+    $res= $this->client->__call('edit_sections', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($sections, 'sections')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editSectionsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Forum Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editForumsInput $forums
+   * @return editForumsOutput
+   */
+  public function edit_forums($client, $sesskey, editForumsInput $forums) {
+    $res= $this->client->__call('edit_forums', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($forums, 'forums')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editForumsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Wikis Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editWikisInput $wikis
+   * @return editWikisOutput
+   */
+  public function edit_wikis($client, $sesskey, editWikisInput $wikis) {
+    $res= $this->client->__call('edit_wikis', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($wikis, 'wikis')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editWikisOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Edit Page of Wiki Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param editPagesWikiInput $pagesWiki
+   * @return editPagesWikiOutput
+   */
+  public function edit_pagesWiki($client, $sesskey, editPagesWikiInput $pagesWiki) {
+    $res= $this->client->__call('edit_pagesWiki', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($pagesWiki, 'pagesWiki')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editPagesWikiOutput',$res);
+  }
+
+  /**
+   * MoodleWS: Affect Course To Category 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $courseid
+   * @param integer $categoryid
+   * @return affectRecord
+   */
+  public function affect_course_to_category($client, $sesskey, $courseid, $categoryid) {
+    $res= $this->client->__call('affect_course_to_category', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($categoryid, 'categoryid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect Label to Section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $labelid
+   * @param integer $sectionid
+   * @return affectRecord
+   */
+  public function affect_label_to_section($client, $sesskey, $labelid, $sectionid) {
+    $res= $this->client->__call('affect_label_to_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($labelid, 'labelid'),
+            new SoapParam($sectionid, 'sectionid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect Forum to Section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $forumid
+   * @param integer $sectionid
+   * @param integer $groupmode
+   * @return affectRecord
+   */
+  public function affect_forum_to_section($client, $sesskey, $forumid, $sectionid, $groupmode) {
+    $res= $this->client->__call('affect_forum_to_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($forumid, 'forumid'),
+            new SoapParam($sectionid, 'sectionid'),
+            new SoapParam($groupmode, 'groupmode')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect Section To Course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $sectionid
+   * @param integer $courseid
+   * @return affectRecord
+   */
+  public function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
+    $res= $this->client->__call('affect_section_to_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($sectionid, 'sectionid'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a user to group 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $userid
+   * @param integer $groupid
+   * @return affectRecord
+   */
+  public function affect_user_to_group($client, $sesskey, $userid, $groupid) {
+    $res= $this->client->__call('affect_user_to_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($groupid, 'groupid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a group to course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $groupid
+   * @param integer $coursid
+   * @return affectRecord
+   */
+  public function affect_group_to_course($client, $sesskey, $groupid, $coursid) {
+    $res= $this->client->__call('affect_group_to_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($groupid, 'groupid'),
+            new SoapParam($coursid, 'coursid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a wiki to section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $wikiid
+   * @param integer $sectionid
+   * @param integer $groupmode
+   * @param integer $visible
+   * @return affectRecord
+   */
+  public function affect_wiki_to_section($client, $sesskey, $wikiid, $sectionid, $groupmode, $visible) {
+    $res= $this->client->__call('affect_wiki_to_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($wikiid, 'wikiid'),
+            new SoapParam($sectionid, 'sectionid'),
+            new SoapParam($groupmode, 'groupmode'),
+            new SoapParam($visible, 'visible')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a database to section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $databaseid
+   * @param integer $sectionid
+   * @return affectRecord
+   */
+  public function affect_database_to_section($client, $sesskey, $databaseid, $sectionid) {
+    $res= $this->client->__call('affect_database_to_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($databaseid, 'databaseid'),
+            new SoapParam($sectionid, 'sectionid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a section to assignment 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $assignmentid
+   * @param integer $sectionid
+   * @param integer $groupmode
+   * @return affectRecord
+   */
+  public function affect_assignment_to_section($client, $sesskey, $assignmentid, $sectionid, $groupmode) {
+    $res= $this->client->__call('affect_assignment_to_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($assignmentid, 'assignmentid'),
+            new SoapParam($sectionid, 'sectionid'),
+            new SoapParam($groupmode, 'groupmode')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect user to the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $userid
+   * @param integer $courseid
+   * @param string $rolename
+   * @return affectRecord
+   */
+  public function affect_user_to_course($client, $sesskey, $userid, $courseid, $rolename) {
+    $res= $this->client->__call('affect_user_to_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($rolename, 'rolename')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a page of wiki to a wiki 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $pageid
+   * @param integer $wikiid
+   * @return affectRecord
+   */
+  public function affect_pageWiki_to_wiki($client, $sesskey, $pageid, $wikiid) {
+    $res= $this->client->__call('affect_pageWiki_to_wiki', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($pageid, 'pageid'),
+            new SoapParam($wikiid, 'wikiid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Remove the role specified of the user 
+   * in the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $userid
+   * @param integer $courseid
+   * @param string $rolename
+   * @return affectRecord
+   */
+  public function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
+    $res= $this->client->__call('remove_userRole_from_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($rolename, 'rolename')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Groups 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getGroupsReturn
+   */
+  public function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_groups', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getGroupsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Forums 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllForumsReturn
+   */
+  public function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_forums', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllForumsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Labels 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllLabelsReturn
+   */
+  public function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_labels', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllLabelsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All wikis 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllWikisReturn
+   */
+  public function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_wikis', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllWikisReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Pages Wikis 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllPagesWikiReturn
+   */
+  public function get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_pagesWiki', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllPagesWikiReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Assignments 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllAssignmentsReturn
+   */
+  public function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_assignments', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllAssignmentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get All Databases 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllDatabasesReturn
+   */
+  public function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_databases', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllDatabasesReturn',$res);
   }
 
 }
