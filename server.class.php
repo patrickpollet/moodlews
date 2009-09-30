@@ -110,6 +110,8 @@ class server {
 			if ($CFG->webservices_version < $this->version) {
 				$this->upgrade($CFG->webservices_version);
 			}
+        if (!empty($CFG->ws_sessiontimeout))
+            $this->sessiontimeout= $CFG->ws_sessiontimeout;
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
@@ -331,6 +333,9 @@ class server {
 	 */
 	function login($username, $password) {
 		global $CFG;
+
+        if (!empty($CFG->ws_disable))
+            return $this->error ("web service access disabled on this site");
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
 		if (!$knowuser = get_record('user', 'username', $username)) {
@@ -1140,7 +1145,6 @@ class server {
 		/// Find grade data for the requested IDs.
 		foreach ($courseids as $cid) {
 			$rgrade = new stdClass;
-
 			/// Get the student grades for each course requested.
 			if ($course = get_record('course', $idfield, $cid)) {
 				if ($this->isteacher($course->id, $uid)) {
@@ -1148,9 +1152,7 @@ class server {
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
                         $rgrade=$legrade;
                         $rgrade->error = '';
-                        $rgrade->courseid = $cid;
-						$rgrade->usergrade = $legrade->grade;
-						//  $this->debug_output("IDS=".print_r($legrade,true));
+                        $rgrade->itemid = $cid;
 					} else {
 						$rgrade->error = 'No grade data for student ' . fullname($user) .						' in course ' . $course->fullname;
 					}
@@ -1162,9 +1164,8 @@ class server {
 			}
 			$return[] = $rgrade;
 		}
-        $this->debug_output("GG".print_r($return, true));
-        //TODO pas converti comme il faut !!!!
-		return $return;
+        //$this->debug_output("GG".print_r($return, true));
+		return $this->filter_grades($client,$return);
 	}
 
 
@@ -1174,7 +1175,7 @@ class server {
 			return $this->error('Could not find user record (' . $userid . ').');
 		}
 
-		// we cannot call  grade_get_course_grade($user->id) since it does not set the courseid as we want it
+		// we cannot call  API grade_get_course_grade($user->id) since it does not set the courseid as we want it
 
 		if (!$courses = get_my_courses($user->id, $sort='visible DESC,sortorder ASC', $fields='idnumber')) {
 			return $this->error('Could not find any grades for user ' . $userid );
@@ -1183,7 +1184,9 @@ class server {
 		foreach ($courses as $c)
 		      if (!empty($c->idnumber)) $courseids[]=$c->idnumber;
 		$this->debug_output("GUG=".print_r($courseids,true));
-		return $this->get_grades($client,$sesskey,$userid,$courseids,'idnumber');
+        // caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
+        // resulting in two calls of to_soaparray !!!!
+		return server::get_grades($client,$sesskey,$userid,$courseids,'idnumber');
 	}
 
 	public function get_course_grades($client, $sesskey, $courseid,$idfield="idnumber") {
@@ -1209,8 +1212,7 @@ class server {
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
                         $rgrade = $legrade;
                         $rgrade->error = '';
-						$rgrade->usergrade = $legrade->grade;
-                        $rgrade->courseid=$user->idnumber;
+                        $rgrade->itemid=$user->idnumber;
 						//  $this->debug_output("IDS=".print_r($legrade,true));
 						$return[] = $rgrade;
 					} else {
@@ -1225,9 +1227,9 @@ class server {
 			$rgrade->error = 'Could not find course ' . $cid;
 			$return[] = $rgrade;
 		}
- $this->debug_output("GcG".print_r($return, true));
+             $this->debug_output("GcG".print_r($return, true));
 
-		return $return;
+		return $this->filter_grades($client,$return);
 
 	}
 
@@ -4153,13 +4155,36 @@ EOSS;
 		//$this->debug_output(print_r($res,true));
 		return $res;
 	}
-	function filter_change($client, $change) {
-		//return false if ressource changed is not visible to $client
-		$uid = $this->get_session_user($client);
-		if ($this->isteacher($change->courseid, $uid))
-			return $change;
-		return $change->visible ? $change : false;
-	}
+
+
+/**
+ * remove empty grades and fix null feedbacks
+ */
+    function filter_grade($client, $grade) {
+        if (!empty($grade->error)) return $grade;
+        if (empty($grade->grade)) return false;
+        if (empty($grade->feedback)) $grade->feedback="";
+        return $grade;
+    }
+    function filter_grades($client,$grades) {
+        $res = array ();
+        foreach ($grades as $grade) {
+            $grade = $this->filter_grade($client, $grade);
+            if ($grade) {
+                $res[] = $grade;
+            }
+        }
+        return $res;
+    }
+
+function filter_change($client, $change) {
+        //return false if ressource changed is not visible to $client
+        $uid = $this->get_session_user($client);
+        if ($this->isteacher($change->courseid, $uid))
+            return $change;
+        return $change->visible ? $change : false;
+    }
+
 	function filter_changes($client, $changes) {
 		$res = array ();
 		foreach ($changes as $change) {

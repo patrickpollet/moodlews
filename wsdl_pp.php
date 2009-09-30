@@ -225,9 +225,9 @@
       <xsd:complexType name="gradeRecord">
         <xsd:all>
            <xsd:element name="error" type="xsd:string" />
-           <xsd:element name="courseid" type="xsd:string" />
-          <xsd:element name="usergrade" type="xsd:float" /> <xsd:element name="str_grade" type="xsd:string" />
-            <xsd:element name="feedback" type="xsd:string" />
+           <xsd:element name="itemid" type="xsd:string" />
+          <xsd:element name="grade" type="xsd:float" /> <xsd:element name="str_grade" type="xsd:string" />
+            <xsd:element name="feedback" type="xsd:string" nillable="true" />
         </xsd:all>
       </xsd:complexType>
 

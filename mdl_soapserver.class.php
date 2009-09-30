@@ -42,8 +42,8 @@
         /// Necessary for processing any DB upgrades.
             parent::server();
 
-            if (DEBUG) $this->debug_output('    Version: ' . $this->version);
-            if (DEBUG) $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+            $this->debug_output('    Version: ' . $this->version);
+            $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
         }
 
 	/** since SOAP requires all attributes fields to be filled, even in case of error
@@ -116,6 +116,7 @@
 
 	function to_soap_array($res,$keyName,$className,$emptyMsg) {
 		$return=array();
+        $this->debug_output("mdl_ss".print_r($res,true));
 		if (!$res || ! is_array($res) || (count($res)==0))
 			$return[$keyName][]=$this->error_record($className,$emptyMsg);
 		else {
@@ -318,7 +319,7 @@
      * @param string $sesskey The client session key.
      * @param string $userid The ATIStudentID number of the student.
      * @param string $courseids Array of course idnumber
-     * @return userGrade [] $ugareturn The student grades
+     * @return  student grades
      *
 */
 
@@ -329,7 +330,7 @@
                         parent::get_grades($client, $sesskey,$userid,$courseids,$idfield),
                         'grades',
                         'gradeRecord',
-                        'no grades  found');
+                        "no grades  found for user $userid ");
 
 
         }
@@ -342,7 +343,7 @@
                         parent::get_user_grades($client, $sesskey,$userid,$idfield),
                         'grades',
                         'gradeRecord',
-                        'no grades  found');
+                        "no grades  found for user $userid");
 
 
         }
