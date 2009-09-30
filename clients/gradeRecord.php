@@ -13,11 +13,11 @@ class gradeRecord {
 	/** 
 	* @var  string
 	*/
-	public $courseid;
+	public $itemid;
 	/** 
 	* @var  float
 	*/
-	public $usergrade;
+	public $grade;
 	/** 
 	* @var  string
 	*/
@@ -27,10 +27,10 @@ class gradeRecord {
 	*/
 	public $feedback;
 	/* full constructor */
-	 public function gradeRecord($error='',$courseid='',$usergrade=0.0,$str_grade='',$feedback=''){
+	 public function gradeRecord($error='',$itemid='',$grade=0.0,$str_grade='',$feedback=''){
 		 $this->error=$error   ;
-		 $this->courseid=$courseid   ;
-		 $this->usergrade=$usergrade   ;
+		 $this->itemid=$itemid   ;
+		 $this->grade=$grade   ;
 		 $this->str_grade=$str_grade   ;
 		 $this->feedback=$feedback   ;
 	}
@@ -39,12 +39,12 @@ class gradeRecord {
 		 return $this->error;
 	}
 
-	public function getCourseid(){
-		 return $this->courseid;
+	public function getItemid(){
+		 return $this->itemid;
 	}
 
-	public function getUsergrade(){
-		 return $this->usergrade;
+	public function getGrade(){
+		 return $this->grade;
 	}
 
 	public function getStr_grade(){
@@ -60,12 +60,12 @@ class gradeRecord {
 		$this->error=$error;
 	}
 
-	public function setCourseid($courseid){
-		$this->courseid=$courseid;
+	public function setItemid($itemid){
+		$this->itemid=$itemid;
 	}
 
-	public function setUsergrade($usergrade){
-		$this->usergrade=$usergrade;
+	public function setGrade($grade){
+		$this->grade=$grade;
 	}
 
 	public function setStr_grade($str_grade){

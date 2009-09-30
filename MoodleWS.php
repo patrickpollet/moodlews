@@ -39,9 +39,9 @@ require_once 'courseDatum.php';
  */
 require_once 'gradeRecord.php';
 /**
- * studentRecord class
+ * enrolRecord class
  */
-require_once 'studentRecord.php';
+require_once 'enrolRecord.php';
 /**
  * eventRecord class
  */

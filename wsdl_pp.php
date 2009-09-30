@@ -232,10 +232,10 @@
       </xsd:complexType>
 
 
-      <xsd:complexType name="studentRecord">
-        <xsd:all>
-          <xsd:element name="userid" type="xsd:integer" />
-          <xsd:element name="course" type="xsd:integer" />
+      <xsd:complexType name="enrolRecord">
+        <xsd:all>  <xsd:element name="error" type="xsd:string" />
+          <xsd:element name="userid" type="xsd:string" />
+          <xsd:element name="course" type="xsd:string" />
           <xsd:element name="timestart" type="xsd:integer" />
           <xsd:element name="timeend" type="xsd:integer" />
           <xsd:element name="timeaccess" type="xsd:integer" />
@@ -405,11 +405,11 @@
       </xsd:complexType>
 
 
-      <xsd:complexType name="studentRecords">
+      <xsd:complexType name="enrolRecords">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
             <xsd:attribute ref="SOAP-ENC:arrayType"
-              wsdl:arrayType="tns:studentRecord[]" />
+              wsdl:arrayType="tns:enrolRecord[]" />
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
@@ -525,8 +525,7 @@
 
       <xsd:complexType name="enrolStudentsReturn">
         <xsd:all>
-          <xsd:element name="error" type="xsd:string" />
-          <xsd:element name="students" type="tns:studentRecords" />
+          <xsd:element name="students" type="tns:enrolRecords" />
         </xsd:all>
       </xsd:complexType>
 
@@ -1182,6 +1181,7 @@
                 <xsd:all>
                   <xsd:element name="error" type="xsd:string" />
                   <xsd:element name="id" type="xsd:integer" />
+
                   <xsd:element name="pagename" type="xsd:string" />
                   <xsd:element name="version" type="xsd:integer" />
                   <xsd:element name="flags" type="xsd:integer" />
@@ -2014,6 +2014,13 @@
       <input message="tns:enrol_studentsRequest" />
       <output message="tns:enrol_studentsResponse" />
     </operation>
+ <operation name="unenrol_students">
+      <documentation>
+        MoodleWS: UnEnrol students in a course
+      </documentation>
+      <input message="tns:enrol_studentsRequest" />
+      <output message="tns:enrol_studentsResponse" />
+    </operation>
 
     <operation name="get_roles">
       <documentation>MoodleWS: Get All roles defined in Moodle</documentation>
@@ -2558,6 +2565,21 @@
       </output>
     </operation>
 
+ <operation name="unenrol_students">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#unenrol_students"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
 
 
     <operation name="get_last_changes">

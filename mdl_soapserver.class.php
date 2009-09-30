@@ -280,20 +280,23 @@
      *               specific data format for sending to the client.
      */
      public function enrol_students($client, $sesskey, $courseid, $userids,$idfield='idnumber') {
-            $rstudents = array();
+             return $this->to_soap_array(
+                        parent::enrol_students($client, $sesskey,$courseid,$userids,$idfield,true),
+                        'students',
+                        'enrolRecord',
+                        "no student to enrol in course $courseid ");
 
-            if ($students = parent::enrol_students($client, $sesskey, $courseid, $userids,$idfield)) {
-                    $rstudents['error']    = $students->error;
-                    $rstudents['students'] = array();
- 		    foreach ($students-> students as $r)
-                        $rstudents['students'][] = $this->to_soap($r,'studentRecord');
-
-            } else {
-               $rstudents['error']    = '??????';
-               $rstudents['students'] = array();
-            }
-            return $rstudents;
         }
+
+     public function unenrol_students($client, $sesskey, $courseid, $userids,$idfield='idnumber') {
+             return $this->to_soap_array(
+                        parent::enrol_students($client, $sesskey,$courseid,$userids,$idfield,false),
+                        'students',
+                        'enrolRecord',
+                        "no student to unenrol in course $courseid ");
+
+        }
+
 
 
     /**

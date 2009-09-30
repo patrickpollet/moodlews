@@ -3,7 +3,7 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get User Grades
+/**test code for MoodleWS: Get User Grades in some courses
 * @param integer $client
 * @param string $sesskey
 * @param string $userid

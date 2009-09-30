@@ -542,7 +542,7 @@ class MoodleWS {
   }
 
   /**
-   * MoodleWS: Get User Grades 
+   * MoodleWS: Get User Grades in some courses 
    *
    * @param integer $client
    * @param string $sesskey
@@ -558,6 +558,55 @@ class MoodleWS {
             new SoapParam($userid, 'userid'),
             new SoapParam($courseids, 'courseids'),
             new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getGradesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get User Grades in all courses 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value
+   * @param string $id
+   * @return getGradesReturn
+   */
+  public function get_user_grades($client, $sesskey, $value, $id) {
+    $res= $this->client->__call('get_user_grades', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getGradesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get all Users  Grades in one course 
+   * 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value
+   * @param string $id
+   * @return getGradesReturn
+   */
+  public function get_course_grades($client, $sesskey, $value, $id) {
+    $res= $this->client->__call('get_course_grades', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value'),
+            new SoapParam($id, 'id')
       ),
       array(
             'uri' => $this->uri ,

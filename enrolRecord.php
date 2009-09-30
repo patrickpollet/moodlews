@@ -5,7 +5,11 @@
  * @package	MoodleWS
  * @copyright	(c) P.Pollet 2007 under GPL
  */
-class studentRecord {
+class enrolRecord {
+	/** 
+	* @var  string
+	*/
+	public $error;
 	/** 
 	* @var  integer
 	*/
@@ -30,7 +34,8 @@ class studentRecord {
 	* @var  string
 	*/
 	public $enrol;
-	 public function studentRecord() {
+	 public function enrolRecord() {
+		 $this->error='';
 		 $this->userid=0;
 		 $this->course=0;
 		 $this->timestart=0;
@@ -39,6 +44,10 @@ class studentRecord {
 		 $this->enrol='';
 	}
 	/* get accessors */
+	public function getError(){
+		 return $this->error;
+	}
+
 	public function getUserid(){
 		 return $this->userid;
 	}
@@ -64,6 +73,10 @@ class studentRecord {
 	}
 
 	/*set accessors */
+	public function setError($error){
+		$this->error=$error;
+	}
+
 	public function setUserid($userid){
 		$this->userid=$userid;
 	}

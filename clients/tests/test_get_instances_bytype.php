@@ -14,7 +14,7 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
-$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','');
+$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','assignment');
 print_r($res);
 print($res->getResources());
 

@@ -11,7 +11,7 @@ class enrolStudentsReturn {
 	*/
 	public $error;
 	/** 
-	* @var  (studentRecords) array of studentRecord
+	* @var  (enrolRecords) array of enrolRecord
 	*/
 	public $students;
 	 public function enrolStudentsReturn() {
