@@ -1169,8 +1169,8 @@ EOSS;
         if (!$course = get_record('course', $courseidfield, $courseid)) {
             return $this->error('Could not find course record (' . $courseid . ')');
         }
-
-        if (!$this->has_capability("moodle/role:assign", CONTEXT_COURSE, $course->id))
+         $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (!has_capability("moodle/role:assign",$context))
             return $this->error('You do not have proper access to perform this operation.');
         if ($course->enrolperiod) {
             $timestart = time();
