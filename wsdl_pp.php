@@ -1247,26 +1247,7 @@
           <!-- /get_all_databases -->
 
       <!-- /TYPES FROM LILLE -->
-      <!-- TYPES from SIS integration -->
 
-
-     <xsd:complexType name="userGrade">
-        <xsd:all>
-
-        </xsd:all>
-      </xsd:complexType>
-
-
-     <xsd:complexType name="userGradesReturn">
-        <xsd:complexContent>
-          <xsd:restriction base="SOAP-ENC:Array">
-            <xsd:attribute ref="SOAP-ENC:arrayType"
-              wsdl:arrayType="tns:userGrade[]" />
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
-
-      <!-- /TYPES from SIS integration -->
 
     </xsd:schema>
   </types>
@@ -1443,9 +1424,9 @@
   <message name="get_gradesRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
-    <part name="userid" type="xsd:string" />
+    <part name="userid" type="xsd:string" /><part name="userfield" type="xsd:string" />
     <part name="courseids" type="tns:getCoursesInput" />
-    <part name="idfield" type="xsd:string" />
+    <part name="courseidfield" type="xsd:string" />
   </message>
 
   <message name="get_gradesResponse">
@@ -1458,9 +1439,9 @@
   <message name="enrol_studentsRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
-    <part name="courseid" type="xsd:string" />
+    <part name="courseid" type="xsd:string" /> <part name="courseidfield" type="xsd:string" />
     <part name="userids" type="tns:enrolStudentsInput" />
-    <part name="idfield" type="xsd:string" />
+    <part name="useridfield" type="xsd:string" />
   </message>
   <message name="enrol_studentsResponse">
     <part name="return" type="tns:enrolStudentsReturn" />
@@ -1526,7 +1507,7 @@
   <message name="get_my_groupsRequest">
     <part name="client" type="xsd:integer" />
     <part name="sesskey" type="xsd:string" />
-    <part name="uid" type="xsd:integer" />
+    <part name="uid" type="xsd:string" /> <part name="idfield" type="xsd:string" />
   </message>
 
 

@@ -1,4 +1,6 @@
 <?php
+
+
 // $Id: server.class.php,v 1.5.4 2007/05/02 04:05:36 ppollet Exp $
 /**
  * Base class for web services server layer. PP 5 ONLY.
@@ -7,7 +9,8 @@
  * @version $Id: server.class.php,v 1.5 2007/04//26 04:05:36 ppollet Exp $
  * @author Open Knowledge Technologies - http://www.oktech.ca/
  * @author Justin Filip <jfilip@oktech.ca> v 1.4
- * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.5
+ * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.5, v 1.6
+ * @author
  */
 /* rev history
   1.5 released to Moodle forum
@@ -59,17 +62,17 @@ but how to authenticate by CAS in this service ????)
 1.6
   - added operations by Lille team
   - moodle < 1.7 not anymore supported
-  - change to get_grades to support new Moodle 1.9 grading
+  - change to get_grades to support new Moodle 1.9 gradebook
   - better support of roles & capabilities (filtering functions moved to filterlib.php)
-  - removed all deprecated calls (isadmion(), isteacher() ....
+  - removed all deprecated calls (isadmin(), isteacher() ....
   - session timeout and global access set in CFG
   - usage of global $USER set properly in validate-client
-  - log all operations in Moodle's log
-
+  - log all operations in Moodle's log as per some CFG entries
+  - removed all ob_* functions (managed globally at mdl_soapserver.class)
 **/
 
 require_once ('../config.php');
-require_once('filterlib.php');
+require_once ('filterlib.php');
 /// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
 // j'ai 11000 comptes
 @ raise_memory_limit("192M"); //fonction de lib/setuplib.php incluse via config.php
@@ -77,7 +80,7 @@ set_time_limit(0);
 //define('DEBUG', true);  rev. 1.5.16 already set (or not) in  MoodleWS.php
 define('cal_show_global', 1);
 define('cal_show_course', 2);
-define('cal_show_groups', 4);
+define('cal_show_group', 4);
 define('cal_show_user', 8);
 /**
  * The main server class.
@@ -114,7 +117,7 @@ class server {
 	function server() {
 		global $CFG;
 		$this->debug_output("Server init...");
-		$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
+		$this->using17 =file_exists($CFG->libdir . '/accesslib.php');
 		$this->using19 = file_exists($CFG->libdir . '/grouplib.php');
 		/// Check for any upgrades.
 		if (empty ($CFG->webservices_version)) {
@@ -123,8 +126,8 @@ class server {
 			if ($CFG->webservices_version < $this->version) {
 				$this->upgrade($CFG->webservices_version);
 			}
-        if (!empty($CFG->ws_sessiontimeout))
-            $this->sessiontimeout= $CFG->ws_sessiontimeout;
+		if (!empty ($CFG->ws_sessiontimeout))
+			$this->sessiontimeout = $CFG->ws_sessiontimeout;
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
@@ -136,85 +139,30 @@ class server {
 	function upgrade($oldversion) {
 		global $CFG;
 		$this->debug_output('Starting WS upgrade to version ' . $oldversion);
-		ob_start();
+
 		$return = true;
-		if ($this->using17) {
-			require_once ($CFG->libdir . '/ddllib.php');
-			if ($oldversion < 2006050800) {
-				// oups . until v 1.5.4 dbdir was still /ws/db/install.xml and db/ was not distributed !!!
-				$return = install_from_xmldb_file($CFG->dirroot . '/wspp/db/install.xml');
-			} else {
-				// add ip column if $oldversion < 2007051000;
-				$table = new XMLDBTable('webservices_sessions');
-				$field = new XMLDBField('ip');
-				// since table exists, keep NULL as true and no default value !
-				// otherwise XMLDB do not do the change but return true ...
-				$field->setAttributes(XMLDB_TYPE_CHAR, '64');
-				$return = add_field($table, $field, false, false);
-			}
+		require_once ($CFG->libdir . '/ddllib.php');
+		if ($oldversion < 2006050800) {
+			// oups . until v 1.5.4 dbdir was still /ws/db/install.xml and db/ was not distributed !!!
+			$return = install_from_xmldb_file($CFG->dirroot . '/wspp/db/install.xml');
 		} else {
-			//TODO upgrade 1.5-> 1.5.4 for Moodle <1.7 to add only the ip column  HOW ?
-			if ($oldversion < 2006050800) {
-				if ($CFG->dbtype == 'mysql') {
-					if ($return) {
-						$return = modify_database('', "
-						                                CREATE TABLE `prefix_webservices_clients_allow` (
-						                                    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-						                                    `client` VARCHAR(15) NOT NULL DEFAULT '0.0.0.0',
-						                                    PRIMARY KEY `id` (`id`)
-						                                );
-						                            ");
-					}
-					if ($return) {
-						$return = modify_database('', "
-						                                CREATE TABLE `prefix_webservices_sessions` (
-						                                    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-						                                    `sessionbegin` INT(10) UNSIGNED NOT NULL DEFAULT 0,
-						                                    `sessionend` INT(10) UNSIGNED NOT NULL DEFAULT 0,
-						                                    `sessionkey` VARCHAR(32) NOT NULL DEFAULT '',
-						                                    `userid` INT(10) UNSIGNED NOT NULL DEFAULT 0,
-						                                    `verified` TINYINT(1) NOT NULL DEFAULT 0,
-						                                    `ip` VARCHAR(64) NOT NULL DEFAULT '',
-						                                    PRIMARY KEY `id` (`id`)
-						                                );
-						                            ");
-					}
-				} else
-					if ($CFG->dbtype == 'postgres7') {
-						if ($return) {
-							$return = modify_database('', "
-							                                CREATE TABLE prefix_webservices_clients_allow (
-							                                    id SERIAL PRIMARY KEY,
-							                                    client VARCHAR(15) NOT NULL DEFAULT '0.0.0.0'
-							                                );
-							                            ");
-						}
-						if ($return) {
-							$return = modify_database('', "
-							                                CREATE TABLE prefix_webservices_sessions (
-							                                    id SERIAL PRIMARY KEY,
-							                                    sessionbegin INTEGER NOT NULL DEFAULT 0,
-							                                    sessionend INTEGER NOT NULL DEFAULT 0,
-							                                    sessionkey VARCHAR(32) NOT NULL DEFAULT '',
-							                                    userid INTEGER NOT NULL DEFAULT 0,
-							                                    verified INTEGER NOT NULL DEFAULT 0
-							                                );
-							                            ");
-						}
-					}
-			}
+			// add ip column if $oldversion < 2007051000;
+			$table = new XMLDBTable('webservices_sessions');
+			$field = new XMLDBField('ip');
+			// since table exists, keep NULL as true and no default value !
+			// otherwise XMLDB do not do the change but return true ...
+			$field->setAttributes(XMLDB_TYPE_CHAR, '64');
+			$return = add_field($table, $field, false, false);
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$this->debug_output('Database output: ' . trim(ob_get_clean()));
-		}
+
+
 		if ($return) {
 			set_config('webservices_version', $this->version);
 			$this->debug_output('Upgraded from ' . $oldversion . ' to ' . $this->version);
 		} else {
 			$this->debug_output('ERROR: Could not upgrade to version ' . $this->version);
 		}
-		ob_end_clean();
+
 		return $return;
 	}
 	/**
@@ -229,14 +177,14 @@ class server {
 		$this->debug_output('Running INIT for client: ' . $client);
 		/// Add this client's database record.
 		if (!$sess = get_record('webservices_sessions', 'id', $client)) {
-		     $this->debug_output('No session');
+			$this->debug_output('No session');
 			return $this->error('Could not get validated client session (' . $client . ').');
 		}
 		$sess->sessionbegin = time();
 		$sess->sessionend = 0;
 		$sess->sessionkey = $this->add_session_key();
 		if (!update_record('webservices_sessions', $sess)) {
-				$this->debug_output('No update');
+			$this->debug_output('No update');
 			return $this->error('Could not initialize client session (' . $client . ').');
 		}
 
@@ -274,7 +222,7 @@ class server {
 	 * @param string $sesskey The client session key.
 	 * @return boolean True if the client is valid, False otherwise.
 	 */
-	function validate_client($client = 0, $sesskey = '',$operation='') {
+	function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
 		/// We can't validate a session that hasn't even been initialized yet.
 		if (!$sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
@@ -287,12 +235,11 @@ class server {
 
 		// rev 1.6 make sure the session has not timed out
 		// rev 843 pas trop longtemps sans logout ...
-		if ($sess->sessionbegin + $this->sessiontimeout < time()){
-			$sess->sessionend=time();
-			update_record('webservices_sessions', $sess,'id');
+		if ($sess->sessionbegin + $this->sessiontimeout < time()) {
+			$sess->sessionend = time();
+			update_record('webservices_sessions', $sess, 'id');
 			return false;
 		}
-
 
 		$USER->id = $sess->userid;
 		$USER->username = '';
@@ -301,54 +248,66 @@ class server {
 		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
 
 		//LOG INTO MOODLE'S LOG
-		add_to_log(SITEID,'webservice pp','',$operation);
+		if ($CFG->ws_logoperations)
+			add_to_log(SITEID, 'webservice', 'webservice pp','', $operation);
 		return true;
 	}
 
+	/**
+	 * Sends an FATAL error response back to the client.
+	 *
+	 * @todo Override in protocol-specific server subclass, e.g. by throwing a PHP  exception
+	 * @param string $msg The error message to return.
+	 * @return An object with the error message string.(required by mdl_soapserver)
+	 */
+	function error($msg) {
+		$res = new StdClass();
+		$res->error = $msg;
+		if ($CFG->ws_logerrors)
+            add_to_log(SITEID, 'webservice', 'webservice pp','', 'error :'.$msg);
+		$this->debug_output("server.soap fatal error : $msg");
+		return $res;
+	}
+	/**
+	* return and object with error attribute set
+	* this record will be inserted in client array of responses
+	* do not override in protocol-specific server subclass.
+	*/
+	private function non_fatal_error($msg) {
+		$res = new StdClass();
+		$res->error = $msg;
+		$this->debug_output("server.soap non fatal error : $msg");
+		return $res;
+	}
+
+	/**
+	 * Do server-side debugging output (to file).
+	 *
+	 * @uses $CFG
+	 * @param mixed $output Debugging output.
+	 * @return none
+	 */
+	function debug_output($output) {
+		global $CFG;
+		if (DEBUG) {
+			$fp = fopen($CFG->dataroot . '/debug.out', 'a');
+			fwrite($fp, "[" . time() . "] $output\n");
+			fflush($fp);
+			fclose($fp);
+		}
+	}
+
     /**
-     * Sends an FATAL error response back to the client.
-     *
-     * @todo Override in protocol-specific server subclass, e.g. by throwing a PHP  exception
-     * @param string $msg The error message to return.
-     * @return An object with the error message string.(required by mdl_soapserver)
+     * check that current ws user has the required capability
+     * @param string capabilty
+     * @param string type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
+     * @param  object moodle's id
      */
-    function error($msg) {
-        $res = new StdClass();
-        $res->error = $msg;
-        add_to_log(SITEID,'webservice pp','','error:'.$smg);
-        $this->debug_output("server.soap fatal error : $msg");
-        return $res;
+    function has_capability( $capability, $context_type, $instance_id) {
+        global $USER;
+        $context = get_context_instance($context_type, $instance_id);
+        return has_capability($capability, $context, $USER->id);
     }
-    /**
-    * return and object with error attribute set
-    * this record will be inserted in client array of responses
-    * do not override in protocol-specific server subclass.
-    */
-    private function non_fatal_error($msg) {
-        $res = new StdClass();
-        $res->error = $msg;
-            $this->debug_output("server.soap non fatal error : $msg");
-        return $res;
-    }
-
-
-    /**
-     * Do server-side debugging output (to file).
-     *
-     * @uses $CFG
-     * @param mixed $output Debugging output.
-     * @return none
-     */
-    function debug_output($output) {
-        global $CFG;
-         if (DEBUG) {
-            $fp = fopen($CFG->dataroot . '/debug.out', 'a');
-            fwrite($fp, "[" . time() . "] $output\n");
-            fflush($fp);
-            fclose($fp);
-        }
-    }
-
 
 
 	/**
@@ -363,8 +322,11 @@ class server {
 	function login($username, $password) {
 		global $CFG;
 
-        if (!empty($CFG->ws_disable))
-            return $this->error ("web service access disabled on this site");
+		if (!empty ($CFG->ws_disable))
+			return $this->error("web service access disabled on this site");
+        if (! $this->using17)
+             return $this->error("Moodle version prior to 1.7 are not supported");
+
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
 		if (!$knowuser = get_record('user', 'username', $username)) {
@@ -381,14 +343,14 @@ class server {
 		} else {
 			/// Verify that an active session does not already exist for this user.
 			$sql = "SELECT s.*
-			                        FROM {$CFG->prefix}webservices_sessions s
-			                        WHERE s.userid = {$user->id} AND
-			                              s.verified = 1 AND
-			                              s.sessionend = 0 AND
-			                              (" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
-			 if ($sess=get_record_sql($sql, 0)) {
-                   //return $this->error('A session already exists for this user (' . $user->login . ')');
-            return $this->init($sess->id) ; // V1.6 reuse current session
+												                        FROM {$CFG->prefix}webservices_sessions s
+												                        WHERE s.userid = {$user->id} AND
+												                              s.verified = 1 AND
+												                              s.sessionend = 0 AND
+												                              (" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
+			if ($sess = get_record_sql($sql, 0)) {
+				//return $this->error('A session already exists for this user (' . $user->login . ')');
+				return $this->init($sess->id); // V1.6 reuse current session
 			}
 			/// Login valid, create a new session record for this client.
 			$sess = new stdClass;
@@ -396,7 +358,9 @@ class server {
 			$sess->verified = true;
 			$sess->ip = getremoteaddr(); // rev 1.5.4
 			$sess->id = insert_record('webservices_sessions', $sess);
-             add_to_log(SITEID,'webservice pp','','login');
+			if ($CFG->ws_logoperations)
+
+                add_to_log(SITEID, 'webservice', 'webservice pp','', 'login');
 			return $this->init($sess->id);
 		}
 	}
@@ -416,136 +380,21 @@ class server {
 		}
 		if ($sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			$sess->verified = 0;
-            $sess->sessionend = time();
+			$sess->sessionend = time();
 			if (update_record('webservices_sessions', $sess)) {
-                 add_to_log(SITEID,'webservice pp','','logout');
+				if ($CFG->ws_logoperations)
+					add_to_log(SITEID, 'webservice pp', '', 'logout');
+                    add_to_log(SITEID, 'webservice', 'webservice pp','','logout');
 				return true;
 			} else {
-                 add_to_log(SITEID,'webservice pp','failure','logout');
+				if ($CFG->ws_logerrors)
+                    add_to_log(SITEID, 'webservice', 'webservice pp','', 'error : logout');
 				return false;
 			}
 		}
 		return false;
 	}
 
-	/**
-	 * Edit user records (add/update/delete).
-	 * FIXED in rev 1.5.8
-	 * @uses $CFG
-	 * @param int $client The client session ID.
-	 * @param string $sesskey The client session key.
-	 * @param array $users An array of user records (objects or arrays) for editing
-	 *                     (including opertaion to perform).
-	 * @return array Return data (user record) to be converted into a
-	 *               specific data format for sending to the client.
-	 */
-	function edit_users($client, $sesskey, $users) {
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'edit_users')) {
-			return $this->error('Invalid client connection.');
-		}
-		$uid = $USER->id;
-		$rusers = array ();
-		$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
-		if (!empty ($users)) {
-			foreach ($users->users as $user) {
-				$ruser = new stdClass();
-
-				$this->debug_output('traitement de ' . print_r($user, true));
-				//obs by Lille: add md5 to the password
-				// todo test whether it is needed or not ?
-				$user->password = md5($user->password);
-				switch (trim(strtolower($user->action))) {
-					case 'add' :
-
-						if (! has_capability('moodle/user:add',CONTEXT_SITE)) {
-							$ruser->error="not allowed to add users";
-							break;
-						}
-
-						unset ($user->action);
-
-						$this->debug_output('adding' . print_r($user, true));
-						//Moodle 1.8 and later (a required field that must be non 0 for login )
-						if (!empty ($CFG->mnet_localhost_id))
-							if (empty($user->mnethostid)) //if not set by caller
-								$user->mnethostid = $CFG->mnet_localhost_id; // always local user
-
-							// Lille : verify if current user is already in database
-						if ($userExist = get_record("user", "username", $user->username)) {
-							$ruser = $userExist;
-							$ruser->error = "user $user->username  already exists";
-							break;
-						}
-						// end Lille
-						if (empty ($user->confirmed)) {
-							$user->confirmed = true;
-						}
-						$user->id = insert_record('user', $user);
-
-						$this->debug_output('ID is ' . $user->id);
-
-						if (empty ($user->id)) {
-							$ruser->error = 'Could not add user: ' . fullname($user);
-						} else {
-							$ruser = get_record('user', 'id', $user->id);
-						}
-						break;
-
-					case 'update' :
-						if (! has_capability('moodle/user:update',CONTEXT_SITE)) {
-							$ruser->error="not allowed to update users";
-							break;
-						}
-						$uid = $user->idnumber;
-						unset ($user->action);
-						$this->debug_output('Attempting to update user ID: ' . $uid);
-
-						if (!$userup= get_record('user', 'idnumber', $uid)) {
-							$ruser = $user;
-							$ruser->error = "update : user with idnumber $uid not found";
-							break;
-
-						} else {
-							/// Update values in the $user database record with what
-							/// the client supplied.
-							foreach ($user as $key => $value)
-							if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-								$userup->$key=$value;
-							$userup->timemodified = time();
-
-							if (update_record('user', $userup)) {
-								$ruser=$ruser = get_record('user', 'id', $user->id);
-							} else {
-								$ruser = $user;
-								$ruser->error = 'Could not update user: ' . $uid;
-							} 						}
-						break;
-					case 'delete' :
-						$uid = $user->idnumber;
-						/// Deleting an existing user.
-						if (! has_capability('moodle/user:delete',CONTEXT_SITE)) {
-							$ruser->error="not allowed to delete users";
-							break;
-						}
-						$ruser=$user;
-						if ($userdel = get_record('user', 'idnumber', $uid)) {
-							if (! delete_user($userdel)) {
-								$ruser->error ="database error when deleting user with idnumber $uid";
-							}
-						} else {
-							$ruser->error ="delete: user with idnumber $uid not found";
-
-						}
-
-						break;
-
-				}
-				$rusers[] = $ruser;
-			}
-		}
-		return $rusers;
-	}
 	/**
 	 * Find and return a list of user records.
 	 *
@@ -557,8 +406,8 @@ class server {
 	 *               specific data format for sending to the client.
 	 */
 	function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_users')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_users')) {
 			return $this->error('Invalid client connection.');
 		}
 		/// Verify that the user for this session can perform this operation.
@@ -577,251 +426,10 @@ class server {
 					$ret[] = $user;
 			}
 		}
-        $this->debug_output("GU".print_r($ret,true));
-		return filter_users($client,$ret);
+		$this->debug_output("GU" . print_r($ret, true));
+		return filter_users($client, $ret,0);
 	}
 
-
-	/**
-	 * Edit course records (add/update/delete).
-	 * TESTED and fixed in rev 1.5.8 PP
-	 * @uses $CFG
-	 * @param int $client The client session ID.
-	 * @param string $sesskey The client session key.
-	 * @param array $courses An array of course records (objects or arrays) for editing
-	 *                       (including opertaion to perform).
-	 * @return array Return data (course record) to be converted into a specific
-	 *               data format for sending to the client.
-	 */
-	function edit_courses($client, $sesskey, $courses) {
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'edit_courses')) {
-			return $this->error('Invalid client connection.');
-		}
-		$uid = $USER->id;
-		$site = get_site();
-		$ret = array ();
-		if (!empty ($courses)) {
-			foreach ($courses->courses as $course) {
-				$rcourse = new stdClass;
-				switch (trim(strtolower($course->action))) {
-					case 'add' :
-						/// Adding a new course.
-						$courseadd = $course;
-
-							$this->debug_output('Trying to add a new course.');
-						/// Check for correct permissions.
-						if (!$this->iscreator($uid)) {
-
-								$this->debug_output('Invalid access UID: ' . $uid);
-							$rcourse->error = 'You do not have proper access to perform this operation.';
-						} else
-							if (record_exists('course', 'idnumber', $courseadd->idnumber)) {
-								$rcourse->error = 'A course with this ID number already exists: ' .								$courseadd->idnumber;
-							} else {
-								/// These database operations MIGHT throw an HTML error message,
-								/// so we've got to catch that and send it back in an error
-								/// request.
-								//verify if current course is aleready in db
-								//Lille
-								$this->debug_output("ajunge ACI");
-								if ($courseExist = get_record("course", "shortname", $course->shortname)) {
-									$rcourse = $courseExist;
-									$rcourse->error = "course shortname $course->shortname already used";
-									break;
-								}
-								//TODO collect Admin default settings  (see course/pending)
-								ob_start();
-								// place at beginning of category
-								fix_course_sortorder();
-								$courseadd->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM " .								"{$CFG->prefix}course WHERE category=$courseadd->category");
-								if (empty ($courseadd->sortorder)) {
-									$courseadd->sortorder = 100;
-								}
-								if (!isset ($courseadd->maxbytes)) {
-									$byteschoices = get_max_upload_sizes($CFG->maxbytes);
-									$courseadd->maxbytes = key($byteschoices);
-								}
-								if (!isset ($courseadd->startdate)) {
-									$courseadd->startdate = time();
-								}
-								$courseadd->timecreated = time();
-								$courseadd->timemodified = time();
-								//make sure a category is specified - default moodle category is implicit
-								if (!isset ($courseadd->category) || $courseadd->category == 0) {
-									$courseadd->category = 1;
-								}
-								$courseadd->id = insert_record('course', $courseadd);
-								if (ob_get_length() && trim(ob_get_contents())) {
-									/// Return an error with  the contents of the output buffer.
-									$msg = trim(ob_get_contents());
-									$rcourse->error = 'Database error: ' . $msg;
-								}
-								ob_end_clean();
-								if (empty ($courseadd->id)) {
-									$rcourse->error = 'Could not add course: ' .									$courseadd->shortname;
-								} else {
-									require_once ($CFG->libdir . '/pagelib.php');
-									require_once ($CFG->libdir . '/blocklib.php');
-									/// These API calls MIGHT throw an HTML error message,
-									/// so we've got to catch that and send it back in an error
-									/// request.
-									ob_start();
-									/// Setup page blocks.
-									$page = page_create_object(PAGE_COURSE_VIEW, $courseadd->id);
-									blocks_repopulate_page($page);
-									if (ob_get_length() && trim(ob_get_contents())) {
-										$msg = trim(ob_get_clean());
-										$rcourse->error = 'API call error: ' . $msg;
-									}
-									/// Create a default section.
-									$section = NULL;
-									$section->course = $courseadd->id;
-									$section->section = 0;
-									$section->id = insert_record('course_sections', $section);
-									if (ob_get_length() && trim(ob_get_contents())) {
-										$msg = trim(ob_get_clean());
-										$rcourse->error = 'Database error: ' . $msg;
-									}
-									ob_end_clean();
-									$rcourse = get_record('course', 'id', $courseadd->id);
-								}
-							}
-						break;
-					case 'update' :
-						/// Updating an existing course.
-						$courseup = $course;
-						$cid = $courseup->idnumber;
-						$dbfail = false;
-
-							$this->debug_output('Attempting to update course ID: ' . $cid . print_r($course, true));
-						/// This database operation MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
-						ob_start();
-						$course = get_record('course', 'idnumber', $cid);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-
-								$this->debug_output('E_DB: "' . ob_get_contents() . '"');
-							$msg = trim(ob_get_clean());
-							$rcourse->error = 'Database error: ' . $msg;
-							$dbfail = true;
-						}
-						ob_end_clean();
-						/// Check for correct permissions.
-						if (!$dbfail && empty ($course)) {
-							$rcourse->error = 'Could not find course ID: ' . $cid;
-						} else
-							if (!$dbfail && !$this->isteacher($course->id, $uid)) {
-								$rcourse->error = 'You do not have proper access to perform this operation.';
-							} else
-								if (!$dbfail) {
-									/// Update values in the course database record with what
-									/// the client supplied.
-									foreach ($courseup as $key => $value)
-										if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-											$course-> $key = $value;
-									$course->timemodified = time();
-									ob_start();
-									$success = update_record('course', $course);
-									if (ob_get_length() && trim(ob_get_contents())) {
-										$msg = trim(ob_get_clean());
-										$rcourse->error = 'Database error: ' . $msg;
-										$dbfail = true;
-									}
-									ob_end_clean();
-									if (!$dbfail && !$success) {
-										$rcourse->error = 'Could not update course: ' . $cid;
-									} else
-										if (!$dbfail && $success) {
-											$rcourse = get_record('course', 'id', $course->id);
-										}
-								}
-						break;
-					case 'delete' :
-						/// Deleting an existing course.
-						$cid = $course->idnumber;
-						$dbfail = false;
-						/// Check for correct permissions.
-						if (!$this->isadmin($uid)) {
-							$rcourse->error = 'You do not have proper access to ' .							'perform this operation.';
-						} else {
-
-								$this->debug_output('Attempting to delete course ID: ' . $cid);
-							/// This database operation MIGHT throw an HTML error message,
-							/// so we've got to catch that and send it back in an error
-							/// request.
-							ob_start();
-							$course = get_record('course', 'idnumber', $cid);
-							if (ob_get_length() && trim(ob_get_contents())) {
-								/// Return an error with  the contents of the output buffer.
-								$msg = trim(ob_get_clean());
-								$rcourse->error = 'Database error: ' . $msg;
-								$dbfail = true;
-							}
-							ob_end_clean();
-							if (!$dbfail && empty ($course)) {
-								$rcourse->error = 'Could not find course ID: ' . $cid;
-							} else
-								if (!$dbfail) {
-									/// 'Delete' the course the Moodle way.
-									$success_r = true;
-									$success_d = true;
-									$success_f = true;
-									/// These operations MIGHT throw an HTML error message,
-									/// so we've got to catch that and send it back in an error
-									/// request.
-									ob_start();
-									require_once ($CFG->libdir . '/moodlelib.php');
-									$success_r = remove_course_contents($course->id, false);
-									if (ob_get_length() && trim(ob_get_contents())) {
-										/// Return an error with  the contents of the output buffer.
-										$msg = trim(ob_get_clean());
-										$rcourse->error = 'API call error: ' . $msg;
-									}
-									if ($success_r && !isset ($rcourse->error)) {
-										$success_d = delete_records('course', 'id', $course->id);
-									}
-									if (ob_get_length() && trim(ob_get_contents())) {
-										/// Return an error with a E_DB status set and the
-										/// contents of the output buffer.
-										$msg = trim(ob_get_clean());
-										$rcourse->error('Database error.', WS_STAT_E_DB, $msg);
-									}
-									if ($success_r && $success_d && !isset ($rcourse->error) && ($dir = @ opendir($CFG->dataroot . '/' . $course->id))) {
-										closedir($dir);
-										require_once ($CFG->libdir . '/filelib.php');
-										$success_f = fulldelete($CFG->dataroot . '/' . $course->id);
-									}
-									if (ob_get_length() && trim(ob_get_contents())) {
-										/// Return an error with  the contents of the output buffer.
-										$msg = trim(ob_get_clean());
-										return $this->error('API call error (2).', WS_STAT_E_API, $msg);
-									}
-									ob_end_clean();
-									if (!isset ($rcourse->error)) {
-										if (!$success_r) {
-											$rcourse->error = 'Error deleting some of the course contents (' .											$cid . ').';
-										} else
-											if (!$success_d) {
-												$rcourse->error = 'Error deleting the course record (' . $cid . ').';
-											} else
-												if (!$success_f) {
-													$rcourse->error = 'Error deleting the course data (' . $cid . ').';
-												} else {
-													$rcourse = $course;
-												}
-									}
-								}
-						}
-						break;
-				}
-				$ret[] = $rcourse;
-			}
-		}
-		return $ret;
-	}
 	/**
 	 * Find and return a list of course records.
 	 *
@@ -833,8 +441,8 @@ class server {
 	 *               data format for sending to the client.
 	 */
 	function get_courses($client, $sesskey, $courseids, $idfield = 'idnumber') {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_courses')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_courses')) {
 			return $this->error('Invalid client connection.');
 		}
 		$uid = $USER->id;
@@ -845,15 +453,13 @@ class server {
 			return filter_courses($client, $res);
 		}
 		foreach ($courseids as $courseid) {
-
 			if ($courses = get_records('course', $idfield, $courseid)) {
-
 				foreach ($courses as $course)
 					$ret[] = $course;
 			} else {
 				$ret[] = $this->non_fatal_error("no match for $idfield = $courseid");
 			}
-        }
+		}
 		return filter_courses($ret);
 	}
 
@@ -867,8 +473,8 @@ class server {
 	 * @return array An array of  records.
 	 */
 	public function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'get_resources')) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_resources')) {
 			return $this->error('Invalid client connection.');
 		}
 		$uid = $USER->id;
@@ -888,7 +494,7 @@ class server {
 			}
 		}
 		//remove courses not available to current user
-		$courses =filter_courses($client, $courses);
+		$courses = filter_courses($client, $courses);
 		$ilink = "{$CFG->wwwroot}/mod/resource/view.php?id=";
 		foreach ($courses as $course) {
 			if ($resources = get_all_instances_in_course("resource", $course, NULL, true)) {
@@ -901,7 +507,6 @@ class server {
 		return filter_resources($client, $ret);
 	}
 
-
 	/**
 	    * Find and return a list of sections within one or several courses.
 	    * OK PP tested with php5 5 and python clients
@@ -912,11 +517,10 @@ class server {
 	    * @return array An array of course records.
 	    */
 	public function get_sections($client, $sesskey, $courseids, $idfield = 'idnumber') {
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'get_sections')) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_sections')) {
 			return $this->error('Invalid client connection.');
 		}
-		$uid = $USER->id;
 		$ret = array ();
 		if (!empty ($courseids) && !is_array($courseids)) {
 			$courseids = array (
@@ -948,16 +552,15 @@ class server {
 		return filter_sections($client, $ret);
 	}
 
-
 	public function get_instances_bytype($client, $sesskey, $courseids, $idfield = 'idnumber', $type) {
 		//TODO merge with get_resources by giving $type="resource"
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'get_instances_bytype')) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_instances_bytype')) {
 			return $this->error('Invalid client connection.');
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
-            $courses = get_my_courses($USER->id);
+			$courses = get_my_courses($USER->id);
 		} else {
 			$courses = array ();
 			foreach ($courseids as $courseid) {
@@ -971,7 +574,7 @@ class server {
 			}
 		}
 		//remove courses not available to current user
-        		$courses =filter_courses($client, $courses);
+		$courses = filter_courses($client, $courses);
 		foreach ($courses as $course) {
 			$resources = get_all_instances_in_course($type, $course, NULL, true);
 			$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
@@ -988,21 +591,25 @@ class server {
 	     * @uses $CFG
 	     * @param int $client The client session ID.
 	     * @param string $sesskey The client session key.
-	     * @param string $userid The ATIStudentID number of the student.
-	     * @param string $courseids Array of short courses
-	     * @param string $idfield
-	     * @return userGrade [] $returna The student grades
+	     * @param string $userid The unique id of the student.
+         * @param string $useridfield The field used to identify the student.
+	     * @param string $courseids Array of courses ids
+	     * @param string $idfield  field used for course's ids (idnumber, shortname, id ...)
+	     * @return userGrade [] The student grades
 	     *
 	*/
-	function get_grades($client, $sesskey, $userid, $courseids, $idfield = 'idnumber') {
-		global $CFG,$USER;
+	function get_grades($client, $sesskey, $userid, $useridfield='idnumber',$courseids, $courseidfield = 'idnumber') {
+        global $CFG;
 		require_once ($CFG->dirroot . '/grade/lib.php');
 		require_once ($CFG->dirroot . '/grade/querylib.php');
-		if (!$this->validate_client($client, $sesskey,'get_grades')) {
+
+		if (empty ($courseids))
+			return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
+
+		if (!$this->validate_client($client, $sesskey, 'get_grades')) {
 			return $this->error('Invalid client connection.');
 		}
-		$uid = $USER->id;
-		if (!$user = get_record('user', 'idnumber', $userid)) {
+		if (!$user = get_record('user', $useridfield, $userid)) {
 			return $this->error('Could not find user record (' . $userid . ').');
 		}
 		$return = array ();
@@ -1010,16 +617,15 @@ class server {
 		foreach ($courseids as $cid) {
 			$rgrade = new stdClass;
 			/// Get the student grades for each course requested.
-			if ($course = get_record('course', $idfield, $cid)) {
-                $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (has_capability('gradereport/overview:view', $context)) {
+			if ($course = get_record('course', $courseidfield, $cid)) {
+				if ($this->has_capability('moodle/grade:viewall', CONTEXT_COURSE,$course->id)) {
 					//  get the floating point final grade
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
-                        $rgrade=$legrade;
-                        $rgrade->error = '';
-                        $rgrade->itemid = $cid;
+						$rgrade = $legrade;
+						$rgrade->error = '';
+						$rgrade->itemid = $cid;
 					} else {
-						$rgrade->error = 'No grade data for student ' . fullname($user) .						' in course ' . $course->fullname;
+						$rgrade->error = 'No grade data for student ' . fullname($user) . ' in course ' . $course->fullname;
 					}
 				} else {
 					$rgrade->error = ' not allowed to see grades  ' . $course->fullname;
@@ -1029,53 +635,57 @@ class server {
 			}
 			$return[] = $rgrade;
 		}
-        //$this->debug_output("GG".print_r($return, true));
-		return filter_grades($client,$return);
+		//$this->debug_output("GG".print_r($return, true));
+		return filter_grades($client, $return);
 	}
+	/**
+	 * return user's grade in all courses
+	 * @use get_grades by first creating an array of courses Moodle's ids
+	 */
 
+	public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
 
-	public function get_user_grades($client, $sesskey, $userid,$idfield="idnumber") {
-
-		if (!$user = get_record('user', 'idnumber', $userid)) {
+		if (!$user = get_record('user', $idfield, $userid)) {
 			return $this->error('Could not find user record (' . $userid . ').');
 		}
 		// we cannot call  API grade_get_course_grade($user->id) since it does not set the courseid as we want it
-		if (!$courses = get_my_courses($user->id, $sort='visible DESC,sortorder ASC', $fields='idnumber')) {
-			return $this->error('Could not find any grades for user ' . $userid );
+		if (!$courses = get_my_courses($user->id, $sort = 'sortorder ASC', $fields = 'idnumber')) {
+			return $this->error('Could not find any courses for user ' . $userid);
 		}
-		$courseids=array();
+		$courseids = array ();
 		foreach ($courses as $c)
-		      if (!empty($c->idnumber)) $courseids[]=$c->idnumber;
-		$this->debug_output("GUG=".print_r($courseids,true));
-        // caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
-        // resulting in two calls of to_soaparray !!!!
-		return server::get_grades($client,$sesskey,$userid,$courseids,'idnumber');
+			if (!empty($c->idnumber))
+                $courseids[] = $c->idnumber;
+		$this->debug_output("GUG=" . print_r($courseids, true));
+
+        if (empty($courseids))
+            return $this->error('Could not find any courses with set idnumber for user ' . $userid);
+		// caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
+		// resulting in two calls of to_soaparray !!!!
+		return server :: get_grades($client, $sesskey, $userid, $idfield, $courseids, 'idnumber');
 	}
 
-	public function get_course_grades($client, $sesskey, $courseid,$idfield="idnumber") {
-		global $CFG,$USER;
+	public function get_course_grades($client, $sesskey, $courseid, $idfield = "idnumber") {
+		global $CFG, $USER;
 		require_once ($CFG->dirroot . '/grade/lib.php');
 		require_once ($CFG->dirroot . '/grade/querylib.php');
-		if (!$this->validate_client($client, $sesskey,'get_course_grades')) {
+		if (!$this->validate_client($client, $sesskey, 'get_course_grades')) {
 			return $this->error('Invalid client connection.');
-		}
-		$uid = $USER->id;
+        }
 
-
-		$return =array();
+		$return = array ();
 		//Get all student grades for course requested.
 		if ($course = get_record('course', $idfield, $courseid)) {
-			$context = get_context_instance(CONTEXT_COURSE, $course->id);
-			if (has_capability('gradereport/overview:view', $context)) {
-				$students=array();
-				$context = get_context_instance(CONTEXT_COURSE, $course->id);
-				$students = get_role_users(5, $context, true,'');
+            $context=get_context_instance(CONTEXT_COURSE, $course->id);
+			if (has_capability('moodle/grade:viewall',$context)) {
+				$students = array ();
+				$students = get_role_users(5, $context, true, '');
 				//$this->debug_output("GcG".print_r($students, true));
 				foreach ($students as $user) {
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
 						$rgrade = $legrade;
 						$rgrade->error = '';
-						$rgrade->itemid=$user->idnumber;
+						$rgrade->itemid = $user->idnumber;
 						//  $this->debug_output("IDS=".print_r($legrade,true));
 						$return[] = $rgrade;
 					} else {
@@ -1092,81 +702,12 @@ class server {
 		}
 		//$this->debug_output("GcG".print_r($return, true));
 
-		return filter_grades($client,$return);
+		return filter_grades($client, $return);
 
 	}
 
 
 
-	/**
-	 * Enrol users as a student in the given category   (ATI Function) (modified)
-	 *
-	 * @param int $client The client session ID.
-	 * @param string $sesskey The client session key.
-	 * @param string $courseid The course ID number to enrol students in <- changed to category...
-	 * @param array $userids An array of input user idnumber values for enrolment.
-	 * @param string $idfield identifier used for users . Note that $courseid is expected
-	 *    to contains an idnumber and not Moodle id.
-	 * @return array Return data (user_student records) to be converted into a
-	 *               specific data format for sending to the client.
-	 */
-	function enrol_students($client, $sesskey, $courseid, $userids, $idfield = 'idnumber', $enrol=true) {
-		if (!$this->validate_client($client, $sesskey,'enrol_students')) {
-			return $this->error('Invalid client connection.');
-		}
-		global $CFG,$USER;
-		$role_student = 5; // student (default)
-		$groupid = 0; // for the role_assign function (what does this )
-		if (!$course = get_record('course', 'idnumber', $courseid)) {
-			return $this->error('Could not find course record (' . $courseid . ')');
-		}
-		$context = get_context_instance(CONTEXT_COURSE, $course->id);
-		if (!has_capability("moodle/role:assign",$context))
-			return $this->error('You do not have proper access to perform this operation.');
-		if ($course->enrolperiod) {
-			$timestart = time();
-			$timeend = $timestart + $course->enrolperiod;
-		} else {
-			$timestart = $timeend = 0;
-		}
-		$this->debug_output("IDS=" . print_r($userids, true)."\n".$enrol);
-		$return=array();
-		if (!empty ($userids)) {
-			foreach ($userids as $userid) {
-				$st = new enrolRecord();
-				if (!$leuser = get_record('user', $idfield, $userid)) {
-					$st->error='Could not find user record  for '.$userid;
-				} else {
-					$st->userid = $leuser->$idfield; //return the sent value
-					$st->course = $course->idnumber;
-					$st->timestart = $timestart;
-					$st->timeend = $timeend;
-					if ($enrol) {
-						if (!role_assign($role_student, $leuser->id, $groupid, $context->id,$timestart,$timeend,0,'webservice')) {
-							$st->error="error enroling";
-						} else {
-							$st->enrol="webservice";
-						}
-					} else {
-						if (!role_unassign($role_student, $leuser->id, $groupid, $context->id)) {
-							$st->error="error unenroling";
-						} else {
-							$st->enrol="no";
-						}
-					}
-				}
-				$return[] = $st;
-			}
-		}else {
-            $st=new enrolRecord();
-            $st->error="nothing to do !";
-            $return[] =$st;
-        }
-        $this->debug_output("ES".print_r($return,true));
-		return $return;
-	}
-
-	//PP BEGIN
 	/**
 	* determine the primary role of user in a course
 	* @param int $client The client session record ID.
@@ -1186,7 +727,7 @@ class server {
 	*/
 	function get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield) {
 		global $USER;
-        if (!$this->validate_client($client, $sesskey,'get_primaryrole_incourse')) {
+		if (!$this->validate_client($client, $sesskey, 'get_primaryrole_incourse')) {
 			return $this->error('Invalid client connection.');
 		}
 		$cuid = $USER->id;
@@ -1195,53 +736,15 @@ class server {
 		if (!$user)
 			return $this->error("user $useridfield='$userid' not found ");
 		$userid = $user->id;
-		// check rights
-		if (($userid != $cuid) && !$this->isadmin($cuid))
-			return $this->error("You do not have proper access to perform this operation.");
 		// convert course request criteria to a courseid
 		$course = get_record('course', $courseidfield, $courseid);
 		if (!$course)
 			return $this->error("course $courseidfield='$courseid' not found");
-		$courseid = $course->id;
-		if ($this->isadmin($userid))
-			return 1;
-		if ($this->iscreator($userid))
-			return 2;
-		if ($this->isteacheredit($courseid, $userid))
-			return 3;
-		if ($this->isteacher($courseid, $userid))
-			return 4;
-		//student
-		// strange : guest has also the course:view capability ?
-		// so we treat it before regular student
-		//guest
-		if ($this->using17) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-			if (has_capability('moodle/legacy:guest', $context, $userid, false)) {
-				if ($course->guest)
-					return 6;
-				else
-					return 0;
-			}
-		} else {
-			if (isguest($userid)) {
-				if ($course->guest)
-					return 6;
-				else
-					return 0;
-			}
-		}
-		//student
-		if ($this->using17) {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-			if (has_capability('moodle/course:view', $context, $userid, false))
-				return 5;
-		} else {
-			if (isstudent($courseid, $userid))
-				return 5;
-		}
-		return 0;
-	}
+		 return ws_get_primaryrole_incourse ($course->id,$userid);
+    }
+
+
+
 	/**
 	* determine if user has (at least) a given role in a course
 	* @param int $client The client session record ID.
@@ -1254,65 +757,10 @@ class server {
 	* @return boolean True if Ok , False otherwise.
 	*/
 	function has_role_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $roleid) {
-		global $USER;
-        if (!$this->validate_client($client, $sesskey,'has_role_incourse')) {
-			return $this->error('Invalid client connection.');
-		}
-		$cuid = $USER->id;
-		// convert user request criteria to an userid
-		$user = get_record('user', $useridfield, $userid);
-		if (!$user)
-			return $this->error("user $useridfield='$userid' not found ");
-		$userid = $user->id;
-		// check rights
-		if (($userid != $cuid) && !$this->isadmin($cuid))
-			return $this->error("You do not have proper access to perform this operation.");
-		// convert course request criteria to a courseid
-		$course = get_record('course', $courseidfield, $courseid);
-		if (!$course)
-			return $this->error("course $courseidfield='$courseid' not found");
-		$courseid = $course->id;
-
-			$this->debug_output("HRIC $userid $courseid $roleid " . print_r($user, true) . "
-			                             " . print_r($course, true));
-		switch ($roleid) {
-			case 1 :
-				return $this->isadmin($userid);
-				break;
-			case 2 :
-				return $this->iscreator($userid);
-				break;
-			case 3 :
-				return $this->isteacheredit($courseid, $userid);
-				break;
-			case 4 :
-				return $this->isteacher($courseid, $userid);
-				break;
-			case 5 : //student
-				if ($this->using17) {
-					$context = get_context_instance(CONTEXT_COURSE, $courseid);
-					return has_capability('moodle/course:view', $context, $userid, false);
-				} else {
-					return isstudent($courseid, $userid);
-				}
-				break;
-			case 6 : // guest TODO does not seems good since it does to check course
-				if ($this->using17) {
-					$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-					return has_capability('moodle/legacy:guest', $context, $userid, false);
-				} else {
-					return isguest($userid);
-				}
-				break;
-			default :
-				if (!$this->using17) {
-					return false;
-				} else {
-					//TODO search in mdl_roles_assignments
-					return false;
-				}
-		}
+		$tmp=server::get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield);
+        return  ($tmp <= $roleid);
 	}
+
 	/**
 	     * Find and return a list of courses that a user is a member of.
 	     *
@@ -1325,26 +773,28 @@ class server {
 	     *               data format for sending to the client.
 	     */
 	function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_my_courses')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_my_courses')) {
 			return $this->error('Invalid client connection.');
 		}
-		$cuid = $USER->id;
-		if ($uinfo) {
-			if ($idfield != 'id') { // find userid if not current user
-				if (!$user = get_record('user', $idfield, $uinfo))
-					return $this->error("user not found with $idfield= '$uinfo'");
-				$uid = $user->id;
-			} else
-				$uid = $uinfo; // rev 1.5.10
-		} else
-			$uid = $cuid; //use current user and ignore $idfield
-		//only admin user can request courses for others
-		if ($uid != $cuid) {
-			if (!$this->isadmin($cuid)) {
-				return $this->error($cuid . ' You do not have proper access to perform this operation.');
-			}
-		}
+        $cuid = $USER->id;
+        if ($uinfo) {
+            if ($idfield != 'id') { // find userid if not current user
+                if (!$user = get_record('user', $idfield, $uinfo))
+                    return $this->error("user not found with $idfield= '$uinfo'");
+                $uid = $user->id;
+            } else
+                $uid = $uinfo; // rev 1.5.10
+        } else
+            $uid = $cuid; //use current user and ignore $idfield
+        //only admin user can request courses for others
+        if ($uid != $cuid) {
+            if (! $this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM,0)){
+                return $this->error($cuid . ' You do not have proper access to perform this operation.');
+            }
+        }
+
+
 		$sort = $sort ? $sort : 'fullname';
 		if (isguest($uid)) //isguest is deprecated by still used in Moodle's 1.7 index.php ?
 			//strange: courses with guest=1 and a password are not returned ?
@@ -1356,110 +806,46 @@ class server {
 		else
 			return $this->non_fatal_error("no courses");
 	}
-	/**
-	  try to "emulate" Moodle 1.7 get_role_users at the best in Moodle 1.6
-	*/
-	private function get_role_users_16($client, $course, $idrole) {
-		global $CFG;
-		$select = 'SELECT u.* ';
-		$where = 'WHERE s.course = ' . $course->id . ' AND u.deleted = 0 ';
-		$order = 'order by lastname,firstname';
-		switch ($idrole) {
-			// case 0:; //all not permitted
-			case 1 : //admin
-				$from = 'FROM ' . $CFG->prefix . 'user u ,' . $CFG->prefix . 'user_admins s ';
-				$where = 'WHERE  s.userid = u.id ';
-				$this->debug_output($select . $from . $where . $order);
-				if ($res = get_records_sql($select . $from . $where . $order)) {
-					returnfilter_users($client, $res);
-				} else
-					return $this->error("get_user_bycourse : no admins ???");
-				break;
-			case 2 : // creator
-			case 3 : // teachers
-			case 4 : // ne teacher
-				$not = $idrole == 4 ? 'not' : '';
-				$where .= ' and ' . $not . ' s.editall ';
-				if ($idrole == 2)
-					$where .= ' and s.authority=1 ';
-				$from = 'FROM ' . $CFG->prefix . 'user u LEFT JOIN ' . $CFG->prefix . 'user_teachers s ON s.userid = u.id ';
-				if ($res = get_records_sql($select . $from . $where . $order)) {
-					returnfilter_users($client, $res);
-				} else
-					return $this->non_fatal_error("get_user_bycourse : no match for student");
-				break;
-			case 5 : //students
-				$from = 'FROM ' . $CFG->prefix . 'user u LEFT JOIN ' . $CFG->prefix . 'user_students s ON s.userid = u.id ';
-				if ($res = get_records_sql($select . $from . $where . $order)) {
-					returnfilter_users($client, $res);
-				} else
-					return $this->non_fatal_error("get_user_bycourse : no match for student");
-				break;
-			case 6 :
-				if ($course->guest) //guest
-					returnfilter_users($client, get_records('user', 'username', 'guest'));
-				else
-					return $this->non_fatal_error("get_user_bycourse : no match for guest");
-				break; //guest
-			default :
-				return $this->error("Role ID is incorrect");
-		}
-	}
+
+
 	function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole = 0) {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_users_bycourse')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_users_bycourse')) {
 			return $this->error('Invalid client connection.');
 		}
 		if (!$course = get_record('course', $idfield, $idcourse)) {
 			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
 		}
-		$cuid = $USER->id;
-		//only teacher or admin can do that ...
-		if (!$this->isteacher($course->id, $cuid, true)) {
+		if (! $this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
 			return $this->error('You do not have proper access to perform this operation.');
+
+		if (!empty($roleid) && !record_exists('role', 'id', $idrole))
+			return $this->error("Role ID is incorrect");
+         $context = get_context_instance(CONTEXT_COURSE, $course->id);
+		if ($res = get_role_users($idrole, $context, true, '')) {
+			return filter_users($client, $res, $idrole);
 		} else {
-			if ($this->using17) {
-				if ($idrole) {
-					if (!record_exists('role', 'id', $idrole))
-						return $this->error("Role ID is incorrect");
-				}
-				$context = get_context_instance(CONTEXT_COURSE, $course->id);
-				// if ($res=get_role_users($idrole, $context, true, '*')) {   rev 1.5.12 01/07/2008
-				if ($res = get_role_users($idrole, $context, true, '')) {
-					returnfilter_users($client, $res, $idrole);
-				} else {
-					return $this->non_fatal_error("get_user_bycourse : no match");
-				}
-			} else { //moodle < 1.7
-				$ret = $this->get_role_users_16($client, $course, $idrole);
-			}
+			return $this->non_fatal_error("get_users_bycourse : no match");
 		}
-		// file_put_contents("$CFG->dataroot/debug_pp.log",'get_users_bycourse'.print_r($res,true));
 		return $ret;
 	}
+
 	function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_roles')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_roles')) {
 			return $this->error('Invalid client connection.');
 		}
-		$cuid = $USER->id;
-		//only teacher or admin can do that ...
-		if (!$this->isteacherinanycourse($cuid, true)) {
-			return $this->error('You do not have proper access to perform this operation.');
+		// Get a list of all the roles in the database, sorted by their short names.
+		if ($res = get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
+			return $res;
 		} else {
-			if ($this->using17) {
-				// Get a list of all the roles in the database, sorted by their short names.
-				if ($res = get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
-					return $res;
-				} else {
-					return $this->error("get_roles : search error");
-				}
-			} else
-				return $this->non_fatal_error("get roles : no roles in Moodle <1.7");
+			return $this->error("get_roles : no roles ???");
 		}
 	}
+
+
 	function get_categories($client, $sesskey, $catid = '', $idfield = '') {
-		if (!$this->validate_client($client, $sesskey,'get_categories')) {
+		if (!$this->validate_client($client, $sesskey, 'get_categories')) {
 			return $this->error('Invalid client connection.');
 		}
 		$ret = array ();
@@ -1471,8 +857,10 @@ class server {
 		}
 		return $ret;
 	}
+
+
 	function get_events($client, $sesskey, $eventtype, $ownerid) {
-        global $USER;
+		global $USER;
 		//NOT FINISHED
 		/* TODO decide according to $eventype what to return
 			global events
@@ -1485,15 +873,12 @@ class server {
 		    it's definitively a course event
 		    if course is not set, but userid id set, it's a user event
 		    */
-		if (!$this->validate_client($client, $sesskey,'get_events')) {
+		if (!$this->validate_client($client, $sesskey, 'get_events')) {
 			return $this->error('Invalid client connection.');
 		}
 		$ret = array ();
 		$cuid = $USER->id;
-		//only teacher or admin can do that ...
-		if (!$this->isteacherinanycourse($cuid, true)) {
-			return $this->error('You do not have proper access to perform this operation.');
-		} else {
+
 			// Get a list of all the events in the database, sorted by their short names.
 			//TODO filter by eventype ...
 			switch ($eventtype) {
@@ -1505,7 +890,7 @@ class server {
 					$idfield = 'courseid';
 					break;
 				case cal_show_group :
-					$idfield = 'groupeid';
+					$idfield = 'groupid';
 					break;
 				case cal_show_user :
 					$idfield = 'userid';
@@ -1516,23 +901,27 @@ class server {
 			}
 			if ($res = get_records('event', $idfield, $ownerid)) {
 				foreach ($res as $r) {
-					$r =filter_event($client, $eventtype, $r);
+					$r = filter_event($client, $eventtype, $r);
 					if ($r)
 						$ret[] = $r;
 				}
 			} else {
-				return $this->error("get_events : search error");
+				return $this->non_fatal_error("get_events : search error");
 			}
-		}
+
 		return $ret;
 	}
+
 	function get_group_members($client, $sesskey, $groupid) {
-		if (!$this->validate_client($client, $sesskey,'get_group_members')) {
+		if (!$this->validate_client($client, $sesskey, 'get_group_members')) {
 			return $this->error('Invalid client connection.');
 		}
-		if (!record_exists('groups', 'id', $groupid)) {
+		if (! $group=get_record('groups', 'id', $groupid)) {
 			return $this->error('Invalid group ' . $groupid);
 		}
+
+        if (!$this-> has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
+            return $this->error('You do not have proper access to perform this operation.');
 		$res = get_group_users($groupid);
 		if (!$res)
 			return $this->error('no group members.' . $groupid);
@@ -1545,61 +934,26 @@ class server {
 		}
 		return $USER->id;
 	}
+
 	function get_groups_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_groups_bycourse')) {
+		global $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_groups_bycourse')) {
 			return $this->error('Invalid client connection.');
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
 			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
 		}
-		$res = get_groups($course->id);
 
+        if (! $this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
+            return $this->error('You do not have proper access to perform this operation.');
+		$res = get_groups($course->id);
 		if (!$res)
 			return $this->non_fatal_error('no groups in course.' . $courseid);
 		return filter_groups($client, $res);
 	}
-	function get_groups($client, $sesskey, $groups, $idfield, $courseid) {
-		if (empty ($groups) && $courseid) {
-			return $this->get_groups_bycourse($client, $sesskey, $courseid);
-		}
-		if (!$this->validate_client($client, $sesskey,'get_groups')) {
-			return $this->error('Invalid client connection.');
-		}
-		global $CFG;
-		$ret = array ();
-		if ($courseid) {
-			$courseselect = 'AND g.courseid =' . $courseid;
-		} else {
-			$courselect = '';
-		}
-		foreach ($groups as $group) {
-			$sql = "SELECT g.*
-			                                FROM {$CFG->prefix}groups g
-			        	                     WHERE g.$idfield ='$group' $courseselect ";
-			$rgroup = new StdClass();
-			/// This database operation MIGHT throw an HTML error message,
-			/// so we've got to catch that and send it back in an error
-			/// request.
-			ob_start();
-			$g = get_records_sql($sql);
-			if (ob_get_length() && trim(ob_get_contents())) {
-				/// Return an error with  the contents of the output buffer.
-				$msg = trim(ob_get_clean());
-				$ret[] = $this->error('Database error: ' . $msg);
-			}
-			ob_end_clean();
-			if (!empty ($g)) {
-				$g =filter_groups($client, $g);
-				foreach ($g as $one) {
-					$ret[] = $one;
-				}
-			} else {
-				$ret[] = $this->non_fatal_error("Invalid group $idfield :$group ");
-			}
-		}
-		return filter_groups($ret);
-	}
+
+
+
 	/**
 	 * Returns the user's groups in all courses (not found in Moodle API)
 	 *
@@ -1609,37 +963,49 @@ class server {
 	 *         if uid is not equal to current's user id, current user must be admin.
 	 * @return array of object
 	 */
-	function get_my_groups($client, $sesskey, $uid) {
-        global $USER;
-		if (!$this->validate_client($client, $sesskey,'get_mygroups')) {
+	function get_my_groups($client, $sesskey, $uinfo='',$idfield="idnumber") {
+		global $USER,$CFG;
+		if (!$this->validate_client($client, $sesskey, 'get_mygroups')) {
 			return $this->error('Invalid client connection.');
 		}
 		$cuid = $USER->id;
-		if (!empty ($uid) && ($uid != $cuid))
-			if (!$this->isadmin($cuid))
-				return $this->error("only admins can do that");
-		global $CFG;
+        if ($uinfo) {
+            if ($idfield != 'id') { // find userid if not current user
+                if (!$user = get_record('user', $idfield, $uinfo))
+                    return $this->error("user not found with $idfield= '$uinfo'");
+                $uid = $user->id;
+            } else
+                $uid = $uinfo; // rev 1.5.10
+        } else
+            $uid = $cuid; //use current user and ignore $idfield
+        //only an user that can login as another can request  for others
+        if ($uid != $cuid) {
+            if (! $this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM,0)){
+                return $this->error($cuid . ' You do not have proper access to perform this operation.');
+            }
+        }
 		$uid = $uid ? $uid : $cuid;
 		$sql = "SELECT g.*
-		                      FROM {$CFG->prefix}groups g,
-		                      {$CFG->prefix}groups_members m
-		                      WHERE g.id = m.groupid
-		                      AND m.userid = '$uid'
-		                      ORDER BY name ASC";
+		 FROM {$CFG->prefix}groups g,
+		 {$CFG->prefix}groups_members m
+		 WHERE g.id = m.groupid
+		 AND m.userid = '$uid'
+		 ORDER BY name ASC";
 		$res = get_records_sql($sql);
-		//file_put_contents("$cfg->dataroot/debug_pp.log",'server:get_my_groups '.$sql.' '.print_r($res,true));
 		return filter_groups($client, $res);
 	}
+
+
 	function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
-		global $CFG,$USER;
-		if (!$this->validate_client($client, $sesskey,'get_last_changes')) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'get_last_changes')) {
 			return $this->error('Invalid client connection.');
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
 			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
 		}
 		$cuid = $USER->id;
-		$isTeacher = $this->isteacher($course->id, $cuid);
+		$isTeacher = $this->has_capability("moodle/course:update",CONTEXT_COURSE,$course->id);
 		//must have id as first field for proper array indexing !
 		$sqlAct =<<<EOS
 		SELECT DISTINCT {$CFG->prefix}log.id,module, {$CFG->prefix}log.url, info,
@@ -1713,12 +1079,17 @@ EOS;
 			}
 		}
 
-			$this->debug_output(print_r($return, true));
+		$this->debug_output(print_r($return, true));
 		return filter_changes($client, $return);
 	}
+
+    /**
+     * return all logged actions of user in one course or any course
+     */
+
 	function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
 		global $USER;
-        if (!$this->validate_client($client, $sesskey,'get_activities')) {
+		if (!$this->validate_client($client, $sesskey, 'get_activities')) {
 			return $this->error('Invalid client connection.');
 		}
 		//resolve user criteria to an user  Moodle's id
@@ -1731,15 +1102,15 @@ EOS;
 			if (!$course = get_record('course', $courseidfield, $courseid))
 				return $this->error('Invalid course ' . $courseidfield . "=" . $courseid);
 			$sql_course = " AND  l.course=$course->id ";
-			$canRead = $this->isteacher($course->id, $cuid);
+			$canRead = $this->has_capability('coursereport/log:view',CONTEXT_COURSE,$course->id);
 		} else {
 			$sql_course = '';
-			$canRead = $this->isadmin($cuid);
+			$canRead = $this->has_capability('coursereport/log:view',CONTEXT_SYSTEM,0);
 		}
 		if (($cuid != $user->id) && !$canRead) {
 			return $this->error('You do not have proper access to perform this operation');
 		}
-		if ($doCount)			// caution result MUST have some id value to fetch result later
+		if ($doCount) // caution result MUST have some id value to fetch result later
 			$sql_select = " SELECT 1,count(l.userid) as CPT ";
 		else {
 			$sql_select =<<<EOS
@@ -1770,6 +1141,405 @@ EOSS;
 			return filter_activities($client, $res);
 		//reconvert dates using userdate()
 	}
+
+
+    /**
+     * Enrol users as a student in the given category
+     *
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @param string $courseid The course ID number to enrol students in <- changed to category...
+     * @param array $userids An array of input user idnumber values for enrolment.
+     * @param string $idfield identifier used for users . Note that $courseid is expected
+     *    to contains an idnumber and not Moodle id.
+     * @return array Return data (user_student records) to be converted into a
+     *               specific data format for sending to the client.
+     */
+    function affect_role_incourse($client, $sesskey, $rolename,$courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
+        if (!$this->validate_client($client, $sesskey, 'enrol_students')) {
+            return $this->error('Invalid client connection.');
+        }
+        global $CFG, $USER;
+
+       if (!($role =get_record('role', 'shortname', $rolename))) {
+            return $this->error("Could not find role ".$rolename);
+        }
+
+        $groupid = 0; // for the role_assign function (what does this )
+        if (!$course = get_record('course', $courseidfield, $courseid)) {
+            return $this->error('Could not find course record (' . $courseid . ')');
+        }
+
+        if (!$this->has_capability("moodle/role:assign", CONTEXT_COURSE, $course->id))
+            return $this->error('You do not have proper access to perform this operation.');
+        if ($course->enrolperiod) {
+            $timestart = time();
+            $timeend = $timestart + $course->enrolperiod;
+        } else {
+            $timestart = $timeend = 0;
+        }
+        $this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol);
+        $return = array ();
+        if (!empty ($userids)) {
+            foreach ($userids as $userid) {
+                $st = new enrolRecord();
+                if (!$leuser = get_record('user', $useridfield, $userid)) {
+                    $st->error = 'Could not find user record  for ' . $userid;
+                } else {
+                    $st->userid = $leuser-> $useridfield; //return the sent value
+                    $st->course = $course->$courseidfield;
+                    $st->timestart = $timestart;
+                    $st->timeend = $timeend;
+                    if ($enrol) {
+                        if (!role_assign($role->id, $leuser->id, $groupid, $context->id, $timestart, $timeend, 0, 'webservice')) {
+                            $st->error = "error enroling";
+                            $op="error enroling ".$st->userid." to ".$st->course;
+                        } else {
+                            $st->enrol = "webservice";
+                            $op= $rolename." ".$st->userid." added to ".$st->course;
+                        }
+                    } else {
+                        if (!role_unassign($role->id, $leuser->id, $groupid, $context->id)) {
+                            $st->error = "error unenroling";
+                             $op="error unenroling ".$st->userid." from ".$st->course;
+                        } else {
+                            $st->enrol = "no";
+                             $op=$rolename ." ".$st->userid." removed from ".$st->course;
+                        }
+                    }
+                }
+                $return[] = $st;
+                if ($CFG->ws_logdetailedoperations)
+                    add_to_log(SITEID, 'webservice', 'webservice pp','', $op);
+            }
+        } else {
+            $st = new enrolRecord();
+            $st->error = "nothing to do !";
+            $return[] = $st;
+        }
+        $this->debug_output("ES" . print_r($return, true));
+        return $return;
+    }
+
+
+	/**
+	* Edit user records (add/update/delete).
+	* FIXED in rev 1.5.8
+	* @uses $CFG
+	* @param int $client The client session ID.
+	* @param string $sesskey The client session key.
+	* @param array $users An array of user records (objects or arrays) for editing
+	*                     (including opertaion to perform).
+	* @return array Return data (user record) to be converted into a
+	*               specific data format for sending to the client.
+	*/
+	function edit_users($client, $sesskey, $users) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'edit_users')) {
+			return $this->error('Invalid client connection.');
+		}
+		$uid = $USER->id;
+		$rusers = array ();
+		$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
+		if (!empty ($users)) {
+			foreach ($users->users as $user) {
+				$ruser = new stdClass();
+
+				$this->debug_output('traitement de ' . print_r($user, true));
+				//obs by Lille: add md5 to the password
+				// todo test whether it is needed or not ?
+				$user->password = md5($user->password);
+				switch (trim(strtolower($user->action))) {
+					case 'add' :
+
+						if (!$this->has_capability('moodle/user:add', CONTEXT_SYSTEM,0)) {
+							$ruser->error = "not allowed to add users";
+							break;
+						}
+						unset ($user->action);
+						$this->debug_output('adding' . print_r($user, true));
+						//Moodle 1.8 and later (a required field that must be non 0 for login )
+						if (!empty ($CFG->mnet_localhost_id))
+							if (empty ($user->mnethostid)) //if not set by caller
+								$user->mnethostid = $CFG->mnet_localhost_id; // always local user
+
+						// Lille : verify if current user is already in database
+						if ($userExist = get_record("user", "username", $user->username)) {
+							$ruser = $userExist;
+							$ruser->error = "user $user->username  already exists";
+							break;
+						}
+						// end Lille
+						if (empty ($user->confirmed)) {
+							$user->confirmed = true;
+						}
+						$user->id = insert_record('user', $user);
+
+						$this->debug_output('ID is ' . $user->id);
+
+						if (empty ($user->id)) {
+							$ruser->error = 'Could not add user: ' . fullname($user);
+						} else {
+							$ruser = get_record('user', 'id', $user->id);
+						}
+						break;
+
+					case 'update' :
+						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM,0)) {
+							$ruser->error = "not allowed to update users";
+							break;
+						}
+						$uid = $user->idnumber;
+						unset ($user->action);
+						$this->debug_output('Attempting to update user ID: ' . $uid);
+
+						if (!$userup = get_record('user', 'idnumber', $uid)) {
+							$ruser = $user;
+							$ruser->error = "update : user with idnumber $uid not found";
+							break;
+
+						} else {
+							/// Update values in the $user database record with what
+							/// the client supplied.
+							foreach ($user as $key => $value)
+								if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
+									$userup-> $key = $value;
+							$userup->timemodified = time();
+
+							if (update_record('user', $userup)) {
+								$ruser = $ruser = get_record('user', 'id', $user->id);
+							} else {
+								$ruser = $user;
+								$ruser->error = 'Could not update user: ' . $uid;
+							}
+						}
+						break;
+					case 'delete' :
+						$uid = $user->idnumber;
+						/// Deleting an existing user.
+						if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM,0)) {
+							$ruser->error = "not allowed to delete users";
+							break;
+						}
+						$ruser = $user;
+						if ($userdel = get_record('user', 'idnumber', $uid)) {
+							if (!delete_user($userdel)) {
+								$ruser->error = "database error when deleting user with idnumber $uid";
+							}
+						} else {
+							$ruser->error = "delete: user with idnumber $uid not found";
+
+						}
+
+						break;
+
+				}
+				$rusers[] = $ruser;
+			}
+		}
+		return $rusers;
+	}
+
+	/**
+	 * Edit course records (add/update/delete).
+	 * TESTED and fixed in rev 1.5.8 PP
+	 * @uses $CFG
+	 * @param int $client The client session ID.
+	 * @param string $sesskey The client session key.
+	 * @param array $courses An array of course records (objects or arrays) for editing
+	 *                       (including opertaion to perform).
+	 * @return array Return data (course record) to be converted into a specific
+	 *               data format for sending to the client.
+	 */
+	function edit_courses($client, $sesskey, $courses) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, 'edit_courses')) {
+			return $this->error('Invalid client connection.');
+		}
+		$uid = $USER->id;
+		$site = get_site();
+		$ret = array ();
+		if (!empty ($courses)) {
+			foreach ($courses->courses as $course) {
+				$rcourse = new stdClass;
+				switch (trim(strtolower($course->action))) {
+					case 'add' :
+						/// Adding a new course.
+						$courseadd = $course;
+
+						$this->debug_output('Trying to add a new course.');
+						/// Check for correct permissions.
+						if (!$this->iscreator($uid)) {
+
+							$this->debug_output('Invalid access UID: ' . $uid);
+							$rcourse->error = 'You do not have proper access to perform this operation.';
+						} else
+							if (record_exists('course', 'idnumber', $courseadd->idnumber)) {
+								$rcourse->error = 'A course with this ID number already exists: ' . $courseadd->idnumber;
+							} else {
+								/// These database operations MIGHT throw an HTML error message,
+								/// so we've got to catch that and send it back in an error
+								/// request.
+								//verify if current course is aleready in db
+								//Lille
+								$this->debug_output("ajunge ACI");
+								if ($courseExist = get_record("course", "shortname", $course->shortname)) {
+									$rcourse = $courseExist;
+									$rcourse->error = "course shortname $course->shortname already used";
+									break;
+								}
+								//TODO collect Admin default settings  (see course/pending)
+
+								// place at beginning of category
+								fix_course_sortorder();
+								$courseadd->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM " . "{$CFG->prefix}course WHERE category=$courseadd->category");
+								if (empty ($courseadd->sortorder)) {
+									$courseadd->sortorder = 100;
+								}
+								if (!isset ($courseadd->maxbytes)) {
+									$byteschoices = get_max_upload_sizes($CFG->maxbytes);
+									$courseadd->maxbytes = key($byteschoices);
+								}
+								if (!isset ($courseadd->startdate)) {
+									$courseadd->startdate = time();
+								}
+								$courseadd->timecreated = time();
+								$courseadd->timemodified = time();
+								//make sure a category is specified - default moodle category is implicit
+								if (!isset ($courseadd->category) || $courseadd->category == 0) {
+									$courseadd->category = 1;
+								}
+								$courseadd->id = insert_record('course', $courseadd);
+
+								if (empty ($courseadd->id)) {
+									$rcourse->error = 'Could not add course: ' . $courseadd->shortname;
+								} else {
+									require_once ($CFG->libdir . '/pagelib.php');
+									require_once ($CFG->libdir . '/blocklib.php');
+									/// These API calls MIGHT throw an HTML error message,
+									/// so we've got to catch that and send it back in an error
+									/// request.
+
+									/// Setup page blocks.
+									$page = page_create_object(PAGE_COURSE_VIEW, $courseadd->id);
+									blocks_repopulate_page($page);
+
+									/// Create a default section.
+									$section = NULL;
+									$section->course = $courseadd->id;
+									$section->section = 0;
+									$section->id = insert_record('course_sections', $section);
+
+
+									$rcourse = get_record('course', 'id', $courseadd->id);
+								}
+							}
+						break;
+                    /********************************
+					case 'update' :
+						/// Updating an existing course.
+						$courseup = $course;
+						$cid = $courseup->idnumber;
+						$dbfail = false;
+
+						$this->debug_output('Attempting to update course ID: ' . $cid . print_r($course, true));
+						/// This database operation MIGHT throw an HTML error message,
+						/// so we've got to catch that and send it back in an error
+						/// request.
+
+						$course = get_record('course', 'idnumber', $cid);
+
+						if (empty ($course)) {
+							$rcourse->error = 'Could not find course ID: ' . $cid;
+						} else
+							if (!$dbfail && !$this->isteacher($course->id, $uid)) {
+								$rcourse->error = 'You do not have proper access to perform this operation.';
+							} else
+								if (!$dbfail) {
+									/// Update values in the course database record with what
+									/// the client supplied.
+									foreach ($courseup as $key => $value)
+									if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
+										$course-> $key = $value;
+									$course->timemodified = time();
+
+									$success = update_record('course', $course);
+
+									if (!$success) {
+										$rcourse->error = 'Could not update course: ' . $cid;
+									} else
+
+										$rcourse = get_record('course', 'id', $course->id);
+								}
+				}
+
+				break;
+                ****************************************************************/
+				case 'delete' :
+					/// Deleting an existing course.
+					$cid = $course->idnumber;
+					$dbfail = false;
+					/// Check for correct permissions.
+					if (!$this->isadmin($uid)) {
+						$rcourse->error = 'You do not have proper access to ' . 'perform this operation.';
+					} else {
+
+						$this->debug_output('Attempting to delete course ID: ' . $cid);
+						/// This database operation MIGHT throw an HTML error message,
+						/// so we've got to catch that and send it back in an error
+						/// request.
+
+						$course = get_record('course', 'idnumber', $cid);
+
+
+						if ( empty ($course)) {
+							$rcourse->error = 'Could not find course ID: ' . $cid;
+						} else
+							if (!$dbfail) {
+								/// 'Delete' the course the Moodle way.
+								$success_r = true;
+								$success_d = true;
+								$success_f = true;
+								/// These operations MIGHT throw an HTML error message,
+								/// so we've got to catch that and send it back in an error
+								/// request.
+
+								require_once ($CFG->libdir . '/moodlelib.php');
+								$success_r = remove_course_contents($course->id, false);
+
+								if ($success_r ) {
+									$success_d = delete_records('course', 'id', $course->id);
+								}
+
+								if ($success_r && $success_d && !isset ($rcourse->error) && ($dir = @ opendir($CFG->dataroot . '/' . $course->id))) {
+									closedir($dir);
+									require_once ($CFG->libdir . '/filelib.php');
+									$success_f = fulldelete($CFG->dataroot . '/' . $course->id);
+								}
+
+								if (!isset ($rcourse->error)) {
+									if (!$success_r) {
+										$rcourse->error = 'Error deleting some of the course contents (' . $cid . ').';
+									} else
+										if (!$success_d) {
+											$rcourse->error = 'Error deleting the course record (' . $cid . ').';
+										} else
+											if (!$success_f) {
+												$rcourse->error = 'Error deleting the course data (' . $cid . ').';
+											} else {
+												$rcourse = $course;
+											}
+								}
+							}
+					}
+					break;
+			}
+			$ret[] = $rcourse;
+		}
+	}
+	return $ret;
+}
+
 	/*
 	*****************************************************************************************************************************
 	*                                                                                                                           *
@@ -1784,14 +1554,7 @@ EOSS;
 	*       status indicates if operation succeded
 	*       if status=false then the error field contains the coresponding error message
 	*/
-	//Utility functions
-	function has_capabilities($client, $sesskey, $capability, $context_type, $instance_id) {
-        global $USER;
-		$context = get_context_instance($context_type, $instance_id);
-		//$myId = $this->get_my_id($client, $sesskey);
-		return has_capability($capability, $context, $USER->id);
-	}
-	///Utility functions
+
 	/**
 	* Edit label records (add/update/delete).
 	* @uses $CFG
@@ -1805,24 +1568,24 @@ EOSS;
 	function edit_labels($client, $sesskey, $labels) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/label/lib.php");
-		if (!$this->validate_client($client, $sesskey,'edit_labels')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_labels')) {
 			return $this->error('EDIT_LABELS:   Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($labels)) {
 			foreach ($labels->labels as $label) {
-				switch ($label->action) {
-					case 'Add' :
+				switch (trim(strtolower($label->action))) {
+					case 'add' :
 						/// Adding a new label.
 						$labeladd = $label;
 
-							$this->debug_output('EDIT_LABELS:    Trying to add a new label.');
+						$this->debug_output('EDIT_LABELS:    Trying to add a new label.');
 						/// These database operations MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rlabel->error = "EDIT_LABELS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -1843,18 +1606,13 @@ EOSS;
 							break;
 						}
 						$rlabel = get_record('label', 'id', $labelid);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rlabel->error = 'EDIT_LABELS:  Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rlabel->error = "EDIT_LABELS:  Operation Update not implemented yet!";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						$rlabel->error = "EDIT_LABELS:  Operation Delete not implemented yet!";
 						break;
 					default :
@@ -1865,6 +1623,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit category records (add/update/delete).
 	* @uses $CFG
@@ -1878,24 +1637,24 @@ EOSS;
 	function edit_categories($client, $sesskey, $categories) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/course/lib.php");
-		if (!$this->validate_client($client, $sesskey,'edit_categories')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_categories')) {
 			return $this->error('EDIT_CATEGORIES:    Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($categories)) {
 			foreach ($categories->categories as $category) {
-				switch ($category->action) {
-					case 'Add' :
+                switch (trim(strtolower($user->action))) {
+					case 'add' :
 						/// Adding a new category.
 						$categoryadd = $category;
 
-							$this->debug_output('EDIT_CATEGORIES:    Trying to add a new category.');
+						$this->debug_output('EDIT_CATEGORIES:    Trying to add a new category.');
 						/// These database operations MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:create', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/category:create', CONTEXT_SYSTEM, 0)) {
 							$rcategory->error = "EDIT_CATEGORIES:   You do not have proper access to perform this operation.";
 							break;
 						}
@@ -1916,25 +1675,20 @@ EOSS;
 							break;
 						}
 						$rcategory = get_record('course_categories', 'id', $categoryadd->id);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rcategory->error = 'EDIT_CATEGORIES:   Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						/// Updating an existing category.
 						$cid = $category->id;
 						$cname = $category->name;
 
-							$this->debug_output('EDIT_CATEGORIES:    Attempting to update category ID: ' . $cid . print_r($category, true));
+						$this->debug_output('EDIT_CATEGORIES:    Attempting to update category ID: ' . $cid . print_r($category, true));
 						/// This database operation MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
-						if (!$this->has_capabilities($client, $sesskey, "moodle/category:update", CONTEXT_SYSTEM, 0)) {
+
+						if (!$this->has_capability( "moodle/category:update", CONTEXT_SYSTEM, 0)) {
 							$rcategory->error = 'EDIT_CATEGORIES:  You do not have proper access to perform this operation.';
 							break;
 						}
@@ -1955,26 +1709,20 @@ EOSS;
 						}
 						fix_course_sortorder();
 						$rcategory = get_record('course_categories', 'id', $database_category->id);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_clean());
-							$rcategory->error = 'EDIT_CATEGORIES:   Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
-					case 'Delete' :
+					case 'delete' :
 						/// Deleting an existing category.
 						$cname = $category->name;
 						$cid = $category->id;
 
-							$this->debug_output('EDIT_CATEGORIES:    Attempting to delete category ID: ' . $cid);
+						$this->debug_output('EDIT_CATEGORIES:    Attempting to delete category ID: ' . $cid);
 						/// This database operation MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, "moodle/category:delete", CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability("moodle/category:delete", CONTEXT_SYSTEM, 0)) {
 							$rcategory->error = 'EDIT_CATEGORIES:   You do not have proper access to perform this operation.';
 							break;
 						}
@@ -1997,21 +1745,14 @@ EOSS;
 									$rcategory->error = "EDIT_CATEGORIES: Error deleting category with id: $_category->id";
 									break;
 								}
-								//this should be removed after the mentioned bug will be fixed
-								ob_clean();
+
 							}
 						}
 						if (!$deleted_commit) {
 							$rcategory->error = "EDIT_CATEGORIES:   Could not delete category with id $cid or name $cname.";
 							break;
 						}
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_clean());
-							$rcategory->error = 'EDIT_CATEGORIES:   Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
 					default :
 						$rcategory->error = "EDIT_CATEGORIES:   Invalid operation: $category->action.";
@@ -2022,6 +1763,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit section records (add/update/delete).
 	* @uses $CFG
@@ -2034,24 +1776,24 @@ EOSS;
 	*/
 	function edit_sections($client, $sesskey, $sections) {
 		global $CFG;
-		if (!$this->validate_client($client, $sesskey,'edit_sections')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_sections')) {
 			return $this->error('EDIT_SECTIONS:   Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($sections)) {
 			foreach ($sections->sections as $section) {
-				switch ($section->action) {
-					case 'Add' :
+                switch (trim(strtolower($section->action))) {
+					case 'add' :
 						/// Adding a new section.
 						$sectionadd = $section;
 
-							$this->debug_output('EDIT_SECTIONS:    Trying to add a new section.');
+						$this->debug_output('EDIT_SECTIONS:    Trying to add a new section.');
 						/// These database operations MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:update', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability( 'moodle/course:update', CONTEXT_SYSTEM, 0)) {
 							$rsection->error = "EDIT_SECTIONS: You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2065,17 +1807,13 @@ EOSS;
 							break;
 						}
 						$rsection = get_record('course_sections', 'id', $resultInsertion);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rsection->error = 'EDIT_SECTIONS:    Database error: ' . $msg;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rsection->error = "EDIT_SECTIONS:  Operation Update not implemented yet!";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						$rsection->error = "EDIT_SECTIONS:  Operation Delete not implemented yet!";
 						break;
 					default :
@@ -2086,6 +1824,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit forum records (add/update/delete).
 	* @uses $CFG
@@ -2099,18 +1838,18 @@ EOSS;
 	function edit_forums($client, $sesskey, $forums) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/forum/lib.php");
-		if (!$this->validate_client($client, $sesskey,'edit_forums')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_forums')) {
 			return $this->error('EDIT_FORUMS:    Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($forums)) {
 			foreach ($forums->forums as $forum) {
-				switch ($forum->action) {
-					case 'Add' :
+                switch (trim(strtolower($forum->action))) {
+					case 'add' :
 						/// Adding a new forum.
 						$forumadd = $forum;
 
-							$this->debug_output('EDIT_FORUMS:     Trying to add a new forum.');
+						$this->debug_output('EDIT_FORUMS:     Trying to add a new forum.');
 						if (empty ($forumadd->type)) {
 							$forumadd->type = "general";
 						}
@@ -2121,9 +1860,9 @@ EOSS;
 						/// These database operations MIGHT throw an HTML error message,
 						/// so we've got to catch that and send it back in an error
 						/// request.
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rforum->error = "EDIT_FORUMS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2137,18 +1876,12 @@ EOSS;
 							break;
 						}
 						$rforum = get_record('forum', 'id', $resultInsertion);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rforum->error = 'EDIT_FORUMS:     Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rforum->error = "EDIT_FORUMS:     Operation Update not implemented yet!";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						$rforum->error = "EDIT_FORUMS:     Operation Delete not implemented yet!";
 						break;
 					default :
@@ -2159,6 +1892,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit group records (add/update/delete).
 	* @uses $CFG
@@ -2172,21 +1906,21 @@ EOSS;
 	function edit_groups($client, $sesskey, $groups) {
 		global $CFG;
 		require_once ($CFG->libdir . '/moodlelib.php');
-		if (!$this->validate_client($client, $sesskey,'edit_groups')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_groups')) {
 			return $this->error('EDIT_GROUPS: Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($groups)) {
 			foreach ($groups->groups as $group) {
-				switch ($group->action) {
-					case 'Add' :
+			switch (trim(strtolower($group->action))) {
+					case 'add' :
 						/// Adding a new group.
 						$groupadd = $group;
 
-							$this->debug_output('EDIT_GROUPS: Trying to add a new group.');
-						ob_start();
+						$this->debug_output('EDIT_GROUPS: Trying to add a new group.');
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
 							break;
 						}
@@ -2205,25 +1939,20 @@ EOSS;
 							break;
 						}
 						$rgroup = get_record('groups', 'id', $groupadd->id);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rgroup->error = 'EDIT_GROUPS:  Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						/// Updating an existing group
-						ob_start();
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+
+						if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
 							break;
 						}
 						$groupup = $group;
 						$gid = $groupup->id;
 
-							$this->debug_output('EDIT_GROUPS:    Attempting to update group ID: ' . $gid . print_r($group, true));
+						$this->debug_output('EDIT_GROUPS:    Attempting to update group ID: ' . $gid . print_r($group, true));
 						$group = get_record('groups', 'id', $gid);
 						if (!$group) {
 							$rgroup->error = "EDIT_GROUPS:    Could not find group ID: $gid";
@@ -2241,24 +1970,19 @@ EOSS;
 						} else {
 							$rgroup = get_record('groups', 'id', $group->id);
 						}
-						if (ob_get_length() && trim(ob_get_contents())) {
-							$msg = trim(ob_get_clean());
-							$rgroup->error = 'EDIT_GROUPS:  Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
-					case 'Delete' :
+					case 'delete' :
 						/// Deleting an existing group.
 						$gid = $group->id;
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
 							break;
 						}
 
-							$this->debug_output('EDIT_GROUPS:    Attempting to delete group ID: ' . $gid);
+						$this->debug_output('EDIT_GROUPS:    Attempting to delete group ID: ' . $gid);
 						$group = get_record('groups', 'id', $gid);
 						if (!$group) {
 							$rgroup->error = 'EDIT_GROUPS:  Could not find group ID: ' . $gid;
@@ -2270,13 +1994,8 @@ EOSS;
 						} else {
 							$rgroup = $group;
 						}
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_clean());
-							$rgroup->error = 'EDIT_GROUPS:  Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
 					default :
 						$rgroup->error = "EDIT_GROUPS: Invalid action " . $group->action;
@@ -2287,6 +2006,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit assgnment records (add/update/delete).
 	* @uses $CFG
@@ -2301,18 +2021,18 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/assignment/lib.php");
 		require_once ("{$CFG->dirroot}/course/lib.php");
-		if (!$this->validate_client($client, $sesskey,'edit_assignments')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_assignments')) {
 			return $this->error = 'EDIT_ASSIGNMENT:   Invalid client connection.';
 		}
 		$ret = array ();
 		if (!empty ($assignments)) {
 			foreach ($assignments->assignments as $assignment) {
-				switch ($assignment->action) {
-					case 'Add' :
+				switch (trim(strtolower($assignment->action))) {
+					case 'add' :
 						$assignmentadd = $assignment;
 						//creation of the new assignment
-						ob_start();
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
+
+						if (!$this->has_capability( 'moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rassignment->error = 'EDIT_ASSIGNMENTS:     You do not have proper access to perform this operation.';
 							break;
 						}
@@ -2339,22 +2059,17 @@ EOSS;
 						}
 						$add->id = $assignId;
 						$rassignment = $add;
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rassignment->error = 'EDIT_ASSIGNMENTS:    Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rassignment->error = "EDIT_ASSIGNMENTS:     Operation Update not implemented.";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						//delete assignment
 						$del = $assignment;
-						ob_start();
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
+
+						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rassignment->error = 'EDIT_ASSIGNMENTS: You do not have proper access to perform this operation.';
 							break;
 						}
@@ -2383,12 +2098,8 @@ EOSS;
 						}
 						$rassignment = $assign;
 						//delete_mod_from_section
-						if (ob_get_length() && trim(ob_get_contents())) {
-							$msg = trim(ob_get_contents());
-							$rassignment->error = 'EDIT_ASSIGNMENTS: Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
 					default :
 						$rassignment->error = "EDIT_ASSIGNMENTS: Invalid action " . $assignment->action;
@@ -2399,6 +2110,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit database records (add/update/delete).
 	* @uses $CFG
@@ -2412,20 +2124,20 @@ EOSS;
 	function edit_databases($client, $sesskey, $databases) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/data/lib.php");
-		if (!$this->validate_client($client, $sesskey,'edit_database')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_database')) {
 			return $this->error = 'EDIT_ASSIGNMENT:   Invalid client connection.';
 		}
 		$ret = array ();
 		if (!empty ($databases)) {
 			foreach ($databases->databases as $database) {
-				switch ($database->action) {
-					case 'Add' :
+                switch (trim(strtolower($database->action))) {
+					case 'add' :
 						//add a new database
 						$dtbadd = $database;
-						ob_start();
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
 
-								$this->debug_output("EDIT_DATABASES:     Invalid access UID: $dtbadd");
+						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
+
+							$this->debug_output("EDIT_DATABASES:     Invalid access UID: $dtbadd");
 							$rdatabase->error = 'EDIT_DATABASES:    You do not have proper access to perform this operation.';
 							break;
 						}
@@ -2444,18 +2156,14 @@ EOSS;
 							break;
 						}
 						$rdatabase = $dtbadd;
-						if (ob_get_length() && trim(ob_get_contents())) {
-							$msg = trim(ob_get_contents());
-							$rdatabase->error = 'EDIT_DATABASES:    Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						//not implemented
 						$rdatabase->error = "EDIT_DATABASES:    The action UPDATE is'n implemented";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						//not implemented
 						$rdatabase->error = "EDIT_DATABASES:    The action DELETE is'n implemented";
 						break;
@@ -2468,6 +2176,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit wiki records (add/update/delete).
 	* @uses $CFG
@@ -2482,21 +2191,20 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey,'edit_wikis')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_wikis')) {
 			return $this->error('EDIT_WIKIS:     Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($wikis)) {
 			foreach ($wikis->wikis as $wiki) {
-				switch ($wiki->action) {
-					case 'Add' :
-
-							$this->debug_output('EDIT_WIKIS:     Trying to add a new wiki.');
+                    switch (trim(strtolower($wiki->action))) {
+					case 'add' :
+						$this->debug_output('EDIT_WIKIS:     Trying to add a new wiki.');
 						/// Adding a new wiki
 						$wikiadd = $wiki;
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rwiki->error = "EDIT_WIKIS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2528,25 +2236,20 @@ EOSS;
 							break;
 						}
 						$rwiki = get_record('wiki', 'id', $wikiId);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rwiki->error = 'EDIT_WIKIS:     Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rwiki->error = "EDIT_WIKIS:  Operation Update not implemented yet";
 						break;
-					case 'Delete' :
+					case 'delete' :
 
-							$this->debug_output('EDIT_WIKIS:     Trying to remove wiki.');
+						$this->debug_output('EDIT_WIKIS:     Trying to remove wiki.');
 						$wikidelete = $wiki;
 						$wikiId = $wikidelete->id;
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rwiki->error = "EDIT_WIKIS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2572,13 +2275,7 @@ EOSS;
 							$rwiki->error = "EDIT_WIKIS:     Error in deleting  from course_sections.";
 						}
 						$rwiki = $_wiki;
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rwiki->error = 'EDIT_WIKIS:     Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
 					default :
 						$rpage->error = "EDIT_WIKIS:  This option was not implemented ";
@@ -2588,6 +2285,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Edit page of Wiki records (add/update/delete).
 	* @uses $CFG
@@ -2602,23 +2300,24 @@ EOSS;
 	function edit_pagesWiki($client, $sesskey, $pagesWiki) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
-		if (!$this->validate_client($client, $sesskey,'edit_pagesWiki')) {
+		if (!$this->validate_client($client, $sesskey, 'edit_pagesWiki')) {
 			return $this->error('EDIT_PAGESWIKI:     Invalid client connection.');
 		}
 		$ret = array ();
 		if (!empty ($pagesWiki)) {
 			foreach ($pagesWiki->pagesWiki as $page) {
-				switch ($page->action) {
-					case 'Add' :
 
-							$this->debug_output('EDIT_PAGESWIKI:     Trying to add a new pageWiki.');
+                    switch (trim(strtolower($page->action))) {
+					case 'add' :
+
+						$this->debug_output('EDIT_PAGESWIKI:     Trying to add a new pageWiki.');
 						$pageadd = $page;
 						$pageadd->userid = $this->get_my_id($client, $sesskey);
 						$pageadd->created = time();
 						$pageadd->lastmodified = time();
-						ob_start();
+
 						/// Check for correct permissions.
-						if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rpage->error = "EDIT_PAGESWIKI:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2632,18 +2331,12 @@ EOSS;
 							break;
 						}
 						$rpage = get_record('wiki_pages', 'id', $resultInsertion);
-						if (ob_get_length() && trim(ob_get_contents())) {
-							/// Return an error with  the contents of the output buffer.
-							$msg = trim(ob_get_contents());
-							$rpage->error = 'EDIT_PAGESWIKI:     Database error: ' . $msg;
-							break;
-						}
-						ob_end_clean();
+
 						break;
-					case 'Update' :
+					case 'update' :
 						$rpage->error = "EDIT_PAGESWIKI:     Operation Update was not implemented yet";
 						break;
-					case 'Delete' :
+					case 'delete' :
 						$rpage->error = "EDIT_PAGESWIKI:     Operation Delete was not implemented yet";
 						break;
 					default :
@@ -2654,6 +2347,7 @@ EOSS;
 		}
 		return $ret;
 	}
+
 	/**
 	* Add label to course section
 	* @uses $CFG
@@ -2667,19 +2361,19 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/lib/accesslib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey,'affect_label_to_section')) {
+		if (!$this->validate_client($client, $sesskey, 'affect_label_to_section')) {
 			return $this->error('AFFECT_LABEL_TO_SECTION:     Invalid client connection.');
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
-		ob_start();
+
 		//get the section record
 		if (!($section = get_record('course_sections', 'id', $sectionid))) {
 			return $this->error("AFFECT_LABEL_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_LABEL_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		//get the label module
@@ -2710,17 +2404,13 @@ EOSS;
 		if (!add_mod_to_section($course_module)) {
 			return $this->error("AFFECT_LABEL_TO_SECTION:     Error adding module to the section!");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_LABEL_TO_SECTION:     Database error: ' . $msg);
-		}
-		ob_end_clean();
+
 		//make compatible with the return type
 		$r = new stdClass();
 		$r->status = true;
 		return $r;
 	}
+
 	/**
 	* Add forum to course section
 	* @uses $CFG
@@ -2737,19 +2427,19 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/lib/datalib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey,'affect_forum_to_section')) {
+		if (!$this->validate_client($client, $sesskey, 'affect_forum_to_section')) {
 			return $this->error('AFFECT_FORUM_TO_SECTION:     Invalid client connection.');
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
-		ob_start();
+
 		//get the section record
 		if (!($section = get_record('course_sections', 'id', $sectionid))) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		// check "groupmode" field
@@ -2793,16 +2483,12 @@ EOSS;
 		if (!add_mod_to_section($course_module)) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     Error adding module to the section!");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_FORUM_TO_SECTION:     Database error: ' . $msg);
-		}
-		ob_end_clean();
+
 		$r = new stdClass();
 		$r->status = true;
 		return $r;
 	}
+
 	/**
 	* Add section to course
 	* @uses $CFG
@@ -2816,15 +2502,15 @@ EOSS;
 	function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey,'affect_section_to_course')) {
+		if (!$this->validate_client($client, $sesskey, 'affect_section_to_course')) {
 			return $this->error('AFFECT_SECTION_TO_COURSE:     Invalid client connection.');
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
-		ob_start();
+
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:update', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability( 'moodle/course:update', CONTEXT_COURSE, $course->id)) {
 			return $this->error("AFFECT_SECTION_TO_COURSE:     You do not have proper access to perform this operation");
 		}
 		//get section
@@ -2861,16 +2547,13 @@ EOSS;
 		if (!update_record("course_sections", $cur_section)) {
 			return $this->error("AFFECT_SECTION_TO_COURSE:     Error updating the section with id=$sectionid");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_SECTION_TO_COURSE:     Database error: ' . $msg);
-		}
-		ob_end_clean();
+
+
 		$r = new stdClass();
 		$r->status = true;
 		return $r;
 	}
+
 	/**
 	* Add course to category
 	* @uses $CFG
@@ -2884,15 +2567,15 @@ EOSS;
 	function affect_course_to_category($client, $sesskey, $courseid, $categoryid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey,'affect_course_to_category')) {
+		if (!$this->validate_client($client, $sesskey, 'affect_course_to_category')) {
 			return $this->error('AFFECT_COURSE_TO_CATEGORY:     Invalid client connection.');
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
-		ob_start();
+
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/category:manage', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability( 'moodle/category:manage', CONTEXT_SYSTEM, 0)) {
 			return $this->error("AFFECT_COURSE_TO_CATEGORY:     You do not have proper access to perform this operation");
 		}
 		/// Check if category with id specified exists
@@ -2906,17 +2589,14 @@ EOSS;
 		move_courses(array (
 			$courseid
 		), $categoryid);
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error = 'AFFECT_COURSE_TO_CATEGORY:   Database error: ' . $msg;
-		}
-		ob_end_clean();
+
+
 		//make compatible with the return type
 		$r = new stdClass();
 		$r->status = true;
 		return $r;
 	}
+
 	/**
 	* Add user to group
 	* @uses $CFG
@@ -2929,13 +2609,13 @@ EOSS;
 	*/
 	function affect_user_to_group($client, $sesskey, $userid, $groupid) {
 
-			$this->debug_output('AFFECT_USER_TO_GROUP:     Trying to affect a user to group.');
-		if (!$this->validate_client($client, $sesskey,'affect_user_to_group')) {
+		$this->debug_output('AFFECT_USER_TO_GROUP:     Trying to affect a user to group.');
+		if (!$this->validate_client($client, $sesskey, 'affect_user_to_group')) {
 			return $this->error('AFFECT_USER_TO_GROUP:     Invalid client connection.');
 		}
-		ob_start();
+
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 			return $this->error('AFFECT_USER_TO_GROUP:     You do not have proper access to perform this operation.');
 		}
 		if (!$exist_user = get_record("user", "id", $userid)) {
@@ -2947,16 +2627,12 @@ EOSS;
 		if (!groups_add_member($groupid, $userid)) {
 			return $this->error("AFFECT_USER_TO_GROUP:     The group don't exists or the insertion couldn't be made...");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			$msg = trim(ob_get_contents());
-			return $this->error = 'AFFECT_USER_TO_GROUP:     Database error: ' . $msg;
-			break;
-		}
-		ob_end_clean();
+
 		$resp = new stdClass();
 		$resp->status = true;
 		return $resp;
 	}
+
 	/**
 	* Add  group to course
 	* @uses $CFG
@@ -2969,13 +2645,13 @@ EOSS;
 	*/
 	function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
 
-			$this->debug_output('AFFECT_GROUP_TO_COURSE:     Trying to affect a group to course.');
-		if (!$this->validate_client($client, $sesskey,' affect_group_to_course')) {
+		$this->debug_output('AFFECT_GROUP_TO_COURSE:     Trying to affect a group to course.');
+		if (!$this->validate_client($client, $sesskey, ' affect_group_to_course')) {
 			return $this->error('AFFECT_GROUP_TO_COURSE:     Invalid client connection.');
 		}
-		ob_start();
+
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 			return $this->error('AFFECT_GROUP_TO_COURSE:     You do not have proper access to perform this operation.');
 		}
 		//verify if this grup exists
@@ -2993,16 +2669,13 @@ EOSS;
 		if (!$success = update_record('groups', $group)) {
 			return $this->error('AFFECT_GROUP_TO_COURSE:     Update idcourse could not be effectued');
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			$msg = trim(ob_get_contents());
-			return $this->error = 'AFFECT_GROUP_TO_COURSE:     Database error: ' . $msg;
-			break;
-		}
-		ob_end_clean();
+
+
 		$resp = new stdClass();
 		$resp->status = true;
 		return $resp;
 	}
+
 	/**
 	* Add wiki to course section
 	* @uses $CFG
@@ -3018,17 +2691,17 @@ EOSS;
 	*/
 	function affect_wiki_to_section($client, $sesskey, $wikiid, $sectionid, $groupmode, $visible) {
 
-			$this->debug_output('AFFECT_WIKI_TO_SECTION:     Trying to affect a wiki to section.');
-		if (!$this->validate_client($client, $sesskey,'affect_wiki_to_section')) {
+		$this->debug_output('AFFECT_WIKI_TO_SECTION:     Trying to affect a wiki to section.');
+		if (!$this->validate_client($client, $sesskey, 'affect_wiki_to_section')) {
 			return $this->error('AFFECT_WIKI_TO_SECTION:     Invalid client connection.');
 		}
-		ob_start();
+
 		//get the section record
 		if (!($section = get_record('course_sections', 'id', $sectionid))) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		//check if exists in db this id & get wiki record
@@ -3090,16 +2763,12 @@ EOSS;
 		if (!$sectionidd = add_mod_to_section($mod)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     Wiki not assigned to section");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_WIKI_TO_SECTION:     Database error: ' . $msg);
-		}
-		ob_end_clean();
+
 		$res = new stdClass();
 		$res->status = true;
 		return $res;
 	}
+
 	/**
 	* Add database to course section
 	* @uses $CFG
@@ -3112,17 +2781,17 @@ EOSS;
 	*/
 	function affect_database_to_section($client, $sesskey, $databaseid, $sectionid) {
 
-			$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
-		if (!$this->validate_client($client, $sesskey,'affect_database_to_section')) {
+		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
+		if (!$this->validate_client($client, $sesskey, 'affect_database_to_section')) {
 			return $this->error('AFFECT_DATABASE_TO_SECTION:     Invalid client connection.');
 		}
-		ob_start();
+
 		//get the section record
 		if (!($section = get_record('course_sections', 'id', $sectionid))) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		//get database module
@@ -3161,16 +2830,13 @@ EOSS;
 		if (!$sectionidd = add_mod_to_section($mod)) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION: The database wasn't assigned to section");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_DATABASE_TO_SECTION: Database error: ' . $msg);
-		}
-		ob_end_clean();
+
+
 		$res = new stdClass();
 		$res->status = true;
 		return $res;
 	}
+
 	/**
 	* Add assignment to course section
 	* @uses $CFG
@@ -3185,17 +2851,17 @@ EOSS;
 	*/
 	function affect_assignment_to_section($client, $sesskey, $assignmentid, $sectionid, $groupmode) {
 
-			$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
-		if (!$this->validate_client($client, $sesskey,'affect_assignment_to_section')) {
+		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
+		if (!$this->validate_client($client, $sesskey, 'affect_assignment_to_section')) {
 			return $this->error('AFFECT_DATABASE_TO_SECTION:     Invalid client connection.');
 		}
-		ob_start();
+
 		//get the section record
 		if (!($section = get_record('course_sections', 'id', $sectionid))) {
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
@@ -3243,15 +2909,12 @@ EOSS;
 		if (!$sectionidd = add_mod_to_section($mod)) {
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION: Error to function add_mod_to_section");
 		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			$msg = trim(ob_get_contents());
-			return $this->error = 'AFFECT_ASSIGNMENT_TO_SECTION: Database error: ' . $msg;
-		}
-		ob_end_clean();
+
 		$res = new stdClass();
 		$res->status = true;
 		return $res;
 	}
+
 	/**
 	* Add a page of wiki to wiki
 	* @uses $CFG
@@ -3265,15 +2928,15 @@ EOSS;
 	function affect_pageWiki_to_wiki($client, $sesskey, $pageid, $wikiid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
-		if (!$this->validate_client($client, $sesskey,'affect_pageWiki_to_wiki')) {
+		if (!$this->validate_client($client, $sesskey, 'affect_pageWiki_to_wiki')) {
 			return $this->error('Invalid client connection.');
 		}
-		ob_start();
+
 		//we verify if we have the permission to do this operation
 		if (!$cm = get_coursemodule_from_instance('wiki', $wikiid)) {
 			return $this->error("Course Module ID was not found. We can't verify if you have permission to do this operation");
 		}
-		if (!$this->has_capabilities($client, $sesskey, 'mod/wiki:participate', CONTEXT_MODULE, $cm->id)) {
+		if (!$this->has_capability( 'mod/wiki:participate', CONTEXT_MODULE, $cm->id)) {
 			return $this->error("AFFECT_PAGEWIKI_TO_WIKI:     You do not have the permission to do this operation.");
 		}
 		//verify if the wiki exist in the database
@@ -3297,13 +2960,13 @@ EOSS;
 		//at the content of this page we are adding a link to the affected page
 		//if this page does not exist  we will create it
 		$sql = "SELECT wp.*
-		                        FROM {$CFG->prefix}wiki_pages wp
-		                        WHERE wp.pagename = '{$wiki->pagename}' AND
-		                        wp.wiki = {$wiki_entry->id} AND
-		                        wp.version in (select MAX(p.version)
-		                        FROM {$CFG->prefix}wiki_pages p
-		                        WHERE p.pagename = '{$wiki->pagename}' AND
-		                        p.wiki = {$wiki_entry->id}) ";
+								                        FROM {$CFG->prefix}wiki_pages wp
+								                        WHERE wp.pagename = '{$wiki->pagename}' AND
+								                        wp.wiki = {$wiki_entry->id} AND
+								                        wp.version in (select MAX(p.version)
+								                        FROM {$CFG->prefix}wiki_pages p
+								                        WHERE p.pagename = '{$wiki->pagename}' AND
+								                        p.wiki = {$wiki_entry->id}) ";
 		// $first_page=get_record_sql($sql);
 		if (!$first_page = get_record_sql($sql)) {
 			$first_page->pagename = $wiki->pagename;
@@ -3351,15 +3014,11 @@ EOSS;
 		if (!update_record("wiki_pages", $first_page)) {
 			return $this->error = "AFFECT_PAGEWIKI_TO_WIKI:      Can not create link to the page new created.";
 		}
-		if (ob_get_length() && trim(og_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_clean());
-			$error = 'AFFECT_PAGEWIKI_TO_WIKI:     Database error: ' . $msg;
-		}
-		ob_end_clean();
+
 		$res->status = true;
 		return $res;
 	}
+
 	/**
 	* add a user to a course, giving him the role  specified as parameter
 	* @param int $client The client session ID.
@@ -3371,47 +3030,17 @@ EOSS;
 	*               specific data format for sending to the client.
 	*/
 	function affect_user_to_course($client, $sesskey, $userid, $courseid, $rolename) {
-		$this->debug_output("ROLE: " . $rolename);
-		if (!$this->validate_client($client, $sesskey,'affect_user_to_course')) {
-			return $this->error('AFFECT_USER_TO_COURSE: Invalid client connection.');
-		}
-		ob_start();
-		/// Check for correct course permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/role:assign', CONTEXT_COURSE, $courseid)) {
-			return $this->error('AFFECT_USER_TO_COURSE:     You do not have permission to do this operation.');
-		}
-		$timestart = time();
-		$timeend = 0;
-		$hidden = 0;
+
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;
-		//verify if the role name specified exist in database
-		if (!($role = get_record('role', 'name', $rolename))) {
-			return $this->error("AFFECT_USER_TO_COURSE:     The role specified was not implemented!");
-		}
-		//verify if the user exist in database
-		if (!(get_record('user', 'id', $userid))) {
-			return $this->error("AFFECT_USER_TO_COURSE:     Error finding the user with id=$userid");
-		}
-		//verify if the course exist in database
-		if (!(get_record('course', 'id', $courseid))) {
-			return $this->error("AFFECT_USER_TO_COURSE:     Error finding the course with id=$courseid");
-		}
-		//add user to course giving him the role specified
-		$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		if (!role_assign($role->id, $userid, 0, $context->id, $timestart, $timeend, $hidden)) {
-			return $this->error("AFFECT_USER_TO_COURSE:     Could not add user with id $userid to this role!");
-		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('AFFECT_USER_TO_COURSE:     Database error: ' . $msg);
-		}
-		ob_end_clean();
+		$res=$this->affect_role_incourse($client,$sesskey,$rolename,$courseid,'id',
+                    array($userid),'id',true);
+
 		$r = new stdClass();
-		$r->status = true;
+		$r->status = empty($res->error);
 		return $r;
 	}
+
 	/**
 	* remove a user's role from a course;  the role  specified as parameter
 	* @param int $client The client session ID.
@@ -3423,45 +3052,19 @@ EOSS;
 	*               specific data format for sending to the client.
 	*/
 	function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
-		if (!$this->validate_client($client, $sesskey,'remove_userRole_from_course')) {
-			return $this->error('REMOVE_TEACHER_FROM_COURSE: Invalid client connection.');
-		}
-		ob_start();
-		/// Check for correct course permissions.
-		if (!$this->has_capabilities($client, $sesskey, 'moodle/role:assign', CONTEXT_COURSE, $courseid)) {
-			return $this->error('REMOVE_USERROLE_FROM_COURSE:     You do not have permission to do this operation.');
-		}
-		$timestart = 0;
-		$timeend = 0;
-		$hidden = 0;
+
+
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;
-		//verify if the role name specified exist in database
-		if (!($role = get_record('role', 'name', $rolename))) {
-			return $this->error("REMOVE_USERROLE_FROM_COURSE: This role was not implemented!");
-		}
-		//verify if user exist in database
-		if (!(get_record('user', 'id', $userid))) {
-			return $this->error("REMOVE_USERROLE_FROM_COURSE: Error finding the user with id=$userid");
-		}
-		//verify if course exist in database
-		if (!(get_record('course', 'id', $courseid))) {
-			return $this->error("REMOVE_USERROLE_FROM_COURSE: Error finding the course with id=$courseid");
-		}
-		//  remove user's role specified from the course
-		if (!role_unassign($role->id, $userid, 0, $context->id)) {
-			return $this->error("REMOVE_USERROLE_FROM_COURSE: Could not remove user with id $userid from this role!");
-		}
-		if (ob_get_length() && trim(ob_get_contents())) {
-			/// Return an error with  the contents of the output buffer.
-			$msg = trim(ob_get_contents());
-			return $this->error('REMOVE_USERROLE_FROM_COURSE:     Database error: ' . $msg);
-		}
-		ob_end_clean();
-		$r = new stdClass();
-		$r->status = true;
-		return $r;
+        $res=$this->affect_role_incourse($client,$sesskey,$rolename,$courseid,'id',
+                    array($userid),'id',false);
+
+        $r = new stdClass();
+        $r->status = empty($res->error);
+        return $r;
+
 	}
+
 	/*
 	*******************************************************************************************
 	*                                                                                         *
@@ -3470,27 +3073,27 @@ EOSS;
 	*******************************************************************************************
 	*/
 	function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_wikis')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_wikis')) {
 			return $this->error('GET_ALL_WIKIS:    Invalid client connection.');
 		}
 		$ret = array ();
 		if ($res = get_records('wiki', $fieldname, $fieldvalue, 'name', '*')) {
-			$ret =filter_wikis($client, $res);
+			$ret = filter_wikis($client, $res);
 		}
 		return $ret;
 	}
 	function get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_pagesWiki')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_pagesWiki')) {
 			return $this->error('GET_ALL_PAGESWIKI:    Invalid client connection.');
 		}
 		$ret = array ();
 		if ($res = get_records('wiki_pages', $fieldname, $fieldvalue, 'pagename', '*')) {
-			$ret =filter_pagesWiki($client, $res);
+			$ret = filter_pagesWiki($client, $res);
 		}
 		return $ret;
 	}
 	function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_groups')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_groups')) {
 			return $this->error('GET_ALL_GROUPS:    Invalid client connection.');
 		}
 		$ret = array ();
@@ -3500,7 +3103,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_forums')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_forums')) {
 			return $this->error('GET_ALL_FORUMS:    Invalid client connection.');
 		}
 		$ret = array ();
@@ -3510,7 +3113,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_labels')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_labels')) {
 			return $this->error('GET_ALL_LABELS:    Invalid client connection.');
 		}
 		$ret = array ();
@@ -3520,17 +3123,17 @@ EOSS;
 		return $ret;
 	}
 	function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_assignments')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_assignments')) {
 			return $this->error('GET_ALL_ASSIGNMENTS:    Invalid client connection.');
 		}
 		$ret = array ();
 		if ($assignments = get_records("assignment", $fieldname, $fieldvalue, "name")) {
-			$ret =filter_assignments($client, $assignments);
+			$ret = filter_assignments($client, $assignments);
 		}
 		return $ret;
 	}
 	function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey,'get_all_databases')) {
+		if (!$this->validate_client($client, $sesskey, 'get_all_databases')) {
 			return $this->error('GET_ALL_DATABASES:     Invalid client connection.');
 		}
 		$ret = array ();
@@ -3540,7 +3143,6 @@ EOSS;
 		return $ret;
 	}
 
-
 	/*
 	*****************************************************************************************************************************
 	*                                                                                                                           *
@@ -3548,7 +3150,6 @@ EOSS;
 	*                                                                                                                           *
 	*****************************************************************************************************************************
 	*/
-
 
 }
 ?>

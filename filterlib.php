@@ -11,6 +11,27 @@
  */
 
 
+ function ws_get_primaryrole_incourse($courseid,$userid) {
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context_cat= get_context_instance(CONTEXT_COURSECAT, $course->category);
+        if (has_capability('moodle/category:manage', $context_cat,$userid))
+            return 1;
+        if (has_capability('moodle/course:create', $context_cat,$userid))
+            return 2;
+        if (has_capability('moodle/course:update', $context,$userid))
+            return 3;
+        if (has_capability('moodle/course:viewhiddenactivities', $context,$userid))
+            return 4;
+        //student
+        // strange : guest may has also the course:view capability ?
+        // so we treat it before regular student
+        //guest
+        if (has_capability('moodle/legacy:guest', $context, $userid, false))
+            return 6;
+        if (has_capability('moodle/course:view', $context, $userid, false))
+            return 5;
+        return 0;
+    }
 
 
 function filter_forum($client, $forum) {
@@ -146,7 +167,8 @@ function filter_forums($client, $forums) {
         if ($user->emailstop)
             $user->email = "not disclosed by user's will";
         $user->password = ''; //no way, even in  md5, can be cracked by reverse dictionnary
-        $user->role = $role; // add a basic role info if available (see get_users_bycourse)
+        if (empty($user->role))
+            $user->role= $role; // add a basic role info if available (see get_users_bycourse)
         return $user;
     }
 
@@ -215,7 +237,6 @@ function filter_forums($client, $forums) {
         if (! has_capability('moodle/course:view', $context))
                 return false;
         $group->enrolmentkey = '';
-        $group->password = '';
         return $group;
     }
 
@@ -275,6 +296,7 @@ function filter_forums($client, $forums) {
         }
         return $res;
     }
+
     function filter_activity($client, $activity) {
         //add attributes with all timestamps converted to friendly dates
         //using moodlelib function userdate .
@@ -288,6 +310,7 @@ function filter_forums($client, $forums) {
                 */
         return $activity;
     }
+
     function filter_activities($client, $activities) {
         $res = array ();
         foreach ($activities as $activity) {
@@ -340,14 +363,16 @@ function filter_change($client, $change) {
 
     function filter_event($client, $eventype, $event) {
         global $USER;
-        if ($this->isadmin($uid))
+        if (has_capability("moodle/calendar:manageentries",get_context_instance(CONTEXT_SYSTEM))) // admin user
             return $event;
         switch ($eventype) {
             case cal_show_user :
                 if ($event->userid != $USER->id)
                     return false;
                 else {
-                    return $event;
+                    if (has_capability("moodle/calendar:manageownentries",get_context_instance(CONTEXT_SYSTEM)))
+                        return $event;
+                    else return false;
                 }
                 break;
             case cal_show_group :
@@ -358,7 +383,9 @@ function filter_change($client, $change) {
                 break;
             case cal_show_course :
                 //TODO check course rights and visibility
+                if (has_capability("moodle/course:view",get_context_instance(CONTEXT_COURSE, $event->courseid)))
                 return $event;
+                else return false;
                 break;
             default :
                 return $event;

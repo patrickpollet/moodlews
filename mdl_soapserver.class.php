@@ -44,7 +44,38 @@
 
             $this->debug_output('    Version: ' . $this->version);
             $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+            ob_start(); //rev 1.6 buffer all Moodle ouptuts see send function
         }
+
+        /**
+         * if Moodle has complained some way return content of ob_buffer
+         * else pass the real result to be sent in XML
+         */
+
+        function send ($result) {
+	        if (ob_get_length() && trim(ob_get_contents())) {
+		        /// Return an error with  the contents of the output buffer.
+		        $msg = trim(ob_get_contents());
+		        ob_end_clean();
+		        return $this->error($msg);
+	        }
+	        ob_end_clean();
+	        return $result;
+        }
+
+
+            /**
+     * Sends an fatal error response back to the client.
+     *  @override server
+     * @param string $msg The error message to return.
+     * @return An error message string.
+     */
+       function error($msg) {
+        parent::error($msg); //log in error msg
+            throw new SoapFault("Server", $msg);
+        }
+
+
 
 	/** since SOAP requires all attributes fields to be filled, even in case of error
 	* this function return a "blank array", with error attribute set to $errMsg
@@ -116,7 +147,6 @@
 
 	function to_soap_array($res,$keyName,$className,$emptyMsg) {
 		$return=array();
-        $this->debug_output("mdl_ss".print_r($res,true));
 		if (!$res || ! is_array($res) || (count($res)==0))
 			$return[$keyName][]=$this->error_record($className,$emptyMsg);
 		else {
@@ -141,14 +171,14 @@
      * @return array An array of user objects.
      */
       public function edit_users($client, $sesskey, $users) {
-           	$return = array();
-		if ($res = parent::edit_users($client, $sesskey,$users))
-                    foreach ($res as $r)
-                        $return['users'][] = $this->to_soap($r,'userRecord');
-                 else
-                        $return['users'][]=$this->error_record('userRecord','no users');
-                 return $return;
+
+        return $this->send($this->to_soap_array(
+            parent::edit_users($client, $sesskey,$users),
+            'users',
+            'userRecord',
+            'nothing to do'));
         }
+
 
 
     /**
@@ -167,11 +197,11 @@
      * @return array An array of user records.
      */
      public function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
 			parent::get_users($client, $sesskey,$userids,$idfield),
 			'users',
 			'userRecord',
-			'no users found');
+			'no users found'));
         }
 
 
@@ -185,14 +215,14 @@
      * @return array An array of course records.
      */
      public function edit_courses($client, $sesskey, $courses) {
-            $return = array();
-            if ($res = parent::edit_courses($client, $sesskey, $courses))
-                    foreach ($res as $r)
-                        $return['courses'][] = $this->to_soap($r,'courseRecord');
-                 else
-                        $return['courses'][]=$this->error_record('courseRecord','no courses');
-                 return $return;
+
+        return $this->send($this->to_soap_array(
+            parent::edit_courses($client, $sesskey,$courses),
+            'courses',
+            'courseRecord',
+            'nothing to do '));
         }
+
 
 
     /**
@@ -205,11 +235,11 @@
      * @return array An array of resource records.
      */
      public function get_courses($client, $sesskey, $courseids,$idfield='idnumber') {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
                         parent::get_courses($client, $sesskey,$courseids,$idfield),
                         'courses',
                         'courseRecord',
-                        'no courses found');
+                        'no courses found'));
         }
 
 
@@ -226,11 +256,11 @@
      * @return array An array of type records.
      */
      public function get_instances_bytype($client, $sesskey, $courseids,$idfield='idnumber',$type='resource') {
-                return $this->to_soap_array(
+                return $this->send($this->to_soap_array(
                         parent::get_instances_bytype($client, $sesskey,$courseids,$idfield,$type),
                         'resources',
                         'resourceRecord',
-                        'no resources of type '.$type.' found');
+                        'no resources of type '.$type.' found'));
         }
 
      /**
@@ -243,11 +273,11 @@
      * @return array An array of resource records.
      */
      public function get_resources($client, $sesskey, $courseids,$idfield='idnumber') {
-                return $this->to_soap_array(
+                return $this->send($this->to_soap_array(
                         parent::get_resources($client, $sesskey,$courseids,$idfield),
                         'resources',
                         'resourceRecord',
-                        'no resources found');
+                        'no resources found'));
         }
 
  /**
@@ -260,11 +290,11 @@
      * @return array An array of section records.
      */
      public function get_sections($client, $sesskey, $courseids,$idfield='idnumber') {
-                return $this->to_soap_array(
+                return $this->send($this->to_soap_array(
                         parent::get_sections($client, $sesskey,$courseids,$idfield),
                         'sections',
                         'sectionRecord',
-                        'no sections found');
+                        'no sections found'));
         }
 
     /**
@@ -279,38 +309,22 @@
      * @return array Return data (user_student records) to be converted into a
      *               specific data format for sending to the client.
      */
-     public function enrol_students($client, $sesskey, $courseid, $userids,$idfield='idnumber') {
-             return $this->to_soap_array(
-                        parent::enrol_students($client, $sesskey,$courseid,$userids,$idfield,true),
+     public function enrol_students($client, $sesskey, $courseid,$courseidfield, $userids,$idfield='idnumber') {
+             return $this->send($this->to_soap_array(
+                        parent::affect_role_incourse($client, $sesskey,'Student',$courseid,$courseidfield,$userids,$idfield,true),
                         'students',
                         'enrolRecord',
-                        "no student to enrol in course $courseid ");
+                        "no student to enrol in course $courseid "));
 
         }
 
-     public function unenrol_students($client, $sesskey, $courseid, $userids,$idfield='idnumber') {
-             return $this->to_soap_array(
-                        parent::enrol_students($client, $sesskey,$courseid,$userids,$idfield,false),
+     public function unenrol_students($client, $sesskey, $courseid,$courseidfield, $userids,$idfield='idnumber') {
+             return $this->send($this->to_soap_array(
+                        parent::affect_role_incourse($client, $sesskey,'Student',$courseid,$courseidfield,$userids,$idfield,false),
                         'students',
                         'enrolRecord',
-                        "no student to unenrol in course $courseid ");
-
+                        "no student to unenrol in course $courseid "));
         }
-
-
-
-    /**
-     * Sends an fatal error response back to the client.
-     *  @override server
-     * @param string $msg The error message to return.
-     * @return An error message string.
-     */
-       function error($msg) {
-  	    parent::error($msg); //log in error msg
-            throw new SoapFault("Server", $msg);
-        }
-
-
 
 
 
@@ -326,14 +340,14 @@
      *
 */
 
-   public function get_grades($client, $sesskey, $userid, $courseids,$idfield="idnumber") {
+   public function get_grades($client, $sesskey, $userid, $useridfield='idnumber',$courseids,$courseidfield="idnumber") {
 
 
-          return $this->to_soap_array(
-                        parent::get_grades($client, $sesskey,$userid,$courseids,$idfield),
+          return $this->send($this->to_soap_array(
+                        parent::get_grades($client, $sesskey,$userid,$useridfield,$courseids,$courseidfield),
                         'grades',
                         'gradeRecord',
-                        "no grades  found for user $userid ");
+                        "no grades  found for user $userid "));
 
 
         }
@@ -342,11 +356,11 @@
  public function get_user_grades($client, $sesskey, $userid,$idfield="idnumber") {
 
 
-          return $this->to_soap_array(
+          return $this->send( $this->to_soap_array(
                         parent::get_user_grades($client, $sesskey,$userid,$idfield),
                         'grades',
                         'gradeRecord',
-                        "no grades  found for user $userid");
+                        "no grades  found for user $userid"));
 
 
         }
@@ -354,11 +368,11 @@
  public function get_course_grades($client, $sesskey, $courseid,$idfield="idnumber") {
 
 
-          return $this->to_soap_array(
+          return $this->send($this->to_soap_array(
                         parent::get_course_grades($client, $sesskey,$courseid,$idfield),
                         'grades',
                         'gradeRecord',
-                        "no grades  found for course $courseid");
+                        "no grades  found for course $courseid"));
 
 
         }
@@ -373,18 +387,7 @@
                 return $this->get_users($client,$sesskey,array($userinfo),$idfield);
         }
 
-/**
-*  internal, not published (yet) in wsdl.
-*  return an array of groups
-*  @see get_group_byid, get_groups_byname
-*/
-       function get_groups($client,$sesskey,$groups,$idfield,$courseid=0) {
-		return $this->to_soap_array(
-                	parent::get_groups($client, $sesskey,$groups,$idfield,$courseid),
-                       'groups',
-			'groupRecord',
-                        'no groups in course '.$courseid);
-        }
+
 
 
      /**
@@ -399,11 +402,11 @@
      */
 
      private function _get_mycourses_by ($client,$sesskey,$uinfo,$idfield,$sort) {
-	return $this->to_soap_array(
+	return $this->send($this->to_soap_array(
                         parent::get_my_courses($client, $sesskey,$uinfo,$idfield,$sort),
                         'courses',
                         'courseRecord',
-                        'no courses');
+                        'no courses'));
 
      }
 
@@ -466,11 +469,11 @@
 	* @return array of groupRecord
 	*/
 	public function get_groups_bycourse($client,$sesskey,$courseid,$idfield='idnumber') {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
 			parent::get_groups_bycourse($client, $sesskey,$courseid,$idfield),
 			'groups',
 			'groupRecord',
-			'no groups in course '.$courseid);
+			'no groups in course '.$courseid));
 	}
 
 	/**
@@ -493,13 +496,12 @@
 	*/
 
 	public function get_group_members($client,$sesskey,$groupid) {
-		$rres = array();
-                if ($res = parent::get_group_members($client, $sesskey,$groupid))
-                    foreach ($res as $r)
-                        $rres['users'][] = $this->to_soap($r,'userRecord');
-                 else
-                        $rres['users'][]=$this->error_record('userRecord','no users');
-                 return $rres;
+
+        return $this->send($this->to_soap_array(
+		  parent::get_group_members($client, $sesskey,$groupid),
+          'users',
+          'userRecord',
+          'no users'));
 
 	}
 
@@ -508,21 +510,21 @@
 	* if $uid is empty, use current logged in user.
 	* otherwise, current logged in user must be admin to fetch data
 	*/
-        public function get_my_groups($client,$sesskey,$uid=0) {
-		return $this->to_soap_array(
-			parent::get_my_groups($client, $sesskey,$uid),
-                        'groups',
+	public function get_my_groups($client,$sesskey,$uid='',$idfield='idnumber') {
+		return $this->send($this->to_soap_array(
+			parent::get_my_groups($client, $sesskey,$uid,$idfield),
+			'groups',
 			'groupRecord',
-                        'no groups');
-        }
+		'no groups'));
+	}
 
 	/**
 	* Return user's $uid group(s)  in course identified by $courseid
 	* @param $uid . User's Moodle id. If empty, use current logged in user.
-	* @param $courseid Moodle's course id
+	* @param $courseid course id
 	*/
 
-       public function get_my_group($client,$sesskey,$uid,$courseid) {
+       public function get_my_group($client,$sesskey,$uid,$courseid,$courseidfield='id') {
         	$rres=array();
 		if( $tmp=parent::get_my_groups($client,$sesskey,$uid)) {
 			$foundOne=false;
@@ -538,7 +540,7 @@
 		}else {
 			$rres['groups'][]=$this->error_record('groupRecord','no group');
 		}
-		return $rres;
+		return $this->send($rres) ;
 
 	}
 
@@ -574,13 +576,12 @@
 	*/
 
 	public function get_users_bycourse($client,$sesskey,$idcourse,$idfield='idnumber',$idrole=0) {
-		$res=$this->to_soap_array(
+		$res=$this->send($this->to_soap_array(
 			parent::get_users_bycourse($client, $sesskey,$idcourse,$idfield,$idrole),
 			'users',
 			'userRecord',
-			'no users in course '.$idfield.'='.$idcourse.' with role '.$idrole );
-                  //file_put_contents('/work/moodledata/debug_pp.log','mdl_ss:get_users_bycourse'.print_r($res,true));
-                 return $res;
+			'no users in course '.$idfield.'='.$idcourse.' with role '.$idrole ));
+           return $res;
 	}
 
            /**
@@ -589,14 +590,14 @@
         * could be moved in server.class since no type conversion is required (return integer)
         */
 
-        public function count_users_bycourse($client,$sesskey,$idcourse,$idfield='idnumber',$idrole=0) {
-                $res=parent::get_users_bycourse($client, $sesskey,$idcourse,$idfield,$idrole);
-                if ($res->error)
+	public function count_users_bycourse($client,$sesskey,$idcourse,$idfield='idnumber',$idrole=0) {
+		$res=parent::get_users_bycourse($client, $sesskey,$idcourse,$idfield,$idrole);
+		if ($res->error)
 			return 0;
-                else
-                        return count($res);
+		else
+			return count($res);
 
-        }
+	}
 
 
 	/**
@@ -604,16 +605,16 @@
 	*/
         public function get_teachers ($client,$sesskey,$idcourse,$idfield='idnumber') {
 		$te=parent::get_users_bycourse($client,$sesskey,$idcourse,$idfield,3);
-		if ($te->error)   // cancel any errors if no teachers found
+		if (!empty($te->error))   // cancel any errors if no teachers found
 			$te=array();
 		$net=parent::get_users_bycourse($client,$sesskey,$idcourse,$idfield,4);
-		if ($net->error)   // cancel any errors if no non editing teachers found
+		if (!empty($net->error))   // cancel any errors if no non editing teachers found
 			$net=array();
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
 			array_merge($te,$net),
 			'users',
 			'userRecord',
- 			'no teachers in course '.$idfield.'='.$idcourse);
+ 			'no teachers in course '.$idfield.'='.$idcourse));
 	}
 
 	/**
@@ -628,11 +629,11 @@
 	* return all known roles in Moodle or an array of roleRecord having $idfield equals to $roleid
 	*/
         public function get_roles($client,$sesskey,$roleid='',$idfield='') {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
                         parent::get_roles($client, $sesskey,$roleid,$idfield),
                         'roles',
                         'roleRecord',
-                        'no roles found ');
+                        'no roles found '));
         }
 
 	/**
@@ -651,11 +652,11 @@
         }
 
 	public function get_categories($client,$sesskey,$catid='',$idfield='') {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
 			parent::get_categories($client, $sesskey,$catid,$idfield),
 			'categories',
 			'categoryRecord',
-			'no categories found ');
+			'no categories found '));
        }
 
 	public function get_category_byid($client,$sesskey,$catid) {
@@ -672,34 +673,33 @@
 	}
 
         public function get_events($client, $sesskey,$eventtype,$ownerid) {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
 			parent::get_events($client,$sesskey,$eventtype,$ownerid),
 			'events',
 			'eventRecord',
-			'no events');
+			'no events'));
         }
 
 	public function get_last_changes($client, $sesskey,$courseid,$idfield='idnumber',$limit=10) {
-		return $this->to_soap_array(
+		return $this->send($this->to_soap_array(
                         parent::get_last_changes($client,$sesskey,$courseid,$idfield,$limit),
                         'changes',
                         'changeRecord',
-                        'nothing new');
+                        'nothing new'));
 	}
 
        public function get_activities($client,$sesskey,
                                       $userid,$useridfield='idnumber',
                                       $courseid=0,$courseidfield='idnumber',$limit=99) {
-                $res=$this->to_soap_array(
+                $res=$this->send($this->to_soap_array(
                         //array(),  <-- test code 1 empty record return
 			parent::get_activities($client,$sesskey,
                                                   $userid,$useridfield,
                                                   $courseid,$courseidfield,$limit,0),
                         'activities',
                         'activityRecord',
-                        'nothing new');
-               //file_put_contents('/work/moodledata/debug_pp.log',
-               //  'get_act  '.print_r($res,true));
+                        'nothing new'));
+
                return $res;
 
         }
@@ -738,7 +738,7 @@
         {
             $return['labels'][]=$this->error_record('labelRecord','no labels');
         }
-        return $return;
+        return $this->send($return);
      }
 
      function edit_groups($client, $sesskey, $groups)
@@ -749,7 +749,7 @@
                         $return['groups'][] = $this->to_soap($r,'groupRecord');
                  else
                         $return['groups'][]=$this->error_record('groupRecord','no group');
-                 return $return;
+                 return $this->send($return);
      }
 
      function edit_assignments($client, $sesskey, $assignments)
@@ -760,7 +760,7 @@
                     $return['assignments'][] = $this->to_soap($r,'assignmentRecord');
              else
                     $return['assignments'][]=$this->error_record('assignmentRecord','no assignment');
-             return $return;
+             return $this->send($return);
      }
 
      function edit_databases($client, $sesskey, $databases)
@@ -771,7 +771,7 @@
                     $return['databases'][] = $this->to_soap($r,'databaseRecord');
              else
                     $return['databases'][]=$this->error_record('databaseRecord','no database');
-             return $return;
+             return $this->send($return);
      }
 
      function edit_categories($client, $sesskey, $categories)
@@ -782,7 +782,7 @@
                     $return['categories'][] = $this->to_soap($r,'categoryRecord');
         else
                     $return['categories'][]=$this->error_record('categoryRecord','no categories');
-        return $return;
+        return $this->send($return);
      }
 
      function edit_sections($client, $sesskey, $sections)
@@ -793,7 +793,7 @@
                     $return['sections'][] = $this->to_soap($r,'sectionRecord');
         else
                     $return['sections'][]=$this->error_record('sectionRecord','no sections');
-        return $return;
+        return $this->send($return);
      }
 
      function edit_forums($client, $sesskey, $forums)
@@ -804,7 +804,7 @@
                     $return['forums'][] = $this->to_soap($r,'forumRecord');
         else
                     $return['forums'][]=$this->error_record('forumRecord','no forums returned');
-        return $return;
+        return $this->send($return);
      }
 
      function edit_wikis($client, $sesskey, $wikis)
@@ -815,7 +815,7 @@
                     $return['wikis'][] = $this->to_soap($r,'wikiRecord');
              else
                     $return['wikis'][]=$this->error_record('wikiRecord','no wikis');
-             return $return;
+             return $this->send($return);
      }
 
      function edit_pagesWiki($client, $sesskey, $pagesWiki)
@@ -826,71 +826,70 @@
                     $return['pagesWiki'][] = $this->to_soap($r,'pageWikiRecord');
              else
                     $return['pagesWiki'][]=$this->error_record('pageWikiRecord','no pages of wiki');
-             return $return;
+             return $this->send($return);
      }
 
      function affect_course_to_category($client,$sesskey,$courseid,$categoryid)
      {
-          return $this->to_soap(parent::affect_course_to_category($client,$sesskey,$courseid,$categoryid),"affectRecord");
+          return $this->send($this->to_soap(parent::affect_course_to_category($client,$sesskey,$courseid,$categoryid),"affectRecord"));
      }
 
      function affect_label_to_section($client,$sesskey,$labelid,$sectionid)
      {
-         return $this->to_soap(parent::affect_label_to_section($client,$sesskey,$labelid,$sectionid),"affectRecord");
+         return $this->send($this->to_soap(parent::affect_label_to_section($client,$sesskey,$labelid,$sectionid),"affectRecord"));
      }
 
      function affect_forum_to_section($client,$sesskey,$forumid,$sectionid,$groupmode)
      {
-         return $this->to_soap(parent::affect_forum_to_section($client,$sesskey,$forumid,$sectionid,$groupmode),"affectRecord");
+         return $this->send($this->to_soap(parent::affect_forum_to_section($client,$sesskey,$forumid,$sectionid,$groupmode),"affectRecord"));
      }
 
      function affect_section_to_course($client,$sesskey,$sectionid,$courseid)
      {
-         return $this->to_soap(parent::affect_section_to_course($client,$sesskey,$sectionid,$courseid),"affectRecord");
+         return $this->send($this->to_soap(parent::affect_section_to_course($client,$sesskey,$sectionid,$courseid),"affectRecord"));
      }
 
      function affect_user_to_group($client,$sesskey,$userid,$groupid)
      {
-          return $this->to_soap(parent::affect_user_to_group($client,$sesskey,$userid,$groupid),"affectRecord");
+          return $this->send($this->to_soap(parent::affect_user_to_group($client,$sesskey,$userid,$groupid),"affectRecord"));
        }
 
      function affect_group_to_course($client,$sesskey,$groupid,$courseid)
      {
-          // return parent::affect_group_to_course($client,$sesskey,$groupid,$courseid);
-             return $this->to_soap(parent::affect_group_to_course($client,$sesskey,$groupid,$courseid),"affectRecord");
+             return $this->send($this->to_soap(parent::affect_group_to_course($client,$sesskey,$groupid,$courseid),"affectRecord"));
      }
 
      function affect_wiki_to_section($client,$sesskey,$wikiid,$sectionid,$groupmode,$visible)
      {
-            return $this->to_soap(parent::affect_wiki_to_section($client,$sesskey,$wikiid,$sectionid,$groupmode,$visible),"affectRecord" );
+            return $this->send($this->to_soap(parent::affect_wiki_to_section($client,$sesskey,$wikiid,$sectionid,$groupmode,$visible),"affectRecord" ));
         }
 
      function affect_database_to_section($client,$sesskey,$databaseid,$sectionid)
      {
-            return $this->to_soap(parent::affect_database_to_section($client,$sesskey,$databaseid,$sectionid),"affectRecord" );
+            return $this->send($this->to_soap(parent::affect_database_to_section($client,$sesskey,$databaseid,$sectionid),"affectRecord" ));
         }
 
      function affect_assignment_to_section ($client,$sesskey,$assignmentid,$sectionid,$groupmode)
      {
-            return $this->to_soap(parent::affect_assignment_to_section ($client,$sesskey,$assignmentid,$sectionid,$groupmode),"affectRecord" );
+            return $this->send($this->to_soap(parent::affect_assignment_to_section ($client,$sesskey,$assignmentid,$sectionid,$groupmode),"affectRecord" ));
      }
 
      function affect_user_to_course($client,$sesskey,$userid,$courseid,$rolename)
      {
             $rest=parent::affect_user_to_course($client,$sesskey,$userid,$courseid, $rolename );
-            return $this->to_soap($rest,'affectRecord');
+            return $this->send($this->to_soap($rest,'affectRecord'));
      }
 
      function affect_pageWiki_to_wiki($client,$sesskey,$pageid,$wikiid)
      {
            $rest=parent::affect_pageWiki_to_wiki($client,$sesskey,$pageid,$wikiid)  ;
-           return $this->to_soap($rest,'affectRecord');
+           return $this->send($this->to_soap($rest,'affectRecord'));
      }
 
      function remove_userRole_from_course($client,$sesskey,$userid,$courseid,$rolename)
      {
             $rest=parent::remove_userRole_from_course($client,$sesskey,$userid,$courseid, $rolename );
-            return $this->to_soap($rest,'affectRecord');
+            return $this->send($this->to_soap($rest,'affectRecord'));
      }
 
      //------------------------------------------------------------------------------------------------------------------------
@@ -898,65 +897,65 @@
 
      function get_all_wikis($client,$sesskey,$fieldname,$fieldvalue)
      {
-        return $this->to_soap_array(
+        return $this->send($this->to_soap_array(
             parent::get_all_wikis($client, $sesskey,$fieldname,$fieldvalue),
             'wikis',
             'wikiRecord',
-            'no wikis found ');
+            'no wikis found '));
      }
 
      function get_all_pagesWiki($client,$sesskey,$fieldname,$fieldvalue)
      {
-        return $this->to_soap_array(
+        return $this->send($this->to_soap_array(
             parent::get_all_pagesWiki($client, $sesskey,$fieldname,$fieldvalue),
             'pageswiki',
             'pageWikiRecord',
-            'no pages wiki found ');
+            'no pages wiki found '));
      }
 
      function get_all_groups($client,$sesskey,$fieldname,$fieldvalue)
      {
-        return $this->to_soap_array(
+        return $this->send($this->to_soap_array(
             parent::get_all_groups($client, $sesskey,$fieldname,$fieldvalue),
             'groups',
             'groupRecord',
-            'no groups found ');
+            'no groups found '));
        }
 
      function get_all_forums($client,$sesskey,$fieldname,$fieldvalue)
      {
-          return $this->to_soap_array(
+          return $this->send($this->to_soap_array(
             parent::get_all_forums($client, $sesskey,$fieldname,$fieldvalue),
             'forums',
             'forumRecord',
-            'no forums found ');
+            'no forums found '));
      }
 
      function get_all_labels($client,$sesskey,$fieldname,$fieldvalue)
      {
-          return $this->to_soap_array(
+          return $this->send($this->to_soap_array(
             parent::get_all_labels($client, $sesskey,$fieldname,$fieldvalue),
             'labels',
             'labelRecord',
-            'no labels found ');
+            'no labels found '));
      }
 
      function get_all_assignments($client,$sesskey,$fieldname,$fieldvalue)
      {
-          return $this->to_soap_array(
+          return $this->send($this->to_soap_array(
             parent::get_all_assignments($client, $sesskey,$fieldname,$fieldvalue),
             'assignments',
             'assignmentRecord',
-            'no assignments found ');
+            'no assignments found '));
      }
 
      function get_all_databases($client,$sesskey,$fieldname,$fieldvalue)
      {
-          return $this->to_soap_array(
+          return $this->send($this->to_soap_array(
             parent::get_all_databases($client, $sesskey,$fieldname,$fieldvalue),
             'databases',
             'databaseRecord',
-            'no databases found ');
+            'no databases found '));
      }
 
 
