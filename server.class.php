@@ -169,6 +169,7 @@ class server {
 	 * @return An object with the error message string.(required by mdl_soapserver)
 	 */
 	function error($msg) {
+        global $CFG;
 		$res = new StdClass();
 		$res->error = $msg;
 		if ($CFG->ws_logerrors)
