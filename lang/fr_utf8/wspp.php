@@ -27,7 +27,7 @@ $string['ws_nomoodle16']='Moodle versions prior to 1.7 are not supported.';
 
 $string['ws_invaliduser']='Invalid username and / or password.';
 
-$string['ws_ipadressmismatch']='ip address has changed for this open session !';
+$string['ws_ipadressmismatch']='ip address has changed for this open session ! $a';
 $string['ws_errorregistersession']='unable to register the session';
 
 $string['ws_invalidclient']='Invalid client connection.';
