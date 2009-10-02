@@ -173,7 +173,7 @@ class server {
 		$res->error = $msg;
 		if ($CFG->ws_logerrors)
 			add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error :' . $msg);
-		$this->debug_output("server.soap fatal error : $msg");
+		$this->debug_output("server.soap fatal error : $msg ". getremoteaddr());
 		return $res;
 	}
 	/**
