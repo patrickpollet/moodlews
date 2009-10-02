@@ -242,7 +242,7 @@ class server {
 		if (!is_internal_auth($knowuser->auth)) {
 			return $this->error(get_string('ws_invaliduser', 'wspp'));
 		}
-		$user = authenticate_user_login($username, $password);
+		$user = authenticate_user_login(addslashes($username), $password);
 		// $this->debug_output('return of a_u_l'. print_r($user,true));
 		if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
 			return $this->error(get_string('ws_invaliduser', 'wspp'));
