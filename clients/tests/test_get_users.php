@@ -12,10 +12,10 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$userids=array('alexis','alainxxxx');
-$res=$moodle->get_users($lr->getClient(),$lr->getSessionKey(),$userids,'firstname');
-//print_r($res);
-print_r($res->getUsers());
+$userids=array();
+$res=$moodle->get_users($lr->getClient(),$lr->getSessionKey(),$userids,'');
+print_r($res);
+print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
