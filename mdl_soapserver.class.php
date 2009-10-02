@@ -420,9 +420,9 @@ class mdl_soapserver extends server {
 	* return members of group identified by $groupeid (Moodle id )
 	*/
 
-	public function get_group_members($client, $sesskey, $groupid) {
+	public function get_group_members($client, $sesskey, $groupid,$groupidfield='id') {
 
-		return $this->send($this->to_soap_array(parent :: get_group_members($client, $sesskey, $groupid), 'users', 'userRecord', 'no users'));
+		return $this->send($this->to_soap_array(parent :: get_group_members($client, $sesskey, $groupid,$groupidfield), 'users', 'userRecord', 'no users'));
 
 	}
 
@@ -582,8 +582,8 @@ class mdl_soapserver extends server {
 		), 'category');
 	}
 
-	public function get_events($client, $sesskey, $eventtype, $ownerid) {
-		return $this->send($this->to_soap_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid), 'events', 'eventRecord', 'no events'));
+	public function get_events($client, $sesskey, $eventtype, $ownerid,$owneridfield='id') {
+		return $this->send($this->to_soap_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid,$owneridfield), 'events', 'eventRecord', 'no events'));
 	}
 
 	public function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {

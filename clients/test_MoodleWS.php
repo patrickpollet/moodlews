@@ -101,6 +101,17 @@ print($res->getResources());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: get current version
+* @param integer $client
+* @param string $sesskey
+* @return string
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_version($lr->getClient(),$lr->getSessionKey());
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 /**test code for MoodleWS: Get Course sections
 * @param integer $client
 * @param string $sesskey
@@ -138,14 +149,15 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param integer $client
 * @param string $sesskey
 * @param string $userid
+* @param string $userfield
 * @param (getCoursesInput) array of string $courseids
-* @param string $idfield
+* @param string $courseidfield
 * @return getGradesReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
-$res=$moodle->get_grades($lr->getClient(),$lr->getSessionKey(),'',$courseids,'');
+$res=$moodle->get_grades($lr->getClient(),$lr->getSessionKey(),'','',$courseids,'');
 print_r($res);
 print($res->getGrades());
 
@@ -185,16 +197,34 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param integer $client
 * @param string $sesskey
 * @param string $courseid
+* @param string $courseidfield
 * @param (enrolStudentsInput) array of string $userids
-* @param string $idfield
+* @param string $useridfield
 * @return enrolStudentsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $userids=array();
-$res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'',$userids,'');
+$res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
 print_r($res);
-print($res->getError());
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: UnEnrol students in a course
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $courseidfield
+* @param (enrolStudentsInput) array of string $userids
+* @param string $useridfield
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->unenrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+print_r($res);
 print($res->getStudents());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
@@ -589,12 +619,13 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 /**test code for MoodleWS: Get user groups in all Moodle site
 * @param integer $client
 * @param string $sesskey
-* @param integer $uid
+* @param string $uid
+* @param string $idfield
 * @return getGroupsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_my_groups($lr->getClient(),$lr->getSessionKey(),0);
+$res=$moodle->get_my_groups($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getGroups());
 

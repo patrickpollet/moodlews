@@ -13,62 +13,7 @@
  * @author
  */
 /* rev history
-  1.5 released to Moodle forum
-  1.5.1 :
-    - make isteacherinanycourse Moodle 1.6 compatible
-    - filtering events by type
-    - function login :CAUTION : authenticate_user_login  WILL  create the user if
-it does not exist AND the global authentication methods is not 'internal' (CAS, LDAP ...)
-so anyone could get in and retrieve some 'public' informations. So we first check for
-an existing account with internal auth method ! (a limitation that should be treated
-but how to authenticate by CAS in this service ????)
- 1.5.4 :
-   - added an idfield and sort paramter to get_my_courses
-   - in get_my_courses, if user is the guest user, process it differently .
-   -
- 1.5.6
-   - fixed has_role_in_course to run with Moodle< 1.7
-   - fixed  get_users_bycourse to run with Moodle < 1.7
-   - filter_changes did not worked with user admin en Moodle 1.6
-   - get_roles should not be called in Moodle <1.7
-1.5.7
-  - added a timestamp (integer) to returned changeRecord
-1.5.8
-  - fixed edit_users parameters passing and simplified code to update user
-  - fixed edit-courses parameters passing and simplified code to update course
-1.5.9
-  - edit_users, add the new field  user->mnethostid = $CFG->mnet_localhost_id for Moodle >= 1.8
-    see http://moodle.org/mod/forum/post.php?reply=376117
-
-1.5.10
-  - bug in get_my_courses when uinfo is Moodle id
-1.5.11
-  - previous empty default value for $sort in get_my_courses raises an SQL error. Changed to fullname
-1.5.13
-  - added get_resources operation
-  - first attempt to get_instances_bytype
-1.5.14
-  - bug in filter_course in Moodle 1.9 if looged user is admin (not teacher of some courses)
-  - added some basic info into global $USER for get_my_courses in Moodle 1.9
-1.5.15
-  - added get_sections operation
-1.5.16
-  - testing for moodle 1.9 in server constructor (attrib. $using19) and using it in validate_client to fill global USER
-     (required for get_my_courses API call)
-  -  fix a notice (DEBUG already defined)
-  - fix a notice error undefined in filter_section and filter_resource
-  - usage of global USER varaible (set in validate_client) instead of
-
-1.6
-  - added operations by Lille team
-  - moodle < 1.7 not anymore supported
-  - change to get_grades to support new Moodle 1.9 gradebook
-  - better support of roles & capabilities (filtering functions moved to filterlib.php)
-  - removed all deprecated calls (isadmin(), isteacher() ....
-  - session timeout and global access set in CFG
-  - usage of global $USER set properly in validate-client
-  - log all operations in Moodle's log as per some CFG entries
-  - removed all ob_* functions (managed globally at mdl_soapserver.class)
+ @see revisions.txt
 **/
 
 require_once ('../config.php');
@@ -85,26 +30,14 @@ define('cal_show_user', 8);
 /**
  * The main server class.
  *
- * This class is broken up into three main sections of methods:
- * 1. Methods that perform actions related to client requests.
- * 2. Methods that handle server setup, incoming client requests, and returning a
- *    response to the client.
- * 3. Utility functions that perform functions such as datetime format conversion or
- *    replication of Moodle library functions in a manner safe for usage within this
- *    web services implementatation.
- *
- * The only methods that need to be extended in a child class are main() and any of
+ * The only methods that need to be extended in a child class are error() and any of
  * the service methods which need special transport-protocol specific handling of
- * input and / or output data.
+ * input and / or output data (ie non simple type returns)
  *
- *
- * @package Web Services
- * @author Open Knowledge Technologies - http://www.oktech.ca/
- * @author Justin Filip <jfilip@oktech.ca>
+
  */
 class server {
 	var $version = 2009091000; // added ip in mdl_webservice_sessions
-	var $sessiontimeout = 1800; // 30 minutes.
 	var $using17;
 	var $using19 = false;
 	/**
@@ -117,17 +50,29 @@ class server {
 	function server() {
 		global $CFG;
 		$this->debug_output("Server init...");
-		$this->using17 =file_exists($CFG->libdir . '/accesslib.php');
+		$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
 		$this->using19 = file_exists($CFG->libdir . '/grouplib.php');
-		/// Check for any upgrades.
+		/// Check for any DB upgrades.
 		if (empty ($CFG->webservices_version)) {
 			$this->upgrade(0);
 		} else
 			if ($CFG->webservices_version < $this->version) {
 				$this->upgrade($CFG->webservices_version);
 			}
-		if (!empty ($CFG->ws_sessiontimeout))
-			$this->sessiontimeout = $CFG->ws_sessiontimeout;
+
+		// setup default values if not set in admin screens (see admin/wspp.php)
+		if (empty ($CFG->ws_sessiontimeout))
+			$CFG->session_timeout = 1800;
+		$this->sessiontimeout = $CFG->ws_sessiontimeout;
+
+		if (!isset ($CFG->ws_logoperations))
+			$CFG->logoperations = 1;
+		if (!isset ($CFG->ws_logerrors))
+			$CFG->logerrors = 0;
+		if (!isset ($CFG->ws_logdetailedoperations))
+			$CFG->logdetailledoperations = 0;
+		if (!isset ($CFG->ws_debug))
+			$CFG->wsdebug = 0;
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
@@ -138,67 +83,30 @@ class server {
 	 */
 	function upgrade($oldversion) {
 		global $CFG;
-		$this->debug_output('Starting WS upgrade to version ' . $oldversion);
-
+		$this->debug_output('Starting WS upgrade from version ' . $oldversion . 'to version ' . $this->version);
 		$return = true;
 		require_once ($CFG->libdir . '/ddllib.php');
 		if ($oldversion < 2006050800) {
-			// oups . until v 1.5.4 dbdir was still /ws/db/install.xml and db/ was not distributed !!!
 			$return = install_from_xmldb_file($CFG->dirroot . '/wspp/db/install.xml');
 		} else {
-			// add ip column if $oldversion < 2007051000;
-			$table = new XMLDBTable('webservices_sessions');
-			$field = new XMLDBField('ip');
-			// since table exists, keep NULL as true and no default value !
-			// otherwise XMLDB do not do the change but return true ...
-			$field->setAttributes(XMLDB_TYPE_CHAR, '64');
-			$return = add_field($table, $field, false, false);
+			if ($oldversion < 2007051000) {
+				$table = new XMLDBTable('webservices_sessions');
+				$field = new XMLDBField('ip');
+				// since table exists, keep NULL as true and no default value !
+				// otherwise XMLDB do not do the change but return true ...
+				$field->setAttributes(XMLDB_TYPE_CHAR, '64');
+				$return = add_field($table, $field, false, false);
+			}
 		}
-
-
 		if ($return) {
 			set_config('webservices_version', $this->version);
 			$this->debug_output('Upgraded from ' . $oldversion . ' to ' . $this->version);
 		} else {
 			$this->debug_output('ERROR: Could not upgrade to version ' . $this->version);
 		}
-
 		return $return;
 	}
-	/**
-	 * Initializes a connection to a new client by generating a random session
-	 * key to be used for communications with this specific client.
-	 *
-	 * @param int $client The client session record ID.
-	 * @return object A new request object containing information the client
-	 *                needs for further communication or an error object.
-	 */
-	function init($client) {
-		$this->debug_output('Running INIT for client: ' . $client);
-		/// Add this client's database record.
-		if (!$sess = get_record('webservices_sessions', 'id', $client)) {
-			$this->debug_output('No session');
-			return $this->error('Could not get validated client session (' . $client . ').');
-		}
-		$sess->sessionbegin = time();
-		$sess->sessionend = 0;
-		$sess->sessionkey = $this->add_session_key();
-		if (!update_record('webservices_sessions', $sess)) {
-			$this->debug_output('No update');
-			return $this->error('Could not initialize client session (' . $client . ').');
-		}
 
-		$this->debug_output('Login successful.');
-
-		/// Return standard data to be converted into the appropriate data format
-		/// for return to the client.
-		$ret = array (
-			'client' => $client,
-			'sessionkey' => $sess->sessionkey
-		);
-		$this->debug_output(print_r($ret, true));
-		return $ret;
-	}
 	/**
 	 * Creates a new session key.
 	 *
@@ -234,7 +142,6 @@ class server {
 		}
 
 		// rev 1.6 make sure the session has not timed out
-		// rev 843 pas trop longtemps sans logout ...
 		if ($sess->sessionbegin + $this->sessiontimeout < time()) {
 			$sess->sessionend = time();
 			update_record('webservices_sessions', $sess, 'id');
@@ -249,7 +156,7 @@ class server {
 
 		//LOG INTO MOODLE'S LOG
 		if ($CFG->ws_logoperations)
-			add_to_log(SITEID, 'webservice', 'webservice pp','', $operation);
+			add_to_log(SITEID, 'webservice', 'webservice pp', '', $operation);
 		return true;
 	}
 
@@ -264,7 +171,7 @@ class server {
 		$res = new StdClass();
 		$res->error = $msg;
 		if ($CFG->ws_logerrors)
-            add_to_log(SITEID, 'webservice', 'webservice pp','', 'error :'.$msg);
+			add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error :' . $msg);
 		$this->debug_output("server.soap fatal error : $msg");
 		return $res;
 	}
@@ -289,7 +196,7 @@ class server {
 	 */
 	function debug_output($output) {
 		global $CFG;
-		if (DEBUG) {
+		if ($CFG->ws_debug) {
 			$fp = fopen($CFG->dataroot . '/debug.out', 'a');
 			fwrite($fp, "[" . time() . "] $output\n");
 			fflush($fp);
@@ -297,18 +204,17 @@ class server {
 		}
 	}
 
-    /**
-     * check that current ws user has the required capability
-     * @param string capabilty
-     * @param string type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
-     * @param  object moodle's id
-     */
-    function has_capability( $capability, $context_type, $instance_id) {
-        global $USER;
-        $context = get_context_instance($context_type, $instance_id);
-        return has_capability($capability, $context, $USER->id);
-    }
-
+	/**
+	 * check that current ws user has the required capability
+	 * @param string capability
+	 * @param string type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
+	 * @param  object moodle's id
+	 */
+	function has_capability($capability, $context_type, $instance_id) {
+		global $USER;
+		$context = get_context_instance($context_type, $instance_id);
+		return has_capability($capability, $context, $USER->id);
+	}
 
 	/**
 	 * Validates a client's login request.
@@ -323,46 +229,61 @@ class server {
 		global $CFG;
 
 		if (!empty ($CFG->ws_disable))
-			return $this->error("web service access disabled on this site");
-        if (! $this->using17)
-             return $this->error("Moodle version prior to 1.7 are not supported");
+			return $this->error(get_string('ws_accessdisabled', 'wspp'));
+		if (!$this->using17)
+			return $this->error(get_string('ws_nomoodle16', 'wspp'));
 
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
 		if (!$knowuser = get_record('user', 'username', $username)) {
-			return $this->error('Invalid username and / or password.');
+			return $this->error(get_string('ws_invaliduser', 'wspp'));
 		}
 		/// also make sure internal_authentication is used  (a limitation to fix ...)
 		if (!is_internal_auth($knowuser->auth)) {
-			return $this->error('Invalid username and / or password.');
+			return $this->error(get_string('ws_invaliduser', 'wspp'));
 		}
 		$user = authenticate_user_login($username, $password);
 		// $this->debug_output('return of a_u_l'. print_r($user,true));
-		if (($user === false) || ($user && $user->id == 0)) {
-			return $this->error('Invalid username and / or password.');
+		if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
+			return $this->error(get_string('ws_invaliduser', 'wspp'));
+		}
+		/// Verify that an active session does not already exist for this user.
+		$userip = getremoteaddr(); // rev 1.5.4
+
+		$sql = "SELECT s.* FROM {$CFG->prefix}webservices_sessions s
+							WHERE s.userid = {$user->id} AND
+							s.verified = 1 AND
+							s.sessionend = 0 AND
+							(" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
+		if ($sess = get_record_sql($sql, 0)) {
+			//return $this->error('A session already exists for this user (' . $user->login . ')');
+			if ($sess->ip != $userip)
+				return $this->error(get_string('ws_ipadressmismatch', 'wspp'));
+			// V1.6 reuse current session
 		} else {
-			/// Verify that an active session does not already exist for this user.
-			$sql = "SELECT s.*
-												                        FROM {$CFG->prefix}webservices_sessions s
-												                        WHERE s.userid = {$user->id} AND
-												                              s.verified = 1 AND
-												                              s.sessionend = 0 AND
-												                              (" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
-			if ($sess = get_record_sql($sql, 0)) {
-				//return $this->error('A session already exists for this user (' . $user->login . ')');
-				return $this->init($sess->id); // V1.6 reuse current session
-			}
 			/// Login valid, create a new session record for this client.
 			$sess = new stdClass;
 			$sess->userid = $user->id;
 			$sess->verified = true;
-			$sess->ip = getremoteaddr(); // rev 1.5.4
-			$sess->id = insert_record('webservices_sessions', $sess);
-			if ($CFG->ws_logoperations)
+			$sess->ip = $userip;
+			$sess->sessionbegin = time();
+			$sess->sessionend = 0;
+			$sess->sessionkey = $this->add_session_key();
+			if ($sess->id = insert_record('webservices_sessions', $sess)) {
+				if ($CFG->ws_logoperations)
+					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'login');
+			} else
+				return $this->error(get_string('ws_errorregistersession','wspp'));
 
-                add_to_log(SITEID, 'webservice', 'webservice pp','', 'login');
-			return $this->init($sess->id);
 		}
+		/// Return standard data to be converted into the appropriate data format
+		/// for return to the client.
+		$ret = array (
+			'client' => $sess->id,
+			'sessionkey' => $sess->sessionkey
+		);
+		$this->debug_output(print_r($ret, true));
+		return $ret;
 	}
 
 	/**
@@ -373,10 +294,11 @@ class server {
 	 * @param integer $client The client record ID.
 	 * @param string $sesskey The client session key.
 	 * @return boolean True if successfully logged out, false otherwise.
+     * since this operation retunr s a simple type, no need to override it in protocol specific layer
 	 */
 	function logout($client, $sesskey) {
 		if (!$this->validate_client($client, $sesskey)) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if ($sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			$sess->verified = 0;
@@ -384,15 +306,22 @@ class server {
 			if (update_record('webservices_sessions', $sess)) {
 				if ($CFG->ws_logoperations)
 					add_to_log(SITEID, 'webservice pp', '', 'logout');
-                    add_to_log(SITEID, 'webservice', 'webservice pp','','logout');
 				return true;
 			} else {
 				if ($CFG->ws_logerrors)
-                    add_to_log(SITEID, 'webservice', 'webservice pp','', 'error : logout');
+					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error : logout');
 				return false;
 			}
 		}
 		return false;
+	}
+
+	function get_version($client, $sesskey) {
+		global $CFG;
+		if (!$this->validate_client($client, $sesskey)) {
+			return -1; //invalid Moodle's ID
+		}
+		return $CFG->webservices_version;
 	}
 
 	/**
@@ -408,26 +337,27 @@ class server {
 	function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_users')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// Verify that the user for this session can perform this operation.
-		$uid = $USER->id;
 		//nothing to check user database is public ?
 		$ret = array (); // Return array.
 		if (empty ($userids)) { // all users ...
 			return filter_users($client, get_users(true), 0);
 		}
 		foreach ($userids as $userid) {
-			$users = get_records('user', $idfield, $userid);
+			$users = get_records('user', $idfield, $userid); //may have more than one !
 			if (empty ($users)) {
-				$ret[] = $this->non_fatal_error("no match found for $idfield= $userid");
+				$a = new StdClass();
+				$a->critere = $idfield;
+				$a->valeur = $userid;
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 			} else {
-				foreach ($users as $user)
-					$ret[] = $user;
+				$ret = array_merge($ret, $users);
 			}
 		}
-		$this->debug_output("GU" . print_r($ret, true));
-		return filter_users($client, $ret,0);
+		//$this->debug_output("GU" . print_r($ret, true));
+		return filter_users($client, $ret, 0);
 	}
 
 	/**
@@ -443,9 +373,8 @@ class server {
 	function get_courses($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_courses')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$uid = $USER->id;
 		$ret = array ();
 		if (empty ($courseids)) {
 			// all courses wanted
@@ -453,11 +382,13 @@ class server {
 			return filter_courses($client, $res);
 		}
 		foreach ($courseids as $courseid) {
-			if ($courses = get_records('course', $idfield, $courseid)) {
-				foreach ($courses as $course)
-					$ret[] = $course;
+			if ($courses = get_records('course', $idfield, $courseid)) { //may have more than one
+				$ret = array_merge($ret, $courses);
 			} else {
-				$ret[] = $this->non_fatal_error("no match for $idfield = $courseid");
+				$a = new StdClass();
+				$a->critere = $idfield;
+				$a->valeur = $courseid;
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 			}
 		}
 		return filter_courses($ret);
@@ -472,15 +403,14 @@ class server {
 	 * @param string $idfield : the field used to identify courses
 	 * @return array An array of  records.
 	 */
-	public function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
+	function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_resources')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$uid = $USER->id;
 		$ret = array ();
 		if (empty ($courseids)) {
-			$courses = get_records('course', '', '');
+		  $courses = get_my_courses($USER->id);
 		} else {
 			$courses = array ();
 			foreach ($courseids as $courseid) {
@@ -488,8 +418,10 @@ class server {
 					$courses[] = $course;
 				else {
 					//append an error record to the list
-					$tmp->error = 'Could not find course with ' . $idfield . '=' . $courseid;
-					$ret[] = $tmp;
+					$a = new StdClass();
+					$a->critere = $idfield;
+					$a->valeur = $courseid;
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 				}
 			}
 		}
@@ -504,29 +436,25 @@ class server {
 				}
 			}
 		}
+        //remove ressources in course where current user is not enroled
 		return filter_resources($client, $ret);
 	}
 
 	/**
-	    * Find and return a list of sections within one or several courses.
-	    * OK PP tested with php5 5 and python clients
-	    * @param int $client The client session ID.
-	    * @param string $sesskey The client session key.
-	    * @param array $courseids An array of input course id values to search for. If empty return all sections
-	    * @param string $idfield : the field used to identify courses
-	    * @return array An array of course records.
-	    */
+	 * Find and return a list of sections within one or several courses.
+	 * OK PP tested with php5 5 and python clients
+	 * @param int $client The client session ID.
+	 * @param string $sesskey The client session key.
+	 * @param array $courseids An array of input course id values to search for. If empty return all sections
+	 * @param string $idfield : the field used to identify courses
+	 * @return array An array of course records.
+	 */
 	public function get_sections($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_sections')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
-		if (!empty ($courseids) && !is_array($courseids)) {
-			$courseids = array (
-				$courseids
-			);
-		}
 		if (empty ($courseids)) {
 			$courses = get_my_courses($USER->id);
 		} else {
@@ -536,8 +464,10 @@ class server {
 					$courses[] = $course;
 				else {
 					//append an error record to the list
-					$tmp->error = 'Could not find course with ' . $idfield . '=' . $courseid;
-					$ret[] = $tmp;
+					$a = new StdClass();
+					$a->critere = $idfield;
+					$a->valeur = $courseid;
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 				}
 			}
 		}
@@ -546,9 +476,10 @@ class server {
 		foreach ($courses as $course) {
 			if ($resources = get_all_sections($course->id))
 				foreach ($resources as $resource) {
-					$ret[] = $resource;
-				}
+				$ret[] = $resource;
+			}
 		}
+         //remove ressources in course where current user is not enroled
 		return filter_sections($client, $ret);
 	}
 
@@ -556,7 +487,10 @@ class server {
 		//TODO merge with get_resources by giving $type="resource"
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_instances_bytype')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
+		}
+		if (empty($type)) {
+			return $this->error(get_string('ws_emptyparameter', 'wspp','type'));
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
@@ -568,23 +502,35 @@ class server {
 					$courses[] = $course;
 				else {
 					//append an error record to the list
-					$tmp->error = 'Could not find course with ' . $idfield . '=' . $courseid;
-					$ret[] = $tmp;
+					$a = new StdClass();
+					$a->critere = $idfield;
+					$a->valeur = $courseid;
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 				}
 			}
 		}
 		//remove courses not available to current user
 		$courses = filter_courses($client, $courses);
 		foreach ($courses as $course) {
-			$resources = get_all_instances_in_course($type, $course, NULL, true);
-			$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
-			foreach ($resources as $resource) {
-				$resource->url = $ilink . $resource->coursemodule;
-				$ret[] = $resource;
+			if (!$resources = get_all_instances_in_course($type, $course, NULL, true)) {
+				//append an error record to the list
+				$a = new StdClass();
+				$a->critere = 'type';
+				$a->valeur = $type;
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+			}else {
+				$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
+				foreach ($resources as $resource) {
+					$resource->url = $ilink . $resource->coursemodule;
+					$ret[] = $resource;
+				}
 			}
 		}
+		//remove ressources in course where current user is not enroled
 		return filter_resources($client, $ret);
 	}
+
+
 	/**
 	     * Find and return student grades for currently enrolled courses  Function for Moodle 1.9)
 	     *
@@ -592,25 +538,30 @@ class server {
 	     * @param int $client The client session ID.
 	     * @param string $sesskey The client session key.
 	     * @param string $userid The unique id of the student.
-         * @param string $useridfield The field used to identify the student.
+	     * @param string $useridfield The field used to identify the student.
 	     * @param string $courseids Array of courses ids
 	     * @param string $idfield  field used for course's ids (idnumber, shortname, id ...)
 	     * @return userGrade [] The student grades
 	     *
 	*/
-	function get_grades($client, $sesskey, $userid, $useridfield='idnumber',$courseids, $courseidfield = 'idnumber') {
-        global $CFG;
-		require_once ($CFG->dirroot . '/grade/lib.php');
-		require_once ($CFG->dirroot . '/grade/querylib.php');
-
-		if (empty ($courseids))
-			return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
+	function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = 'idnumber') {
+		global $CFG;
 
 		if (!$this->validate_client($client, $sesskey, 'get_grades')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
+        if (empty ($courseids))
+            return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
+
+
+         if (!$this->using19)
+            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+
+        require_once ($CFG->dirroot . '/grade/lib.php');
+        require_once ($CFG->dirroot . '/grade/querylib.php');
+
 		if (!$user = get_record('user', $useridfield, $userid)) {
-			return $this->error('Could not find user record (' . $userid . ').');
+			return $this->error(get_string('ws_userunknown','wspp',$userid));
 		}
 		$return = array ();
 		/// Find grade data for the requested IDs.
@@ -618,20 +569,23 @@ class server {
 			$rgrade = new stdClass;
 			/// Get the student grades for each course requested.
 			if ($course = get_record('course', $courseidfield, $cid)) {
-				if ($this->has_capability('moodle/grade:viewall', CONTEXT_COURSE,$course->id)) {
+				if ($this->has_capability('moodle/grade:viewall', CONTEXT_COURSE, $course->id)) {
 					//  get the floating point final grade
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
 						$rgrade = $legrade;
 						$rgrade->error = '';
 						$rgrade->itemid = $cid;
 					} else {
-						$rgrade->error = 'No grade data for student ' . fullname($user) . ' in course ' . $course->fullname;
+                        $a=new StdClass();
+                        $a->user=fullname($user);
+                        $a->course= $course->fullname;
+						$rgrade->error = get_string('ws_nogrades','wspp',$a);
 					}
 				} else {
-					$rgrade->error = ' not allowed to see grades  ' . $course->fullname;
+					$rgrade->error= get_string('ws_noseegrades','wspp',$course->fullname);
 				}
 			} else {
-				$rgrade->error = 'Could not find course ' . $cid;
+				$rgrade->error = get_string('ws_courseunknown','wspp', $cid);
 			}
 			$return[] = $rgrade;
 		}
@@ -645,21 +599,27 @@ class server {
 
 	public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
 
-		if (!$user = get_record('user', $idfield, $userid)) {
-			return $this->error('Could not find user record (' . $userid . ').');
+        if (!$this->validate_client($client, $sesskey, 'get_user_grades')) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        if (!$this->using19)
+            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+
+        if (!$user = get_record('user', $idfield, $userid)) {
+			return $this->error(get_string('ws_userunknown','wspp',$idfield.'='.$userid));
 		}
 		// we cannot call  API grade_get_course_grade($user->id) since it does not set the courseid as we want it
 		if (!$courses = get_my_courses($user->id, $sort = 'sortorder ASC', $fields = 'idnumber')) {
-			return $this->error('Could not find any courses for user ' . $userid);
+			return $this->error(get_string('ws_nocourseforuser','wspp',$userid));
 		}
 		$courseids = array ();
 		foreach ($courses as $c)
-			if (!empty($c->idnumber))
-                $courseids[] = $c->idnumber;
-		$this->debug_output("GUG=" . print_r($courseids, true));
+			if (!empty ($c->idnumber))
+				$courseids[] = $c->idnumber;
+		//$this->debug_output("GUG=" . print_r($courseids, true));
 
-        if (empty($courseids))
-            return $this->error('Could not find any courses with set idnumber for user ' . $userid);
+		if (empty ($courseids))
+			return $this->error(get_string('ws_nocoursewithidnumberforuser','wspp', $userid));
 		// caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
 		// resulting in two calls of to_soaparray !!!!
 		return server :: get_grades($client, $sesskey, $userid, $idfield, $courseids, 'idnumber');
@@ -667,17 +627,21 @@ class server {
 
 	public function get_course_grades($client, $sesskey, $courseid, $idfield = "idnumber") {
 		global $CFG, $USER;
-		require_once ($CFG->dirroot . '/grade/lib.php');
-		require_once ($CFG->dirroot . '/grade/querylib.php');
 		if (!$this->validate_client($client, $sesskey, 'get_course_grades')) {
-			return $this->error('Invalid client connection.');
-        }
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
+		}
+
+         if (!$this->using19)
+            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+
+        require_once ($CFG->dirroot . '/grade/lib.php');
+        require_once ($CFG->dirroot . '/grade/querylib.php');
 
 		$return = array ();
 		//Get all student grades for course requested.
 		if ($course = get_record('course', $idfield, $courseid)) {
-            $context=get_context_instance(CONTEXT_COURSE, $course->id);
-			if (has_capability('moodle/grade:viewall',$context)) {
+			$context = get_context_instance(CONTEXT_COURSE, $course->id);
+			if (has_capability('moodle/grade:viewall', $context)) {
 				$students = array ();
 				$students = get_role_users(5, $context, true, '');
 				//$this->debug_output("GcG".print_r($students, true));
@@ -689,24 +653,24 @@ class server {
 						//  $this->debug_output("IDS=".print_r($legrade,true));
 						$return[] = $rgrade;
 					} else {
-						$rgrade->error = 'No grade data for student ' . fullname($user);
+                         $a=new StdClass();
+                        $a->user=fullname($user);
+                        $a->course= $course->fullname;
+                        $rgrade->error = get_string('ws_nogrades','wspp',$a);
 					}
 				}
 			} else {
-				$rgrade->error = ' not allowed to see grades of course ' . $course->fullname;
+				$rgrade->error = get_string('ws_noseegrades','wspp',$course->fullname);
 				$return[] = $rgrade;
 			}
 		} else {
-			$rgrade->error = 'Could not find course ' . $cid;
+			$rgrade->error = get_string('ws_courseunknown','wspp', $cid);
 			$return[] = $rgrade;
 		}
 		//$this->debug_output("GcG".print_r($return, true));
-
 		return filter_grades($client, $return);
 
 	}
-
-
 
 	/**
 	* determine the primary role of user in a course
@@ -724,26 +688,23 @@ class server {
 	*          5 student
 	*          6 guest IF course allows guest AND username ==guest
 	*          0 nothing
+    * since this operation retunr s a simple type, no need to override it in protocol specific layer
 	*/
 	function get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield) {
-		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_primaryrole_incourse')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$cuid = $USER->id;
 		// convert user request criteria to an userid
 		$user = get_record('user', $useridfield, $userid);
 		if (!$user)
-			return $this->error("user $useridfield='$userid' not found ");
+			return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid));
 		$userid = $user->id;
 		// convert course request criteria to a courseid
 		$course = get_record('course', $courseidfield, $courseid);
 		if (!$course)
-			return $this->error("course $courseidfield='$courseid' not found");
-		 return ws_get_primaryrole_incourse ($course->id,$userid);
-    }
-
-
+			return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
+		return ws_get_primaryrole_incourse($course->id, $userid);
+	}
 
 	/**
 	* determine if user has (at least) a given role in a course
@@ -755,10 +716,11 @@ class server {
 	* @param string courseidfield
 	* @param int roleid
 	* @return boolean True if Ok , False otherwise.
+    * since this operation retunr s a simple type, no need to override it in protocol specific layer
 	*/
 	function has_role_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $roleid) {
-		$tmp=server::get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield);
-        return  ($tmp <= $roleid);
+		$tmp = server :: get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield);
+		return ($tmp <= $roleid);
 	}
 
 	/**
@@ -775,160 +737,160 @@ class server {
 	function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_my_courses')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-        $cuid = $USER->id;
-        if ($uinfo) {
-            if ($idfield != 'id') { // find userid if not current user
-                if (!$user = get_record('user', $idfield, $uinfo))
-                    return $this->error("user not found with $idfield= '$uinfo'");
-                $uid = $user->id;
-            } else
-                $uid = $uinfo; // rev 1.5.10
-        } else
-            $uid = $cuid; //use current user and ignore $idfield
-        //only admin user can request courses for others
-        if ($uid != $cuid) {
-            if (! $this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM,0)){
-                return $this->error($cuid . ' You do not have proper access to perform this operation.');
-            }
-        }
-
+		$cuid = $USER->id;
+		if ($uinfo) {
+			if ($idfield != 'id') { // find userid if not current user
+				if (!$user = get_record('user', $idfield, $uinfo))
+					return $this->error(get_string('ws_userunknown','wspp',idfield."=".$uinfo));
+				$uid = $user->id;
+			} else
+				$uid = $uinfo; // rev 1.5.10
+		} else
+			$uid = $cuid; //use current user and ignore $idfield
+		//only admin user can request courses for others
+		if ($uid != $cuid) {
+			if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
+				return $this->error(get_string('ws_operationnotallowed','wspp'));
+			}
+		}
 
 		$sort = $sort ? $sort : 'fullname';
-		if (isguest($uid)) //isguest is deprecated by still used in Moodle's 1.7 index.php ?
-			//strange: courses with guest=1 and a password are not returned ?
+		if (isguestuser($user))
 			$res = get_records('course', 'guest', 1, $sort);
 		else
 			$res = get_my_courses($uid, $sort);
 		if ($res)
 			return filter_courses($client, $res);
 		else
-			return $this->non_fatal_error("no courses");
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 	}
 
+/**
+ * returns users havaing $idrole in course identified by $idcourse
+ * @param string $idcourse unique identifierr of course
+ * @param string $idfield  name of field used to finc course (idnumber, id, shortname), should be unique
+ * @param integer $idrole  role searched for (0 = any role)
+ */
 
 	function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole = 0) {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_users_bycourse')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $idcourse)) {
-			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
+			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$idcourse ));
 		}
-		if (! $this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
-			return $this->error('You do not have proper access to perform this operation.');
+		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
 
-		if (!empty($roleid) && !record_exists('role', 'id', $idrole))
-			return $this->error("Role ID is incorrect");
-         $context = get_context_instance(CONTEXT_COURSE, $course->id);
+		if (!empty ($roleid) && !record_exists('role', 'id', $idrole))
+            return $this->error(get_string('ws_roleunknown','wspp',$idrole ));
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		if ($res = get_role_users($idrole, $context, true, '')) {
 			return filter_users($client, $res, $idrole);
 		} else {
-			return $this->non_fatal_error("get_users_bycourse : no match");
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		}
-		return $ret;
 	}
 
 	function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
-		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_roles')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		// Get a list of all the roles in the database, sorted by their short names.
 		if ($res = get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
 			return $res;
 		} else {
-			return $this->error("get_roles : no roles ???");
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		}
 	}
 
-
 	function get_categories($client, $sesskey, $catid = '', $idfield = '') {
 		if (!$this->validate_client($client, $sesskey, 'get_categories')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		// Get a list of all the categories in the database, sorted by their name
 		if ($res = get_records('course_categories', $idfield, $catid, 'name', '*')) {
-			$ret = filter_categories($client, $res);
+			return filter_categories($client, $res);
 		} else {
-			return $this->error("get_categories : search error");
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		}
-		return $ret;
 	}
 
-
-	function get_events($client, $sesskey, $eventtype, $ownerid) {
+	function get_events($client, $sesskey, $eventtype, $ownerid,$owneridfield='id') {
 		global $USER;
-		//NOT FINISHED
-		/* TODO decide according to $eventype what to return
-			global events
-		          course events
-		          group events
-		          user's event
-		          from calendar/lib.php function calendar_event_can_edit
-		    if groupid is set, it's definitely a group event
-		    else  if groupid is not set, but course is set,
-		    it's definitively a course event
-		    if course is not set, but userid id set, it's a user event
-		    */
+
 		if (!$this->validate_client($client, $sesskey, 'get_events')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
-		$cuid = $USER->id;
 
-			// Get a list of all the events in the database, sorted by their short names.
-			//TODO filter by eventype ...
-			switch ($eventtype) {
-				case cal_show_global :
-					$idfield = 'courseid';
-					$ownerid = 1;
-					break;
-				case cal_show_course :
-					$idfield = 'courseid';
-					break;
-				case cal_show_group :
-					$idfield = 'groupid';
-					break;
-				case cal_show_user :
-					$idfield = 'userid';
-					break;
-				default :
-					$idfield = '';
-					$ownerid = '';
+		// Get a list of all the events in the database, sorted by their short names.
+		//TODO filter by eventype ...
+		switch ($eventtype) {
+			case cal_show_global :
+				$idfield = 'courseid';
+				$ownerid = 1;
+				break;
+			case cal_show_course :
+				$idfield = 'courseid';
+                if (!$course =get_record('course',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_courseunknown','wspp',$owneridfield."=".$ownerid ));
+                }
+                $ownerid=$course->id;
+				break;
+			case cal_show_group :
+				$idfield = 'groupid';
+                if (!$group =get_record('groups',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_groupunknown','wspp',$owneridfield."=".$ownerid ));
+                }
+                 $ownerid=$group->id;
+				break;
+			case cal_show_user :
+				$idfield = 'userid';
+                if (!$user =get_record('user',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_userunknown','wspp',$owneridfield."=".$ownerid ));
+                }
+                 $ownerid=$user->id;
+				break;
+			default :
+				$idfield = '';
+				$ownerid = '';
+		}
+		if ($res = get_records('event', $idfield, $ownerid)) {
+			foreach ($res as $r) {
+				$r = filter_event($client, $eventtype, $r);
+				if ($r)
+					$ret[] = $r;
 			}
-			if ($res = get_records('event', $idfield, $ownerid)) {
-				foreach ($res as $r) {
-					$r = filter_event($client, $eventtype, $r);
-					if ($r)
-						$ret[] = $r;
-				}
-			} else {
-				return $this->non_fatal_error("get_events : search error");
-			}
+		} else {
+			$ret[]=$this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+		}
 
 		return $ret;
 	}
 
-	function get_group_members($client, $sesskey, $groupid) {
+	function get_group_members($client, $sesskey, $groupid,$groupidfield='id') {
 		if (!$this->validate_client($client, $sesskey, 'get_group_members')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		if (! $group=get_record('groups', 'id', $groupid)) {
-			return $this->error('Invalid group ' . $groupid);
+		if (!$group = get_record('groups', $groupidfield, $groupid)) {
+			return $this->error(get_string('ws_groupunknown','wspp',$groupid));
 		}
 
-        if (!$this-> has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
-            return $this->error('You do not have proper access to perform this operation.');
+		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
 		$res = get_group_users($groupid);
 		if (!$res)
-			return $this->error('no group members.' . $groupid);
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		return filter_users($client, $res, 0);
 	}
 
 	function get_my_id($client, $sesskey) {
+		global $USER;
 		if (!$this->validate_client($client, $sesskey)) {
 			return -1; //invalid Moodle's ID
 		}
@@ -938,21 +900,19 @@ class server {
 	function get_groups_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_groups_bycourse')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
-			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
+			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
 		}
 
-        if (! $this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
-            return $this->error('You do not have proper access to perform this operation.');
+		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
 		$res = get_groups($course->id);
 		if (!$res)
-			return $this->non_fatal_error('no groups in course.' . $courseid);
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		return filter_groups($client, $res);
 	}
-
-
 
 	/**
 	 * Returns the user's groups in all courses (not found in Moodle API)
@@ -963,49 +923,48 @@ class server {
 	 *         if uid is not equal to current's user id, current user must be admin.
 	 * @return array of object
 	 */
-	function get_my_groups($client, $sesskey, $uinfo='',$idfield="idnumber") {
-		global $USER,$CFG;
+	function get_my_groups($client, $sesskey, $uinfo = '', $idfield = "idnumber") {
+		global $USER, $CFG;
 		if (!$this->validate_client($client, $sesskey, 'get_mygroups')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$cuid = $USER->id;
-        if ($uinfo) {
-            if ($idfield != 'id') { // find userid if not current user
-                if (!$user = get_record('user', $idfield, $uinfo))
-                    return $this->error("user not found with $idfield= '$uinfo'");
-                $uid = $user->id;
-            } else
-                $uid = $uinfo; // rev 1.5.10
-        } else
-            $uid = $cuid; //use current user and ignore $idfield
-        //only an user that can login as another can request  for others
-        if ($uid != $cuid) {
-            if (! $this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM,0)){
-                return $this->error($cuid . ' You do not have proper access to perform this operation.');
-            }
-        }
+		if ($uinfo) {
+			if ($idfield != 'id') { // find userid if not current user
+				if (!$user = get_record('user', $idfield, $uinfo))
+					return $this->error(get_string('ws_userunknown','wspp',$idfield."=".$uinfo));
+				$uid = $user->id;
+			} else
+				$uid = $uinfo; // rev 1.5.10
+		} else
+			$uid = $cuid; //use current user and ignore $idfield
+		//only an user that can login as another can request  for others
+		if ($uid != $cuid) {
+			if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
+				return $this->error(get_string('ws_operationnotallowed','wspp'));
+			}
+		}
 		$uid = $uid ? $uid : $cuid;
 		$sql = "SELECT g.*
-		 FROM {$CFG->prefix}groups g,
-		 {$CFG->prefix}groups_members m
-		 WHERE g.id = m.groupid
-		 AND m.userid = '$uid'
-		 ORDER BY name ASC";
+															 FROM {$CFG->prefix}groups g,
+															 {$CFG->prefix}groups_members m
+															 WHERE g.id = m.groupid
+															 AND m.userid = '$uid'
+															 ORDER BY name ASC";
 		$res = get_records_sql($sql);
 		return filter_groups($client, $res);
 	}
 
-
 	function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_last_changes')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
-			return $this->error('Invalid course ' . $idfield . "=" . $courseid);
+			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
 		}
 		$cuid = $USER->id;
-		$isTeacher = $this->has_capability("moodle/course:update",CONTEXT_COURSE,$course->id);
+		$isTeacher = $this->has_capability("moodle/course:update", CONTEXT_COURSE, $course->id);
 		//must have id as first field for proper array indexing !
 		$sqlAct =<<<EOS
 		SELECT DISTINCT {$CFG->prefix}log.id,module, {$CFG->prefix}log.url, info,
@@ -1021,7 +980,7 @@ time,firstname,lastname,email,
 EOS;
 		$return = array ();
 		if (!$resultAct = get_records_sql($sqlAct)) {
-			return $this->non_fatal_error("nada");
+			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		}
 		foreach ($resultAct as $rowAct) {
 			if ($limit-- <= 0)
@@ -1079,36 +1038,36 @@ EOS;
 			}
 		}
 
-		$this->debug_output(print_r($return, true));
+		//$this->debug_output(print_r($return, true));
 		return filter_changes($client, $return);
 	}
 
-    /**
-     * return all logged actions of user in one course or any course
-     */
+	/**
+	 * return all logged actions of user in one course or any course
+	 */
 
 	function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, 'get_activities')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		//resolve user criteria to an user  Moodle's id
 		if (!$user = get_record('user', $useridfield, $userid)) {
-			return $this->error('Invalid user ' . $useridfield . "=" . $userid);
+			return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid));
 		}
 		$cuid = $USER->id;
 		if ($courseid) {
 			//resolve course criteria to a course Moodle's id
 			if (!$course = get_record('course', $courseidfield, $courseid))
-				return $this->error('Invalid course ' . $courseidfield . "=" . $courseid);
+				return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
 			$sql_course = " AND  l.course=$course->id ";
-			$canRead = $this->has_capability('coursereport/log:view',CONTEXT_COURSE,$course->id);
+			$canRead = $this->has_capability('coursereport/log:view', CONTEXT_COURSE, $course->id);
 		} else {
 			$sql_course = '';
-			$canRead = $this->has_capability('coursereport/log:view',CONTEXT_SYSTEM,0);
+			$canRead = $this->has_capability('coursereport/log:view', CONTEXT_SYSTEM, 0);
 		}
 		if (($cuid != $user->id) && !$canRead) {
-			return $this->error('You do not have proper access to perform this operation');
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
 		}
 		if ($doCount) // caution result MUST have some id value to fetch result later
 			$sql_select = " SELECT 1,count(l.userid) as CPT ";
@@ -1142,85 +1101,83 @@ EOSS;
 		//reconvert dates using userdate()
 	}
 
+	/**
+	 * Enrol users as a student in the given category
+	 *
+	 * @param int $client The client session ID.
+	 * @param string $sesskey The client session key.
+	 * @param string $courseid The course ID number to enrol students in <- changed to category...
+	 * @param array $userids An array of input user idnumber values for enrolment.
+	 * @param string $idfield identifier used for users . Note that $courseid is expected
+	 *    to contains an idnumber and not Moodle id.
+	 * @return array Return data (user_student records) to be converted into a
+	 *               specific data format for sending to the client.
+	 */
+	function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
+		if (!$this->validate_client($client, $sesskey, 'enrol_students')) {
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
+		}
+		global $CFG, $USER;
 
-    /**
-     * Enrol users as a student in the given category
-     *
-     * @param int $client The client session ID.
-     * @param string $sesskey The client session key.
-     * @param string $courseid The course ID number to enrol students in <- changed to category...
-     * @param array $userids An array of input user idnumber values for enrolment.
-     * @param string $idfield identifier used for users . Note that $courseid is expected
-     *    to contains an idnumber and not Moodle id.
-     * @return array Return data (user_student records) to be converted into a
-     *               specific data format for sending to the client.
-     */
-    function affect_role_incourse($client, $sesskey, $rolename,$courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
-        if (!$this->validate_client($client, $sesskey, 'enrol_students')) {
-            return $this->error('Invalid client connection.');
-        }
-        global $CFG, $USER;
+		if (!($role = get_record('role', 'shortname', $rolename))) {
+            return $this->non_fatal_error(get_string('ws_roleunknown','wspp',$rolename));
+		}
 
-       if (!($role =get_record('role', 'shortname', $rolename))) {
-            return $this->error("Could not find role ".$rolename);
-        }
-
-        $groupid = 0; // for the role_assign function (what does this )
-        if (!$course = get_record('course', $courseidfield, $courseid)) {
-            return $this->error('Could not find course record (' . $courseid . ')');
-        }
-         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        if (!has_capability("moodle/role:assign",$context))
-            return $this->error('You do not have proper access to perform this operation.');
-        if ($course->enrolperiod) {
-            $timestart = time();
-            $timeend = $timestart + $course->enrolperiod;
-        } else {
-            $timestart = $timeend = 0;
-        }
-        $this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol);
-        $return = array ();
-        if (!empty ($userids)) {
-            foreach ($userids as $userid) {
-                $st = new enrolRecord();
-                if (!$leuser = get_record('user', $useridfield, $userid)) {
-                    $st->error = 'Could not find user record  for ' . $userid;
-                } else {
-                    $st->userid = $leuser-> $useridfield; //return the sent value
-                    $st->course = $course->$courseidfield;
-                    $st->timestart = $timestart;
-                    $st->timeend = $timeend;
-                    if ($enrol) {
-                        if (!role_assign($role->id, $leuser->id, $groupid, $context->id, $timestart, $timeend, 0, 'webservice')) {
-                            $st->error = "error enroling";
-                            $op="error enroling ".$st->userid." to ".$st->course;
-                        } else {
-                            $st->enrol = "webservice";
-                            $op= $rolename." ".$st->userid." added to ".$st->course;
-                        }
-                    } else {
-                        if (!role_unassign($role->id, $leuser->id, $groupid, $context->id)) {
-                            $st->error = "error unenroling";
-                             $op="error unenroling ".$st->userid." from ".$st->course;
-                        } else {
-                            $st->enrol = "no";
-                             $op=$rolename ." ".$st->userid." removed from ".$st->course;
-                        }
-                    }
-                }
-                $return[] = $st;
-                if ($CFG->ws_logdetailedoperations)
-                    add_to_log(SITEID, 'webservice', 'webservice pp','', $op);
-            }
-        } else {
-            $st = new enrolRecord();
-            $st->error = "nothing to do !";
-            $return[] = $st;
-        }
-        $this->debug_output("ES" . print_r($return, true));
-        return $return;
-    }
-
+		$groupid = 0; // for the role_assign function (what does this )
+		if (!$course = get_record('course', $courseidfield, $courseid)) {
+			return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
+		}
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
+		if (!has_capability("moodle/role:assign", $context))
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
+		if ($course->enrolperiod) {
+			$timestart = time();
+			$timeend = $timestart + $course->enrolperiod;
+		} else {
+			$timestart = $timeend = 0;
+		}
+		$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol);
+		$return = array ();
+		if (!empty ($userids)) {
+			foreach ($userids as $userid) {
+				$st = new enrolRecord();
+				if (!$leuser = get_record('user', $useridfield, $userid)) {
+					$st->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
+				} else {
+					$st->userid = $leuser-> $useridfield; //return the sent value
+					$st->course = $course-> $courseidfield;
+					$st->timestart = $timestart;
+					$st->timeend = $timeend;
+					if ($enrol) {
+						if (!role_assign($role->id, $leuser->id, $groupid, $context->id, $timestart, $timeend, 0, 'webservice')) {
+							$st->error = "error enroling";
+							$op = "error enroling " . $st->userid . " to " . $st->course;
+						} else {
+							$st->enrol = "webservice";
+							$op = $rolename . " " . $st->userid . " added to " . $st->course;
+						}
+					} else {
+						if (!role_unassign($role->id, $leuser->id, $groupid, $context->id)) {
+							$st->error = "error unenroling";
+							$op = "error unenroling " . $st->userid . " from " . $st->course;
+						} else {
+							$st->enrol = "no";
+							$op = $rolename . " " . $st->userid . " removed from " . $st->course;
+						}
+					}
+				}
+				$return[] = $st;
+				if ($CFG->ws_logdetailedoperations)
+					add_to_log(SITEID, 'webservice', 'webservice pp', '', $op);
+			}
+		} else {
+			$st = new enrolRecord();
+			$st->error = get_string('ws_nothingtodo','wspp');
+			$return[] = $st;
+		}
+		//$this->debug_output("ES" . print_r($return, true));
+		return $return;
+	}
 
 	/**
 	* Edit user records (add/update/delete).
@@ -1236,7 +1193,7 @@ EOSS;
 	function edit_users($client, $sesskey, $users) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'edit_users')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$uid = $USER->id;
 		$rusers = array ();
@@ -1252,7 +1209,7 @@ EOSS;
 				switch (trim(strtolower($user->action))) {
 					case 'add' :
 
-						if (!$this->has_capability('moodle/user:add', CONTEXT_SYSTEM,0)) {
+						if (!$this->has_capability('moodle/user:add', CONTEXT_SYSTEM, 0)) {
 							$ruser->error = "not allowed to add users";
 							break;
 						}
@@ -1285,7 +1242,7 @@ EOSS;
 						break;
 
 					case 'update' :
-						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM,0)) {
+						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
 							$ruser->error = "not allowed to update users";
 							break;
 						}
@@ -1295,7 +1252,7 @@ EOSS;
 
 						if (!$userup = get_record('user', 'idnumber', $uid)) {
 							$ruser = $user;
-							$ruser->error = "update : user with idnumber $uid not found";
+							$ruser->error =get_string('ws_userunknown','wspp','idnumber='.$uid);
 							break;
 
 						} else {
@@ -1317,7 +1274,7 @@ EOSS;
 					case 'delete' :
 						$uid = $user->idnumber;
 						/// Deleting an existing user.
-						if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM,0)) {
+						if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM, 0)) {
 							$ruser->error = "not allowed to delete users";
 							break;
 						}
@@ -1354,7 +1311,7 @@ EOSS;
 	function edit_courses($client, $sesskey, $courses) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, 'edit_courses')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$uid = $USER->id;
 		$site = get_site();
@@ -1430,115 +1387,113 @@ EOSS;
 									$section->section = 0;
 									$section->id = insert_record('course_sections', $section);
 
-
 									$rcourse = get_record('course', 'id', $courseadd->id);
 								}
 							}
 						break;
-                    /********************************
-					case 'update' :
-						/// Updating an existing course.
-						$courseup = $course;
-						$cid = $courseup->idnumber;
+						/********************************
+						case 'update' :
+							/// Updating an existing course.
+							$courseup = $course;
+							$cid = $courseup->idnumber;
+							$dbfail = false;
+
+							$this->debug_output('Attempting to update course ID: ' . $cid . print_r($course, true));
+							/// This database operation MIGHT throw an HTML error message,
+							/// so we've got to catch that and send it back in an error
+							/// request.
+
+							$course = get_record('course', 'idnumber', $cid);
+
+							if (empty ($course)) {
+								$rcourse->error = 'Could not find course ID: ' . $cid;
+							} else
+								if (!$dbfail && !$this->isteacher($course->id, $uid)) {
+									$rcourse->error = 'You do not have proper access to perform this operation.';
+								} else
+									if (!$dbfail) {
+										/// Update values in the course database record with what
+										/// the client supplied.
+										foreach ($courseup as $key => $value)
+										if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
+											$course-> $key = $value;
+										$course->timemodified = time();
+
+										$success = update_record('course', $course);
+
+										if (!$success) {
+											$rcourse->error = 'Could not update course: ' . $cid;
+										} else
+
+											$rcourse = get_record('course', 'id', $course->id);
+									}
+						}
+
+						break;
+						****************************************************************/
+					case 'delete' :
+						/// Deleting an existing course.
+						$cid = $course->idnumber;
 						$dbfail = false;
+						/// Check for correct permissions.
+						if (!$this->isadmin($uid)) {
+							$rcourse->error = 'You do not have proper access to ' . 'perform this operation.';
+						} else {
 
-						$this->debug_output('Attempting to update course ID: ' . $cid . print_r($course, true));
-						/// This database operation MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
+							$this->debug_output('Attempting to delete course ID: ' . $cid);
+							/// This database operation MIGHT throw an HTML error message,
+							/// so we've got to catch that and send it back in an error
+							/// request.
 
-						$course = get_record('course', 'idnumber', $cid);
+							$course = get_record('course', 'idnumber', $cid);
 
-						if (empty ($course)) {
-							$rcourse->error = 'Could not find course ID: ' . $cid;
-						} else
-							if (!$dbfail && !$this->isteacher($course->id, $uid)) {
-								$rcourse->error = 'You do not have proper access to perform this operation.';
+							if (empty ($course)) {
+								$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$cid );
 							} else
 								if (!$dbfail) {
-									/// Update values in the course database record with what
-									/// the client supplied.
-									foreach ($courseup as $key => $value)
-									if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-										$course-> $key = $value;
-									$course->timemodified = time();
+									/// 'Delete' the course the Moodle way.
+									$success_r = true;
+									$success_d = true;
+									$success_f = true;
+									/// These operations MIGHT throw an HTML error message,
+									/// so we've got to catch that and send it back in an error
+									/// request.
 
-									$success = update_record('course', $course);
+									require_once ($CFG->libdir . '/moodlelib.php');
+									$success_r = remove_course_contents($course->id, false);
 
-									if (!$success) {
-										$rcourse->error = 'Could not update course: ' . $cid;
-									} else
+									if ($success_r) {
+										$success_d = delete_records('course', 'id', $course->id);
+									}
 
-										$rcourse = get_record('course', 'id', $course->id);
-								}
-				}
+									if ($success_r && $success_d && !isset ($rcourse->error) && ($dir = @ opendir($CFG->dataroot . '/' . $course->id))) {
+										closedir($dir);
+										require_once ($CFG->libdir . '/filelib.php');
+										$success_f = fulldelete($CFG->dataroot . '/' . $course->id);
+									}
 
-				break;
-                ****************************************************************/
-				case 'delete' :
-					/// Deleting an existing course.
-					$cid = $course->idnumber;
-					$dbfail = false;
-					/// Check for correct permissions.
-					if (!$this->isadmin($uid)) {
-						$rcourse->error = 'You do not have proper access to ' . 'perform this operation.';
-					} else {
-
-						$this->debug_output('Attempting to delete course ID: ' . $cid);
-						/// This database operation MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
-
-						$course = get_record('course', 'idnumber', $cid);
-
-
-						if ( empty ($course)) {
-							$rcourse->error = 'Could not find course ID: ' . $cid;
-						} else
-							if (!$dbfail) {
-								/// 'Delete' the course the Moodle way.
-								$success_r = true;
-								$success_d = true;
-								$success_f = true;
-								/// These operations MIGHT throw an HTML error message,
-								/// so we've got to catch that and send it back in an error
-								/// request.
-
-								require_once ($CFG->libdir . '/moodlelib.php');
-								$success_r = remove_course_contents($course->id, false);
-
-								if ($success_r ) {
-									$success_d = delete_records('course', 'id', $course->id);
-								}
-
-								if ($success_r && $success_d && !isset ($rcourse->error) && ($dir = @ opendir($CFG->dataroot . '/' . $course->id))) {
-									closedir($dir);
-									require_once ($CFG->libdir . '/filelib.php');
-									$success_f = fulldelete($CFG->dataroot . '/' . $course->id);
-								}
-
-								if (!isset ($rcourse->error)) {
-									if (!$success_r) {
-										$rcourse->error = 'Error deleting some of the course contents (' . $cid . ').';
-									} else
-										if (!$success_d) {
-											$rcourse->error = 'Error deleting the course record (' . $cid . ').';
+									if (!isset ($rcourse->error)) {
+										if (!$success_r) {
+											$rcourse->error = 'Error deleting some of the course contents (' . $cid . ').';
 										} else
-											if (!$success_f) {
-												$rcourse->error = 'Error deleting the course data (' . $cid . ').';
-											} else {
-												$rcourse = $course;
-											}
+											if (!$success_d) {
+												$rcourse->error = 'Error deleting the course record (' . $cid . ').';
+											} else
+												if (!$success_f) {
+													$rcourse->error = 'Error deleting the course data (' . $cid . ').';
+												} else {
+													$rcourse = $course;
+												}
+									}
 								}
-							}
-					}
-					break;
+						}
+						break;
+				}
+				$ret[] = $rcourse;
 			}
-			$ret[] = $rcourse;
 		}
+		return $ret;
 	}
-	return $ret;
-}
 
 	/*
 	*****************************************************************************************************************************
@@ -1569,7 +1524,7 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/label/lib.php");
 		if (!$this->validate_client($client, $sesskey, 'edit_labels')) {
-			return $this->error('EDIT_LABELS:   Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($labels)) {
@@ -1607,7 +1562,6 @@ EOSS;
 						}
 						$rlabel = get_record('label', 'id', $labelid);
 
-
 						break;
 					case 'update' :
 						$rlabel->error = "EDIT_LABELS:  Operation Update not implemented yet!";
@@ -1638,12 +1592,12 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/course/lib.php");
 		if (!$this->validate_client($client, $sesskey, 'edit_categories')) {
-			return $this->error('EDIT_CATEGORIES:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($categories)) {
 			foreach ($categories->categories as $category) {
-                switch (trim(strtolower($user->action))) {
+				switch (trim(strtolower($user->action))) {
 					case 'add' :
 						/// Adding a new category.
 						$categoryadd = $category;
@@ -1676,7 +1630,6 @@ EOSS;
 						}
 						$rcategory = get_record('course_categories', 'id', $categoryadd->id);
 
-
 						break;
 					case 'update' :
 						/// Updating an existing category.
@@ -1688,7 +1641,7 @@ EOSS;
 						/// so we've got to catch that and send it back in an error
 						/// request.
 
-						if (!$this->has_capability( "moodle/category:update", CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability("moodle/category:update", CONTEXT_SYSTEM, 0)) {
 							$rcategory->error = 'EDIT_CATEGORIES:  You do not have proper access to perform this operation.';
 							break;
 						}
@@ -1777,12 +1730,12 @@ EOSS;
 	function edit_sections($client, $sesskey, $sections) {
 		global $CFG;
 		if (!$this->validate_client($client, $sesskey, 'edit_sections')) {
-			return $this->error('EDIT_SECTIONS:   Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($sections)) {
 			foreach ($sections->sections as $section) {
-                switch (trim(strtolower($section->action))) {
+				switch (trim(strtolower($section->action))) {
 					case 'add' :
 						/// Adding a new section.
 						$sectionadd = $section;
@@ -1793,7 +1746,7 @@ EOSS;
 						/// request.
 
 						/// Check for correct permissions.
-						if (!$this->has_capability( 'moodle/course:update', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:update', CONTEXT_SYSTEM, 0)) {
 							$rsection->error = "EDIT_SECTIONS: You do not have proper access to perform this operation.";
 							break;
 						}
@@ -1807,7 +1760,6 @@ EOSS;
 							break;
 						}
 						$rsection = get_record('course_sections', 'id', $resultInsertion);
-
 
 						break;
 					case 'update' :
@@ -1839,12 +1791,12 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 		if (!$this->validate_client($client, $sesskey, 'edit_forums')) {
-			return $this->error('EDIT_FORUMS:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($forums)) {
 			foreach ($forums->forums as $forum) {
-                switch (trim(strtolower($forum->action))) {
+				switch (trim(strtolower($forum->action))) {
 					case 'add' :
 						/// Adding a new forum.
 						$forumadd = $forum;
@@ -1862,7 +1814,7 @@ EOSS;
 						/// request.
 
 						/// Check for correct permissions.
-						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rforum->error = "EDIT_FORUMS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -1905,14 +1857,13 @@ EOSS;
 	*/
 	function edit_groups($client, $sesskey, $groups) {
 		global $CFG;
-		require_once ($CFG->libdir . '/moodlelib.php');
 		if (!$this->validate_client($client, $sesskey, 'edit_groups')) {
-			return $this->error('EDIT_GROUPS: Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($groups)) {
 			foreach ($groups->groups as $group) {
-			switch (trim(strtolower($group->action))) {
+				switch (trim(strtolower($group->action))) {
 					case 'add' :
 						/// Adding a new group.
 						$groupadd = $group;
@@ -1920,7 +1871,7 @@ EOSS;
 						$this->debug_output('EDIT_GROUPS: Trying to add a new group.');
 
 						/// Check for correct permissions.
-						if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
 							break;
 						}
@@ -1940,12 +1891,11 @@ EOSS;
 						}
 						$rgroup = get_record('groups', 'id', $groupadd->id);
 
-
 						break;
 					case 'update' :
 						/// Updating an existing group
 
-						if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
 							break;
 						}
@@ -1995,7 +1945,6 @@ EOSS;
 							$rgroup = $group;
 						}
 
-
 						break;
 					default :
 						$rgroup->error = "EDIT_GROUPS: Invalid action " . $group->action;
@@ -2022,7 +1971,7 @@ EOSS;
 		require_once ("{$CFG->dirroot}/mod/assignment/lib.php");
 		require_once ("{$CFG->dirroot}/course/lib.php");
 		if (!$this->validate_client($client, $sesskey, 'edit_assignments')) {
-			return $this->error = 'EDIT_ASSIGNMENT:   Invalid client connection.';
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($assignments)) {
@@ -2032,7 +1981,7 @@ EOSS;
 						$assignmentadd = $assignment;
 						//creation of the new assignment
 
-						if (!$this->has_capability( 'moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rassignment->error = 'EDIT_ASSIGNMENTS:     You do not have proper access to perform this operation.';
 							break;
 						}
@@ -2059,7 +2008,6 @@ EOSS;
 						}
 						$add->id = $assignId;
 						$rassignment = $add;
-
 
 						break;
 					case 'update' :
@@ -2099,7 +2047,6 @@ EOSS;
 						$rassignment = $assign;
 						//delete_mod_from_section
 
-
 						break;
 					default :
 						$rassignment->error = "EDIT_ASSIGNMENTS: Invalid action " . $assignment->action;
@@ -2125,12 +2072,12 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/data/lib.php");
 		if (!$this->validate_client($client, $sesskey, 'edit_database')) {
-			return $this->error = 'EDIT_ASSIGNMENT:   Invalid client connection.';
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($databases)) {
 			foreach ($databases->databases as $database) {
-                switch (trim(strtolower($database->action))) {
+				switch (trim(strtolower($database->action))) {
 					case 'add' :
 						//add a new database
 						$dtbadd = $database;
@@ -2156,7 +2103,6 @@ EOSS;
 							break;
 						}
 						$rdatabase = $dtbadd;
-
 
 						break;
 					case 'update' :
@@ -2192,19 +2138,19 @@ EOSS;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'edit_wikis')) {
-			return $this->error('EDIT_WIKIS:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($wikis)) {
 			foreach ($wikis->wikis as $wiki) {
-                    switch (trim(strtolower($wiki->action))) {
+				switch (trim(strtolower($wiki->action))) {
 					case 'add' :
 						$this->debug_output('EDIT_WIKIS:     Trying to add a new wiki.');
 						/// Adding a new wiki
 						$wikiadd = $wiki;
 
 						/// Check for correct permissions.
-						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rwiki->error = "EDIT_WIKIS:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2236,7 +2182,6 @@ EOSS;
 							break;
 						}
 						$rwiki = get_record('wiki', 'id', $wikiId);
-
 
 						break;
 					case 'update' :
@@ -2301,13 +2246,13 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'edit_pagesWiki')) {
-			return $this->error('EDIT_PAGESWIKI:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if (!empty ($pagesWiki)) {
 			foreach ($pagesWiki->pagesWiki as $page) {
 
-                    switch (trim(strtolower($page->action))) {
+				switch (trim(strtolower($page->action))) {
 					case 'add' :
 
 						$this->debug_output('EDIT_PAGESWIKI:     Trying to add a new pageWiki.');
@@ -2317,7 +2262,7 @@ EOSS;
 						$pageadd->lastmodified = time();
 
 						/// Check for correct permissions.
-						if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
 							$rpage->error = "EDIT_PAGESWIKI:     You do not have proper access to perform this operation.";
 							break;
 						}
@@ -2362,7 +2307,7 @@ EOSS;
 		require_once ($CFG->dirroot . '/lib/accesslib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'affect_label_to_section')) {
-			return $this->error('AFFECT_LABEL_TO_SECTION:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
@@ -2373,7 +2318,7 @@ EOSS;
 			return $this->error("AFFECT_LABEL_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_LABEL_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		//get the label module
@@ -2428,7 +2373,7 @@ EOSS;
 		require_once ($CFG->dirroot . '/lib/datalib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'affect_forum_to_section')) {
-			return $this->error('AFFECT_FORUM_TO_SECTION:     Invalid client connection.');
+		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
@@ -2439,7 +2384,7 @@ EOSS;
 			return $this->error("AFFECT_FORUM_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		// check "groupmode" field
@@ -2503,14 +2448,14 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'affect_section_to_course')) {
-			return $this->error('AFFECT_SECTION_TO_COURSE:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
 
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/course:update', CONTEXT_COURSE, $course->id)) {
+		if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)) {
 			return $this->error("AFFECT_SECTION_TO_COURSE:     You do not have proper access to perform this operation");
 		}
 		//get section
@@ -2548,7 +2493,6 @@ EOSS;
 			return $this->error("AFFECT_SECTION_TO_COURSE:     Error updating the section with id=$sectionid");
 		}
 
-
 		$r = new stdClass();
 		$r->status = true;
 		return $r;
@@ -2568,14 +2512,14 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'affect_course_to_category')) {
-			return $this->error('AFFECT_COURSE_TO_CATEGORY:     Invalid client connection.');
+		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
 		/// so we've got to catch that and send it back in an error
 		/// request.
 
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/category:manage', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability('moodle/category:manage', CONTEXT_SYSTEM, 0)) {
 			return $this->error("AFFECT_COURSE_TO_CATEGORY:     You do not have proper access to perform this operation");
 		}
 		/// Check if category with id specified exists
@@ -2589,7 +2533,6 @@ EOSS;
 		move_courses(array (
 			$courseid
 		), $categoryid);
-
 
 		//make compatible with the return type
 		$r = new stdClass();
@@ -2611,7 +2554,7 @@ EOSS;
 
 		$this->debug_output('AFFECT_USER_TO_GROUP:     Trying to affect a user to group.');
 		if (!$this->validate_client($client, $sesskey, 'affect_user_to_group')) {
-			return $this->error('AFFECT_USER_TO_GROUP:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		/// Check for correct permissions.
@@ -2647,11 +2590,11 @@ EOSS;
 
 		$this->debug_output('AFFECT_GROUP_TO_COURSE:     Trying to affect a group to course.');
 		if (!$this->validate_client($client, $sesskey, ' affect_group_to_course')) {
-			return $this->error('AFFECT_GROUP_TO_COURSE:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
+		if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
 			return $this->error('AFFECT_GROUP_TO_COURSE:     You do not have proper access to perform this operation.');
 		}
 		//verify if this grup exists
@@ -2669,7 +2612,6 @@ EOSS;
 		if (!$success = update_record('groups', $group)) {
 			return $this->error('AFFECT_GROUP_TO_COURSE:     Update idcourse could not be effectued');
 		}
-
 
 		$resp = new stdClass();
 		$resp->status = true;
@@ -2693,7 +2635,7 @@ EOSS;
 
 		$this->debug_output('AFFECT_WIKI_TO_SECTION:     Trying to affect a wiki to section.');
 		if (!$this->validate_client($client, $sesskey, 'affect_wiki_to_section')) {
-			return $this->error('AFFECT_WIKI_TO_SECTION:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		//get the section record
@@ -2783,7 +2725,7 @@ EOSS;
 
 		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
 		if (!$this->validate_client($client, $sesskey, 'affect_database_to_section')) {
-			return $this->error('AFFECT_DATABASE_TO_SECTION:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		//get the section record
@@ -2791,7 +2733,7 @@ EOSS;
 			return $this->error("AFFECT_DATABASE_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		//get database module
@@ -2831,7 +2773,6 @@ EOSS;
 			return $this->error("AFFECT_DATABASE_TO_SECTION: The database wasn't assigned to section");
 		}
 
-
 		$res = new stdClass();
 		$res->status = true;
 		return $res;
@@ -2853,7 +2794,7 @@ EOSS;
 
 		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
 		if (!$this->validate_client($client, $sesskey, 'affect_assignment_to_section')) {
-			return $this->error('AFFECT_DATABASE_TO_SECTION:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		//get the section record
@@ -2861,7 +2802,7 @@ EOSS;
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION:     Error finding the section with id=$sectionid");
 		}
 		/// Check for correct permissions.
-		if (!$this->has_capability( 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
+		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION:     You do not have proper access to perform this operation");
 		}
 		if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
@@ -2929,14 +2870,14 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		if (!$this->validate_client($client, $sesskey, 'affect_pageWiki_to_wiki')) {
-			return $this->error('Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
 		//we verify if we have the permission to do this operation
 		if (!$cm = get_coursemodule_from_instance('wiki', $wikiid)) {
 			return $this->error("Course Module ID was not found. We can't verify if you have permission to do this operation");
 		}
-		if (!$this->has_capability( 'mod/wiki:participate', CONTEXT_MODULE, $cm->id)) {
+		if (!$this->has_capability('mod/wiki:participate', CONTEXT_MODULE, $cm->id)) {
 			return $this->error("AFFECT_PAGEWIKI_TO_WIKI:     You do not have the permission to do this operation.");
 		}
 		//verify if the wiki exist in the database
@@ -2960,13 +2901,13 @@ EOSS;
 		//at the content of this page we are adding a link to the affected page
 		//if this page does not exist  we will create it
 		$sql = "SELECT wp.*
-								                        FROM {$CFG->prefix}wiki_pages wp
-								                        WHERE wp.pagename = '{$wiki->pagename}' AND
-								                        wp.wiki = {$wiki_entry->id} AND
-								                        wp.version in (select MAX(p.version)
-								                        FROM {$CFG->prefix}wiki_pages p
-								                        WHERE p.pagename = '{$wiki->pagename}' AND
-								                        p.wiki = {$wiki_entry->id}) ";
+																					                        FROM {$CFG->prefix}wiki_pages wp
+																					                        WHERE wp.pagename = '{$wiki->pagename}' AND
+																					                        wp.wiki = {$wiki_entry->id} AND
+																					                        wp.version in (select MAX(p.version)
+																					                        FROM {$CFG->prefix}wiki_pages p
+																					                        WHERE p.pagename = '{$wiki->pagename}' AND
+																					                        p.wiki = {$wiki_entry->id}) ";
 		// $first_page=get_record_sql($sql);
 		if (!$first_page = get_record_sql($sql)) {
 			$first_page->pagename = $wiki->pagename;
@@ -3033,11 +2974,12 @@ EOSS;
 
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;
-		$res=$this->affect_role_incourse($client,$sesskey,$rolename,$courseid,'id',
-                    array($userid),'id',true);
+		$res = $this->affect_role_incourse($client, $sesskey, $rolename, $courseid, 'id', array (
+			$userid
+		), 'id', true);
 
 		$r = new stdClass();
-		$r->status = empty($res->error);
+		$r->status = empty ($res->error);
 		return $r;
 	}
 
@@ -3053,15 +2995,15 @@ EOSS;
 	*/
 	function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
 
-
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;
-        $res=$this->affect_role_incourse($client,$sesskey,$rolename,$courseid,'id',
-                    array($userid),'id',false);
+		$res = $this->affect_role_incourse($client, $sesskey, $rolename, $courseid, 'id', array (
+			$userid
+		), 'id', false);
 
-        $r = new stdClass();
-        $r->status = empty($res->error);
-        return $r;
+		$r = new stdClass();
+		$r->status = empty ($res->error);
+		return $r;
 
 	}
 
@@ -3074,7 +3016,7 @@ EOSS;
 	*/
 	function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_wikis')) {
-			return $this->error('GET_ALL_WIKIS:    Invalid client connection.');
+		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($res = get_records('wiki', $fieldname, $fieldvalue, 'name', '*')) {
@@ -3084,7 +3026,7 @@ EOSS;
 	}
 	function get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_pagesWiki')) {
-			return $this->error('GET_ALL_PAGESWIKI:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($res = get_records('wiki_pages', $fieldname, $fieldvalue, 'pagename', '*')) {
@@ -3094,7 +3036,7 @@ EOSS;
 	}
 	function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_groups')) {
-			return $this->error('GET_ALL_GROUPS:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($res = get_records('groups', $fieldname, $fieldvalue, 'name', '*')) {
@@ -3104,7 +3046,7 @@ EOSS;
 	}
 	function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_forums')) {
-			return $this->error('GET_ALL_FORUMS:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($forums = get_records("forum", $fieldname, $fieldvalue, "name")) {
@@ -3114,7 +3056,7 @@ EOSS;
 	}
 	function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_labels')) {
-			return $this->error('GET_ALL_LABELS:    Invalid client connection.');
+	         return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($labels = get_records("label", $fieldname, $fieldvalue, "name")) {
@@ -3124,7 +3066,7 @@ EOSS;
 	}
 	function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_assignments')) {
-			return $this->error('GET_ALL_ASSIGNMENTS:    Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($assignments = get_records("assignment", $fieldname, $fieldvalue, "name")) {
@@ -3134,7 +3076,7 @@ EOSS;
 	}
 	function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_databases')) {
-			return $this->error('GET_ALL_DATABASES:     Invalid client connection.');
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
 		if ($databases = get_records("data", $fieldname, $fieldvalue, "name")) {

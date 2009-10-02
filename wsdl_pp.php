@@ -2140,6 +2140,12 @@
       <output message="tns:integerResponse" />
     </operation>
 
+         <operation name="get_version">
+      <documentation>MoodleWS: get current version</documentation>
+      <input message="tns:noinputRequest" />
+      <output message="tns:stringResponse" />
+    </operation>
+
   <operation name="has_role_incourse">
       <documentation>MoodleWS: check if user has a given role in a given course </documentation>
       <input message="tns:has_role_incourseRequest" />
@@ -2450,7 +2456,21 @@
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
       </output>
     </operation>
-
+<operation name="get_version">
+      <soap:operation
+        soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_version"
+        style="rpc" />
+      <input>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded"
+          namespace="' . $CFG->wwwroot . '/wspp/wsdl"
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
  <operation name="get_sections">
       <soap:operation
         soapAction="' . $CFG->wwwroot . '/wspp/wsdl#get_sections"

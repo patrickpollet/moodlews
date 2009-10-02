@@ -3,7 +3,7 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Enrol students in a course
+/**test code for MoodleWS: UnEnrol students in a course
 * @param integer $client
 * @param string $sesskey
 * @param string $courseid
@@ -15,7 +15,7 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $userids=array();
-$res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+$res=$moodle->unenrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
 print_r($res);
 print($res->getStudents());
 

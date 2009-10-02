@@ -192,7 +192,7 @@ function filter_forums($client, $forums) {
                 $course->password = ''; // do not disclose it to non teacher
                 return $course;
         }
-        return false;
+        return $course->visible? $course: false;
     }
 
     function filter_courses($client, $courses) {

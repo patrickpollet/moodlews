@@ -7,32 +7,19 @@
  */
 class enrolStudentsReturn {
 	/** 
-	* @var  string
-	*/
-	public $error;
-	/** 
-	* @var  (studentRecords) array of studentRecord
+	* @var  (enrolRecords) array of enrolRecord
 	*/
 	public $students;
 	/* full constructor */
-	 public function enrolStudentsReturn($error='',$students=array()){
-		 $this->error=$error   ;
+	 public function enrolStudentsReturn($students=array()){
 		 $this->students=$students   ;
 	}
 	/* get accessors */
-	public function getError(){
-		 return $this->error;
-	}
-
 	public function getStudents(){
 		 return $this->students;
 	}
 
 	/*set accessors */
-	public function setError($error){
-		$this->error=$error;
-	}
-
 	public function setStudents($students){
 		$this->students=$students;
 	}

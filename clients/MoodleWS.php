@@ -39,9 +39,9 @@ require_once 'courseDatum.php';
  */
 require_once 'gradeRecord.php';
 /**
- * studentRecord class
+ * enrolRecord class
  */
-require_once 'studentRecord.php';
+require_once 'enrolRecord.php';
 /**
  * eventRecord class
  */
@@ -298,10 +298,6 @@ require_once 'getAllAssignmentsReturn.php';
  * getAllDatabasesReturn class
  */
 require_once 'getAllDatabasesReturn.php';
-/**
- * userGrade class
- */
-require_once 'userGrade.php';
 
 /**
  * MoodleWS class
@@ -492,6 +488,26 @@ class MoodleWS {
   }
 
   /**
+   * MoodleWS: get current version 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @return string
+   */
+  public function get_version($client, $sesskey) {
+    $res= $this->client->__call('get_version', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
+  }
+
+  /**
    * MoodleWS: Get Course sections 
    *
    * @param integer $client
@@ -547,17 +563,19 @@ class MoodleWS {
    * @param integer $client
    * @param string $sesskey
    * @param string $userid
+   * @param string $userfield
    * @param (getCoursesInput) array of string $courseids
-   * @param string $idfield
+   * @param string $courseidfield
    * @return getGradesReturn
    */
-  public function get_grades($client, $sesskey, $userid, $courseids, $idfield) {
+  public function get_grades($client, $sesskey, $userid, $userfield, $courseids, $courseidfield) {
     $res= $this->client->__call('get_grades', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($userid, 'userid'),
+            new SoapParam($userfield, 'userfield'),
             new SoapParam($courseids, 'courseids'),
-            new SoapParam($idfield, 'idfield')
+            new SoapParam($courseidfield, 'courseidfield')
       ),
       array(
             'uri' => $this->uri ,
@@ -622,17 +640,47 @@ class MoodleWS {
    * @param integer $client
    * @param string $sesskey
    * @param string $courseid
+   * @param string $courseidfield
    * @param (enrolStudentsInput) array of string $userids
-   * @param string $idfield
+   * @param string $useridfield
    * @return enrolStudentsReturn
    */
-  public function enrol_students($client, $sesskey, $courseid, $userids, $idfield) {
+  public function enrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
     $res= $this->client->__call('enrol_students', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
             new SoapParam($userids, 'userids'),
-            new SoapParam($idfield, 'idfield')
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: UnEnrol students in a course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $courseidfield
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $useridfield
+   * @return enrolStudentsReturn
+   */
+  public function unenrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+    $res= $this->client->__call('unenrol_students', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
       ),
       array(
             'uri' => $this->uri ,
@@ -1277,14 +1325,16 @@ class MoodleWS {
    *
    * @param integer $client
    * @param string $sesskey
-   * @param integer $uid
+   * @param string $uid
+   * @param string $idfield
    * @return getGroupsReturn
    */
-  public function get_my_groups($client, $sesskey, $uid) {
+  public function get_my_groups($client, $sesskey, $uid, $idfield) {
     $res= $this->client->__call('get_my_groups', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($uid, 'uid')
+            new SoapParam($uid, 'uid'),
+            new SoapParam($idfield, 'idfield')
       ),
       array(
             'uri' => $this->uri ,
