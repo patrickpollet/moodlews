@@ -151,6 +151,7 @@ class server {
 		$USER->id = $sess->userid;
 		$USER->username = '';
 		$USER->mnethostid = $CFG->mnet_localhost_id; //Moodle 1.95+ build sept 2009
+        $USER->ip= getremoteaddr();
 		unset ($USER->access); // important for get_my_courses !
 		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
 
@@ -273,7 +274,7 @@ class server {
 			$sess->sessionkey = $this->add_session_key();
 			if ($sess->id = insert_record('webservices_sessions', $sess)) {
 				if ($CFG->ws_logoperations)
-					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'login');
+					add_to_log(SITEID, 'webservice', 'webservice pp', '', __FUNCTION__);
 			} else
 				return $this->error(get_string('ws_errorregistersession','wspp'));
 
@@ -311,7 +312,7 @@ class server {
 				return true;
 			} else {
 				if ($CFG->ws_logerrors)
-					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error : logout');
+					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error'.__FUNCTION__);
 				return false;
 			}
 		}
@@ -338,7 +339,7 @@ class server {
 	 */
 	function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_users')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// Verify that the user for this session can perform this operation.
@@ -374,7 +375,7 @@ class server {
 	 */
 	function get_courses($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_courses')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -407,7 +408,7 @@ class server {
 	 */
 	function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_resources')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -453,7 +454,7 @@ class server {
 	 */
 	public function get_sections($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_sections')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -488,7 +489,7 @@ class server {
 	public function get_instances_bytype($client, $sesskey, $courseids, $idfield = 'idnumber', $type) {
 		//TODO merge with get_resources by giving $type="resource"
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_instances_bytype')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (empty($type)) {
@@ -549,7 +550,7 @@ class server {
 	function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = 'idnumber') {
 		global $CFG;
 
-		if (!$this->validate_client($client, $sesskey, 'get_grades')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
         if (empty ($courseids))
@@ -601,7 +602,7 @@ class server {
 
 	public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
 
-        if (!$this->validate_client($client, $sesskey, 'get_user_grades')) {
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
         if (!$this->using19)
@@ -629,7 +630,7 @@ class server {
 
 	public function get_course_grades($client, $sesskey, $courseid, $idfield = "idnumber") {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_course_grades')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -693,7 +694,7 @@ class server {
     * since this operation retunr s a simple type, no need to override it in protocol specific layer
 	*/
 	function get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield) {
-		if (!$this->validate_client($client, $sesskey, 'get_primaryrole_incourse')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		// convert user request criteria to an userid
@@ -738,7 +739,7 @@ class server {
 	     */
 	function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_my_courses')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$cuid = $USER->id;
@@ -778,7 +779,7 @@ class server {
 
 	function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole = 0) {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_users_bycourse')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $idcourse)) {
@@ -798,7 +799,7 @@ class server {
 	}
 
 	function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
-		if (!$this->validate_client($client, $sesskey, 'get_roles')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		// Get a list of all the roles in the database, sorted by their short names.
@@ -810,7 +811,7 @@ class server {
 	}
 
 	function get_categories($client, $sesskey, $catid = '', $idfield = '') {
-		if (!$this->validate_client($client, $sesskey, 'get_categories')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -825,7 +826,7 @@ class server {
 	function get_events($client, $sesskey, $eventtype, $ownerid,$owneridfield='id') {
 		global $USER;
 
-		if (!$this->validate_client($client, $sesskey, 'get_events')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -876,7 +877,7 @@ class server {
 	}
 
 	function get_group_members($client, $sesskey, $groupid,$groupidfield='id') {
-		if (!$this->validate_client($client, $sesskey, 'get_group_members')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$group = get_record('groups', $groupidfield, $groupid)) {
@@ -893,7 +894,7 @@ class server {
 
 	function get_my_id($client, $sesskey) {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey)) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return -1; //invalid Moodle's ID
 		}
 		return $USER->id;
@@ -901,7 +902,7 @@ class server {
 
 	function get_groups_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_groups_bycourse')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
@@ -927,7 +928,7 @@ class server {
 	 */
 	function get_my_groups($client, $sesskey, $uinfo = '', $idfield = "idnumber") {
 		global $USER, $CFG;
-		if (!$this->validate_client($client, $sesskey, 'get_mygroups')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$cuid = $USER->id;
@@ -959,7 +960,7 @@ class server {
 
 	function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_last_changes')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		if (!$course = get_record('course', $idfield, $courseid)) {
@@ -1050,7 +1051,7 @@ EOS;
 
 	function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
 		global $USER;
-		if (!$this->validate_client($client, $sesskey, 'get_activities')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		//resolve user criteria to an user  Moodle's id
@@ -1116,7 +1117,7 @@ EOSS;
 	 *               specific data format for sending to the client.
 	 */
 	function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
-		if (!$this->validate_client($client, $sesskey, 'enrol_students')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		global $CFG, $USER;
@@ -1194,7 +1195,7 @@ EOSS;
 	*/
 	function edit_users($client, $sesskey, $users) {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'edit_users')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$uid = $USER->id;
@@ -1312,7 +1313,7 @@ EOSS;
 	 */
 	function edit_courses($client, $sesskey, $courses) {
 		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, 'edit_courses')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$uid = $USER->id;
@@ -1525,7 +1526,7 @@ EOSS;
 	function edit_labels($client, $sesskey, $labels) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/label/lib.php");
-		if (!$this->validate_client($client, $sesskey, 'edit_labels')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -1593,7 +1594,7 @@ EOSS;
 	function edit_categories($client, $sesskey, $categories) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/course/lib.php");
-		if (!$this->validate_client($client, $sesskey, 'edit_categories')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -1731,7 +1732,7 @@ EOSS;
 	*/
 	function edit_sections($client, $sesskey, $sections) {
 		global $CFG;
-		if (!$this->validate_client($client, $sesskey, 'edit_sections')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -1792,7 +1793,7 @@ EOSS;
 	function edit_forums($client, $sesskey, $forums) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/forum/lib.php");
-		if (!$this->validate_client($client, $sesskey, 'edit_forums')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -1859,7 +1860,7 @@ EOSS;
 	*/
 	function edit_groups($client, $sesskey, $groups) {
 		global $CFG;
-		if (!$this->validate_client($client, $sesskey, 'edit_groups')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -1972,7 +1973,7 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/assignment/lib.php");
 		require_once ("{$CFG->dirroot}/course/lib.php");
-		if (!$this->validate_client($client, $sesskey, 'edit_assignments')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -2073,7 +2074,7 @@ EOSS;
 	function edit_databases($client, $sesskey, $databases) {
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/data/lib.php");
-		if (!$this->validate_client($client, $sesskey, 'edit_database')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -2139,7 +2140,7 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'edit_wikis')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -2247,7 +2248,7 @@ EOSS;
 	function edit_pagesWiki($client, $sesskey, $pagesWiki) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'edit_pagesWiki')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -2308,7 +2309,7 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/lib/accesslib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'affect_label_to_section')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
@@ -2374,7 +2375,7 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/lib/datalib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'affect_forum_to_section')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
@@ -2449,7 +2450,7 @@ EOSS;
 	function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'affect_section_to_course')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
@@ -2513,7 +2514,7 @@ EOSS;
 	function affect_course_to_category($client, $sesskey, $courseid, $categoryid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'affect_course_to_category')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		/// These database operations MIGHT throw an HTML error message,
@@ -2555,7 +2556,7 @@ EOSS;
 	function affect_user_to_group($client, $sesskey, $userid, $groupid) {
 
 		$this->debug_output('AFFECT_USER_TO_GROUP:     Trying to affect a user to group.');
-		if (!$this->validate_client($client, $sesskey, 'affect_user_to_group')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -2591,7 +2592,7 @@ EOSS;
 	function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
 
 		$this->debug_output('AFFECT_GROUP_TO_COURSE:     Trying to affect a group to course.');
-		if (!$this->validate_client($client, $sesskey, ' affect_group_to_course')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -2636,7 +2637,7 @@ EOSS;
 	function affect_wiki_to_section($client, $sesskey, $wikiid, $sectionid, $groupmode, $visible) {
 
 		$this->debug_output('AFFECT_WIKI_TO_SECTION:     Trying to affect a wiki to section.');
-		if (!$this->validate_client($client, $sesskey, 'affect_wiki_to_section')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -2726,7 +2727,7 @@ EOSS;
 	function affect_database_to_section($client, $sesskey, $databaseid, $sectionid) {
 
 		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
-		if (!$this->validate_client($client, $sesskey, 'affect_database_to_section')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -2795,7 +2796,7 @@ EOSS;
 	function affect_assignment_to_section($client, $sesskey, $assignmentid, $sectionid, $groupmode) {
 
 		$this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
-		if (!$this->validate_client($client, $sesskey, 'affect_assignment_to_section')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -2871,7 +2872,7 @@ EOSS;
 	function affect_pageWiki_to_wiki($client, $sesskey, $pageid, $wikiid) {
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
-		if (!$this->validate_client($client, $sesskey, 'affect_pageWiki_to_wiki')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 
@@ -3017,7 +3018,7 @@ EOSS;
 	*******************************************************************************************
 	*/
 	function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_wikis')) {
+		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 		  return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -3037,7 +3038,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_groups')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -3047,7 +3048,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_forums')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -3057,7 +3058,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_labels')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 	         return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -3067,7 +3068,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_assignments')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
@@ -3077,7 +3078,7 @@ EOSS;
 		return $ret;
 	}
 	function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
-		if (!$this->validate_client($client, $sesskey, 'get_all_databases')) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
