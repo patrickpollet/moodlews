@@ -257,8 +257,10 @@ class server {
 							(" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
 		if ($sess = get_record_sql($sql, 0)) {
 			//return $this->error('A session already exists for this user (' . $user->login . ')');
+            /*
 			if ($sess->ip != $userip)
 				return $this->error(get_string('ws_ipadressmismatch', 'wspp',$userip."!=".$sess->ip));
+            */
 			// V1.6 reuse current session
 		} else {
 			/// Login valid, create a new session record for this client.
