@@ -148,7 +148,7 @@
           <xsd:element name="cost" type="xsd:string" />
           <xsd:element name="timecreated" type="xsd:integer" />
           <xsd:element name="timemodified" type="xsd:integer" />
-          <xsd:element name="metacourse" type="xsd:integer" />
+          <xsd:element name="metacourse" type="xsd:integer" /> <xsd:element name="myrole" type="xsd:integer" />
         </xsd:all>
       </xsd:complexType>
        <xsd:complexType name="userDatum">

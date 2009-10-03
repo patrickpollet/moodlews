@@ -708,7 +708,7 @@ class server {
 		$course = get_record('course', $courseidfield, $courseid);
 		if (!$course)
 			return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
-		return ws_get_primaryrole_incourse($course->id, $userid);
+		return ws_get_primaryrole_incourse($course, $userid);
 	}
 
 	/**
@@ -745,13 +745,11 @@ class server {
 			return $this->error(get_string('ws_invalidclient', 'wspp')." ".__FUNCTION__);
 		}
 		$cuid = $USER->id;
-		if ($uinfo) {
-			if ($idfield != 'id') { // find userid if not current user
+		if (!empty($uinfo)) {
+			// find userid if not current user
 				if (!$user = get_record('user', $idfield, $uinfo))
 					return $this->error(get_string('ws_userunknown','wspp',idfield."=".$uinfo));
-				$uid = $user->id;
-			} else
-				$uid = $uinfo; // rev 1.5.10
+                $uid=$user->id;
 		} else
 			$uid = $cuid; //use current user and ignore $idfield
 		//only admin user can request courses for others
@@ -766,14 +764,18 @@ class server {
 			$res = get_records('course', 'guest', 1, $sort);
 		else
 			$res = get_my_courses($uid, $sort);
-		if ($res)
-			return filter_courses($client, $res);
+		if ($res) {
+		   //rev 1.6 return primary role for each course
+             foreach ($res as $id=>$value)
+                    $res[$id]->myrole=ws_get_primaryrole_incourse($res[$id],$uid);
+        	return filter_courses($client, $res);
+        }
 		else
 			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 	}
 
 /**
- * returns users havaing $idrole in course identified by $idcourse
+ * returns users having $idrole in course identified by $idcourse
  * @param string $idcourse unique identifierr of course
  * @param string $idfield  name of field used to finc course (idnumber, id, shortname), should be unique
  * @param integer $idrole  role searched for (0 = any role)
@@ -794,6 +796,13 @@ class server {
             return $this->error(get_string('ws_roleunknown','wspp',$idrole ));
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		if ($res = get_role_users($idrole, $context, true, '')) {
+            //rev 1.6 if $idrole is empty return primary role for each user
+            if (empty($idrole)) {
+                foreach ($res as $id=>$value)
+                    $res[$id]->role=ws_get_primaryrole_incourse($course,$res[$id]->id);
+            }
+
+
 			return filter_users($client, $res, $idrole);
 		} else {
 			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
@@ -934,13 +943,11 @@ class server {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$cuid = $USER->id;
-		if ($uinfo) {
-			if ($idfield != 'id') { // find userid if not current user
+		if (!empty($uinfo)) {
+			 // find userid if not current user
 				if (!$user = get_record('user', $idfield, $uinfo))
 					return $this->error(get_string('ws_userunknown','wspp',$idfield."=".$uinfo));
 				$uid = $user->id;
-			} else
-				$uid = $uinfo; // rev 1.5.10
 		} else
 			$uid = $cuid; //use current user and ignore $idfield
 		//only an user that can login as another can request  for others
@@ -949,7 +956,6 @@ class server {
 				return $this->error(get_string('ws_operationnotallowed','wspp'));
 			}
 		}
-		$uid = $uid ? $uid : $cuid;
 		$sql = "SELECT g.*
 															 FROM {$CFG->prefix}groups g,
 															 {$CFG->prefix}groups_members m
@@ -970,11 +976,14 @@ class server {
 		}
 		$cuid = $USER->id;
 		$isTeacher = $this->has_capability("moodle/course:update", CONTEXT_COURSE, $course->id);
+        $fmtdate=get_string('ws_sqlstrftimedatetime','wspp'); // '%d/%m/%Y %H:%i:%s'
+        //$this->debug_output('date='.$fmtdate);
+
 		//must have id as first field for proper array indexing !
 		$sqlAct =<<<EOS
 		SELECT DISTINCT {$CFG->prefix}log.id,module, {$CFG->prefix}log.url, info,
 time,firstname,lastname,email,
-		action , cmid, course, time, FROM_UNIXTIME( time, '%d/%m/%Y %H:%i:%s' ) AS DATE_J
+		action , cmid, course, time, FROM_UNIXTIME( time, '$fmtdate' ) AS DATE_J
 		FROM {$CFG->prefix}log inner join {$CFG->prefix}user on
 {$CFG->prefix}log.userid={$CFG->prefix}user.id
 		WHERE course =$course->id
@@ -984,6 +993,7 @@ time,firstname,lastname,email,
 		ORDER BY time DESC
 EOS;
 		$return = array ();
+        //$this->debug_output($sqlAct);
 		if (!$resultAct = get_records_sql($sqlAct)) {
 			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		}
@@ -1077,15 +1087,16 @@ EOS;
 		if ($doCount) // caution result MUST have some id value to fetch result later
 			$sql_select = " SELECT 1,count(l.userid) as CPT ";
 		else {
+            $fmtdate=get_string('ws_sqlstrftimedatetime','wspp'); // '%d/%m/%Y %H:%i:%s'
 			$sql_select =<<<EOS
 
 SELECT l.*,u.auth,u.firstname,u.lastname,u.email,
 u.firstaccess, u.lastaccess, u.lastlogin, u.currentlogin,
-FROM_UNIXTIME(l.time,'%d/%m/%Y %H:%i:%s' )as DATE,
-FROM_UNIXTIME(u.lastaccess,'%d/%m/%Y %H:%i:%s' )as DLA,
-FROM_UNIXTIME(u.firstaccess,'%d/%m/%Y %H:%i:%s' )as DFA,
-FROM_UNIXTIME(u.lastlogin,'%d/%m/%Y %H:%i:%s' )as DLL,
-FROM_UNIXTIME(u.currentlogin,'%d/%m/%Y %H:%i:%s' )as DCL
+FROM_UNIXTIME(l.time,'$fmtdate' )as DATE,
+FROM_UNIXTIME(u.lastaccess,'$fmtdate' )as DLA,
+FROM_UNIXTIME(u.firstaccess,'$fmtdate' )as DFA,
+FROM_UNIXTIME(u.lastlogin,'$fmtdate' )as DLL,
+FROM_UNIXTIME(u.currentlogin,'$fmtdate' )as DCL
 EOS;
 		}
 		$sql =<<<EOSS

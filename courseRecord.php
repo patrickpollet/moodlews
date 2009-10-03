@@ -134,6 +134,10 @@ class courseRecord {
 	* @var  integer
 	*/
 	public $metacourse;
+	/** 
+	* @var  integer
+	*/
+	public $myrole;
 	 public function courseRecord() {
 		 $this->error='';
 		 $this->id=0;
@@ -167,6 +171,7 @@ class courseRecord {
 		 $this->timecreated=0;
 		 $this->timemodified=0;
 		 $this->metacourse=0;
+		 $this->myrole=0;
 	}
 	/* get accessors */
 	public function getError(){
@@ -297,6 +302,10 @@ class courseRecord {
 		 return $this->metacourse;
 	}
 
+	public function getMyrole(){
+		 return $this->myrole;
+	}
+
 	/*set accessors */
 	public function setError($error){
 		$this->error=$error;
@@ -424,6 +433,10 @@ class courseRecord {
 
 	public function setMetacourse($metacourse){
 		$this->metacourse=$metacourse;
+	}
+
+	public function setMyrole($myrole){
+		$this->myrole=$myrole;
 	}
 
 }

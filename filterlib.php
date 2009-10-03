@@ -10,9 +10,14 @@
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
  */
 
-
- function ws_get_primaryrole_incourse($courseid,$userid) {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+/*
+ *return primary role of userid in course
+ *@param course $course an existing course record
+ *@param integer $userid :id of an existing user
+ *
+ */
+ function ws_get_primaryrole_incourse($course,$userid) {
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $context_cat= get_context_instance(CONTEXT_COURSECAT, $course->category);
         if (has_capability('moodle/category:manage', $context_cat,$userid))
             return 1;
@@ -344,7 +349,7 @@ function filter_forums($client, $forums) {
 
 function filter_change($client, $change) {
         //return false if ressource changed is not visible to $client
-         $context = get_context_instance(CONTEXT_COURSE, $resource->course);
+         $context = get_context_instance(CONTEXT_COURSE, $change->courseid);
         if (has_capability('moodle/course:update', $context))
                 return $change;
         return $change->visible ? $change : false;

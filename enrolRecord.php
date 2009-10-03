@@ -11,11 +11,11 @@ class enrolRecord {
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var  string
 	*/
 	public $userid;
 	/** 
-	* @var  integer
+	* @var  string
 	*/
 	public $course;
 	/** 
@@ -36,8 +36,8 @@ class enrolRecord {
 	public $enrol;
 	 public function enrolRecord() {
 		 $this->error='';
-		 $this->userid=0;
-		 $this->course=0;
+		 $this->userid='';
+		 $this->course='';
 		 $this->timestart=0;
 		 $this->timeend=0;
 		 $this->timeaccess=0;

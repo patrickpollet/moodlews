@@ -30,7 +30,9 @@ $string['ws_invaliduser']='Invalid username and / or password.';
 $string['ws_ipadressmismatch']='ip address has changed for this open session ! $a';
 $string['ws_errorregistersession']='unable to register the session';
 
-$string['ws_invalidclient']='Invalid client connection.';
+$string['ws_invalidclient']='Invalid Client connection.';
+
+$string['ws_sqlstrftimedatetime']='%%d/%%m/%%Y %%H:%%i:%%s';
 
 $string['ws_nomatch']='no match found for $a->critere = $a->valeur';
 $string['ws_nothingfound']='aucun résultat.';
@@ -48,9 +50,9 @@ $string['ws_coursewithoutidnumber']='le cours $a n\'a pas de idnumber  (signalez
 $string['ws_nocoursewithidnumberforuser']='aucun cours avec un numéro idnumber trouvé pour $a (signalez le à votre administrateur)';
 $string['ws_roleidnotfound']='ce rôle $a n\'existe pas.';
 $string['ws_nothingtodo']='rien à faire.';
-
-
 $string['ws_notsupportedgradebook']='le carnet de notes antérieur à Moodle 1.8 n\'est pas supporté.';
+
+
 
 
 ?>

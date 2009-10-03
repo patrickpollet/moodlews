@@ -298,9 +298,5 @@ require_once 'getAllAssignmentsReturn.php';
  * getAllDatabasesReturn class
  */
 require_once 'getAllDatabasesReturn.php';
-/**
- * userGrade class
- */
-require_once 'userGrade.php';
 
 ?>
