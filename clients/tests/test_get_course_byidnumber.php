@@ -11,7 +11,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_course_byidnumber($lr->getClient(),$lr->getSessionKey(),'');
+$res=$moodle->get_course_byidnumber($lr->getClient(),$lr->getSessionKey(),'1PC_INFO_BD');
 print_r($res);
 print($res->getCourses());
 

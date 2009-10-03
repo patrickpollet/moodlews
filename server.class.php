@@ -302,6 +302,7 @@ class server {
      * since this operation retunr s a simple type, no need to override it in protocol specific layer
 	 */
 	function logout($client, $sesskey) {
+                global $CFG;
 		if (!$this->validate_client($client, $sesskey)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
@@ -765,8 +766,8 @@ class server {
 			$res = get_records('course', 'guest', 1, $sort);
 		else {
            //Moodle 1.95 do not return all fields set in wsdl
-           $extrafields=array("password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
-hiddensections,lang,theme,cost,timecreated,timemodified,metacourse");
+           $extrafields=array("password,c.summary,c.format,c.showgrades,c.newsitems,c.enrolperiod,c.numsections,c.marker,c.maxbytes,
+c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse");
 
 			$res = get_my_courses($uid, $sort,$extrafields);
         }
@@ -774,7 +775,8 @@ hiddensections,lang,theme,cost,timecreated,timemodified,metacourse");
 		   //rev 1.6 return primary role for each course
              foreach ($res as $id=>$value)
                     $res[$id]->myrole=ws_get_primaryrole_incourse($res[$id],$uid);
-        	return filter_courses($client, $res);
+             //return $res;	
+             return filter_courses($client, $res);
         }
 		else
 			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
