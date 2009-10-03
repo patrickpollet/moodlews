@@ -396,7 +396,8 @@ class server {
 				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
 			}
 		}
-		return filter_courses($ret);
+
+		return filter_courses($client,$ret);
 	}
 
 	/**
