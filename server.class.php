@@ -255,6 +255,7 @@ class server {
 		$sql = "SELECT s.* FROM {$CFG->prefix}webservices_sessions s
 							WHERE s.userid = {$user->id} AND
 							s.verified = 1 AND
+                            ip='$userip' AND
 							s.sessionend = 0 AND
 							(" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
 		if ($sess = get_record_sql($sql, 0)) {
@@ -741,7 +742,7 @@ class server {
 	function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'wspp')." ".__FUNCTION__);
 		}
 		$cuid = $USER->id;
 		if ($uinfo) {
