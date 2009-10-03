@@ -45,6 +45,7 @@ but how to authenticate by CAS in this service ????)
   - usage of global USER varaible (set in validate_client) instead of
 
 1.6
+  - Moodle 1.9.5 compatible 
   - added operations by Lille team
   - internationalization possible with an lang/xx_utf8_local/wspp.php file
   - returns dates in both unix time stamp and localized strings 

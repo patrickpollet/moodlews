@@ -762,8 +762,13 @@ class server {
 		$sort = $sort ? $sort : 'fullname';
 		if (isguestuser($user))
 			$res = get_records('course', 'guest', 1, $sort);
-		else
-			$res = get_my_courses($uid, $sort);
+		else {
+           //Moodle 1.95 do not return all fields set in wsdl
+           $extrafields=array("password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
+hiddensections,lang,theme,cost,timecreated,timemodified,metacourse");
+
+			$res = get_my_courses($uid, $sort,$extrafields);
+        }
 		if ($res) {
 		   //rev 1.6 return primary role for each course
              foreach ($res as $id=>$value)
