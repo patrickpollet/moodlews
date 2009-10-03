@@ -311,7 +311,7 @@ class server {
 			$sess->sessionend = time();
 			if (update_record('webservices_sessions', $sess)) {
 				if ($CFG->ws_logoperations)
-					add_to_log(SITEID, 'webservice pp', '', 'logout');
+					add_to_log(SITEID, 'webservice','webservice pp', '', 'logout');
 				return true;
 			} else {
 				if ($CFG->ws_logerrors)
