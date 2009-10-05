@@ -1586,7 +1586,7 @@ EOSS;
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
-        //$this->debug_output("EDC".print_r($courses,true));
+        $this->debug_output("EDC".print_r($courses,true));
 		if (!empty ($courses)) {
 			foreach ($courses->courses as $course) {
 				$rcourse = new stdClass;
@@ -1636,6 +1636,12 @@ EOSS;
 							break;
 						}
 						$course->timemodified = time(); //not done in update_course ?
+
+                        //GROS PB avec le record rempli de 0 !!!!
+                        foreach($course as $key=>$value) {
+                            if (empty($value)) unset ($course->$key);
+                        }
+
 						if (!update_course($course)) {
 							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->idnumber);
 						} else

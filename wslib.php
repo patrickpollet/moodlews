@@ -118,7 +118,7 @@ function ws_checkuserrecord(&$user,$newuser) {
 	} else {
 		if (empty($user->id))
 			$errmsg=get_string('ws_missingvalue','wspp','id');
-		else if  (! record_exist('user','id',$user->id)) {
+		else if  (! record_exists('user','id',$user->id)) {
 			$errmsg =get_string ('ws_userunknown','wspp',$user->id);
 		}
 	}
@@ -182,7 +182,7 @@ function ws_checkcourserecord(&$course,$newcourse) {
 	} else {
         if (empty($course->id))
             $errmsg=get_string('ws_missingvalue','wspp','id');
-        else if  (! record_exist('course','id',$course->id)) {
+        else if  (! record_exists('course','id',$course->id)) {
             $errmsg =get_string ('ws_courseunknown','wspp',$course->id);
         }
 
