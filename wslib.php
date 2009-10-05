@@ -43,7 +43,7 @@
  /**
   * add admin default values to empty fields of a course
   */
- function ws_fix_courserecord (&$course) {
+ function ws_fixcourserecord (&$course) {
 
 	 // ajout defaut de la conf globale
 	 $courseconfig = get_config('moodlecourse');
@@ -100,11 +100,11 @@ function ws_checkuserrecord(&$user,$newuser) {
 		$required=array('username','email','firstname','lastname','idnumber');
 		ws_fixuserrecord($user);
 		foreach ($required as $field) {
-			if (empty($user->field))
+			if (empty($user->$field))
 				$errmsg .=get_string('ws_missingvalue','wspp',$field);
 			else {
 				$user->$field=trim($user->$field);
-				if (empty($user->field))
+				if (empty($user->$field))
 					$errmsg .=" ".get_string('ws_missingvalue','wspp',$field);
 			}
 		}
@@ -148,21 +148,21 @@ function ws_checkuserrecord(&$user,$newuser) {
 
 
 
-function check_courserecord(&$course,$newcourse) {
+function ws_checkcourserecord(&$course,$newcourse) {
 
     global $CFG;
 
 	$errmsg="";
     unset($course->action); // remove it
 	if ($newcourse) {
-	    $required=array('shortname','name','idnumber');
+	    $required=array('shortname','fullname','idnumber');
         ws_fixcourserecord($course);
     	foreach ($required as $field) {
-			if (empty($course->field))
+			if (empty($course->$field))
 				$errmsg .=get_string('ws_missingvalue','wspp',$field);
 			else {
 				$course->$field=trim($course->$field);
-				if (empty($course->field))
+				if (empty($course->$field))
 					$errmsg .=" ".get_string('ws_missingvalue','wspp',$field);
 			}
 		}

@@ -1586,10 +1586,12 @@ EOSS;
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
+        //$this->debug_output("EDC".print_r($courses,true));
 		if (!empty ($courses)) {
 			foreach ($courses->courses as $course) {
 				$rcourse = new stdClass;
 				$rcourse->error="";
+                 $this->debug_output("EDC".print_r($course,true));
 				switch (trim(strtolower($course->action))) {
 					case 'add' :
 						/// Adding a new course.
