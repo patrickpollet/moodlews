@@ -2142,7 +2142,7 @@
 		<operation name="delete_user">
 			<documentation>MoodleWS: add on course
 			</documentation>
-			<input message="tns:tns:valueAndIdRequest" />
+			<input message="tns:valueAndIdRequest" />
 			<output message="tns:edit_usersResponse" />
 		</operation>
 
