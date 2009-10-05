@@ -26,18 +26,13 @@ class labelDatum {
 	* @var  string
 	*/
 	public $content;
-	/** 
-	* @var  integer
-	*/
-	public $timemodified;
 	/* full constructor */
-	 public function labelDatum($action='',$id=0,$course=0,$name='',$content='',$timemodified=0){
+	 public function labelDatum($action='',$id=0,$course=0,$name='',$content=''){
 		 $this->action=$action   ;
 		 $this->id=$id   ;
 		 $this->course=$course   ;
 		 $this->name=$name   ;
 		 $this->content=$content   ;
-		 $this->timemodified=$timemodified   ;
 	}
 	/* get accessors */
 	public function getAction(){
@@ -60,10 +55,6 @@ class labelDatum {
 		 return $this->content;
 	}
 
-	public function getTimemodified(){
-		 return $this->timemodified;
-	}
-
 	/*set accessors */
 	public function setAction($action){
 		$this->action=$action;
@@ -83,10 +74,6 @@ class labelDatum {
 
 	public function setContent($content){
 		$this->content=$content;
-	}
-
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
 	}
 
 }

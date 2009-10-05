@@ -3,7 +3,8 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Remove the role specified of the user in the course
+/**test code for MoodleWS: Remove the role specified of the
+				user in the course
 * @param integer $client
 * @param string $sesskey
 * @param integer $userid

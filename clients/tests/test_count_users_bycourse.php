@@ -3,7 +3,8 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: count users having a role in a course
+/**test code for MoodleWS: count users having a role in a
+				course
 * @param integer $client
 * @param string $sesskey
 * @param string $idcourse

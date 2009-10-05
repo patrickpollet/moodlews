@@ -3,7 +3,8 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get user info from Moodle user login
+/**test code for MoodleWS: Get user info from Moodle user
+				login
 * @param integer $client
 * @param string $sesskey
 * @param string $userinfo

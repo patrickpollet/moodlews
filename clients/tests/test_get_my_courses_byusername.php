@@ -3,7 +3,8 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get Courses current user identified by username is  member of
+/**test code for MoodleWS: Get Courses current user identified
+				by username is member of
 * @param integer $client
 * @param string $sesskey
 * @param string $uinfo
@@ -12,7 +13,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_my_courses_byusername($lr->getClient(),$lr->getSessionKey(),'pguy','');
+$res=$moodle->get_my_courses_byusername($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getCourses());
 

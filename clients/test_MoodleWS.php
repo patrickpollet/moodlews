@@ -178,7 +178,7 @@ print($res->getGrades());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get all Users  Grades in one course
+/**test code for MoodleWS: Get all Users Grades in one course
 * @param integer $client
 * @param string $sesskey
 * @param string $value
@@ -229,7 +229,8 @@ print($res->getStudents());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get last changes to a Moodle s course
+/**test code for MoodleWS: Get last changes to a Moodle s
+				course
 * @param integer $client
 * @param string $sesskey
 * @param string $courseid
@@ -359,7 +360,7 @@ print($res->getRoles());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get  Moodle  course categories
+/**test code for MoodleWS: Get Moodle course categories
 * @param integer $client
 * @param string $sesskey
 * @return getCategoriesReturn
@@ -400,7 +401,8 @@ print($res->getCategories());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get Courses user identified by id is member of
+/**test code for MoodleWS: Get Courses user identified by id
+				is member of
 * @param integer $client
 * @param string $sesskey
 * @param integer $uid
@@ -415,7 +417,8 @@ print($res->getCourses());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get Courses current user identified by username is  member of
+/**test code for MoodleWS: Get Courses current user identified
+				by username is member of
 * @param integer $client
 * @param string $sesskey
 * @param string $uinfo
@@ -430,7 +433,8 @@ print($res->getCourses());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get Courses current user identified by idnumber is  member of
+/**test code for MoodleWS: Get Courses current user identified
+				by idnumber is member of
 * @param integer $client
 * @param string $sesskey
 * @param string $uinfo
@@ -445,7 +449,8 @@ print($res->getCourses());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get user info from Moodle user login
+/**test code for MoodleWS: Get user info from Moodle user
+				login
 * @param integer $client
 * @param string $sesskey
 * @param string $userinfo
@@ -459,7 +464,8 @@ print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get user info from Moodle user id number
+/**test code for MoodleWS: Get user info from Moodle user id
+				number
 * @param integer $client
 * @param string $sesskey
 * @param string $userinfo
@@ -503,7 +509,8 @@ print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: count users having a role in a course
+/**test code for MoodleWS: count users having a role in a
+				course
 * @param integer $client
 * @param string $sesskey
 * @param string $idcourse
@@ -576,7 +583,8 @@ print($res->getGroups());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get users members of a group in course
+/**test code for MoodleWS: Get users members of a group in
+				course
 * @param integer $client
 * @param string $sesskey
 * @param integer $groupid
@@ -590,7 +598,23 @@ print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: get current user Moodle internal id (helper)
+/**test code for MoodleWS: Get users members of a grouping in
+				course
+* @param integer $client
+* @param string $sesskey
+* @param integer $groupid
+* @return getUsersReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_grouping_members($lr->getClient(),$lr->getSessionKey(),0);
+print_r($res);
+print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: get current user Moodle internal id
+				(helper)
 * @param integer $client
 * @param string $sesskey
 * @return integer
@@ -661,7 +685,8 @@ print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: check if user has a given role in a given course
+/**test code for MoodleWS: check if user has a given role in a
+				given course
 * @param integer $client
 * @param string $sesskey
 * @param string $iduser
@@ -677,7 +702,8 @@ $res=$moodle->has_role_incourse($lr->getClient(),$lr->getSessionKey(),'','','','
 print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: returns  user s primary role in a given course
+/**test code for MoodleWS: returns user s primary role in a
+				given course
 * @param integer $client
 * @param string $sesskey
 * @param string $iduser
@@ -692,7 +718,8 @@ $res=$moodle->get_primaryrole_incourse($lr->getClient(),$lr->getSessionKey(),'',
 print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Get user most recent activities in a Moodle course
+/**test code for MoodleWS: Get user most recent activities in
+				a Moodle course
 * @param integer $client
 * @param string $sesskey
 * @param string $iduser
@@ -710,7 +737,8 @@ print($res->getActivities());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: count user most recent activities in a Moodle course
+/**test code for MoodleWS: count user most recent activities
+				in a Moodle course
 * @param integer $client
 * @param string $sesskey
 * @param string $value1
@@ -723,6 +751,126 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->count_activities($lr->getClient(),$lr->getSessionKey(),'','','','');
 print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param userDatum $user
+* @return editUsersOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$user= new userDatum();
+$user->setAction('');
+$user->setId(0);
+$user->setConfirmed(0);
+$user->setPolicyagreed(0);
+$user->setDeleted(0);
+$user->setUsername('');
+$user->setAuth('');
+$user->setPassword('');
+$user->setIdnumber('');
+$user->setFirstname('');
+$user->setLastname('');
+$user->setEmail('');
+$user->setEmailstop(0);
+$user->setIcq('');
+$user->setSkype('');
+$user->setYahoo('');
+$user->setAim('');
+$user->setMsn('');
+$user->setPhone1('');
+$user->setPhone2('');
+$user->setInstitution('');
+$user->setDepartment('');
+$user->setAddress('');
+$user->setCity('');
+$user->setCountry('');
+$user->setLang('');
+$user->setTimezone(0);
+$user->setLastip('');
+$user->setTheme('');
+$user->setDescription('');
+$user->setMnethostid(0);
+$res=$moodle->add_user($lr->getClient(),$lr->getSessionKey(),$user);
+print_r($res);
+print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param courseDatum $course
+* @return editCoursesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$course= new courseDatum();
+$course->setAction('');
+$course->setId(0);
+$course->setCategory(0);
+$course->setSortorder(0);
+$course->setPassword('');
+$course->setFullname('');
+$course->setShortname('');
+$course->setIdnumber('');
+$course->setSummary('');
+$course->setFormat('');
+$course->setShowgrades(0);
+$course->setNewsitems(0);
+$course->setTeacher('');
+$course->setTeachers('');
+$course->setStudent('');
+$course->setStudents('');
+$course->setGuest(0);
+$course->setStartdate(0);
+$course->setEnrolperiod(0);
+$course->setMarker(0);
+$course->setMaxbytes(0);
+$course->setVisible(0);
+$course->setHiddensections(0);
+$course->setGroupmode(0);
+$course->setGroupmodeforce(0);
+$course->setLang('');
+$course->setTheme('');
+$course->setCost('');
+$course->setMetacourse(0);
+$res=$moodle->add_course($lr->getClient(),$lr->getSessionKey(),$course);
+print_r($res);
+print($res->getCourses());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param string $value
+* @param string $id
+* @return editUsersOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->delete_user($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param string $value
+* @param string $id
+* @return editCoursesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->delete_course($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getCourses());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Edit Label Information
@@ -1050,7 +1198,8 @@ print($res->getStatus());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: Remove the role specified of the user in the course
+/**test code for MoodleWS: Remove the role specified of the
+				user in the course
 * @param integer $client
 * @param string $sesskey
 * @param integer $userid
@@ -1169,6 +1318,83 @@ $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_all_databases($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getDatabases());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All groupings
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllGroupingsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_groupings($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: unAffect a user to group
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $groupid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_user_from_group($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Edit Groups Information
+* @param integer $client
+* @param string $sesskey
+* @param editGroupingsInput $groupings
+* @return UNKNOWN
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$groupings= new editGroupingsInput();
+$groupings->setGroupings(array());
+$res=$moodle->edit_groupings($lr->getClient(),$lr->getSessionKey(),$groupings);
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: unAffect a group to grouping
+* @param integer $client
+* @param string $sesskey
+* @param integer $groupid
+* @param integer $groupingid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_group_from_grouping($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a group to grouping
+* @param integer $client
+* @param string $sesskey
+* @param integer $groupid
+* @param integer $groupingid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_group_to_grouping($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

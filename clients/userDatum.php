@@ -13,6 +13,10 @@ class userDatum {
 	/** 
 	* @var  integer
 	*/
+	public $id;
+	/** 
+	* @var  integer
+	*/
 	public $confirmed;
 	/** 
 	* @var  integer
@@ -127,8 +131,9 @@ class userDatum {
 	*/
 	public $mnethostid;
 	/* full constructor */
-	 public function userDatum($action='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
+	 public function userDatum($action='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
 		 $this->action=$action   ;
+		 $this->id=$id   ;
 		 $this->confirmed=$confirmed   ;
 		 $this->policyagreed=$policyagreed   ;
 		 $this->deleted=$deleted   ;
@@ -162,6 +167,10 @@ class userDatum {
 	/* get accessors */
 	public function getAction(){
 		 return $this->action;
+	}
+
+	public function getId(){
+		 return $this->id;
 	}
 
 	public function getConfirmed(){
@@ -283,6 +292,10 @@ class userDatum {
 	/*set accessors */
 	public function setAction($action){
 		$this->action=$action;
+	}
+
+	public function setId($id){
+		$this->id=$id;
 	}
 
 	public function setConfirmed($confirmed){

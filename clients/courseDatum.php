@@ -85,10 +85,6 @@ class courseDatum {
 	/** 
 	* @var  integer
 	*/
-	public $numsections;
-	/** 
-	* @var  integer
-	*/
 	public $marker;
 	/** 
 	* @var  integer
@@ -125,17 +121,9 @@ class courseDatum {
 	/** 
 	* @var  integer
 	*/
-	public $timecreated;
-	/** 
-	* @var  integer
-	*/
-	public $timemodified;
-	/** 
-	* @var  integer
-	*/
 	public $metacourse;
 	/* full constructor */
-	 public function courseDatum($action='',$id=0,$category=0,$sortorder=0,$password='',$fullname='',$shortname='',$idnumber='',$summary='',$format='',$showgrades=0,$newsitems=0,$teacher='',$teachers='',$student='',$students='',$guest=0,$startdate=0,$enrolperiod=0,$numsections=0,$marker=0,$maxbytes=0,$visible=0,$hiddensections=0,$groupmode=0,$groupmodeforce=0,$lang='',$theme='',$cost='',$timecreated=0,$timemodified=0,$metacourse=0){
+	 public function courseDatum($action='',$id=0,$category=0,$sortorder=0,$password='',$fullname='',$shortname='',$idnumber='',$summary='',$format='',$showgrades=0,$newsitems=0,$teacher='',$teachers='',$student='',$students='',$guest=0,$startdate=0,$enrolperiod=0,$marker=0,$maxbytes=0,$visible=0,$hiddensections=0,$groupmode=0,$groupmodeforce=0,$lang='',$theme='',$cost='',$metacourse=0){
 		 $this->action=$action   ;
 		 $this->id=$id   ;
 		 $this->category=$category   ;
@@ -155,7 +143,6 @@ class courseDatum {
 		 $this->guest=$guest   ;
 		 $this->startdate=$startdate   ;
 		 $this->enrolperiod=$enrolperiod   ;
-		 $this->numsections=$numsections   ;
 		 $this->marker=$marker   ;
 		 $this->maxbytes=$maxbytes   ;
 		 $this->visible=$visible   ;
@@ -165,8 +152,6 @@ class courseDatum {
 		 $this->lang=$lang   ;
 		 $this->theme=$theme   ;
 		 $this->cost=$cost   ;
-		 $this->timecreated=$timecreated   ;
-		 $this->timemodified=$timemodified   ;
 		 $this->metacourse=$metacourse   ;
 	}
 	/* get accessors */
@@ -246,10 +231,6 @@ class courseDatum {
 		 return $this->enrolperiod;
 	}
 
-	public function getNumsections(){
-		 return $this->numsections;
-	}
-
 	public function getMarker(){
 		 return $this->marker;
 	}
@@ -284,14 +265,6 @@ class courseDatum {
 
 	public function getCost(){
 		 return $this->cost;
-	}
-
-	public function getTimecreated(){
-		 return $this->timecreated;
-	}
-
-	public function getTimemodified(){
-		 return $this->timemodified;
 	}
 
 	public function getMetacourse(){
@@ -375,10 +348,6 @@ class courseDatum {
 		$this->enrolperiod=$enrolperiod;
 	}
 
-	public function setNumsections($numsections){
-		$this->numsections=$numsections;
-	}
-
 	public function setMarker($marker){
 		$this->marker=$marker;
 	}
@@ -413,14 +382,6 @@ class courseDatum {
 
 	public function setCost($cost){
 		$this->cost=$cost;
-	}
-
-	public function setTimecreated($timecreated){
-		$this->timecreated=$timecreated;
-	}
-
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
 	}
 
 	public function setMetacourse($metacourse){

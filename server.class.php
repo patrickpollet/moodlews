@@ -17,6 +17,7 @@
 **/
 
 require_once ('../config.php');
+require_once ('wslib.php');
 require_once ('filterlib.php');
 /// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
 // j'ai 11000 comptes
@@ -156,7 +157,7 @@ class server {
 		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
 
 		//LOG INTO MOODLE'S LOG
-		if ($CFG->ws_logoperations)
+		if ($operation && $CFG->ws_logoperations)
 			add_to_log(SITEID, 'webservice', 'webservice pp', '', $operation);
 		return true;
 	}
@@ -211,11 +212,15 @@ class server {
 	 * @param string capability
 	 * @param string type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
 	 * @param  object moodle's id
+     * @param int $userid : user to chcek, default me
 	 */
-	function has_capability($capability, $context_type, $instance_id) {
+	function has_capability($capability, $context_type, $instance_id,$userid=NULL) {
 		global $USER;
 		$context = get_context_instance($context_type, $instance_id);
-		return has_capability($capability, $context, $USER->id);
+		if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
+			$userid = $USER->id;
+		}
+		return has_capability($capability, $context, $userid);
 	}
 
 	/**
@@ -304,18 +309,14 @@ class server {
 	function logout($client, $sesskey) {
                 global $CFG;
 		if (!$this->validate_client($client, $sesskey)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'wspp', __FUNCTION__));
 		}
 		if ($sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			$sess->verified = 0;
 			$sess->sessionend = time();
 			if (update_record('webservices_sessions', $sess)) {
-				if ($CFG->ws_logoperations)
-					add_to_log(SITEID, 'webservice','webservice pp', '', 'logout');
 				return true;
 			} else {
-				if ($CFG->ws_logerrors)
-					add_to_log(SITEID, 'webservice', 'webservice pp', '', 'error'.__FUNCTION__);
 				return false;
 			}
 		}
@@ -324,7 +325,7 @@ class server {
 
 	function get_version($client, $sesskey) {
 		global $CFG;
-		if (!$this->validate_client($client, $sesskey)) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return -1; //invalid Moodle's ID
 		}
 		return $CFG->webservices_version;
@@ -775,7 +776,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 		   //rev 1.6 return primary role for each course
              foreach ($res as $id=>$value)
                     $res[$id]->myrole=ws_get_primaryrole_incourse($res[$id],$uid);
-             //return $res;	
+             //return $res;
              return filter_courses($client, $res);
         }
 		else
@@ -905,11 +906,255 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
 			return $this->error(get_string('ws_operationnotallowed','wspp'));
-		$res = get_group_users($groupid);
+		$res = get_group_users($group->id);
 		if (!$res)
 			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
 		return filter_users($client, $res, 0);
 	}
+
+    function get_grouping_members($client, $sesskey, $groupid,$groupidfield='id') {
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        if (!$group = get_record('groupings', $groupidfield, $groupid)) {
+            return $this->error(get_string('ws_groupingunknown','wspp',$groupid));
+        }
+
+        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        $res = groups_get_grouping_members($group->id);
+        if (!$res)
+            return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+        return filter_users($client, $res, 0);
+    }
+
+
+    /**
+    * Add user to group
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $userid The user's id
+    * @param int $groupid The group's id
+    * @return affectRecord Return data (affectRecord object) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function affect_user_to_group($client, $sesskey, $userid, $groupid) {
+;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$group = get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        }
+
+        if (!$user = get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','wspp','id='.$userid));
+        }
+
+            /// Check user is enroled in course
+        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid,$user->id)) {
+            $a=new StdClass();
+            $a->user=$user->username;
+            $a->course=$group->courseid;
+            return $this->error(get_string('ws_user_notenroled','wspp',$a));
+        }
+
+        /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+        $resp = new stdClass();
+        $resp->status = groups_add_member($group->id, $user->id);
+        return $resp;
+    }
+
+    function remove_user_from_group($client, $sesskey, $userid, $groupid) {
+;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$group = get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        }
+
+        if (!$user = get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','wspp','id='.$userid));
+        }
+
+            /// Check user is member
+        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE,$group->courseid, $user->id)) {
+            $a=new StdClass();
+            $a->user=$user->username;
+            $a->course=$group->courseid;
+            return $this->error(get_string('ws_user_notenroled','wspp',$a));
+        }
+
+        /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+        $resp = new stdClass();
+        $resp->status = groups_remove_member($group->id, $user->id);
+        return $resp;
+    }
+
+
+
+     function affect_group_to_grouping($client, $sesskey, $groupid, $groupingid) {
+         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$group = get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        }
+        if (!$grouping = get_record('groupings', 'id', $groupingid)) {
+            return $this->error(get_string('ws_groupidunknown','wspp','id='.$groupid));
+        }
+        if ($group->courseid != $grouping->courseid) {
+             $a=new StdClass();
+            $a->group=$group->id;
+            $a->grouping=$grouping->id;
+            return $this->error(get_string('ws_group_grouping_notsamecourse','wspp',$a));
+        }
+         /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+        $resp = new stdClass();
+        $resp->status = groups_assign_grouping($grouping->id, $group->id);
+        return $resp;
+
+
+    }
+
+     function remove_group_from_grouping($client, $sesskey, $groupid, $groupingid) {
+             if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$group = get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        }
+        if (!$grouping = get_record('groupings', 'id', $groupingid)) {
+            return $this->error(get_string('ws_groupidunknown','wspp','id='.$groupid));
+        }
+        if ($group->courseid != $grouping->courseid) {
+             $a=new StdClass();
+            $a->group=$group->id;
+            $a->grouping=$grouping->id;
+            return $this->error(get_string('ws_group_grouping_notsamecourse','wspp',$a));
+        }
+         /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+        //$this->debug_output("RGG  gid=$group->id gpip= $grouping->id");
+        $resp = new stdClass();
+        $resp->status = groups_unassign_grouping($grouping->id, $group->id);
+        return $resp;
+    }
+
+
+    /**
+    * Add  group to course
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $groupid The group's id
+    * @param int $courseid The course's id
+    * @return affectRecord Return data (affectRecord object) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$course = get_record('course', $idfield, $idcourse)) {
+            return $this->error(get_string('ws_courseunknown','wspp',"id=".$idcourse ));
+        }
+
+        /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+
+        //verify if this grup exists
+        if (!$group = get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        }
+
+        //verify if this group is assigned of any course
+        if ($group->courseid > 0) {
+            $a=new StdClass();
+            $a->group=$group->id;
+            $a->course=$groupe->courseid;
+            return $this->error("ws_groupalreadyaffected","wspp",$a);
+        }
+        $group->courseid = $courseid;
+        //verify if the update operation is done
+
+
+        $resp = new stdClass();
+        $resp->status = update_record('groups', $group);
+        return $resp;
+    }
+
+
+
+    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid) {
+          /**
+    * Add  group to course
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $groupid The group's id
+    * @param int $courseid The course's id
+    * @return affectRecord Return data (affectRecord object) to be converted into a
+    *               specific data format for sending to the client.
+    */
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+
+        if (!$course = get_record('course', $idfield, $idcourse)) {
+            return $this->error(get_string('ws_courseunknown','wspp',"id=".$idcourse ));
+        }
+
+        /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+
+        //verify if this grup exists
+        if (!$group = get_record('groupings', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupingunknown','wspp','id='.$groupid));
+        }
+
+        //verify if this group is assigned of any course
+        if ($group->courseid > 0) {
+            $a=new StdClass();
+            $a->group=$group->id;
+            $a->course=$groupe->courseid;
+            return $this->error("ws_groupingalreadyaffected","wspp",$a);
+        }
+
+
+        $resp = new stdClass();
+        $resp->status =update_record('groupings', $group);
+        return $resp;
+    }
+
+
+
+
+
 
 	function get_my_id($client, $sesskey) {
 		global $USER;
@@ -1126,11 +1371,13 @@ EOSS;
 	}
 
 	/**
-	 * Enrol users as a student in the given category
+	 * Enrol users with the given role name  in the given course
 	 *
 	 * @param int $client The client session ID.
 	 * @param string $sesskey The client session key.
+     * @param string $rolename  shortname of role to affect
 	 * @param string $courseid The course ID number to enrol students in <- changed to category...
+     * @param  string $courseidfield field to use to identify course (idnumber,id, shortname)
 	 * @param array $userids An array of input user idnumber values for enrolment.
 	 * @param string $idfield identifier used for users . Note that $courseid is expected
 	 *    to contains an idnumber and not Moodle id.
@@ -1227,9 +1474,7 @@ EOSS;
 				$ruser = new stdClass();
 
 				$this->debug_output('traitement de ' . print_r($user, true));
-				//obs by Lille: add md5 to the password
-				// todo test whether it is needed or not ?
-				$user->password = md5($user->password);
+
 				switch (trim(strtolower($user->action))) {
 					case 'add' :
 
@@ -1238,11 +1483,9 @@ EOSS;
 							break;
 						}
 						unset ($user->action);
-						$this->debug_output('adding' . print_r($user, true));
-						//Moodle 1.8 and later (a required field that must be non 0 for login )
-						if (!empty ($CFG->mnet_localhost_id))
-							if (empty ($user->mnethostid)) //if not set by caller
-								$user->mnethostid = $CFG->mnet_localhost_id; // always local user
+				        ws_fix_usercord($user);
+                		$this->debug_output('adding' . print_r($user, true));
+
 
 						// Lille : verify if current user is already in database
 						if ($userExist = get_record("user", "username", $user->username)) {
@@ -1264,7 +1507,7 @@ EOSS;
 							$ruser = get_record('user', 'id', $user->id);
 						}
 						break;
-
+/***
 					case 'update' :
 						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
 							$ruser->error = "not allowed to update users";
@@ -1282,11 +1525,14 @@ EOSS;
 						} else {
 							/// Update values in the $user database record with what
 							/// the client supplied.
+
 							foreach ($user as $key => $value)
 								if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
 									$userup-> $key = $value;
 							$userup->timemodified = time();
-
+                            //obs by Lille: add md5 to the password
+                // todo test whether it is needed or not ?
+                $user->password = md5($user->password);
 							if (update_record('user', $userup)) {
 								$ruser = $ruser = get_record('user', 'id', $user->id);
 							} else {
@@ -1295,6 +1541,7 @@ EOSS;
 							}
 						}
 						break;
+****/
 					case 'delete' :
 						$uid = $user->idnumber;
 						/// Deleting an existing user.
@@ -1334,190 +1581,99 @@ EOSS;
 	 */
 	function edit_courses($client, $sesskey, $courses) {
 		global $CFG, $USER;
+		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$uid = $USER->id;
-		$site = get_site();
 		$ret = array ();
 		if (!empty ($courses)) {
 			foreach ($courses->courses as $course) {
 				$rcourse = new stdClass;
+				$rcourse->error="";
 				switch (trim(strtolower($course->action))) {
 					case 'add' :
 						/// Adding a new course.
-						$courseadd = $course;
+						// fix course record if needed and check for missing values or database collision
+						if ($errmsg=ws_checkcourserecord($course,true)) {
+							$rcourse->error=$errmsg;
+							break;
+						}
 
-						$this->debug_output('Trying to add a new course.');
-						/// Check for correct permissions.
-						if (!$this->iscreator($uid)) {
+						/// Now check for correct permissions.
+						if (!$this->has_capability("moodle/course:create",CONTEXT_COURSECAT,$course->category)) {
+							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							break;
+						}
 
-							$this->debug_output('Invalid access UID: ' . $uid);
-							$rcourse->error = 'You do not have proper access to perform this operation.';
-						} else
-							if (record_exists('course', 'idnumber', $courseadd->idnumber)) {
-								$rcourse->error = 'A course with this ID number already exists: ' . $courseadd->idnumber;
-							} else {
-								/// These database operations MIGHT throw an HTML error message,
-								/// so we've got to catch that and send it back in an error
-								/// request.
-								//verify if current course is aleready in db
-								//Lille
-								$this->debug_output("ajunge ACI");
-								if ($courseExist = get_record("course", "shortname", $course->shortname)) {
-									$rcourse = $courseExist;
-									$rcourse->error = "course shortname $course->shortname already used";
-									break;
-								}
-								//TODO collect Admin default settings  (see course/pending)
+						if ($courseadd=create_course($course)) {
+							$rcourse = $courseadd;
 
-								// place at beginning of category
-								fix_course_sortorder();
-								$courseadd->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM " . "{$CFG->prefix}course WHERE category=$courseadd->category");
-								if (empty ($courseadd->sortorder)) {
-									$courseadd->sortorder = 100;
-								}
-								if (!isset ($courseadd->maxbytes)) {
-									$byteschoices = get_max_upload_sizes($CFG->maxbytes);
-									$courseadd->maxbytes = key($byteschoices);
-								}
-								if (!isset ($courseadd->startdate)) {
-									$courseadd->startdate = time();
-								}
-								$courseadd->timecreated = time();
-								$courseadd->timemodified = time();
-								//make sure a category is specified - default moodle category is implicit
-								if (!isset ($courseadd->category) || $courseadd->category == 0) {
-									$courseadd->category = 1;
-								}
-								$courseadd->id = insert_record('course', $courseadd);
-
-								if (empty ($courseadd->id)) {
-									$rcourse->error = 'Could not add course: ' . $courseadd->shortname;
-								} else {
-									require_once ($CFG->libdir . '/pagelib.php');
-									require_once ($CFG->libdir . '/blocklib.php');
-									/// These API calls MIGHT throw an HTML error message,
-									/// so we've got to catch that and send it back in an error
-									/// request.
-
-									/// Setup page blocks.
-									$page = page_create_object(PAGE_COURSE_VIEW, $courseadd->id);
-									blocks_repopulate_page($page);
-
-									/// Create a default section.
-									$section = NULL;
-									$section->course = $courseadd->id;
-									$section->section = 0;
-									$section->id = insert_record('course_sections', $section);
-
-									$rcourse = get_record('course', 'id', $courseadd->id);
-								}
-							}
-						break;
-						/********************************
-						case 'update' :
-							/// Updating an existing course.
-							$courseup = $course;
-							$cid = $courseup->idnumber;
-							$dbfail = false;
-
-							$this->debug_output('Attempting to update course ID: ' . $cid . print_r($course, true));
-							/// This database operation MIGHT throw an HTML error message,
-							/// so we've got to catch that and send it back in an error
-							/// request.
-
-							$course = get_record('course', 'idnumber', $cid);
-
-							if (empty ($course)) {
-								$rcourse->error = 'Could not find course ID: ' . $cid;
-							} else
-								if (!$dbfail && !$this->isteacher($course->id, $uid)) {
-									$rcourse->error = 'You do not have proper access to perform this operation.';
-								} else
-									if (!$dbfail) {
-										/// Update values in the course database record with what
-										/// the client supplied.
-										foreach ($courseup as $key => $value)
-										if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-											$course-> $key = $value;
-										$course->timemodified = time();
-
-										$success = update_record('course', $course);
-
-										if (!$success) {
-											$rcourse->error = 'Could not update course: ' . $cid;
-										} else
-
-											$rcourse = get_record('course', 'id', $course->id);
-									}
+						}else {
+							$rcourse->error=get_string('ws_errorcreatingcourse','wspp',$course->idnumber);
 						}
 
 						break;
-						****************************************************************/
+
+					case 'update' :
+						/// Updating an existing course.
+						if (! $oldcourse = get_record('course', 'idnumber', $course->idnumber)) {
+							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->idnumber );
+							break;
+						}
+						$rcourse=$course;
+						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSECAT,$oldcourse->category)) {
+							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							break;
+
+						}
+						//set Moodle internal id
+						$course->id=$oldcourse->id;
+						// fix course record if needed and check for missing values or database collision
+						if ($errmsg=ws_checkcourserecord($course,false)) {
+							$rcourse->error=$errmsg;
+							break;
+						}
+						$course->timemodified = time(); //not done in update_course ?
+						if (!update_course($course)) {
+							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->idnumber);
+						} else
+							$rcourse = get_record('course', 'id', $course->id); //return new value
+
+						break;
 					case 'delete' :
 						/// Deleting an existing course.
-						$cid = $course->idnumber;
-						$dbfail = false;
-						/// Check for correct permissions.
-						if (!$this->isadmin($uid)) {
-							$rcourse->error = 'You do not have proper access to ' . 'perform this operation.';
-						} else {
-
-							$this->debug_output('Attempting to delete course ID: ' . $cid);
-							/// This database operation MIGHT throw an HTML error message,
-							/// so we've got to catch that and send it back in an error
-							/// request.
-
-							$course = get_record('course', 'idnumber', $cid);
-
-							if (empty ($course)) {
-								$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$cid );
-							} else
-								if (!$dbfail) {
-									/// 'Delete' the course the Moodle way.
-									$success_r = true;
-									$success_d = true;
-									$success_f = true;
-									/// These operations MIGHT throw an HTML error message,
-									/// so we've got to catch that and send it back in an error
-									/// request.
-
-									require_once ($CFG->libdir . '/moodlelib.php');
-									$success_r = remove_course_contents($course->id, false);
-
-									if ($success_r) {
-										$success_d = delete_records('course', 'id', $course->id);
-									}
-
-									if ($success_r && $success_d && !isset ($rcourse->error) && ($dir = @ opendir($CFG->dataroot . '/' . $course->id))) {
-										closedir($dir);
-										require_once ($CFG->libdir . '/filelib.php');
-										$success_f = fulldelete($CFG->dataroot . '/' . $course->id);
-									}
-
-									if (!isset ($rcourse->error)) {
-										if (!$success_r) {
-											$rcourse->error = 'Error deleting some of the course contents (' . $cid . ').';
-										} else
-											if (!$success_d) {
-												$rcourse->error = 'Error deleting the course record (' . $cid . ').';
-											} else
-												if (!$success_f) {
-													$rcourse->error = 'Error deleting the course data (' . $cid . ').';
-												} else {
-													$rcourse = $course;
-												}
-									}
-								}
+						if (! $course = get_record('course', 'idnumber', $course->idnumber)) {
+							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->idnumber );
+							break;
 						}
+						$rcourse=$course;
+                        //$this->debug_output("DC".print_r($course,true));
+						/// Now check for correct permissions.
+						if (!$this->has_capability("moodle/course:delete",CONTEXT_COURSECAT,$course->category)) {
+							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							break;
+						}
+						if (!delete_course($course->id,false)) {
+							$rcourse->error=get_string('ws_errordeletingcourse','wspp',$course->idnumber);
+						}
+
 						break;
+                    default :
+                        $rcourse->error=get_string('ws_invalidaction','wspp',$course->action);
 				}
-				$ret[] = $rcourse;
+                $ret[] = $rcourse;
 			}
+
 		}
 		return $ret;
 	}
+
+
+
+
+
+
+
 
 	/*
 	*****************************************************************************************************************************
@@ -2564,83 +2720,9 @@ EOSS;
 		return $r;
 	}
 
-	/**
-	* Add user to group
-	* @uses $CFG
-	* @param int $client The client session ID.
-	* @param string $sesskey The client session key.
-	* @param int $userid The user's id
-	* @param int $groupid The group's id
-	* @return affectRecord Return data (affectRecord object) to be converted into a
-	*               specific data format for sending to the client.
-	*/
-	function affect_user_to_group($client, $sesskey, $userid, $groupid) {
 
-		$this->debug_output('AFFECT_USER_TO_GROUP:     Trying to affect a user to group.');
-		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
-		}
 
-		/// Check for correct permissions.
-		if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
-			return $this->error('AFFECT_USER_TO_GROUP:     You do not have proper access to perform this operation.');
-		}
-		if (!$exist_user = get_record("user", "id", $userid)) {
-			return $this->error("AFFECT_USER_TO_GROUP:     userID: " . $userid . ", don't exist in database");
-		}
-		if (!$exist_user = get_record("groups", "id", $groupid)) {
-			return $this->error("AFFECT_USER_TO_GROUP:     groupID: " . $groupid . ", don't exist in database");
-		}
-		if (!groups_add_member($groupid, $userid)) {
-			return $this->error("AFFECT_USER_TO_GROUP:     The group don't exists or the insertion couldn't be made...");
-		}
 
-		$resp = new stdClass();
-		$resp->status = true;
-		return $resp;
-	}
-
-	/**
-	* Add  group to course
-	* @uses $CFG
-	* @param int $client The client session ID.
-	* @param string $sesskey The client session key.
-	* @param int $groupid The group's id
-	* @param int $courseid The course's id
-	* @return affectRecord Return data (affectRecord object) to be converted into a
-	*               specific data format for sending to the client.
-	*/
-	function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
-
-		$this->debug_output('AFFECT_GROUP_TO_COURSE:     Trying to affect a group to course.');
-		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
-		}
-
-		/// Check for correct permissions.
-		if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
-			return $this->error('AFFECT_GROUP_TO_COURSE:     You do not have proper access to perform this operation.');
-		}
-		//verify if this grup exists
-		if (!$group = get_record('groups', 'id', $groupid)) {
-			return $this->error('AFFECT_GROUP_TO_COURSE:     Group ID was incorrect');
-		}
-		if (!get_record('course', 'id', $courseid)) {
-			return $this->error('AFFECT_GROUP_TO_COURSE:     Course ID was incorrect');
-		}
-		//verify if this group is assigned of any course
-		if ($group->courseid > 0)
-			return $this->error("AFFECT_GROUP_TO_COURSE:     This group is already assigned to a course with ID:$group->courseid");
-		$group->courseid = $courseid;
-		//verify if the update operation is done
-		if (!$success = update_record('groups', $group)) {
-			return $this->error('AFFECT_GROUP_TO_COURSE:     Update idcourse could not be effectued');
-		}
-
-		$resp = new stdClass();
-		$resp->status = true;
-		return $resp;
-	}
 
 	/**
 	* Add wiki to course section
@@ -3117,5 +3199,15 @@ EOSS;
 	*****************************************************************************************************************************
 	*/
 
+  function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        $ret = array ();
+        if ($res = get_records('groupings', $fieldname, $fieldvalue, 'name', '*')) {
+            $ret = filter_groupings($client, $res);
+        }
+        return $ret;
+    }
 }
 ?>

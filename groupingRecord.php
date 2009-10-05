@@ -5,11 +5,11 @@
  * @package	MoodleWS
  * @copyright	(c) P.Pollet 2007 under GPL
  */
-class groupDatum {
+class groupingRecord {
 	/** 
 	* @var  string
 	*/
-	public $action;
+	public $error;
 	/** 
 	* @var  integer
 	*/
@@ -29,28 +29,28 @@ class groupDatum {
 	/** 
 	* @var  string
 	*/
-	public $enrolmentkey;
+	public $configdata;
 	/** 
 	* @var  integer
 	*/
-	public $picture;
+	public $timecreated;
 	/** 
 	* @var  integer
 	*/
-	public $hidepicture;
-	 public function groupDatum() {
-		 $this->action='';
+	public $timemodified;
+	 public function groupingRecord() {
+		 $this->error='';
 		 $this->id=0;
 		 $this->courseid=0;
 		 $this->name='';
 		 $this->description='';
-		 $this->enrolmentkey='';
-		 $this->picture=0;
-		 $this->hidepicture=0;
+		 $this->configdata='';
+		 $this->timecreated=0;
+		 $this->timemodified=0;
 	}
 	/* get accessors */
-	public function getAction(){
-		 return $this->action;
+	public function getError(){
+		 return $this->error;
 	}
 
 	public function getId(){
@@ -69,21 +69,21 @@ class groupDatum {
 		 return $this->description;
 	}
 
-	public function getEnrolmentkey(){
-		 return $this->enrolmentkey;
+	public function getConfigdata(){
+		 return $this->configdata;
 	}
 
-	public function getPicture(){
-		 return $this->picture;
+	public function getTimecreated(){
+		 return $this->timecreated;
 	}
 
-	public function getHidepicture(){
-		 return $this->hidepicture;
+	public function getTimemodified(){
+		 return $this->timemodified;
 	}
 
 	/*set accessors */
-	public function setAction($action){
-		$this->action=$action;
+	public function setError($error){
+		$this->error=$error;
 	}
 
 	public function setId($id){
@@ -102,16 +102,16 @@ class groupDatum {
 		$this->description=$description;
 	}
 
-	public function setEnrolmentkey($enrolmentkey){
-		$this->enrolmentkey=$enrolmentkey;
+	public function setConfigdata($configdata){
+		$this->configdata=$configdata;
 	}
 
-	public function setPicture($picture){
-		$this->picture=$picture;
+	public function setTimecreated($timecreated){
+		$this->timecreated=$timecreated;
 	}
 
-	public function setHidepicture($hidepicture){
-		$this->hidepicture=$hidepicture;
+	public function setTimemodified($timemodified){
+		$this->timemodified=$timemodified;
 	}
 
 }

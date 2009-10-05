@@ -3,7 +3,8 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get users members of a group in course
+/**test code for MoodleWS: Get users members of a group in
+				course
 * @param integer $client
 * @param string $sesskey
 * @param integer $groupid

@@ -85,10 +85,6 @@ class courseDatum {
 	/** 
 	* @var  integer
 	*/
-	public $numsections;
-	/** 
-	* @var  integer
-	*/
 	public $marker;
 	/** 
 	* @var  integer
@@ -125,14 +121,6 @@ class courseDatum {
 	/** 
 	* @var  integer
 	*/
-	public $timecreated;
-	/** 
-	* @var  integer
-	*/
-	public $timemodified;
-	/** 
-	* @var  integer
-	*/
 	public $metacourse;
 	 public function courseDatum() {
 		 $this->action='';
@@ -154,7 +142,6 @@ class courseDatum {
 		 $this->guest=0;
 		 $this->startdate=0;
 		 $this->enrolperiod=0;
-		 $this->numsections=0;
 		 $this->marker=0;
 		 $this->maxbytes=0;
 		 $this->visible=0;
@@ -164,8 +151,6 @@ class courseDatum {
 		 $this->lang='';
 		 $this->theme='';
 		 $this->cost='';
-		 $this->timecreated=0;
-		 $this->timemodified=0;
 		 $this->metacourse=0;
 	}
 	/* get accessors */
@@ -245,10 +230,6 @@ class courseDatum {
 		 return $this->enrolperiod;
 	}
 
-	public function getNumsections(){
-		 return $this->numsections;
-	}
-
 	public function getMarker(){
 		 return $this->marker;
 	}
@@ -283,14 +264,6 @@ class courseDatum {
 
 	public function getCost(){
 		 return $this->cost;
-	}
-
-	public function getTimecreated(){
-		 return $this->timecreated;
-	}
-
-	public function getTimemodified(){
-		 return $this->timemodified;
 	}
 
 	public function getMetacourse(){
@@ -374,10 +347,6 @@ class courseDatum {
 		$this->enrolperiod=$enrolperiod;
 	}
 
-	public function setNumsections($numsections){
-		$this->numsections=$numsections;
-	}
-
 	public function setMarker($marker){
 		$this->marker=$marker;
 	}
@@ -412,14 +381,6 @@ class courseDatum {
 
 	public function setCost($cost){
 		$this->cost=$cost;
-	}
-
-	public function setTimecreated($timecreated){
-		$this->timecreated=$timecreated;
-	}
-
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
 	}
 
 	public function setMetacourse($metacourse){

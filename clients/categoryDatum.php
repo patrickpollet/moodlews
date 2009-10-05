@@ -33,15 +33,7 @@ class categoryDatum {
 	/** 
 	* @var  integer
 	*/
-	public $coursecount;
-	/** 
-	* @var  integer
-	*/
 	public $visible;
-	/** 
-	* @var  integer
-	*/
-	public $timemodified;
 	/** 
 	* @var  integer
 	*/
@@ -55,16 +47,14 @@ class categoryDatum {
 	*/
 	public $theme;
 	/* full constructor */
-	 public function categoryDatum($action='',$id=0,$name='',$description='',$parent=0,$sortorder=0,$coursecount=0,$visible=0,$timemodified=0,$depth=0,$path='',$theme=''){
+	 public function categoryDatum($action='',$id=0,$name='',$description='',$parent=0,$sortorder=0,$visible=0,$depth=0,$path='',$theme=''){
 		 $this->action=$action   ;
 		 $this->id=$id   ;
 		 $this->name=$name   ;
 		 $this->description=$description   ;
 		 $this->parent=$parent   ;
 		 $this->sortorder=$sortorder   ;
-		 $this->coursecount=$coursecount   ;
 		 $this->visible=$visible   ;
-		 $this->timemodified=$timemodified   ;
 		 $this->depth=$depth   ;
 		 $this->path=$path   ;
 		 $this->theme=$theme   ;
@@ -94,16 +84,8 @@ class categoryDatum {
 		 return $this->sortorder;
 	}
 
-	public function getCoursecount(){
-		 return $this->coursecount;
-	}
-
 	public function getVisible(){
 		 return $this->visible;
-	}
-
-	public function getTimemodified(){
-		 return $this->timemodified;
 	}
 
 	public function getDepth(){
@@ -143,16 +125,8 @@ class categoryDatum {
 		$this->sortorder=$sortorder;
 	}
 
-	public function setCoursecount($coursecount){
-		$this->coursecount=$coursecount;
-	}
-
 	public function setVisible($visible){
 		$this->visible=$visible;
-	}
-
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
 	}
 
 	public function setDepth($depth){

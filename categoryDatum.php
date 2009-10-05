@@ -33,15 +33,7 @@ class categoryDatum {
 	/** 
 	* @var  integer
 	*/
-	public $coursecount;
-	/** 
-	* @var  integer
-	*/
 	public $visible;
-	/** 
-	* @var  integer
-	*/
-	public $timemodified;
 	/** 
 	* @var  integer
 	*/
@@ -61,9 +53,7 @@ class categoryDatum {
 		 $this->description='';
 		 $this->parent=0;
 		 $this->sortorder=0;
-		 $this->coursecount=0;
 		 $this->visible=0;
-		 $this->timemodified=0;
 		 $this->depth=0;
 		 $this->path='';
 		 $this->theme='';
@@ -93,16 +83,8 @@ class categoryDatum {
 		 return $this->sortorder;
 	}
 
-	public function getCoursecount(){
-		 return $this->coursecount;
-	}
-
 	public function getVisible(){
 		 return $this->visible;
-	}
-
-	public function getTimemodified(){
-		 return $this->timemodified;
 	}
 
 	public function getDepth(){
@@ -142,16 +124,8 @@ class categoryDatum {
 		$this->sortorder=$sortorder;
 	}
 
-	public function setCoursecount($coursecount){
-		$this->coursecount=$coursecount;
-	}
-
 	public function setVisible($visible){
 		$this->visible=$visible;
-	}
-
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
 	}
 
 	public function setDepth($depth){

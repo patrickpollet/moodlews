@@ -13,6 +13,10 @@ class userDatum {
 	/** 
 	* @var  integer
 	*/
+	public $id;
+	/** 
+	* @var  integer
+	*/
 	public $confirmed;
 	/** 
 	* @var  integer
@@ -128,6 +132,7 @@ class userDatum {
 	public $mnethostid;
 	 public function userDatum() {
 		 $this->action='';
+		 $this->id=0;
 		 $this->confirmed=0;
 		 $this->policyagreed=0;
 		 $this->deleted=0;
@@ -161,6 +166,10 @@ class userDatum {
 	/* get accessors */
 	public function getAction(){
 		 return $this->action;
+	}
+
+	public function getId(){
+		 return $this->id;
 	}
 
 	public function getConfirmed(){
@@ -282,6 +291,10 @@ class userDatum {
 	/*set accessors */
 	public function setAction($action){
 		$this->action=$action;
+	}
+
+	public function setId($id){
+		$this->id=$id;
 	}
 
 	public function setConfirmed($confirmed){

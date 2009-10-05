@@ -11,6 +11,10 @@ define('DEBUG',true);
 if (DEBUG) ini_set('soap.wsdl_cache_enabled', '0');  // no caching by php in debug mode
 
 /**
+ * affectRecord class
+ */
+require_once 'affectRecord.php';
+/**
  * userRecord class
  */
 require_once 'userRecord.php';
@@ -19,6 +23,10 @@ require_once 'userRecord.php';
  */
 require_once 'groupRecord.php';
 /**
+ * groupingRecord class
+ */
+require_once 'groupingRecord.php';
+/**
  * sectionRecord class
  */
 require_once 'sectionRecord.php';
@@ -26,14 +34,6 @@ require_once 'sectionRecord.php';
  * courseRecord class
  */
 require_once 'courseRecord.php';
-/**
- * userDatum class
- */
-require_once 'userDatum.php';
-/**
- * courseDatum class
- */
-require_once 'courseDatum.php';
 /**
  * gradeRecord class
  */
@@ -62,6 +62,86 @@ require_once 'categoryRecord.php';
  * resourceRecord class
  */
 require_once 'resourceRecord.php';
+/**
+ * activityRecord class
+ */
+require_once 'activityRecord.php';
+/**
+ * groupRecord class
+ */
+require_once 'groupRecord.php';
+/**
+ * labelRecord class
+ */
+require_once 'labelRecord.php';
+/**
+ * forumRecord class
+ */
+require_once 'forumRecord.php';
+/**
+ * assignmentRecord class
+ */
+require_once 'assignmentRecord.php';
+/**
+ * databaseRecord class
+ */
+require_once 'databaseRecord.php';
+/**
+ * wikiRecord class
+ */
+require_once 'wikiRecord.php';
+/**
+ * pageWikiRecord class
+ */
+require_once 'pageWikiRecord.php';
+/**
+ * userDatum class
+ */
+require_once 'userDatum.php';
+/**
+ * courseDatum class
+ */
+require_once 'courseDatum.php';
+/**
+ * labelDatum class
+ */
+require_once 'labelDatum.php';
+/**
+ * groupDatum class
+ */
+require_once 'groupDatum.php';
+/**
+ * groupingDatum class
+ */
+require_once 'groupingDatum.php';
+/**
+ * categoryDatum class
+ */
+require_once 'categoryDatum.php';
+/**
+ * sectionDatum class
+ */
+require_once 'sectionDatum.php';
+/**
+ * forumDatum class
+ */
+require_once 'forumDatum.php';
+/**
+ * assignmentDatum class
+ */
+require_once 'assignmentDatum.php';
+/**
+ * databaseDatum class
+ */
+require_once 'databaseDatum.php';
+/**
+ * wikiDatum class
+ */
+require_once 'wikiDatum.php';
+/**
+ * pageWikiDatum class
+ */
+require_once 'pageWikiDatum.php';
 /**
  * loginReturn class
  */
@@ -127,57 +207,37 @@ require_once 'getResourcesReturn.php';
  */
 require_once 'getSectionsReturn.php';
 /**
- * activityRecord class
- */
-require_once 'activityRecord.php';
-/**
  * getActivitiesReturn class
  */
 require_once 'getActivitiesReturn.php';
-/**
- * affectRecord class
- */
-require_once 'affectRecord.php';
 /**
  * editLabelsInput class
  */
 require_once 'editLabelsInput.php';
 /**
- * labelDatum class
- */
-require_once 'labelDatum.php';
-/**
  * editLabelsOutput class
  */
 require_once 'editLabelsOutput.php';
-/**
- * labelRecord class
- */
-require_once 'labelRecord.php';
 /**
  * editGroupsInput class
  */
 require_once 'editGroupsInput.php';
 /**
- * groupDatum class
- */
-require_once 'groupDatum.php';
-/**
  * editGroupsOutput class
  */
 require_once 'editGroupsOutput.php';
 /**
- * groupRecord class
+ * editGroupingsInput class
  */
-require_once 'groupRecord.php';
+require_once 'editGroupingsInput.php';
+/**
+ * editGroupingsOutput class
+ */
+require_once 'editGroupingsOutput.php';
 /**
  * editCategoriesInput class
  */
 require_once 'editCategoriesInput.php';
-/**
- * categoryDatum class
- */
-require_once 'categoryDatum.php';
 /**
  * editCategoriesOutput class
  */
@@ -187,10 +247,6 @@ require_once 'editCategoriesOutput.php';
  */
 require_once 'editSectionsInput.php';
 /**
- * sectionDatum class
- */
-require_once 'sectionDatum.php';
-/**
  * editSectionsOutput class
  */
 require_once 'editSectionsOutput.php';
@@ -199,81 +255,41 @@ require_once 'editSectionsOutput.php';
  */
 require_once 'editForumsInput.php';
 /**
- * forumDatum class
- */
-require_once 'forumDatum.php';
-/**
  * editForumsOutput class
  */
 require_once 'editForumsOutput.php';
-/**
- * forumRecord class
- */
-require_once 'forumRecord.php';
 /**
  * editAssignmentsInput class
  */
 require_once 'editAssignmentsInput.php';
 /**
- * assignmentDatum class
- */
-require_once 'assignmentDatum.php';
-/**
  * editAssignmentsOutput class
  */
 require_once 'editAssignmentsOutput.php';
-/**
- * assignmentRecord class
- */
-require_once 'assignmentRecord.php';
 /**
  * editDatabasesInput class
  */
 require_once 'editDatabasesInput.php';
 /**
- * databaseDatum class
- */
-require_once 'databaseDatum.php';
-/**
  * editDatabasesOutput class
  */
 require_once 'editDatabasesOutput.php';
-/**
- * databaseRecord class
- */
-require_once 'databaseRecord.php';
 /**
  * editWikisInput class
  */
 require_once 'editWikisInput.php';
 /**
- * wikiDatum class
- */
-require_once 'wikiDatum.php';
-/**
  * editWikisOutput class
  */
 require_once 'editWikisOutput.php';
-/**
- * wikiRecord class
- */
-require_once 'wikiRecord.php';
 /**
  * editPagesWikiInput class
  */
 require_once 'editPagesWikiInput.php';
 /**
- * pageWikiDatum class
- */
-require_once 'pageWikiDatum.php';
-/**
  * editPagesWikiOutput class
  */
 require_once 'editPagesWikiOutput.php';
-/**
- * pageWikiRecord class
- */
-require_once 'pageWikiRecord.php';
 /**
  * getAllForumsReturn class
  */
@@ -298,5 +314,9 @@ require_once 'getAllAssignmentsReturn.php';
  * getAllDatabasesReturn class
  */
 require_once 'getAllDatabasesReturn.php';
+/**
+ * getAllGroupingsReturn class
+ */
+require_once 'getAllGroupingsReturn.php';
 
 ?>

@@ -10,33 +10,6 @@
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
  */
 
-/*
- *return primary role of userid in course
- *@param course $course an existing course record
- *@param integer $userid :id of an existing user
- *
- */
- function ws_get_primaryrole_incourse($course,$userid) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $context_cat= get_context_instance(CONTEXT_COURSECAT, $course->category);
-        if (has_capability('moodle/category:manage', $context_cat,$userid))
-            return 1;
-        if (has_capability('moodle/course:create', $context_cat,$userid))
-            return 2;
-        if (has_capability('moodle/course:update', $context,$userid))
-            return 3;
-        if (has_capability('moodle/course:viewhiddenactivities', $context,$userid))
-            return 4;
-        //student
-        // strange : guest may has also the course:view capability ?
-        // so we treat it before regular student
-        //guest
-        if (has_capability('moodle/legacy:guest', $context, $userid, false))
-            return 6;
-        if (has_capability('moodle/course:view', $context, $userid, false))
-            return 5;
-        return 0;
-    }
 
 
 function filter_forum($client, $forum) {
@@ -190,6 +163,7 @@ function filter_forums($client, $forums) {
         global $USER;
         //return false if not visible to $client
         // check capability , course maybe non visible
+        //TODO ajouter ici le role primaire ;-)
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('moodle/course:update', $context))
                 return $course;
@@ -249,6 +223,27 @@ function filter_forums($client, $forums) {
         $res = array ();
         foreach ($groups as $group) {
             $group = filter_group($client, $group);
+            if ($group)
+                $res[] = $group;
+        }
+        return $res;
+    }
+
+       function filter_grouping($client, $group) {
+        // check user's membership to this group ?
+         $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+        if (has_capability('moodle/course:update', $context))
+                return $group;
+        if (! has_capability('moodle/course:view', $context))
+                return false;
+        $group->confifdata = '';
+        return $group;
+    }
+
+    function filter_groupings($client, $groups) {
+        $res = array ();
+        foreach ($groups as $group) {
+            $group = filter_grouping($client, $group);
             if ($group)
                 $res[] = $group;
         }

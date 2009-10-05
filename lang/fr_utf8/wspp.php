@@ -54,5 +54,43 @@ $string['ws_notsupportedgradebook']='le carnet de notes antérieur à Moodle 1.8
 
 
 
+$string['ws_missingvalue']='valeur requise $a manquante';
+$string['ws_useridnumberexists']='un utilisateur existe déja avec cet idnumber $a';
+$string['ws_courseidnumberexists']='un cours existe déja avec cet idnumber $a';
+$string['ws_invalidaction']='action invalide $a';
+$string['ws_user_notenroled']='L\'utilisateur $a->user n\'est pas inscrit au cours $a->course.';
+
+$string['nothingtodo']='rien à faire';
+
+$string['nocourses']='pas de cours';
+$string['nousers']='pas d\'utilisateurs';
+$string['nocategories']='pas de catégories';
+$string['noroles']='pas de rôles';
+$string['noresources']='pas de ressources';
+
+$string['nosections']='pas de sections';
+$string['nogradesfor']='pas de notes pour $a';
+$string['nogradesin']='pas de notes dans $a';
+$string['nogroupsin']='pas de groupes dans $a';
+$string['nogroups']='pas de groupes';
+$string['nogrouping']='pas de groupements';
+
+
+$string['noteachers']='pas d\'enseignants';
+$string['noevents']='pas d\'évenements';
+$string['nochanges']='aucun changement';
+$string['noactivities']='pas d\'activités enregistrées';
+$string['nodatabases']='pas d\'activités base de données';
+$string['noforums']='pas d\'activités forum';
+$string['nowikis']='pas d\'activités wiki';
+$string['noassignments']='pas d\'activités devoirs';
+$string['nowikipages']='pas de pages wiki';
+$string['nolabels']='pas d\'étiquettes';
+
+
+$string['ws_groupalreadyaffected']='le groupe $a->group appartient déja au cours $a->course.';
+$string['ws_groupingalreadyaffected']='le groupement $a->group appartient déja au cours $a->course.';
+
+
 
 ?>
