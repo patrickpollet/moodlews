@@ -91,6 +91,24 @@ $string['nolabels']='pas d\'étiquettes';
 $string['ws_groupalreadyaffected']='le groupe $a->group appartient déja au cours $a->course.';
 $string['ws_groupingalreadyaffected']='le groupement $a->group appartient déja au cours $a->course.';
 
+$string['ws_errorcreatingcourse']='erreur en créant le cours $a.';
+$string['ws_errordeletingcourse']='erreur en supprimant le cours $a.';
+$string['ws_errorupdatingcourse']='erreur en modifiant le cours $a.';
+
+$string['ws_errorcreatinguser']='erreur en créant l\'utilisateur $a.';
+$string['ws_errordeletinguser']='erreur en supprimant l\'utilisateur $a.';
+$string['ws_errorupdatinguser']='erreur en modifiant l\'utilisateur $a.';
+
+$string['ws_errorcreatinggroup']='erreur en créant le groupe $a.';
+$string['ws_errordeletinggroup']='erreur en supprimant le groupe $a.';
+$string['ws_errorupdatinggroup']='erreur en modifiant le groupe $a.';
+
+$string['ws_errorcreatinggrouping']='erreur en créant le groupement $a.';
+$string['ws_errordeletinggrouping']='erreur en supprimant le groupement $a.';
+$string['ws_errorupdatinggrouping']='erreur en modifiant le groupement $a.';
+
+$string['ws_duplicategroupname']='ce cours a déja un groupe nommé $a.';
+$string['ws_duplicategroupingname']='ce cours a déja un groupement nommé $a.';
 
 
 ?>

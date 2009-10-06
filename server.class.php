@@ -1460,113 +1460,100 @@ EOSS;
 	*                     (including opertaion to perform).
 	* @return array Return data (user record) to be converted into a
 	*               specific data format for sending to the client.
-	*/
+    *
+    * important for consistency with others edit functions, Moodle internal id number is used
+    * to identify user to be updated, deleted. see update_user, delete_user ... to use other fields
+    * such as idnumber of username
+    */
 	function edit_users($client, $sesskey, $users) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$uid = $USER->id;
 		$rusers = array ();
-		$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
+		//$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
 		if (!empty ($users)) {
 			foreach ($users->users as $user) {
 				$ruser = new stdClass();
-
-				$this->debug_output('traitement de ' . print_r($user, true));
-
+				//$this->debug_output('traitement de ' . print_r($user, true));
 				switch (trim(strtolower($user->action))) {
 					case 'add' :
-
 						if (!$this->has_capability('moodle/user:add', CONTEXT_SYSTEM, 0)) {
-							$ruser->error = "not allowed to add users";
+							$ruser->error=get_string('ws_operationnotallowed','wspp');
 							break;
 						}
-						unset ($user->action);
-				        ws_fix_usercord($user);
-                		$this->debug_output('adding' . print_r($user, true));
-
-
-						// Lille : verify if current user is already in database
-						if ($userExist = get_record("user", "username", $user->username)) {
-							$ruser = $userExist;
-							$ruser->error = "user $user->username  already exists";
+						// fix record if needed and check for missing values or database collision
+						if ($errmsg=ws_checkuserrecord($user,true)) {
+							$ruser->error=$errmsg;
 							break;
 						}
-						// end Lille
-						if (empty ($user->confirmed)) {
-							$user->confirmed = true;
-						}
-						$user->id = insert_record('user', $user);
+						if ($userid=insert_record('user',$user)) {
+							$ruser = get_record('user','id',$userid);
+                             events_trigger('user_created', $ruser);
 
-						$this->debug_output('ID is ' . $user->id);
-
-						if (empty ($user->id)) {
-							$ruser->error = 'Could not add user: ' . fullname($user);
-						} else {
-							$ruser = get_record('user', 'id', $user->id);
+						}else {
+							$ruser->error=get_string('ws_errorcreatinguser','wspp',$user->idnumber);
 						}
+						$this->debug_output('traitement de ' . print_r($ruser, true));
 						break;
-/***
+
 					case 'update' :
 						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
-							$ruser->error = "not allowed to update users";
+							$ruser->error=get_string('ws_operationnotallowed','wspp');
 							break;
 						}
-						$uid = $user->idnumber;
-						unset ($user->action);
-						$this->debug_output('Attempting to update user ID: ' . $uid);
-
-						if (!$userup = get_record('user', 'idnumber', $uid)) {
-							$ruser = $user;
-							$ruser->error =get_string('ws_userunknown','wspp','idnumber='.$uid);
+						if (! $olduser = get_record('user', 'id', $user->id)) {
+							$rcourse->error = get_string('ws_userunknown','wspp',"id=".$user->id );
 							break;
+						}
+						$ruser=$user;
+						// fix record if needed and check for missing values or database collision
+						if ($errmsg=ws_checkuserrecord($user,false)) {
+							$ruser->error=$errmsg;
+							break;
+						}
+						$user->timemodified = time();
 
+						//GROS PB avec le record rempli de 0 !!!!
+						foreach($user as $key=>$value) { // rev 1.5.15 must ignore empty values ! serious flaw !
+							if (empty($value)) unset ($user->$key);
+						}
+						/// Update values in the $user database record with what
+						/// the client supplied.
+
+						if (update_record('user', $user)) {
+							$ruser = get_record('user', 'id', $user->id);
+                            events_trigger('user_updated', $ruser);
 						} else {
-							/// Update values in the $user database record with what
-							/// the client supplied.
-
-							foreach ($user as $key => $value)
-								if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-									$userup-> $key = $value;
-							$userup->timemodified = time();
-                            //obs by Lille: add md5 to the password
-                // todo test whether it is needed or not ?
-                $user->password = md5($user->password);
-							if (update_record('user', $userup)) {
-								$ruser = $ruser = get_record('user', 'id', $user->id);
-							} else {
-								$ruser = $user;
-								$ruser->error = 'Could not update user: ' . $uid;
-							}
+							$ruser->error=get_string('ws_errorupdatinguser','wspp',$user->id);
 						}
+				break;
+
+				case 'delete' :
+
+					/// Deleting an existing user.
+					if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM, 0)) {
+						$ruser->error=get_string('ws_operationnotallowed','wspp');
 						break;
-****/
-					case 'delete' :
-						$uid = $user->idnumber;
-						/// Deleting an existing user.
-						if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM, 0)) {
-							$ruser->error = "not allowed to delete users";
-							break;
-						}
-						$ruser = $user;
-						if ($userdel = get_record('user', 'idnumber', $uid)) {
-							if (!delete_user($userdel)) {
-								$ruser->error = "database error when deleting user with idnumber $uid";
-							}
-						} else {
-							$ruser->error = "delete: user with idnumber $uid not found";
+					}
 
-						}
-
+					if (! $user = get_record('user', 'id', $user->id)) {
+						$ruser->error = get_string('ws_userunknown','wspp',"id=".$user->id );
 						break;
-
-				}
-				$rusers[] = $ruser;
+					}
+					$ruser = $user;
+					if (!delete_user($user)) {
+						$ruser->error=get_string('ws_errordeletinguser','wspp',$user->idnumber);
+					}
+					break;
+                  default :
+                        $ruser->error=get_string('ws_invalidaction','wspp',$user->action);
 			}
+			$rusers[] = $ruser;
 		}
-		return $rusers;
 	}
+	return $rusers;
+}
 
 	/**
 	 * Edit course records (add/update/delete).
@@ -1578,6 +1565,9 @@ EOSS;
 	 *                       (including opertaion to perform).
 	 * @return array Return data (course record) to be converted into a specific
 	 *               data format for sending to the client.
+     *  * important for consistency with others edit functions, Moodle internal id number is used
+    * to identify course to be updated, deleted. see update_course, delete_course ... to use other fields
+    * such as idnumber or shortname
 	 */
 	function edit_courses($client, $sesskey, $courses) {
 		global $CFG, $USER;
@@ -1586,12 +1576,12 @@ EOSS;
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$ret = array ();
-        $this->debug_output("EDC".print_r($courses,true));
+       // $this->debug_output("EDC".print_r($courses,true));
 		if (!empty ($courses)) {
 			foreach ($courses->courses as $course) {
 				$rcourse = new stdClass;
 				$rcourse->error="";
-                 $this->debug_output("EDC".print_r($course,true));
+                // $this->debug_output("EDC".print_r($course,true));
 				switch (trim(strtolower($course->action))) {
 					case 'add' :
 						/// Adding a new course.
@@ -1618,18 +1608,17 @@ EOSS;
 
 					case 'update' :
 						/// Updating an existing course.
-						if (! $oldcourse = get_record('course', 'idnumber', $course->idnumber)) {
-							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->idnumber );
+						if (! $oldcourse = get_record('course', 'id', $course->id)) {
+							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->id );
 							break;
 						}
 						$rcourse=$course;
-						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSECAT,$oldcourse->category)) {
+						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE,$oldcourse->id)) {
 							$rcourse->error=get_string('ws_operationnotallowed','wspp');
 							break;
 
 						}
 						//set Moodle internal id
-						$course->id=$oldcourse->id;
 						// fix course record if needed and check for missing values or database collision
 						if ($errmsg=ws_checkcourserecord($course,false)) {
 							$rcourse->error=$errmsg;
@@ -1643,15 +1632,16 @@ EOSS;
                         }
 
 						if (!update_course($course)) {
-							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->idnumber);
+							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->id);
 						} else
 							$rcourse = get_record('course', 'id', $course->id); //return new value
 
 						break;
 					case 'delete' :
-						/// Deleting an existing course.
-						if (! $course = get_record('course', 'idnumber', $course->idnumber)) {
-							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->idnumber );
+						/// Deleting an existing course
+
+						if (! $course = get_record('course', 'id', $course->id)) {
+							$rcourse->error = get_string('ws_courseunknown','wspp',"id=".$course->id );
 							break;
 						}
 						$rcourse=$course;
@@ -1662,7 +1652,7 @@ EOSS;
 							break;
 						}
 						if (!delete_course($course->id,false)) {
-							$rcourse->error=get_string('ws_errordeletingcourse','wspp',$course->idnumber);
+							$rcourse->error=get_string('ws_errordeletingcourse','wspp',$course->id);
 						}
 
 						break;
@@ -1677,6 +1667,108 @@ EOSS;
 	}
 
 
+   /**
+    * Edit grouping records (add/update/delete).
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param array $groupings An array of grouping records (objects or arrays) for editing
+    *                     (including operation to perform).
+    * @return array Return data (grouping record) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function edit_groupings($client, $sesskey, $groupings) {
+        global $CFG;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        $rets = array ();
+        if (!empty ($groupings)) {
+            foreach ($groupings->groupings as $grouping) {
+                $ret = new stdClass;
+                $ret->error="";
+                switch (trim(strtolower($grouping->action))) {
+                    case 'add' :
+                        /// Adding a new group.
+                        if (!empty($grouping->courseid)) {
+                            if (! $course = get_record('course', 'id', $grouping->courseid)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$grouping->courseid );
+                            break;
+                            }
+                            if (get_record('groupings','name',$grouping->name,'courseid',$grouping->courseid)) {
+                                $ret->error = get_string('ws_duplicategroupingname','wspp',$grouping->name );
+                                break;
+                            }
+                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $grouping->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                            }
+                        } else {
+                        /// Check for correct permissions. at site level
+                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
+                                $ret->error=get_string('ws_operationnotallowed','wspp');
+                                break;
+                            }
+                        }
+                        if ($id=groups_create_grouping($grouping,false)) {
+                        $ret = get_record('groupings', 'id', $id);
+                        }else {
+                            $ret->error=get_string('ws_errorcreatinggrouping','wspp',$grouping->name);
+                        }
+
+                        break;
+                    case 'update' :
+                        /// Updating an existing group
+                                   $ret=$grouping;
+                        if (! $oldgrouping = get_record('groupings', 'id', $grouping->id)) {
+                            $ret->error = get_string('ws_groupingunknown','wspp',"id=".$grouping->id );
+                            break;
+                        }
+
+                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgrouping->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+                        //TODO check for changing course
+
+                        foreach ($grouping as $key => $value) {
+                            if (!empty ($value))
+                                $grouping-> $key = $value;
+                        }
+                        if (groups_update_grouping($grouping)) {
+                        $ret = get_record('groupings', 'id', $grouping->id);
+                        }else {
+                            $ret->error=get_string('ws_errorupdatinggrouping','wspp',$grouping->name);
+                        }
+
+                        break;
+                    case 'delete' :
+                        /// Deleting an existing group.
+                        $ret=$group;
+                          if (! $oldgrouping = get_record('groupings', 'id', $grouping->id)) {
+                            $ret->error = get_string('ws_groupingunknown','wspp',"id=".$grouping->id );
+                            break;
+                        }
+                        $ret=$oldgroup;
+
+                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgrouping->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+                        if (!groups_delete_grouping($grouping)) {
+                            $ret->error==get_string('ws_errordeletinggrouping','wspp',$grouping->id);
+                        }
+                        break;
+                    default :
+                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
+
+                        break;
+                }
+                $rets[] = $ret;
+            }
+        }
+        return $rets;
+    }
 
 
 
@@ -2033,7 +2125,7 @@ EOSS;
 		return $ret;
 	}
 
-	/**
+    /**
 	* Edit group records (add/update/delete).
 	* @uses $CFG
 	* @param int $client The client session ID.
@@ -2048,100 +2140,92 @@ EOSS;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
-		$ret = array ();
+		$rets = array ();
 		if (!empty ($groups)) {
 			foreach ($groups->groups as $group) {
+                $ret = new stdClass;
+                $ret->error="";
 				switch (trim(strtolower($group->action))) {
 					case 'add' :
 						/// Adding a new group.
-						$groupadd = $group;
-
-						$this->debug_output('EDIT_GROUPS: Trying to add a new group.');
-
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
-							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
-							break;
-						}
-						//verify if current group is already in db
-						if ($groupExist = get_record("groups", "courseid", $group->courseid, "name", $group->name, "description", $group->description)) {
-							$rgroup = $groupExist;
-							break;
-						}
-						$groupadd->picture = 0;
-						$groupadd->hidepicture = 0;
-						$groupadd->timecreated = time();
-						$groupadd->timemodified = time();
-						$groupadd->id = insert_record('groups', $groupadd);
-						if (empty ($groupadd->id)) {
-							$rgroup->error = 'EDIT_GROUPS:  Could not add the group: ' . $groupadd->name;
-							break;
-						}
-						$rgroup = get_record('groups', 'id', $groupadd->id);
+						if (!empty($group->courseid)) {
+                            if (! $course = get_record('course', 'id', $group->courseid)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$group->courseid );
+                            break;
+                            }
+                            if (get_record('groups','name',$group->name,'courseid',$group->courseid)) {
+                                $ret->error = get_string('ws_duplicategroupname','wspp',$group->name );
+                                break;
+                            }
+                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                            }
+                        } else {
+						/// Check for correct permissions. at site level
+	                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
+		                        $ret->error=get_string('ws_operationnotallowed','wspp');
+		                        break;
+	                        }
+                        }
+                        if ($id=groups_create_group($group,false)) {
+                        $ret = get_record('groups', 'id', $id);
+                        }else {
+                            $ret->error=get_string('ws_errorcreatinggroup','wspp',$group->name);
+                        }
 
 						break;
 					case 'update' :
 						/// Updating an existing group
+                         $ret=$group;
+                        if (! $oldgroup = get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                            break;
+                        }
 
-						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
-							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
+						if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
 							break;
 						}
-						$groupup = $group;
-						$gid = $groupup->id;
+                        //TODO check for changing course
 
-						$this->debug_output('EDIT_GROUPS:    Attempting to update group ID: ' . $gid . print_r($group, true));
-						$group = get_record('groups', 'id', $gid);
-						if (!$group) {
-							$rgroup->error = "EDIT_GROUPS:    Could not find group ID: $gid";
-							break;
-						}
-						foreach ($groupup as $key => $value) {
+						foreach ($group as $key => $value) {
 							if (!empty ($value))
 								$group-> $key = $value;
 						}
-						$group->timemodified = time();
-						$success = update_record('groups', $group);
-						if (!$success) {
-							$rgroup->error = 'EDIT_GROUPS:  Could not update group: ' . $gid;
-							break;
-						} else {
-							$rgroup = get_record('groups', 'id', $group->id);
-						}
+						if (groups_update_group($group,false)) {
+                        $ret = get_record('groups', 'id', $group->id);
+                        }else {
+                            $ret->error=get_string('ws_errorupdatinggroup','wspp',$group->name);
+                        }
 
 						break;
 					case 'delete' :
 						/// Deleting an existing group.
-						$gid = $group->id;
+                          $ret=$group;
+                          if (! $oldgroup = get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                            break;
+                        }
+                        $ret=$oldgroup;
 
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/category:managegroups', CONTEXT_SYSTEM, 0)) {
-							$rgroup->error = 'EDIT_GROUPS:  You do not have proper access to perform this operation.';
-							break;
+                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+						if (!groups_delete_group($group)) {
+							$ret->error==get_string('ws_errordeletinggroup','wspp',$group->id);
 						}
-
-						$this->debug_output('EDIT_GROUPS:    Attempting to delete group ID: ' . $gid);
-						$group = get_record('groups', 'id', $gid);
-						if (!$group) {
-							$rgroup->error = 'EDIT_GROUPS:  Could not find group ID: ' . $gid;
-							break;
-						}
-						if (!groups_delete_group($gid)) {
-							$rgroup->error = 'This  group no exist or is not deleted';
-							break;
-						} else {
-							$rgroup = $group;
-						}
-
 						break;
 					default :
-						$rgroup->error = "EDIT_GROUPS: Invalid action " . $group->action;
+                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
+
 						break;
 				}
-				$ret[] = $rgroup;
+				$rets[] = $ret;
 			}
 		}
-		return $ret;
+		return $rets;
 	}
 
 	/**

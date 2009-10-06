@@ -1455,6 +1455,13 @@
 		<part name="user" type="tns:userDatum" />
 	</message>
 
+	<message name="update_userRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="user" type="tns:userDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
+
 	<message name="edit_usersResponse">
 		<part name="return" type="tns:editUsersOutput" />
 	</message>
@@ -1479,6 +1486,40 @@
 		<part name="sesskey" type="xsd:string" />
 		<part name="course" type="tns:courseDatum" />
 	</message>
+
+	<message name="update_courseRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="course" type="tns:courseDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
+
+	<message name="add_groupRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="group" type="tns:groupDatum" />
+	</message>
+
+	<message name="update_groupRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="group" type="tns:groupDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
+
+	<message name="add_groupingRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="grouping" type="tns:groupingDatum" />
+	</message>
+
+	<message name="update_groupingRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="grouping" type="tns:groupingDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
+
 
 	<message name="edit_coursesResponse">
 		<part name="return" type="tns:editCoursesOutput" />
@@ -1765,7 +1806,7 @@
 	</message>
 
 	<message name="edit_groupingsResponse">
-		<part name="return" type="tns:editGroupingssOutput" />
+		<part name="return" type="tns:editGroupingsOutput" />
 	</message>
 	<!-- /edit_groupings -->
 
@@ -2132,6 +2173,19 @@
 			<output message="tns:edit_usersResponse" />
 		</operation>
 
+		<operation name="add_group">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:add_groupRequest" />
+			<output message="tns:edit_groupsResponse" />
+		</operation>
+
+		<operation name="add_grouping">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:add_groupingRequest" />
+			<output message="tns:edit_groupingsResponse" />
+		</operation>
 		<operation name="delete_course">
 			<documentation>MoodleWS: add on course
 			</documentation>
@@ -2146,6 +2200,47 @@
 			<output message="tns:edit_usersResponse" />
 		</operation>
 
+		<operation name="delete_group">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:valueAndIdRequest" />
+			<output message="tns:edit_groupsResponse" />
+		</operation>
+
+		<operation name="delete_grouping">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:valueAndIdRequest" />
+			<output message="tns:edit_groupingsResponse" />
+		</operation>
+
+		<operation name="update_course">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:update_courseRequest" />
+			<output message="tns:edit_coursesResponse" />
+		</operation>
+
+		<operation name="update_user">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:update_userRequest" />
+			<output message="tns:edit_usersResponse" />
+		</operation>
+
+		<operation name="update_group">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:update_groupRequest" />
+			<output message="tns:edit_groupsResponse" />
+		</operation>
+
+		<operation name="update_grouping">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:update_groupingRequest" />
+			<output message="tns:edit_groupingsResponse" />
+		</operation>
 
 		<operation name="get_users">
 			<documentation>MoodleWS: Get Users Information
@@ -2644,8 +2739,6 @@
 			<input message="tns:affect_group_to_groupingRequest" />
 			<output message="tns:affect_user_to_groupResponse" />
 		</operation>
-
-
 
 		<operation name="get_all_groupings">
 			<documentation>MoodleWS: Get All groupings</documentation>
@@ -3343,6 +3436,33 @@
 			</output>
 		</operation>
 
+		<operation name="add_group">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="add_grouping">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_grouping"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+
 		<operation name="delete_user">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_user"
 				style="rpc" />
@@ -3368,6 +3488,86 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+
+		<operation name="delete_group">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="delete_grouping">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_grouping"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+
+		<operation name="update_user">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_user"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="update_course">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_course"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="update_group">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="update_grouping">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_grouping"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
 		<!-- BINDING FROM LILLE -->
 
 		<operation name="edit_labels">

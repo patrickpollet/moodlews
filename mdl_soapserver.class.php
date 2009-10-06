@@ -654,11 +654,33 @@ class mdl_soapserver extends server {
         $tmp= new  editCoursesInput();
         $datum=new courseDatum();
         $datum->setAction('delete');
-        $datum->setIdnumber ($course->idnumber);
+        $datum->setId ($course->id);  //set Moodle internal id for edit_courses
         $tmp->setCourses(array($datum));
         return $this->send($this->to_soap_array(parent::edit_courses($client,$sesskey,$tmp),
         'courses', 'courseRecord', get_string('nothingtodo','wspp')));
     }
+
+     /**
+     * rev 1.6 update a single course from Moodle
+     * @param string $datum new  course data
+     * @param string $courseidfield)
+     * @return a completed course record just updated  from DB or error record
+     */
+
+     function update_course ($client,$sesskey,$datum,$courseidfield='idnumber') {
+        $cid=$datum->$courseidfield;
+        $course = get_record('course', $courseidfield,$cid );
+        if (!$course)
+            return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$cid ));
+        $tmp= new  editCoursesInput();
+        $datum->action='update';
+        $datum->id=$course->id;    //set Moodle internal id for edit_courses
+        $tmp->setCourses(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_courses($client,$sesskey,$tmp),
+        'courses', 'courseRecord', get_string('nothingtodo','wspp')));
+    }
+
+
 
    /**
      * rev 1.6 add a single course to Moodle
@@ -670,37 +692,115 @@ class mdl_soapserver extends server {
         $tmp= new  editUsersInput();
         $userdatum->action='add';
         $tmp->setUsers(array($userdatum));
-        return $this->send($this->to_soap_array(parent::edit_user($client,$sesskey,$tmp),
-        'users', 'userRecord', get_string('nothingtodo','wspp')));
-    }
-
-
-    /**
-     * rev 1.6 delete a single user from Moodle
-     * @param string $id
-     * @param string $idfield)
-     * @return a completed user record juste deleted from DB or error record
-     */
-
-     function delete_user ($client,$sesskey,$userid,$useridfield='idnumber') {
-        $user = get_record('user', $useridfield, $userid);
-        if (!$course)
-            return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid ));
-        $tmp= new  editUsersInput();
-        $datum=new userDatum();
-        $datum->setAction('delete');
-        $datum->setIdnumber ($user->idnumber);
-        $tmp->setCourses(array($datum));
         return $this->send($this->to_soap_array(parent::edit_users($client,$sesskey,$tmp),
         'users', 'userRecord', get_string('nothingtodo','wspp')));
     }
 
 
+
+
+     function delete_user ($client,$sesskey,$userid,$useridfield='idnumber') {
+        $user = get_record('user', $useridfield, $userid);
+        if (!$user)
+            return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$uid ));
+        $tmp= new  editUsersInput();
+        $datum=new userDatum();
+        $datum->setAction('delete');
+        $datum->setId ($user->id);  //set Moodle internal id for edit_users
+        $tmp->setUsers(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_users($client,$sesskey,$tmp),
+        'users', 'userRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function update_user ($client,$sesskey,$datum,$useridfield='idnumber') {
+           $uid=$datum->$useridfield;
+        $user = get_record('user', $useridfield, $uid);
+        if (!$user)
+            return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$uid ));
+        $tmp= new  editUsersInput();
+        $datum->action='update';
+        $datum->id=$user->id;  //set Moodle internal id for edit_users
+        $tmp->setUsers(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_users($client,$sesskey,$tmp),
+        'users', 'userRecord', get_string('nothingtodo','wspp')));
+    }
+
+
+
     function edit_groupings($client, $sesskey, $groupings) {
     return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $groupings),
          'groupings', 'groupingRecord', get_string('nothingtodo','wspp')));
-
     }
+
+
+    function add_group ($client,$sesskey,$datum) {
+        $tmp= new  editGroupsInput();
+        $datum->action='add';
+        $tmp->setGroups(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groups($client,$sesskey,$tmp),
+        'groups', 'groupRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function add_grouping ($client,$sesskey,$datum) {
+        $tmp= new  editGroupingsInput();
+        $datum->action='add';
+        $tmp->setGroupings(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groupings($client,$sesskey,$tmp),
+        'groupings', 'groupingRecord', get_string('nothingtodo','wspp')));
+    }
+
+
+  function delete_group ($client,$sesskey,$id,$idfield='id') {
+        $old = get_record('groups', $idfield, $id);
+        if (!$old)
+            return $this->error(get_string('ws_groupunknown','wspp',$idfield."=".$id ));
+        $tmp= new  editGroupsInput();
+        $datum=new groupDatum();
+        $datum->setAction('delete');
+        $datum->setId ($old->id);  //set Moodle internal id for edit_
+        $tmp->setGroups(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groups($client,$sesskey,$tmp),
+        'groups', 'groupRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function delete_grouping ($client,$sesskey,$id,$idfield='id') {
+        $old = get_record('groupings', $idfield, $id);
+        if (!$old)
+            return $this->error(get_string('ws_groupingunknown','wspp',$idfield."=".$id ));
+        $tmp= new  editGroupingsInput();
+        $datum=new groupingDatum();
+        $datum->setAction('delete');
+        $datum->setId ($old->id);  //set Moodle internal id for edit_
+        $tmp->setGroupings(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groupings($client,$sesskey,$tmp),
+        'groupings', 'groupingRecord', get_string('nothingtodo','wspp')));
+    }
+
+     function update_group ($client,$sesskey,$datum,$idfield='id') {
+        $id=$datum->$idfield;
+        if(!$old = get_record('groups', $idfield, $id))
+            return $this->error(get_string('ws_groupunknown','wspp',$idfield."=".$id ));
+        $tmp= new  editGroupsInput();
+        $datum->action='update';
+        $datum->id=$old->id;  //set Moodle internal id for edit_users
+        $tmp->setGroups(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groups($client,$sesskey,$tmp),
+        'groups', 'groupRecord', get_string('nothingtodo','wspp')));
+    }
+
+       function update_grouping ($client,$sesskey,$datum,$idfield='id') {
+        $id=$datum->$idfield;
+       if (!$old = get_record('groupings', $idfield, $id))
+            return $this->error(get_string('ws_groupingunknown','wspp',$idfield."=".$id ));
+        $tmp= new  editGroupingsInput();
+        $datum->action='update';
+        $datum->id=$old->id;  //set Moodle internal id for edit_users
+        $tmp->setGroupings(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_groupings($client,$sesskey,$tmp),
+        'groupings', 'groupingRecord', get_string('nothingtodo','wspp')));
+    }
+
+
 
     function affect_group_to_grouping($client, $sesskey, $groupid, $groupingid) {
         return $this->send($this->to_soap(parent :: affect_group_to_grouping($client, $sesskey, $groupid, $groupingid), "affectRecord"));

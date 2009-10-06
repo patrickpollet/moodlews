@@ -76,14 +76,13 @@ function ws_fixuserrecord(&$user) {
 	if (empty ($user->confirmed)) {
 		$user->confirmed = true;
 	}
-    if (!empty($user->password))
-        $user->password = hash_internal_user_password($user->password);
 
 	if (empty($user->auth))
 		$user->auth = 'manual';
 	if (empty($user->lang)) {
 		$user->lang = $CFG->lang;
 	}
+    $user->deleted=0; // do not mess with this flag !
 	$user = addslashes_recursive($user);
 }
 
@@ -94,10 +93,10 @@ function ws_fixuserrecord(&$user) {
 function ws_checkuserrecord(&$user,$newuser) {
 	global $CFG;
 	$errmsg="";
-     unset($course->action); // remove it
+     unset($user->action); // remove it
 	//first check for required values
 	if ($newuser) {
-		$required=array('username','email','firstname','lastname','idnumber');
+		$required=array('username','email','firstname','lastname','idnumber','password');
 		ws_fixuserrecord($user);
 		foreach ($required as $field) {
 			if (empty($user->$field))
@@ -110,7 +109,7 @@ function ws_checkuserrecord(&$user,$newuser) {
 		}
 		if ($errmsg) return $errmsg;
 		//check new username does not exist
-		if (record_exists('user', 'username', $user->username, 'mnethostid', $user->mnet_localhost_id)) {
+		if (record_exists('user', 'username', $user->username, 'mnethostid', $user->mnethostid)) {
 			$errmsg = get_string('usernameexists');
 		}
 		if (!empty($user->id)) unset($user->id);
@@ -128,7 +127,7 @@ function ws_checkuserrecord(&$user,$newuser) {
 
     if (!empty($user->idnumber)) {
         if ($collision=get_record('user', 'idnumber', $user->idnumber)) {
-            if (!empty($user->id) && $user->id !=$collision->id)
+            if (empty($user->id) || ($user->id !=$collision->id))
                 $errmsg=get_string('ws_useridnumberexists','wspp',$user->idnumber);
         }
 
@@ -138,10 +137,14 @@ function ws_checkuserrecord(&$user,$newuser) {
 		if (!validate_email($user->email)) {
 			$errmsg.=" ".get_string('invalidemail');
 		} else if ($collision=get_record('user', 'email', $user->email, 'mnethostid', $CFG->mnet_localhost_id)) {
-			if (!empty($user->id) && $user->id !=$collision->id)
-				$errmsg=get_string('emailexists')." ".$user->email;
+			if (empty($user->id) || ($user->id !=$collision->id))
+				$errmsg.=" ".get_string('emailexists')." ".$user->email;
 		}
 	}
+
+     if (!empty($user->password))
+        $user->password = hash_internal_user_password($user->password);
+
 	return $errmsg;
 }
 
@@ -192,15 +195,15 @@ function ws_checkcourserecord(&$course,$newcourse) {
     //check for other collisions in database
     if (!empty($course->shortname)) {
         if ($collision=get_record('course', 'shortname', $course->shortname)) {
-            if (!empty($course->id) && $course->id !=$collision->id)
+            if (empty($course->id) || ($course->id !=$collision->id))
                 $errmsg=get_string('shortnametaken')." ".$course->shortname;
         }
     }
 
      if (!empty($course->idnumber)) {
         if ($collision=get_record('course', 'idnumber', $course->idnumber)) {
-            if (!empty($course->id) && $course->id !=$collision->id)
-                $errmsg=get_string('ws_courseidnumberexists','wspp',$course->idnumber);
+            if (empty($course->id) || ($course->id !=$collision->id))
+                $errmsg.=" ".get_string('ws_courseidnumberexists','wspp',$course->idnumber);
         }
 
     }
