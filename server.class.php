@@ -1624,6 +1624,13 @@ EOSS;
 							$rcourse->error=$errmsg;
 							break;
 						}
+
+                         //TODO if the category has changed ....
+                        if ($oldcourse->category != $course->category) {
+                            //check that target category exists
+                        }
+
+
 						$course->timemodified = time(); //not done in update_course ?
 
                         //GROS PB avec le record rempli de 0 !!!!
@@ -1633,8 +1640,16 @@ EOSS;
 
 						if (!update_course($course)) {
 							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->id);
-						} else
+						} else  {
 							$rcourse = get_record('course', 'id', $course->id); //return new value
+                            break;
+                        }
+                        //TODO if the category has changed ....
+                        if ($oldcourse->category != $course->category) {
+                            //do the move via course/lib.php#move_courses (array($course->id),$course->category)
+                            // caution this function may send somme notify errors ...
+                        }
+
 
 						break;
 					case 'delete' :
@@ -1782,13 +1797,253 @@ EOSS;
 	*                                                                                                                           *
 	*****************************************************************************************************************************
 	*/
-	/*
-	* Comments:
-	* All the affect methods are returning a generic object type named affectRecord
-	* This object has two fields: status and error
-	*       status indicates if operation succeded
-	*       if status=false then the error field contains the coresponding error message
-	*/
+
+      /**
+    * Edit group records (add/update/delete).
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param array $groups An array of group records (objects or arrays) for editing
+    *                     (including operation to perform).
+    * @return array Return data (group record) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function edit_groups($client, $sesskey, $groups) {
+        global $CFG;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        $rets = array ();
+        if (!empty ($groups)) {
+            foreach ($groups->groups as $group) {
+                $ret = new stdClass;
+                $ret->error="";
+                switch (trim(strtolower($group->action))) {
+                    case 'add' :
+                        /// Adding a new group.
+                        if (!empty($group->courseid)) {
+                            if (! $course = get_record('course', 'id', $group->courseid)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$group->courseid );
+                            break;
+                            }
+                            if (get_record('groups','name',$group->name,'courseid',$group->courseid)) {
+                                $ret->error = get_string('ws_duplicategroupname','wspp',$group->name );
+                                break;
+                            }
+                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                            }
+                        } else {
+                        /// Check for correct permissions. at site level
+                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
+                                $ret->error=get_string('ws_operationnotallowed','wspp');
+                                break;
+                            }
+                        }
+                        if ($id=groups_create_group($group,false)) {
+                        $ret = get_record('groups', 'id', $id);
+                        }else {
+                            $ret->error=get_string('ws_errorcreatinggroup','wspp',$group->name);
+                        }
+
+                        break;
+                    case 'update' :
+                        /// Updating an existing group
+                         $ret=$group;
+                        if (! $oldgroup = get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                            break;
+                        }
+
+                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+                        //TODO check for changing course
+
+                        foreach ($group as $key => $value) {
+                            if (!empty ($value))
+                                $group-> $key = $value;
+                        }
+                        if (groups_update_group($group,false)) {
+                        $ret = get_record('groups', 'id', $group->id);
+                        }else {
+                            $ret->error=get_string('ws_errorupdatinggroup','wspp',$group->name);
+                        }
+
+                        break;
+                    case 'delete' :
+                        /// Deleting an existing group.
+                          $ret=$group;
+                          if (! $oldgroup = get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                            break;
+                        }
+                        $ret=$oldgroup;
+
+                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+                        if (!groups_delete_group($group)) {
+                            $ret->error==get_string('ws_errordeletinggroup','wspp',$group->id);
+                        }
+                        break;
+                    default :
+                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
+
+                        break;
+                }
+                $rets[] = $ret;
+            }
+        }
+        return $rets;
+    }
+
+
+    /**
+    * Edit category records (add/update/delete).
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param array $categories An array of category records (objects or arrays) for editing
+    *                     (including operation to perform).
+    * @return array Return data (category record) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function edit_categories($client, $sesskey, $categories) {
+        global $CFG;
+        require_once ("{$CFG->dirroot}/course/lib.php");
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        $ret = array ();
+        if (!empty ($categories)) {
+            foreach ($categories->categories as $category) {
+                switch (trim(strtolower($user->action))) {
+                    case 'add' :
+                        /// Adding a new category.
+                        $categoryadd = $category;
+
+                        $this->debug_output('EDIT_CATEGORIES:    Trying to add a new category.');
+                        /// These database operations MIGHT throw an HTML error message,
+                        /// so we've got to catch that and send it back in an error
+                        /// request.
+
+                        /// Check for correct permissions.
+                        if (!$this->has_capability('moodle/category:create', CONTEXT_SYSTEM, 0)) {
+                            $rcategory->error = "EDIT_CATEGORIES:   You do not have proper access to perform this operation.";
+                            break;
+                        }
+                        //verify if current category is already in db
+                        if ($catExist = get_record("course_categories", "name", $category->name, "description", $category->description)) {
+                            $rcategory = $catExist;
+                            break;
+                        }
+                        $categoryadd->sortorder = 999;
+                        if (!$categoryadd->id = insert_record('course_categories', $categoryadd)) {
+                            $rcategory->error = "EDIT_CATEGORIES:    Could not insert the new category '$categoryadd->name' ";
+                            break;
+                        }
+                        $categoryadd->context = get_context_instance(CONTEXT_COURSECAT, $categoryadd->id);
+                        mark_context_dirty($categoryadd->context->path);
+                        if (empty ($categoryadd->id)) {
+                            $rcategory->error = 'EDIT_CATEGORIES:   Could not add category: ' . $categoryadd->shortname;
+                            break;
+                        }
+                        $rcategory = get_record('course_categories', 'id', $categoryadd->id);
+
+                        break;
+                    case 'update' :
+                        /// Updating an existing category.
+                        $cid = $category->id;
+                        $cname = $category->name;
+
+                        $this->debug_output('EDIT_CATEGORIES:    Attempting to update category ID: ' . $cid . print_r($category, true));
+                        /// This database operation MIGHT throw an HTML error message,
+                        /// so we've got to catch that and send it back in an error
+                        /// request.
+
+                        if (!$this->has_capability("moodle/category:update", CONTEXT_SYSTEM, 0)) {
+                            $rcategory->error = 'EDIT_CATEGORIES:  You do not have proper access to perform this operation.';
+                            break;
+                        }
+                        if (!$database_category = get_record('course_categories', 'id', $cid)) {
+                            $rcategory->error = 'EDIT_CATEGORIES:   Could not find category ID: ' . $cid;
+                            break;
+                        }
+                        /// Update values in the category database record with what
+                        /// the client supplied.
+                        foreach ($category as $key => $value) {
+                            if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
+                                $database_category-> $key = $value;
+                        }
+                        $database_category->timemodified = time();
+                        if (!$success = update_record('course_categories', $database_category)) {
+                            $rcategory->error = 'EDIT_CATEGORIES:   Could not update category: ' . $cid;
+                            break;
+                        }
+                        fix_course_sortorder();
+                        $rcategory = get_record('course_categories', 'id', $database_category->id);
+
+                        break;
+                    case 'delete' :
+                        /// Deleting an existing category.
+                        $cname = $category->name;
+                        $cid = $category->id;
+
+                        $this->debug_output('EDIT_CATEGORIES:    Attempting to delete category ID: ' . $cid);
+                        /// This database operation MIGHT throw an HTML error message,
+                        /// so we've got to catch that and send it back in an error
+                        /// request.
+
+                        /// Check for correct permissions.
+                        if (!$this->has_capability("moodle/category:delete", CONTEXT_SYSTEM, 0)) {
+                            $rcategory->error = 'EDIT_CATEGORIES:   You do not have proper access to perform this operation.';
+                            break;
+                        }
+                        //initial no record found and none deleted
+                        $deleted_commit = false;
+                        if (!$categories = get_records("course_categories", "", "", "id,name")) {
+                            $rcategory->error = "EDIT_CATEGORIES:   Could not find category ID: $cid or name: $cname";
+                            break;
+                        }
+                        foreach ($categories as $_category) {
+                            if ($_category->id == $cid || $_category->name == $cname) {
+                                //at least a record was found and deleted
+                                $deleted_commit = true;
+                                $rcategory = $_category;
+                                //we delete the courses of that category and theirs students and teachers
+                                //Lille bug found
+                                //category_delete_full's second parameter should notify the function not to print status messages
+                                //it doesn't work...this case it's not implemented inside the course/lib.php library function
+                                if (!category_delete_full($_category, false)) {
+                                    $rcategory->error = "EDIT_CATEGORIES: Error deleting category with id: $_category->id";
+                                    break;
+                                }
+
+                            }
+                        }
+                        if (!$deleted_commit) {
+                            $rcategory->error = "EDIT_CATEGORIES:   Could not delete category with id $cid or name $cname.";
+                            break;
+                        }
+
+                        break;
+                    default :
+                        $rcategory->error = "EDIT_CATEGORIES:   Invalid operation: $category->action.";
+                        break;
+                }
+                $ret[] = $rcategory;
+            }
+        }
+        return $ret;
+    }
+
+
+
+
 
 	/**
 	* Edit label records (add/update/delete).
@@ -1858,144 +2113,6 @@ EOSS;
 		return $ret;
 	}
 
-	/**
-	* Edit category records (add/update/delete).
-	* @uses $CFG
-	* @param int $client The client session ID.
-	* @param string $sesskey The client session key.
-	* @param array $categories An array of category records (objects or arrays) for editing
-	*                     (including operation to perform).
-	* @return array Return data (category record) to be converted into a
-	*               specific data format for sending to the client.
-	*/
-	function edit_categories($client, $sesskey, $categories) {
-		global $CFG;
-		require_once ("{$CFG->dirroot}/course/lib.php");
-		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
-		}
-		$ret = array ();
-		if (!empty ($categories)) {
-			foreach ($categories->categories as $category) {
-				switch (trim(strtolower($user->action))) {
-					case 'add' :
-						/// Adding a new category.
-						$categoryadd = $category;
-
-						$this->debug_output('EDIT_CATEGORIES:    Trying to add a new category.');
-						/// These database operations MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
-
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/category:create', CONTEXT_SYSTEM, 0)) {
-							$rcategory->error = "EDIT_CATEGORIES:   You do not have proper access to perform this operation.";
-							break;
-						}
-						//verify if current category is already in db
-						if ($catExist = get_record("course_categories", "name", $category->name, "description", $category->description)) {
-							$rcategory = $catExist;
-							break;
-						}
-						$categoryadd->sortorder = 999;
-						if (!$categoryadd->id = insert_record('course_categories', $categoryadd)) {
-							$rcategory->error = "EDIT_CATEGORIES:    Could not insert the new category '$categoryadd->name' ";
-							break;
-						}
-						$categoryadd->context = get_context_instance(CONTEXT_COURSECAT, $categoryadd->id);
-						mark_context_dirty($categoryadd->context->path);
-						if (empty ($categoryadd->id)) {
-							$rcategory->error = 'EDIT_CATEGORIES:   Could not add category: ' . $categoryadd->shortname;
-							break;
-						}
-						$rcategory = get_record('course_categories', 'id', $categoryadd->id);
-
-						break;
-					case 'update' :
-						/// Updating an existing category.
-						$cid = $category->id;
-						$cname = $category->name;
-
-						$this->debug_output('EDIT_CATEGORIES:    Attempting to update category ID: ' . $cid . print_r($category, true));
-						/// This database operation MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
-
-						if (!$this->has_capability("moodle/category:update", CONTEXT_SYSTEM, 0)) {
-							$rcategory->error = 'EDIT_CATEGORIES:  You do not have proper access to perform this operation.';
-							break;
-						}
-						if (!$database_category = get_record('course_categories', 'id', $cid)) {
-							$rcategory->error = 'EDIT_CATEGORIES:   Could not find category ID: ' . $cid;
-							break;
-						}
-						/// Update values in the category database record with what
-						/// the client supplied.
-						foreach ($category as $key => $value) {
-							if (!empty ($value)) // rev 1.5.15 must ignore empty values ! serious flaw !
-								$database_category-> $key = $value;
-						}
-						$database_category->timemodified = time();
-						if (!$success = update_record('course_categories', $database_category)) {
-							$rcategory->error = 'EDIT_CATEGORIES:   Could not update category: ' . $cid;
-							break;
-						}
-						fix_course_sortorder();
-						$rcategory = get_record('course_categories', 'id', $database_category->id);
-
-						break;
-					case 'delete' :
-						/// Deleting an existing category.
-						$cname = $category->name;
-						$cid = $category->id;
-
-						$this->debug_output('EDIT_CATEGORIES:    Attempting to delete category ID: ' . $cid);
-						/// This database operation MIGHT throw an HTML error message,
-						/// so we've got to catch that and send it back in an error
-						/// request.
-
-						/// Check for correct permissions.
-						if (!$this->has_capability("moodle/category:delete", CONTEXT_SYSTEM, 0)) {
-							$rcategory->error = 'EDIT_CATEGORIES:   You do not have proper access to perform this operation.';
-							break;
-						}
-						//initial no record found and none deleted
-						$deleted_commit = false;
-						if (!$categories = get_records("course_categories", "", "", "id,name")) {
-							$rcategory->error = "EDIT_CATEGORIES:   Could not find category ID: $cid or name: $cname";
-							break;
-						}
-						foreach ($categories as $_category) {
-							if ($_category->id == $cid || $_category->name == $cname) {
-								//at least a record was found and deleted
-								$deleted_commit = true;
-								$rcategory = $_category;
-								//we delete the courses of that category and theirs students and teachers
-								//Lille bug found
-								//category_delete_full's second parameter should notify the function not to print status messages
-								//it doesn't work...this case it's not implemented inside the course/lib.php library function
-								if (!category_delete_full($_category, false)) {
-									$rcategory->error = "EDIT_CATEGORIES: Error deleting category with id: $_category->id";
-									break;
-								}
-
-							}
-						}
-						if (!$deleted_commit) {
-							$rcategory->error = "EDIT_CATEGORIES:   Could not delete category with id $cid or name $cname.";
-							break;
-						}
-
-						break;
-					default :
-						$rcategory->error = "EDIT_CATEGORIES:   Invalid operation: $category->action.";
-						break;
-				}
-				$ret[] = $rcategory;
-			}
-		}
-		return $ret;
-	}
 
 	/**
 	* Edit section records (add/update/delete).
@@ -2125,108 +2242,7 @@ EOSS;
 		return $ret;
 	}
 
-    /**
-	* Edit group records (add/update/delete).
-	* @uses $CFG
-	* @param int $client The client session ID.
-	* @param string $sesskey The client session key.
-	* @param array $groups An array of group records (objects or arrays) for editing
-	*                     (including operation to perform).
-	* @return array Return data (group record) to be converted into a
-	*               specific data format for sending to the client.
-	*/
-	function edit_groups($client, $sesskey, $groups) {
-		global $CFG;
-		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
-		}
-		$rets = array ();
-		if (!empty ($groups)) {
-			foreach ($groups->groups as $group) {
-                $ret = new stdClass;
-                $ret->error="";
-				switch (trim(strtolower($group->action))) {
-					case 'add' :
-						/// Adding a new group.
-						if (!empty($group->courseid)) {
-                            if (! $course = get_record('course', 'id', $group->courseid)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$group->courseid );
-                            break;
-                            }
-                            if (get_record('groups','name',$group->name,'courseid',$group->courseid)) {
-                                $ret->error = get_string('ws_duplicategroupname','wspp',$group->name );
-                                break;
-                            }
-                            if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
-                            break;
-                            }
-                        } else {
-						/// Check for correct permissions. at site level
-	                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
-		                        $ret->error=get_string('ws_operationnotallowed','wspp');
-		                        break;
-	                        }
-                        }
-                        if ($id=groups_create_group($group,false)) {
-                        $ret = get_record('groups', 'id', $id);
-                        }else {
-                            $ret->error=get_string('ws_errorcreatinggroup','wspp',$group->name);
-                        }
 
-						break;
-					case 'update' :
-						/// Updating an existing group
-                         $ret=$group;
-                        if (! $oldgroup = get_record('groups', 'id', $group->id)) {
-                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
-                            break;
-                        }
-
-						if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
-							break;
-						}
-                        //TODO check for changing course
-
-						foreach ($group as $key => $value) {
-							if (!empty ($value))
-								$group-> $key = $value;
-						}
-						if (groups_update_group($group,false)) {
-                        $ret = get_record('groups', 'id', $group->id);
-                        }else {
-                            $ret->error=get_string('ws_errorupdatinggroup','wspp',$group->name);
-                        }
-
-						break;
-					case 'delete' :
-						/// Deleting an existing group.
-                          $ret=$group;
-                          if (! $oldgroup = get_record('groups', 'id', $group->id)) {
-                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
-                            break;
-                        }
-                        $ret=$oldgroup;
-
-                        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
-                            break;
-                        }
-						if (!groups_delete_group($group)) {
-							$ret->error==get_string('ws_errordeletinggroup','wspp',$group->id);
-						}
-						break;
-					default :
-                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
-
-						break;
-				}
-				$rets[] = $ret;
-			}
-		}
-		return $rets;
-	}
 
 	/**
 	* Edit assgnment records (add/update/delete).
@@ -2565,6 +2581,18 @@ EOSS;
 		return $ret;
 	}
 
+
+
+    /*
+    * Comments:
+    * All the affect methods are returning a generic object type named affectRecord
+    * This object has two fields: status and error
+    *       status indicates if operation succeded
+    *       if status=false then the error field contains the coresponding error message
+    */
+
+
+
 	/**
 	* Add label to course section
 	* @uses $CFG
@@ -2604,14 +2632,17 @@ EOSS;
 		//verify if this label is already assigned to this section
 		if ($isAssigned = get_record("course_modules", "module", $module_type->id, "instance", $labelid))
 			return $this->error("AFFECT_LABEL_TO_SECTION:  Label with ID $labelid is already assigned to section with ID $isAssigned->section");
-		$course_module->instance = $labelid;
+
+        $label->course = $section->course;
+        if (!update_record("label", $label)) {
+            return $this->error("AFFECT_LABEL_TO_SECTION:     Error updating the label with id=$labelid");
+        }
+
+
+        $course_module->instance = $labelid;
 		$course_module->module = $module_type->id;
 		$course_module->course = $section->course;
-		$label->course = $section->course;
 		$course_module->section = $sectionid;
-		if (!update_record("label", $label)) {
-			return $this->error("AFFECT_LABEL_TO_SECTION:     Error updating the label with id=$labelid");
-		}
 		if (!$course_module_id = add_course_module($course_module)) {
 			return $this->error("AFFECT_LABEL_TO_SECTION:     Error adding course module!");
 		}
@@ -2682,15 +2713,18 @@ EOSS;
 		if (get_record("course_modules", "instance", $forumid, "section", $sectionid)) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     Forum with id $forumid already contained by section with id $sectionid!");
 		}
+
+        $forum->course = $section->course;
+        if (!update_record("forum", $forum)) {
+            return $this->error("AFFECT_FORUM_TO_SECTION:     Error updating the forum with id=$forumid");
+        }
+
 		$course_module->instance = $forumid;
 		$course_module->module = $module_type->id;
 		$course_module->course = $section->course;
 		$course_module->groupmode = $groupmode;
-		$forum->course = $section->course;
 		$course_module->section = $sectionid;
-		if (!update_record("forum", $forum)) {
-			return $this->error("AFFECT_FORUM_TO_SECTION:     Error updating the forum with id=$forumid");
-		}
+
 		if (!$course_module_id = add_course_module($course_module)) {
 			return $this->error("AFFECT_FORUM_TO_SECTION:     Error adding course module!");
 		}
@@ -2848,10 +2882,7 @@ EOSS;
 		if (!$wiki = get_record("wiki", "id", $wikiid)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     WikiId not found in table WIKI ");
 		}
-		//get the courseId
-		if (!$courseSections = get_record("course_sections", "id", $sectionid)) {
-			return $this->error("AFFECT_WIKI_TO_SECTION:     SectionId not found in table COURSE_SECTIONS ");
-		}
+
 		// check "groupmode" field
 		if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     Group type invalid");
@@ -2860,21 +2891,24 @@ EOSS;
 		if (!$module = get_record("modules", "name", "wiki")) {
 			return $this->error(" AFFECT_WIKI_TO_SECTION:     Wiki module not found");
 		}
+
+
+
 		//verify if this wiki is already assigned to this section
 		if ($isAssigned = get_record("course_modules", "module", $module->id, "instance", $wikiid))
 			return $this->error("AFFECT_WIKI_TO_SECTION:  Wiki with ID $wikiid is already assigned to section with ID $isAssigned->section");
 		$mod->module = $module->id;
 		$mod->instance = $wikiid;
-		$mod->course = $courseSections->course;
+		$mod->course = $section->course;
 		if (($groupmode == SEPARATEGROUPS) || ($groupmode == VISIBLEGROUPS)) {
-			if ($group = get_record("groups", "courseid", $courseSections->course)) {
+			if ($group = get_record("groups", "courseid", $section->course)) {
 				$mod->groupmode = $groupmode;
 				$wiki2->groupid = $group->id;
 			} else {
 				$mod->groupmode = 0;
 			}
 		}
-		$wiki->course = $courseSections->course;
+		$wiki->course = $section->course;
 		$mod->visible = $visible;
 		//update the wiki
 		if (!update_record("wiki", $wiki)) {
@@ -2885,12 +2919,15 @@ EOSS;
 		}
 		$wiki2->id = $wiki_entry->id;
 		$wiki2->wikiid = $wikiid;
-		$wiki2->course = $courseSections->course;
+		$wiki2->course = $section->course;
 		//update "wiki_entries"
 		if (!update_record("wiki_entries", $wiki2)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     Impossible to acces WIKI_ENTRIES table");
 		}
-		$mod->section = $courseSections->section;
+
+
+
+		$mod->section = $section->section;
 		//insert a record in table "course_modules"
 		if (!$course_module = add_course_module($mod)) {
 			return $this->error("AFFECT_WIKI_TO_SECTION:     A module can't be added to table COURSE_MODULE");
@@ -2938,26 +2975,27 @@ EOSS;
 		if (!$module = get_record("modules", "name", "data")) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION: The Module data wasn't found");
 		}
-		$mod->module = $module->id;
-		$mod->instance = $databaseid;
 		//get record of database
 		if (!$database = get_record("data", "id", $databaseid)) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION: Invalid databaseID: " . $databaseid . ". This don't exist in database");
 		}
-		//get the courseId
-		if (!$courseSections = get_record("course_sections", "id", $sectionid)) {
-			return $this->error("AFFECT_DATABASE_TO_SECTION: Invalid sectionID: " . $sectionid . ". This don't exist in database");
-		}
+
 		//verify if this database is already assigned to this section
 		if ($isAssigned = get_record("course_modules", "module", $module->id, "instance", $databaseid))
 			return $this->error("AFFECT_DATABASE_TO_SECTION:  Database with ID $databaseid is already assigned to section with ID $isAssigned->section");
-		$mod->course = $courseSections->course;
-		$database->course = $mod->course;
-		//update the database
-		if (!update_record("data", $database)) {
-			return $this->error("AFFECT_DATABASE_TO_SECTION: The table DATA wasn't updated");
-		}
-		$mod->section = $courseSections->section;
+
+
+        $database->course = $mod->course;
+        //update the database
+        if (!update_record("data", $database)) {
+            return $this->error("AFFECT_DATABASE_TO_SECTION: The table DATA wasn't updated");
+        }
+
+
+        $mod->module = $module->id;
+        $mod->instance = $databaseid;
+        $mod->course = $section->course;
+		$mod->section = $section->section;
 		//insert a record in table "course_modules"
 		if (!$course_module = add_course_module($mod)) {
 			return $this->error("AFFECT_DATABASE_TO_SECTION: The addition the module to course wasn't effectued");
@@ -3017,25 +3055,26 @@ EOSS;
 		//verify if this assigment is already assigned to this section
 		if ($isAssigned = get_record("course_modules", "module", $module->id, "instance", $assignmentid))
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION:  Assignment with ID $assignmentid is already assigned to section with ID $isAssigned->section");
-		$mod->module = $module->id;
+
+        $assign->course = $section->course;
+        //update the assignment
+        if (!update_record("assignment", $assign)) {
+            return $this->error("The table assignment wasn't updated");
+        }
+
+
+        $mod->module = $module->id;
 		$mod->instance = $assignmentid;
 		$mod->groupmode = $groupmode;
-		//get the courseId
-		if (!$courseSections = get_record("course_sections", "id", $sectionid)) {
-			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION: The table Course_Sections {$sectionid} can't be accesed");
-		}
-		$mod->course = $courseSections->course;
-		$assign->course = $courseSections->course;
-		//update the assignment
-		if (!update_record("assignment", $assign)) {
-			return $this->error("The table assignment wasn't updated");
-		}
+
+		$mod->course = $section->course;
+
 		//is the course already linked to the assignment?
 		if ($course_module = get_record("course_modules", "course", $mod->course, "module", $mod->module, "instance", $mod->instance)) {
 			$res->status = "true";
 			return $res;
 		}
-		$mod->section = $courseSections->section;
+		$mod->section = $section->section;
 		//affect the course to the assignment
 		if (!$course_module = add_course_module($mod)) {
 			return $this->error("AFFECT_ASSIGNMENT_TO_SECTION: The module can't be added to cours");
@@ -3191,7 +3230,7 @@ EOSS;
 	* @return affectRecord Return data (affectRecord object) to be converted into a
 	*               specific data format for sending to the client.
 	*/
-	function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
+	function remove_use_from_course($client, $sesskey, $userid, $courseid, $rolename) {
 
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;

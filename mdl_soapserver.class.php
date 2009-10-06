@@ -939,8 +939,8 @@ class mdl_soapserver extends server {
 		return $this->send($this->to_soap($rest, 'affectRecord'));
 	}
 
-	function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
-		$rest = parent :: remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename);
+	function remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename) {
+		$rest = parent :: remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename);
 		return $this->send($this->to_soap($rest, 'affectRecord'));
 	}
 

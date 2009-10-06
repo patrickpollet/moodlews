@@ -2033,8 +2033,8 @@
 	</message>
 	<!-- /affect_pageWiki_to_wiki -->
 
-	<!-- remove_userRole_from_course -->
-	<message name="remove_userRole_from_courseRequest">
+	<!-- remove_user_from_course -->
+	<message name="remove_user_from_courseRequest">
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userid" type="xsd:integer" />
@@ -2665,10 +2665,10 @@
 			<output message="tns:affectResponse" />
 		</operation>
 
-		<operation name="remove_userRole_from_course">
+		<operation name="remove_user_from_course">
 			<documentation>MoodleWS: Remove the role specified of the
 				user in the course</documentation>
-			<input message="tns:remove_userRole_from_courseRequest" />
+			<input message="tns:remove_user_from_courseRequest" />
 			<output message="tns:affectResponse" />
 		</operation>
 
@@ -3832,8 +3832,8 @@
 			</output>
 		</operation>
 
-		<operation name="remove_userRole_from_course">
-			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_userRole_from_course"
+		<operation name="remove_user_from_course">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_user_from_course"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
