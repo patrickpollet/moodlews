@@ -1531,6 +1531,13 @@
 		<part name="sesskey" type="xsd:string" />
 		<part name="section" type="tns:sectionDatum" />
 	</message>
+	
+	<message name="update_sectionRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="section" type="tns:sectionDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
 
 <message name="add_labelRequest">
 		<part name="client" type="xsd:integer" />
@@ -2301,6 +2308,13 @@
 			<documentation>MoodleWS: add a course section
 			</documentation>
 			<input message="tns:add_sectionRequest" />
+			<output message="tns:edit_sectionsResponse" />
+		</operation>
+		
+		<operation name="update_section">
+			<documentation>MoodleWS: add a course section
+			</documentation>
+			<input message="tns:update_sectionRequest" />
 			<output message="tns:edit_sectionsResponse" />
 		</operation>
 		
@@ -3740,6 +3754,19 @@
 
 		<operation name="update_course">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_course"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+<operation name="update_section">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_section"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

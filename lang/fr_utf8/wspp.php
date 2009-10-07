@@ -135,6 +135,13 @@ $string['ws_errorcreatingdatabase']='erreur en créant la base de données $a.';
 $string['ws_errorcreatingwiki']='erreur en créant le wiki $a.';
 $string['ws_errorcreatingpagewiki']='erreur en créant la page de wiki $a.';
 
+$string['ws_errorcreatingsection']='erreur en créant la section $a.';
+$string['ws_errorupdatingsection']='erreur en modifiant la section $a.';
+
+
+$string['ws_unvalidgroupmode']='type de groupe invalide $a';
+
+
 
 
 $string['ws_moduletypeunknown']='Module type $a not found!';
@@ -142,4 +149,5 @@ $string['ws_modalreadyassigned']='le $a->type  $a->id est déja dans la section 
 $string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le $a->type  $a->id au cours $a->course.';
 $string['ws_erroraddingmoduletosection']='impossible d\'ajouter le $a->type  $a->id à la section $a->section du cours $a->course.';
 
+$string['ws_errorupdatingmodule']='erreur en affectant le module $a->id au cours $a->course';
 ?>

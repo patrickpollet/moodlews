@@ -2117,51 +2117,77 @@ EOSS;
 
 
 	/**
-	* Edit section records (add/update/delete).
-	* @uses $CFG
-	* @param int $client The client session ID.
-	* @param string $sesskey The client session key.
-	* @param array $sections An array of section records (objects or arrays) for editing
-	*                     (including operation to perform).
-	* @return array Return data (section record) to be converted into a
-	*               specific data format for sending to the client.
-	*/
+	 * Edit section records (add/update/delete).
+	 * @uses $CFG
+	 * @param int $client The client session ID.
+	 * @param string $sesskey The client session key.
+	 * @param array $sections An array of section records (objects or arrays) for editing
+	 *                     (including operation to perform).
+	 * @return array Return data (section record) to be converted into a
+	 *               specific data format for sending to the client.
+	 */
 	function edit_sections($client, $sesskey, $sections) {
 		global $CFG;
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
 		$rets= array ();
+
 		if (!empty ($sections)) {
 			foreach ($sections->sections as $section) {
+
 				switch (trim(strtolower($section->action))) {
 					case 'add' :
 						/// Adding a new section.
-						$sectionadd = $section;
+						$ret = $section;
 
 						$this->debug_output('EDIT_SECTIONS:    Trying to add a new section.');
 
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:update', CONTEXT_SYSTEM, 0)) {
-                             $rsection->error=get_string('ws_operationnotallowed','wspp');
+							$ret->error=get_string('ws_operationnotallowed','wspp');
 
 							break;
 						}
 						// verify if current section is already in database
 						if ($sectionExist = get_record("course_sections", "course", $section->course, "section", $section->section)) {
 							$ret = $sectionExist;
-                            $ret->error=get_string('ws_sectionexists','wspp',$section->course);
+							$ret->error=get_string('ws_sectionexists','wspp',$section->course);
 							break;
 						}
 						if (!$resultInsertion = insert_record("course_sections", $sectionadd)) {
-							$rsection->error = "EDIT_SECTIONS:  Could not insert the new section: $sectionadd->name";
+							$ret->error =get_string('ws_errorcreatingsection','wspp',$section->summary);
 							break;
 						}
 						$ret = get_record('course_sections', 'id', $resultInsertion);
 
 						break;
 					case 'update' :
-						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$section->action);
+						//get the section record
+						if (!($oldsection = get_record('course_sections', 'id', $section->id))) {
+							return $this->error(get_string('ws_sectionunknown','wspp','id='.$section->id));
+						}
+						/// Check for correct permissions.
+						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $oldsection->course)) {
+							$ret->error=get_string('ws_operationnotallowed','wspp');
+							break;
+						}
+
+						unset($section->sequence); //don't mess with these
+						if (empty($section->course))
+                             unset($section->course);
+                        if (empty($section->section)) //TODO move_sections ?
+                            unset($section->section);
+						if (! update_record('course_sections', $section)) {
+							$ret->error = get_string('ws_errorupdatingsection','wspp',$section->id);
+							break;
+						}
+						$ret = get_record('course_sections', 'id', $section->id);
+
+                        if ($section->visible !=$oldsection->visible) {
+                             set_section_visible($oldsection->course, $oldsection->section, $section->visible);
+                        }
+
 						break;
 					case 'delete' :
 						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$section->action);
@@ -2172,7 +2198,7 @@ EOSS;
 				$rets[] = $ret;
 			}
 		}
-		return $ret;
+		return $rets;
 	}
 
 	/**
@@ -2198,7 +2224,7 @@ EOSS;
 					case 'add' :
 						/// Adding a new forum.
 						$ret = $forum;
-					if (empty ($forum->type)) {
+						if (empty ($forum->type)) {
 							$forum->type = "general";
 						}
 						if (!array_key_exists($forum->type, forum_get_forum_types_all())) {
@@ -2207,11 +2233,11 @@ EOSS;
 						}
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
-                             $ret->error=get_string('ws_operationnotallowed','wspp');
-                            break;
+							$ret->error=get_string('ws_operationnotallowed','wspp');
+							break;
 						}
-                        //TODO in debugging mode do the operation but send and error in libgrade
-                        // since courseid is null
+						//TODO in debugging mode do the operation but send and error in libgrade
+						// since courseid is null
 						if (!$resultInsertion = forum_add_instance($forum)) {
 							$ret->error =get_string('ws_errorcreatingforum','wspp', $forum->name);
 							break;
@@ -2567,7 +2593,7 @@ EOSS;
 			}
 			$rets[] = $ret;
 		}
-		return $ret;
+		return $rets;
 	}
 
 
@@ -2617,7 +2643,10 @@ EOSS;
 		}else {
 			$label->course = $section->course;
 			if (!update_record("label", $label)) {
-				$r->error=get_string('Error updating the label with id=$labelid','wspp');
+                     $a=new StdClass();
+                $a->id=$labelid;
+                $a->course=$section->course;
+                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
 			}
 		}
 		$r->status =empty($r->error);
@@ -2653,7 +2682,7 @@ EOSS;
 		}
 		// check "groupmode" field
 		if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-			return $this->error("AFFECT_FORUM_TO_SECTION:     Invalid forum group type $groupmode.");
+			return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
 		}
 
 		//get the forum record
@@ -2669,7 +2698,10 @@ EOSS;
         }else {
             $forum->course = $section->course;
             if (!update_record("forum", $forum)) {
-                $r->error=get_string('Error updating the label with id=$labelid','wspp');
+                $a=new StdClass();
+                $a->id=$forumid;
+                $a->course=$section->course;
+                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
             }
         }
         $r->status =empty($r->error);
@@ -2715,8 +2747,11 @@ EOSS;
         }else {
             $database->course = $section->course;
             if (!update_record("data", $database)) {
-                $r->error=get_string('Error updating the label with id=$labelid','wspp');
-            }
+                     $a=new StdClass();
+                $a->id=$databaseid;
+                $a->course=$section->course;
+                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                 }
         }
         $r->status =empty($r->error);
         return $r;
@@ -2751,7 +2786,7 @@ EOSS;
             return $this->error(get_string('ws_operationnotallowed','wspp'));
         }
         if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-            return $this->error("AFFECT_ASSIGNMENT_TO_SECTION: Invalid groupmode");
+           return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
         }
         //get the assignment record
         if (!$assign = get_record("assignment", "id", $assignmentid)) {
@@ -2766,8 +2801,11 @@ EOSS;
         }else {
             $assign->course = $section->course;
             if (!update_record("assignment", $assign)) {
-                $r->error=get_string('Error updating the label with id=$labelid','wspp');
-            }
+                     $a=new StdClass();
+                $a->id=$assignmentid;
+                $a->course=$section->course;
+                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                 }
         }
         $r->status =empty($r->error);
         return $r;
@@ -2806,7 +2844,7 @@ EOSS;
 	    }
 	    // check "groupmode" field
 	    if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-		    return $this->error("AFFECT_WIKI_TO_SECTION:     Group type invalid");
+		    return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
 	    }
 
 	    if (($groupmode == SEPARATEGROUPS) || ($groupmode == VISIBLEGROUPS)) {
@@ -2831,7 +2869,11 @@ EOSS;
 	    }else {
 		    $wiki->course = $section->course;
 		    if (!update_record("wiki", $wiki)) {
-			    $r->error=get_string('Error updating the label with id=$labelid','wspp');
+                     $a=new StdClass();
+                $a->id=$wikiid;
+                $a->course=$section->course;
+                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+
 		    }
 		    $wiki2->id = $wiki_entry->id;
 		    $wiki2->wikiid = $wikiid;
@@ -2899,7 +2941,10 @@ EOSS;
 		}
 		$cur_section->course = $courseid;
 		if (!update_record("course_sections", $cur_section)) {
-			return $this->error("AFFECT_SECTION_TO_COURSE:     Error updating the section with id=$sectionid");
+            $a=new StdClass();
+            $a->id=$cur_section->id;
+                $a->course=$courseid;
+                $r->error=get_string('ws_errorupdatingsection','wspp',$a);
 		}
 
 		$r = new stdClass();

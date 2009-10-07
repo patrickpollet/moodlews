@@ -245,8 +245,9 @@ function ws_add_mod_to_section ($modid,$modtype,$section,$groupmode=0,$visible=1
 	}
 	$course_module->coursemodule = $course_module_id;
 	$course_module->section = $section->section;
-	//affect the label to the section
+	//affect the module to the section
 	if (!add_mod_to_section($course_module)) {
+
         $a->section=$section->id;
 		return get_string('ws_erroraddingmoduletosection','wspp',$a);
 	}

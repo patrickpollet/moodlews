@@ -34,11 +34,16 @@ class mdl_soapserver extends server {
 	 * @return none
 	 */
 	function mdl_soapserver() {
+        global $CFG;
 		/// Necessary for processing any DB upgrades.
 		parent :: server();
 
 		$this->debug_output('    Version: ' . $this->version);
 		$this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+        //turn off output of calls to debugging() that messup the XML
+        // see lib/gradelib.php
+        $CFG->debug=0;
+
 		ob_start(); //rev 1.6 buffer all Moodle ouptuts see send function
 	}
 
@@ -888,6 +893,21 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap_array(parent::edit_section($client,$sesskey,$tmp),
         'sections', 'sectionRecord', get_string('nothingtodo','wspp')));
     }
+
+    function update_section ($client,$sesskey,$datum,$idfield='id') {
+        $id=$datum->$idfield;
+        if(!$old = get_record('course_sections', $idfield, $id))
+            return $this->error(get_string('ws_sectionunknown','wspp',$idfield."=".$id ));
+        $tmp= new  editSectionsInput();
+        $datum->action='update';
+        $datum->id=$old->id;  //set Moodle internal id for edit_sections
+        $tmp->setSections(array($datum));
+       //      $this->debug_output("ES1".print_r($datum,true));
+       //  $this->debug_output("ES1".print_r($tmp,true));
+        return $this->send($this->to_soap_array(parent::edit_sections($client,$sesskey,$tmp),
+        'sections', 'sectionRecord', get_string('nothingtodo','wspp')));
+    }
+
 
     function add_category($client, $sesskey, $datum) {
        $tmp= new  editCategoriesInput();
