@@ -207,11 +207,50 @@ function ws_checkcourserecord(&$course,$newcourse) {
         }
 
     }
-
     return $errmsg;
+}
 
+/**
+ * perform all needed operations to insert an activity module into an existing course section
+ * @param integer $modid
+ * @param string  $modtype
+ * @param section $section
+ * @return string $errmsg
+ */
 
+function ws_add_mod_to_section ($modid,$modtype,$section,$groupmode=0,$visible=1) {
+	if (!$module = get_record("modules", "name", $modtype)) {
+		return get_string('ws_moduletypeunknown','wspp',$modtype);
+	}
+    $a=new StdClass();
+    $a->type=$modtype;
+    $a->id=$modid;
+    //verify if this module is already assigned to any section
+        if ($isAssigned = get_record("course_modules", "module", $module->id, "instance", $modid)) {
+            $a->section=$isAssigned->section;
+            $a->course=$isAssigned->course;
+            return get_string('ws_modalreadyassigned','wspp',$a);
+        }
 
+	$course_module=new StdClass();
+	$course_module->instance = $modid;
+	$course_module->module = $module->id;
+	$course_module->course = $section->course;
+	$course_module->section = $section->id;
+    $course_module->groupmode = $groupmode;
+    $course_module->visible=$visible;
+	if (!$course_module_id = add_course_module($course_module)) {
+        $a->course=$section->course;
+		return get_string('ws_erroraddingmoduletocourse','wspp',$a);
+	}
+	$course_module->coursemodule = $course_module_id;
+	$course_module->section = $section->section;
+	//affect the label to the section
+	if (!add_mod_to_section($course_module)) {
+        $a->section=$section->id;
+		return get_string('ws_erroraddingmoduletosection','wspp',$a);
+	}
+	return "";
 }
 
 ?>

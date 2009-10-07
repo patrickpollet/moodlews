@@ -1519,8 +1519,55 @@
 		<part name="grouping" type="tns:groupingDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
+	
+	<message name="add_categoryRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="category" type="tns:categoryDatum" />
+	</message>
+	
+	<message name="add_sectionRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="section" type="tns:sectionDatum" />
+	</message>
 
+<message name="add_labelRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="label" type="tns:labelDatum" />
+	</message>
 
+<message name="add_forumRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="forum" type="tns:forumDatum" />
+	</message>
+	
+<message name="add_assignmentRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="assignment" type="tns:assignmentDatum" />
+	</message>	
+	
+	<message name="add_databaseRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="database" type="tns:databaseDatum" />
+	</message>
+	
+	<message name="add_wikiRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="wiki" type="tns:wikiDatum" />
+	</message>
+	
+	<message name="add_pagewikiRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="page" type="tns:pagewikiDatum" />
+	</message>
+	
 	<message name="edit_coursesResponse">
 		<part name="return" type="tns:editCoursesOutput" />
 	</message>
@@ -1879,6 +1926,7 @@
 		<part name="sesskey" type="xsd:string" />
 		<part name="wikis" type="tns:editWikisInput" />
 	</message>
+	
 	<message name="edit_wikisResponse">
 		<part name="return" type="tns:editWikisOutput" />
 	</message>
@@ -2241,6 +2289,63 @@
 			<input message="tns:update_groupingRequest" />
 			<output message="tns:edit_groupingsResponse" />
 		</operation>
+		
+		<operation name="add_category">
+			<documentation>MoodleWS: add a course category
+			</documentation>
+			<input message="tns:add_categoryRequest" />
+			<output message="tns:edit_categoriesResponse" />
+		</operation>
+		
+		<operation name="add_section">
+			<documentation>MoodleWS: add a course section
+			</documentation>
+			<input message="tns:add_sectionRequest" />
+			<output message="tns:edit_sectionsResponse" />
+		</operation>
+		
+		<operation name="add_label">
+			<documentation>MoodleWS: add a label
+			</documentation>
+			<input message="tns:add_labelRequest" />
+			<output message="tns:edit_labelsResponse" />
+		</operation>
+		
+		<operation name="add_forum">
+			<documentation>MoodleWS: add a forum
+			</documentation>
+			<input message="tns:add_forumRequest" />
+			<output message="tns:edit_forumsResponse" />
+		</operation>
+		
+		<operation name="add_assignment">
+			<documentation>MoodleWS: add an assignment
+			</documentation>
+			<input message="tns:add_assignmentRequest" />
+			<output message="tns:edit_assignmentsResponse" />
+		</operation>
+		
+		<operation name="add_database">
+			<documentation>MoodleWS: add a course category
+			</documentation>
+			<input message="tns:add_databaseRequest" />
+			<output message="tns:edit_databasesResponse" />
+		</operation>
+		
+		<operation name="add_wiki">
+			<documentation>MoodleWS: add a course category
+			</documentation>
+			<input message="tns:add_wikiRequest" />
+			<output message="tns:edit_wikisResponse" />
+		</operation>
+		
+		<operation name="add_pagewiki">
+			<documentation>MoodleWS: add a course category
+			</documentation>
+			<input message="tns:add_pagewikiRequest" />
+			<output message="tns:edit_pagesWikiResponse" />
+		</operation>
+		
 
 		<operation name="get_users">
 			<documentation>MoodleWS: Get Users Information
@@ -3461,8 +3566,97 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
-
-
+		
+		<operation name="add_section">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_section"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="add_label">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_label"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+<operation name="add_forum">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_forum"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+<operation name="add_database">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_database"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+<operation name="add_assignment">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_assignment"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>		
+		
+		<operation name="add_wiki">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_wiki"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="add_pagewiki">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_pagewiki"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
 		<operation name="delete_user">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_user"
 				style="rpc" />
@@ -3475,6 +3669,21 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		
+		<operation name="add_category">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_category"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 
 		<operation name="delete_course">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_course"

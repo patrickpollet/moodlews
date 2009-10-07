@@ -37,11 +37,26 @@ $string['ws_sqlstrftimedatetime']='%%d/%%m/%%Y %%H:%%i:%%s';
 $string['ws_nomatch']='no match found for $a->critere = $a->valeur';
 $string['ws_nothingfound']='aucun résultat.';
 $string['ws_emptyparameter']='ce paramètre $a ne peut être vide.';
+
+
 $string['ws_userunknown']='utilisateur $a inconnu.';
 $string['ws_courseunknown']='cours $a inconnu.';
+$string['ws_categoryunknown']='categorie $a inconnue.';
 $string['ws_groupunknown']='groupe $a inconnu.';
 $string['ws_groupingunknown']='groupement $a inconnu.';
 $string['ws_roleunknown']='rôle $a inconnu.';
+$string['ws_sectionunknown']='section $a inconnue.';
+$string['ws_forumunknown']='forum $a inconnu.';
+$string['ws_databaseunknown']='base de données $a inconnue.';
+$string['ws_assignmentunknown']='devoir $a inconnu.';
+$string['ws_wikiunknown']='wiki $a inconnu.';
+$string['ws_wikipageunknown']='wiki $a inconnu.';
+$string['ws_labelunknown']='étiquette $a inconnue.';
+
+
+
+
+
 $string['ws_noseegrades']='pas autorisé à voir les notes de $a';
 $string['ws_nogradesfound']='pas de notes pour $a->user dans $a->course';
 $string['ws_operationnotallowed']='vous n\'avez pas les permissions de faire cela.';
@@ -61,6 +76,7 @@ $string['ws_invalidaction']='action invalide $a';
 $string['ws_user_notenroled']='L\'utilisateur $a->user n\'est pas inscrit au cours $a->course.';
 
 $string['nothingtodo']='rien à faire';
+$string['ws_notimplemented']='fonctionnalité non encore implementée $a';
 
 $string['nocourses']='pas de cours';
 $string['nousers']='pas d\'utilisateurs';
@@ -110,5 +126,20 @@ $string['ws_errorupdatinggrouping']='erreur en modifiant le groupement $a.';
 $string['ws_duplicategroupname']='ce cours a déja un groupe nommé $a.';
 $string['ws_duplicategroupingname']='ce cours a déja un groupement nommé $a.';
 
+$string['ws_errorcreatingcategory']='erreur en créant la catégorie $a.';
+$string['ws_errorcreatingsection']='erreur en créant la section $a.';
+$string['ws_errorcreatinglabel']='erreur en créant l\'étiquette $a.';
+$string['ws_errorcreatingforum']='erreur en créant le forum $a.';
+$string['ws_errorcreatingassignment']='erreur en créant le devoir $a.';
+$string['ws_errorcreatingdatabase']='erreur en créant la base de données $a.';
+$string['ws_errorcreatingwiki']='erreur en créant le wiki $a.';
+$string['ws_errorcreatingpagewiki']='erreur en créant la page de wiki $a.';
+
+
+
+$string['ws_moduletypeunknown']='Module type $a not found!';
+$string['ws_modalreadyassigned']='le $a->type  $a->id est déja dans la section $a->section du cours $a->course.';
+$string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le $a->type  $a->id au cours $a->course.';
+$string['ws_erroraddingmoduletosection']='impossible d\'ajouter le $a->type  $a->id à la section $a->section du cours $a->course.';
 
 ?>

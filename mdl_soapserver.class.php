@@ -827,6 +827,77 @@ class mdl_soapserver extends server {
             'groupings', 'groupingRecord', get_string('nogroupings','wspp')));
     }
 
+
+/**
+ * add one activity to moodle , must be later assigned to a section
+ */
+
+    function add_label($client, $sesskey, $datum) {
+       $tmp= new  editLabelsInput();
+        $datum->action='add';
+        $tmp->setLabels(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_labels($client,$sesskey,$tmp),
+        'labels', 'labelRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function add_forum($client, $sesskey, $datum) {
+       $tmp= new  editForumsInput();
+        $datum->action='add';
+        $tmp->setForums(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_forums($client,$sesskey,$tmp),
+        'forums', 'forumRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function add_database($client, $sesskey, $datum) {
+       $tmp= new  editDatabasesInput();
+        $datum->action='add';
+        $tmp->setDatabases(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_databases($client,$sesskey,$tmp),
+        'databases', 'databaseRecord', get_string('nothingtodo','wspp')));
+    }
+
+     function add_assignment($client, $sesskey, $datum) {
+       $tmp= new  editAssignmentsInput();
+        $datum->action='add';
+        $tmp->setAssignments(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_assignments($client,$sesskey,$tmp),
+        'assignments', 'assignmentRecord', get_string('nothingtodo','wspp')));
+    }
+
+     function add_wiki($client, $sesskey, $datum) {
+       $tmp= new  editWikisInput();
+        $datum->action='add';
+        $tmp->setWikis(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_wikis($client,$sesskey,$tmp),
+        'wikis', 'wikiRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function add_pagewiki($client, $sesskey, $datum) {
+       $tmp= new  editPagesWikiInput();
+        $datum->action='add';
+        $tmp->setPagesWiki(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_pageswiki($client,$sesskey,$tmp),
+        'pageswikis', 'pageWikiRecord', get_string('nothingtodo','wspp')));
+    }
+
+
+     function add_section($client, $sesskey, $datum) {
+       $tmp= new  editSectionsInput();
+        $datum->action='add';
+        $tmp->setSections(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_section($client,$sesskey,$tmp),
+        'sections', 'sectionRecord', get_string('nothingtodo','wspp')));
+    }
+
+    function add_category($client, $sesskey, $datum) {
+       $tmp= new  editCategoriesInput();
+        $datum->action='add';
+        $tmp->setCategories(array($datum));
+        return $this->send($this->to_soap_array(parent::edit_categories($client,$sesskey,$tmp),
+        'categories', 'categoryRecord', get_string('nothingtodo','wspp')));
+    }
+
+
 	/*
 	*****************************************************************************************************************************
 	*                                                                                                                           *
