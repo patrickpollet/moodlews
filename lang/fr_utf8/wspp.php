@@ -20,9 +20,13 @@ $string['config_ws_sessiontimeout']='Intervalle de temps en secondes au bout duq
 $string['ws_debug']='Activer le mode debug';
 $string['config_ws_debug']='Dump many intermediate values in moodledata/debug.out file';
 
+$string['ws_enforceipcheck']='Activer le contrôle des IP';
+$string['ws_config_enforceipcheck']='Avec cette option, seuls les clients enregistrés dans la table mdl_webservices_clients_allow seront autorisés à se connecter' .
+        '. Pour l\'instant vous devez l\'éditer avec phpmyadmin';
+
 
 $string['ws_accessdisabled']='web service access disabled on this site.';
-
+$string['ws_accessrestricted']='web service access not allowed for your ip address $a.';
 $string['ws_nomoodle16']='Moodle versions prior to 1.7 are not supported.';
 
 $string['ws_invaliduser']='Invalid username and / or password.';

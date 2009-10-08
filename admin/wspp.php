@@ -11,6 +11,11 @@
     $temp->add(new admin_setting_configcheckbox('ws_disable',
                    get_string('ws_disable', 'wspp'),
                    get_string('config_ws_disable', 'wspp'), 0));
+    $temp->add(new admin_setting_configcheckbox('ws_enforceipcheck',
+                   get_string('ws_enforceipcheck', 'wspp'),
+                   get_string('ws_config_enforceipcheck', 'wspp'), 0));
+
+
     $temp->add(new admin_setting_configcheckbox('ws_logoperations',
                    get_string('ws_logoperations', 'wspp'),
                    get_string('config_ws_logoperations', 'wspp'), 1));

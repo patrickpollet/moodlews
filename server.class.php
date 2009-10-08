@@ -67,13 +67,15 @@ class server {
 		$this->sessiontimeout = $CFG->ws_sessiontimeout;
 
 		if (!isset ($CFG->ws_logoperations))
-			$CFG->logoperations = 1;
+			$CFG->ws_logoperations = 1;
 		if (!isset ($CFG->ws_logerrors))
-			$CFG->logerrors = 0;
+			$CFG->ws_logerrors = 0;
 		if (!isset ($CFG->ws_logdetailedoperations))
-			$CFG->logdetailledoperations = 0;
+			$CFG->ws_logdetailledoperations = 0;
 		if (!isset ($CFG->ws_debug))
-			$CFG->wsdebug = 0;
+			$CFG->ws_debug = 0;
+        if (!isset ($CFG->ws_enforceipcheck))
+            $CFG->ws_enforceipcheck = 1;
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
@@ -239,6 +241,14 @@ class server {
 			return $this->error(get_string('ws_accessdisabled', 'wspp'));
 		if (!$this->using17)
 			return $this->error(get_string('ws_nomoodle16', 'wspp'));
+
+         $userip = getremoteaddr(); // rev 1.5.4
+         if (!empty($CFG->ws_enforceipcheck)) {
+            if (!record_exists('webservices_clients_allow','client',$userip))
+            return $this->error(get_string('ws_accessrestricted', 'wspp',$userip));
+
+         }
+
 
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
