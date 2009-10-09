@@ -63,7 +63,7 @@ class server {
 
 		// setup default values if not set in admin screens (see admin/wspp.php)
 		if (empty ($CFG->ws_sessiontimeout))
-			$CFG->session_timeout = 1800;
+			$CFG->ws_sessiontimeout = 1800;
 		$this->sessiontimeout = $CFG->ws_sessiontimeout;
 
 		if (!isset ($CFG->ws_logoperations))
