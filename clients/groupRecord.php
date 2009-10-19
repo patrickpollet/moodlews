@@ -29,7 +29,11 @@ class groupRecord {
 	/** 
 	* @var  string
 	*/
-	public $enrolmentkey;
+	public $lang;
+	/** 
+	* @var  string
+	*/
+	public $theme;
 	/** 
 	* @var  integer
 	*/
@@ -46,18 +50,24 @@ class groupRecord {
 	* @var  integer
 	*/
 	public $timemodified;
+	/** 
+	* @var  string
+	*/
+	public $enrolmentkey;
 	/* full constructor */
-	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$enrolmentkey='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0){
+	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$lang='',$theme='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0,$enrolmentkey=''){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
 		 $this->courseid=$courseid   ;
 		 $this->name=$name   ;
 		 $this->description=$description   ;
-		 $this->enrolmentkey=$enrolmentkey   ;
+		 $this->lang=$lang   ;
+		 $this->theme=$theme   ;
 		 $this->picture=$picture   ;
 		 $this->hidepicture=$hidepicture   ;
 		 $this->timecreated=$timecreated   ;
 		 $this->timemodified=$timemodified   ;
+		 $this->enrolmentkey=$enrolmentkey   ;
 	}
 	/* get accessors */
 	public function getError(){
@@ -80,8 +90,12 @@ class groupRecord {
 		 return $this->description;
 	}
 
-	public function getEnrolmentkey(){
-		 return $this->enrolmentkey;
+	public function getLang(){
+		 return $this->lang;
+	}
+
+	public function getTheme(){
+		 return $this->theme;
 	}
 
 	public function getPicture(){
@@ -98,6 +112,10 @@ class groupRecord {
 
 	public function getTimemodified(){
 		 return $this->timemodified;
+	}
+
+	public function getEnrolmentkey(){
+		 return $this->enrolmentkey;
 	}
 
 	/*set accessors */
@@ -121,8 +139,12 @@ class groupRecord {
 		$this->description=$description;
 	}
 
-	public function setEnrolmentkey($enrolmentkey){
-		$this->enrolmentkey=$enrolmentkey;
+	public function setLang($lang){
+		$this->lang=$lang;
+	}
+
+	public function setTheme($theme){
+		$this->theme=$theme;
 	}
 
 	public function setPicture($picture){
@@ -139,6 +161,10 @@ class groupRecord {
 
 	public function setTimemodified($timemodified){
 		$this->timemodified=$timemodified;
+	}
+
+	public function setEnrolmentkey($enrolmentkey){
+		$this->enrolmentkey=$enrolmentkey;
 	}
 
 }

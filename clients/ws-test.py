@@ -13,7 +13,7 @@ Set login_name and password to a regular Moodle user
 
 import SOAPpy
 
-proxy= proxy = SOAPpy.WSDL.Proxy('http://localhost/moodle/wspp/wsdl_pp.php')
+proxy= proxy = SOAPpy.WSDL.Proxy('http://cipcnet.insa-lyon.fr/moodle/wspp/wsdl_pp.php')
 print proxy.methods
 proxy.show_methods()
 

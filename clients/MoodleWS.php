@@ -67,10 +67,6 @@ require_once 'resourceRecord.php';
  */
 require_once 'activityRecord.php';
 /**
- * groupRecord class
- */
-require_once 'groupRecord.php';
-/**
  * labelRecord class
  */
 require_once 'labelRecord.php';
@@ -1617,6 +1613,204 @@ class MoodleWS {
    *
    * @param integer $client
    * @param string $sesskey
+   * @param groupDatum $group
+   * @return editGroupsOutput
+   */
+  public function add_group($client, $sesskey, groupDatum $group) {
+    $res= $this->client->__call('add_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($group, 'group')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param groupingDatum $grouping
+   * @return editGroupingsOutput
+   */
+  public function add_grouping($client, $sesskey, groupingDatum $grouping) {
+    $res= $this->client->__call('add_grouping', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($grouping, 'grouping')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupingsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param sectionDatum $section
+   * @return editSectionsOutput
+   */
+  public function add_section($client, $sesskey, sectionDatum $section) {
+    $res= $this->client->__call('add_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($section, 'section')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editSectionsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a label 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param labelDatum $label
+   * @return editLabelsOutput
+   */
+  public function add_label($client, $sesskey, labelDatum $label) {
+    $res= $this->client->__call('add_label', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($label, 'label')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editLabelsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a forum 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param forumDatum $forum
+   * @return editForumsOutput
+   */
+  public function add_forum($client, $sesskey, forumDatum $forum) {
+    $res= $this->client->__call('add_forum', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($forum, 'forum')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editForumsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course category 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param databaseDatum $database
+   * @return editDatabasesOutput
+   */
+  public function add_database($client, $sesskey, databaseDatum $database) {
+    $res= $this->client->__call('add_database', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($database, 'database')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editDatabasesOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add an assignment 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param assignmentDatum $assignment
+   * @return editAssignmentsOutput
+   */
+  public function add_assignment($client, $sesskey, assignmentDatum $assignment) {
+    $res= $this->client->__call('add_assignment', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($assignment, 'assignment')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editAssignmentsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course category 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param wikiDatum $wiki
+   * @return editWikisOutput
+   */
+  public function add_wiki($client, $sesskey, wikiDatum $wiki) {
+    $res= $this->client->__call('add_wiki', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($wiki, 'wiki')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editWikisOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course category 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param pageWikiDatum $page
+   * @return editPagesWikiOutput
+   */
+  public function add_pagewiki($client, $sesskey, pageWikiDatum $page) {
+    $res= $this->client->__call('add_pagewiki', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($page, 'page')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editPagesWikiOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
    * @param string $value
    * @param string $id
    * @return editUsersOutput
@@ -1634,6 +1828,28 @@ class MoodleWS {
            )
       );
   return $this->castTo ('editUsersOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course category 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param categoryDatum $category
+   * @return editCategoriesOutput
+   */
+  public function add_category($client, $sesskey, categoryDatum $category) {
+    $res= $this->client->__call('add_category', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($category, 'category')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCategoriesOutput',$res);
   }
 
   /**
@@ -1658,6 +1874,174 @@ class MoodleWS {
            )
       );
   return $this->castTo ('editCoursesOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value
+   * @param string $id
+   * @return editGroupsOutput
+   */
+  public function delete_group($client, $sesskey, $value, $id) {
+    $res= $this->client->__call('delete_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value
+   * @param string $id
+   * @return editGroupingsOutput
+   */
+  public function delete_grouping($client, $sesskey, $value, $id) {
+    $res= $this->client->__call('delete_grouping', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupingsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param userDatum $user
+   * @param string $idfield
+   * @return editUsersOutput
+   */
+  public function update_user($client, $sesskey, userDatum $user, $idfield) {
+    $res= $this->client->__call('update_user', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($user, 'user'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editUsersOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param courseDatum $course
+   * @param string $idfield
+   * @return editCoursesOutput
+   */
+  public function update_course($client, $sesskey, courseDatum $course, $idfield) {
+    $res= $this->client->__call('update_course', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($course, 'course'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCoursesOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add a course section 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param sectionDatum $section
+   * @param string $idfield
+   * @return editSectionsOutput
+   */
+  public function update_section($client, $sesskey, sectionDatum $section, $idfield) {
+    $res= $this->client->__call('update_section', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($section, 'section'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editSectionsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param groupDatum $group
+   * @param string $idfield
+   * @return editGroupsOutput
+   */
+  public function update_group($client, $sesskey, groupDatum $group, $idfield) {
+    $res= $this->client->__call('update_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($group, 'group'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param groupingDatum $grouping
+   * @param string $idfield
+   * @return editGroupingsOutput
+   */
+  public function update_grouping($client, $sesskey, groupingDatum $grouping, $idfield) {
+    $res= $this->client->__call('update_grouping', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($grouping, 'grouping'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editGroupingsOutput',$res);
   }
 
   /**
@@ -2144,8 +2528,8 @@ class MoodleWS {
    * @param string $rolename
    * @return affectRecord
    */
-  public function remove_userRole_from_course($client, $sesskey, $userid, $courseid, $rolename) {
-    $res= $this->client->__call('remove_userRole_from_course', array(
+  public function remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename) {
+    $res= $this->client->__call('remove_user_from_course', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($userid, 'userid'),
@@ -2382,7 +2766,7 @@ class MoodleWS {
    * @param integer $client
    * @param string $sesskey
    * @param editGroupingsInput $groupings
-   * @return UNKNOWN
+   * @return editGroupingsOutput
    */
   public function edit_groupings($client, $sesskey, editGroupingsInput $groupings) {
     $res= $this->client->__call('edit_groupings', array(
@@ -2395,7 +2779,7 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castTo ('editGroupingsOutput',$res);
   }
 
   /**

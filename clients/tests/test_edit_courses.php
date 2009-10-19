@@ -11,22 +11,8 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$course= new courseDatum();
-$course->setAction('update');
-//$course->setId(0);
-$course->setCategory(4);
-//$course->setSortorder(0);
-$course->setPassword('pwd');
-$course->setFullname('test PP upd');
-$course->setShortname('testpp001x');
-$course->setIdnumber('testpp001');  //on ne peut pas le changer !!!!
-$course->setSummary('resumé resumé');
-
-
-
 $courses= new editCoursesInput();
-$courses->setCourses(array($course));
-print_r($courses);
+$courses->setCourses(array());
 $res=$moodle->edit_courses($lr->getClient(),$lr->getSessionKey(),$courses);
 print_r($res);
 print($res->getCourses());

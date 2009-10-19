@@ -7,14 +7,16 @@ require_once ('../auth.php');
 * @param integer $client
 * @param string $sesskey
 * @param editGroupingsInput $groupings
-* @return UNKNOWN
+* @return editGroupingsOutput
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $groupings= new editGroupingsInput();
 $groupings->setGroupings(array());
 $res=$moodle->edit_groupings($lr->getClient(),$lr->getSessionKey(),$groupings);
-print($res);
+print_r($res);
+print($res->getGroupings());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

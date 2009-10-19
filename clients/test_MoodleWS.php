@@ -846,6 +846,267 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 /**test code for MoodleWS: add on course
 * @param integer $client
 * @param string $sesskey
+* @param groupDatum $group
+* @return editGroupsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$group= new groupDatum();
+$group->setAction('');
+$group->setId(0);
+$group->setCourseid(0);
+$group->setName('');
+$group->setDescription('');
+$group->setEnrolmentkey('');
+$group->setPicture(0);
+$group->setHidepicture(0);
+$res=$moodle->add_group($lr->getClient(),$lr->getSessionKey(),$group);
+print_r($res);
+print($res->getGroups());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param groupingDatum $grouping
+* @return editGroupingsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$grouping= new groupingDatum();
+$grouping->setAction('');
+$grouping->setId(0);
+$grouping->setCourseid(0);
+$grouping->setName('');
+$grouping->setDescription('');
+$res=$moodle->add_grouping($lr->getClient(),$lr->getSessionKey(),$grouping);
+print_r($res);
+print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course section
+* @param integer $client
+* @param string $sesskey
+* @param sectionDatum $section
+* @return editSectionsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$section= new sectionDatum();
+$section->setAction('');
+$section->setId(0);
+$section->setCourse(0);
+$section->setSection(0);
+$section->setSummary('');
+$section->setSequence('');
+$section->setVisible(0);
+$res=$moodle->add_section($lr->getClient(),$lr->getSessionKey(),$section);
+print_r($res);
+print($res->getSections());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a label
+* @param integer $client
+* @param string $sesskey
+* @param labelDatum $label
+* @return editLabelsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$label= new labelDatum();
+$label->setAction('');
+$label->setId(0);
+$label->setCourse(0);
+$label->setName('');
+$label->setContent('');
+$res=$moodle->add_label($lr->getClient(),$lr->getSessionKey(),$label);
+print_r($res);
+print($res->getLabels());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a forum
+* @param integer $client
+* @param string $sesskey
+* @param forumDatum $forum
+* @return editForumsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$forum= new forumDatum();
+$forum->setAction('');
+$forum->setId(0);
+$forum->setCourse(0);
+$forum->setType('');
+$forum->setName('');
+$forum->setIntro('');
+$forum->setAssessed(0);
+$forum->setAssesstimestart(0);
+$forum->setAssesstimefinish(0);
+$forum->setScale(0);
+$forum->setMaxbytes(0);
+$forum->setForcesubscribe(0);
+$forum->setTrackingtype(0);
+$forum->setRsstype(0);
+$forum->setRssarticles(0);
+$forum->setTimemodified(0);
+$forum->setWarnafter(0);
+$forum->setBlockafter(0);
+$forum->setBlockperiod(0);
+$res=$moodle->add_forum($lr->getClient(),$lr->getSessionKey(),$forum);
+print_r($res);
+print($res->getForums());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course category
+* @param integer $client
+* @param string $sesskey
+* @param databaseDatum $database
+* @return editDatabasesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$database= new databaseDatum();
+$database->setAction('');
+$database->setId(0);
+$database->setCourse(0);
+$database->setName('');
+$database->setIntro('');
+$database->setComments(0);
+$database->setTimeavailablefrom(0);
+$database->setTimeavailableto(0);
+$database->setTimeviewfrom(0);
+$database->setTimeviewto(0);
+$database->setRequiredentries(0);
+$database->setRequiredentriestoview(0);
+$database->setMaxentries(0);
+$database->setRessarticles(0);
+$database->setSingletemplate('');
+$database->setListtemplate('');
+$database->setListtemplateheader('');
+$database->setListtemplatefooter('');
+$database->setAddtemplatee('');
+$database->setRsstemplate('');
+$database->setRsstitletemplate('');
+$database->setCsstemplate('');
+$database->setJstemplate('');
+$database->setAsearchtemplate('');
+$database->setApproval(0);
+$database->setScale(0);
+$database->setAssessed(0);
+$database->setDefaultsort(0);
+$database->setDefaultsortdir(0);
+$database->setEditany(0);
+$database->setNotification(0);
+$res=$moodle->add_database($lr->getClient(),$lr->getSessionKey(),$database);
+print_r($res);
+print($res->getDatabases());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add an assignment
+* @param integer $client
+* @param string $sesskey
+* @param assignmentDatum $assignment
+* @return editAssignmentsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$assignment= new assignmentDatum();
+$assignment->setAction('');
+$assignment->setId(0);
+$assignment->setCourse(0);
+$assignment->setName('');
+$assignment->setDescription('');
+$assignment->setFormat(0);
+$assignment->setAssignmenttype('');
+$assignment->setResubmit(0);
+$assignment->setPreventlate(0);
+$assignment->setEmailteachers(0);
+$assignment->setVar1(0);
+$assignment->setVar2(0);
+$assignment->setVar3(0);
+$assignment->setVar4(0);
+$assignment->setVar5(0);
+$assignment->setMaxbytes(0);
+$assignment->setTimedue(0);
+$assignment->setTimeavailable(0);
+$assignment->setGrade(0);
+$assignment->setTimemodified(0);
+$res=$moodle->add_assignment($lr->getClient(),$lr->getSessionKey(),$assignment);
+print_r($res);
+print($res->getAssignments());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course category
+* @param integer $client
+* @param string $sesskey
+* @param wikiDatum $wiki
+* @return editWikisOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$wiki= new wikiDatum();
+$wiki->setAction('');
+$wiki->setId(0);
+$wiki->setName('');
+$wiki->setSummary('');
+$wiki->setWtype('');
+$wiki->setEwikiacceptbinary(0);
+$wiki->setCourse(0);
+$wiki->setPagename('');
+$wiki->setEwikiprinttitle(0);
+$wiki->setHtmlmode(0);
+$wiki->setDisablecamelcase(0);
+$wiki->setSetpageflags(0);
+$wiki->setStrippages(0);
+$wiki->setRemovepages(0);
+$wiki->setRevertchanges(0);
+$wiki->setInitialcontent('');
+$wiki->setTimemodified(0);
+$res=$moodle->add_wiki($lr->getClient(),$lr->getSessionKey(),$wiki);
+print_r($res);
+print($res->getWikis());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course category
+* @param integer $client
+* @param string $sesskey
+* @param pageWikiDatum $page
+* @return editPagesWikiOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$page= new pageWikiDatum();
+$page->setAction('');
+$page->setId(0);
+$page->setPagename('');
+$page->setVersion(0);
+$page->setFlags(0);
+$page->setContent('');
+$page->setAuthor('');
+$page->setUserid(0);
+$page->setCreated(0);
+$page->setLastmodified(0);
+$page->setRefs('');
+$page->setMeta('');
+$page->setHits(0);
+$page->setWiki(0);
+$res=$moodle->add_pagewiki($lr->getClient(),$lr->getSessionKey(),$page);
+print_r($res);
+print($res->getPagesWiki());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
 * @param string $value
 * @param string $id
 * @return editUsersOutput
@@ -855,6 +1116,31 @@ $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->delete_user($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course category
+* @param integer $client
+* @param string $sesskey
+* @param categoryDatum $category
+* @return editCategoriesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$category= new categoryDatum();
+$category->setAction('');
+$category->setId(0);
+$category->setName('');
+$category->setDescription('');
+$category->setParent(0);
+$category->setSortorder(0);
+$category->setVisible(0);
+$category->setDepth(0);
+$category->setPath('');
+$category->setTheme('');
+$res=$moodle->add_category($lr->getClient(),$lr->getSessionKey(),$category);
+print_r($res);
+print($res->getCategories());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -870,6 +1156,196 @@ $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->delete_course($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getCourses());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param string $value
+* @param string $id
+* @return editGroupsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->delete_group($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getGroups());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param string $value
+* @param string $id
+* @return editGroupingsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->delete_grouping($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param userDatum $user
+* @param string $idfield
+* @return editUsersOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$user= new userDatum();
+$user->setAction('');
+$user->setId(0);
+$user->setConfirmed(0);
+$user->setPolicyagreed(0);
+$user->setDeleted(0);
+$user->setUsername('');
+$user->setAuth('');
+$user->setPassword('');
+$user->setIdnumber('');
+$user->setFirstname('');
+$user->setLastname('');
+$user->setEmail('');
+$user->setEmailstop(0);
+$user->setIcq('');
+$user->setSkype('');
+$user->setYahoo('');
+$user->setAim('');
+$user->setMsn('');
+$user->setPhone1('');
+$user->setPhone2('');
+$user->setInstitution('');
+$user->setDepartment('');
+$user->setAddress('');
+$user->setCity('');
+$user->setCountry('');
+$user->setLang('');
+$user->setTimezone(0);
+$user->setLastip('');
+$user->setTheme('');
+$user->setDescription('');
+$user->setMnethostid(0);
+$res=$moodle->update_user($lr->getClient(),$lr->getSessionKey(),$user,'');
+print_r($res);
+print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param courseDatum $course
+* @param string $idfield
+* @return editCoursesOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$course= new courseDatum();
+$course->setAction('');
+$course->setId(0);
+$course->setCategory(0);
+$course->setSortorder(0);
+$course->setPassword('');
+$course->setFullname('');
+$course->setShortname('');
+$course->setIdnumber('');
+$course->setSummary('');
+$course->setFormat('');
+$course->setShowgrades(0);
+$course->setNewsitems(0);
+$course->setTeacher('');
+$course->setTeachers('');
+$course->setStudent('');
+$course->setStudents('');
+$course->setGuest(0);
+$course->setStartdate(0);
+$course->setEnrolperiod(0);
+$course->setMarker(0);
+$course->setMaxbytes(0);
+$course->setVisible(0);
+$course->setHiddensections(0);
+$course->setGroupmode(0);
+$course->setGroupmodeforce(0);
+$course->setLang('');
+$course->setTheme('');
+$course->setCost('');
+$course->setMetacourse(0);
+$res=$moodle->update_course($lr->getClient(),$lr->getSessionKey(),$course,'');
+print_r($res);
+print($res->getCourses());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a course section
+* @param integer $client
+* @param string $sesskey
+* @param sectionDatum $section
+* @param string $idfield
+* @return editSectionsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$section= new sectionDatum();
+$section->setAction('');
+$section->setId(0);
+$section->setCourse(0);
+$section->setSection(0);
+$section->setSummary('');
+$section->setSequence('');
+$section->setVisible(0);
+$res=$moodle->update_section($lr->getClient(),$lr->getSessionKey(),$section,'');
+print_r($res);
+print($res->getSections());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param groupDatum $group
+* @param string $idfield
+* @return editGroupsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$group= new groupDatum();
+$group->setAction('');
+$group->setId(0);
+$group->setCourseid(0);
+$group->setName('');
+$group->setDescription('');
+$group->setEnrolmentkey('');
+$group->setPicture(0);
+$group->setHidepicture(0);
+$res=$moodle->update_group($lr->getClient(),$lr->getSessionKey(),$group,'');
+print_r($res);
+print($res->getGroups());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param groupingDatum $grouping
+* @param string $idfield
+* @return editGroupingsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$grouping= new groupingDatum();
+$grouping->setAction('');
+$grouping->setId(0);
+$grouping->setCourseid(0);
+$grouping->setName('');
+$grouping->setDescription('');
+$res=$moodle->update_grouping($lr->getClient(),$lr->getSessionKey(),$grouping,'');
+print_r($res);
+print($res->getGroupings());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -1209,7 +1685,7 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->remove_userRole_from_course($lr->getClient(),$lr->getSessionKey(),0,0,'');
+$res=$moodle->remove_user_from_course($lr->getClient(),$lr->getSessionKey(),0,0,'');
 print_r($res);
 print($res->getError());
 print($res->getStatus());
@@ -1356,14 +1832,16 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param integer $client
 * @param string $sesskey
 * @param editGroupingsInput $groupings
-* @return UNKNOWN
+* @return editGroupingsOutput
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $groupings= new editGroupingsInput();
 $groupings->setGroupings(array());
 $res=$moodle->edit_groupings($lr->getClient(),$lr->getSessionKey(),$groupings);
-print($res);
+print_r($res);
+print($res->getGroupings());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: unAffect a group to grouping
