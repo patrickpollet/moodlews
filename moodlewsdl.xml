@@ -413,29 +413,6 @@
 			</xsd:complexType>
 
 
-			<xsd:complexType name="groupRecord">
-				<xsd:all>
-					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
-					<xsd:element name="name" type="xsd:string" />
-					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="enrolmentkey" type="xsd:string" />
-					<xsd:element name="picture" type="xsd:integer" />
-					<xsd:element name="hidepicture" type="xsd:integer" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-				</xsd:all>
-			</xsd:complexType>
-
-			<xsd:complexType name="groupRecords">
-				<xsd:complexContent>
-					<xsd:restriction base="SOAP-ENC:Array">
-						<xsd:attribute ref="SOAP-ENC:arrayType"
-							wsdl:arrayType="tns:groupRecord[]" />
-					</xsd:restriction>
-				</xsd:complexContent>
-			</xsd:complexType>
 
 
 			<xsd:complexType name="labelRecord">
