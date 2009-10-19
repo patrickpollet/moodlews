@@ -279,7 +279,8 @@ class mdl_soapserver extends server {
 	}
 
 	public function unenrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $idfield = 'idnumber') {
-		return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'Student', $courseid, $courseidfield, $userids, $idfield, false), 'students', 'enrolRecord', "no student to unenrol in course $courseid "));
+		return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'Student', $courseid, $courseidfield, $userids, $idfield, false),
+          'students', 'enrolRecord', "no student to unenrol in course $courseid "));
 	}
 
 	/**

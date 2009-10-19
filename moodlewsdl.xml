@@ -1572,7 +1572,7 @@
 	<message name="add_pagewikiRequest">
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="page" type="tns:pagewikiDatum" />
+		<part name="page" type="tns:pageWikiDatum" />
 	</message>
 	
 	<message name="edit_coursesResponse">

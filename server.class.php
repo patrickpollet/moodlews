@@ -249,7 +249,6 @@ class server {
 
          }
 
-
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
 		if (!$knowuser = get_record('user', 'username', $username)) {
@@ -2031,7 +2030,7 @@ EOSS;
 						    break;
 					    }
 					    foreach ($categories as $_category) {
-						    if ($_category->id == $cid || $_category->name == $cname) {
+						    if ($_category->id == $cid ) {
 							    //at least a record was found and deleted
 							    $deleted_commit = true;
 							    $rcategory = $_category;
@@ -3145,7 +3144,7 @@ EOSS;
 	* @return affectRecord Return data (affectRecord object) to be converted into a
 	*               specific data format for sending to the client.
 	*/
-	function remove_use_from_course($client, $sesskey, $userid, $courseid, $rolename) {
+	function remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename) {
 
 		//if it isn't specified the role name, this will be set as Student
 		$rolename = empty ($rolename) ? "Student" : $rolename;
