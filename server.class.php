@@ -251,16 +251,34 @@ class server {
 
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
-		if (!$knowuser = get_record('user', 'username', $username)) {
+		if (!$knownuser = get_record('user', 'username', $username)) {
 			return $this->error(get_string('ws_invaliduser', 'wspp'));
 		}
-		/// also make sure internal_authentication is used  (a limitation to fix ...)
-		if (!is_internal_auth($knowuser->auth)) {
-			return $this->error(get_string('ws_invaliduser', 'wspp'));
+
+		$user=false;
+
+		//revision 1.6.1 try to use a custom auth plugin
+        if (!exists_auth_plugin("webservice") || ! is_enabled_auth("webservice")) {
+
+			/// also make sure internal_authentication is used  (a limitation to fix ...)
+			if (!is_internal_auth($knownuser->auth)) {
+				return $this->error(get_string('ws_invaliduser', 'wspp'));
+			}
+            // regular manual authentification (should not be allowed !)
+			$user = authenticate_user_login(addslashes($username), $password);
+			$this->debug_output('return of a_u_l'. print_r($user,true));
+
+
 		}
-		$user = authenticate_user_login(addslashes($username), $password);
-		// $this->debug_output('return of a_u_l'. print_r($user,true));
-		if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
+		else {
+			$auth=get_auth_plugin("webservice");
+			if ($auth->user_login_webservice($username,$password)) {
+				$user=$knownuser;
+			}
+        }
+
+        if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
+
 			return $this->error(get_string('ws_invaliduser', 'wspp'));
 		}
 		/// Verify that an active session does not already exist for this user.

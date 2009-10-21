@@ -152,6 +152,10 @@ class mdl_soapserver extends server {
 
 	}
 
+    function login($username, $password) {
+        return $this->send(parent::login($username, $password));
+    }
+
 	/**  =====  OVERRIDE SERVER METHODS NEEDING SOAP-SPECIFIC HANDLING  ======  **/
 
 	/**

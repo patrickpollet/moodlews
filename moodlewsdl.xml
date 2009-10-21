@@ -78,8 +78,6 @@
 					<xsd:element name="courseid" type="xsd:integer" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="lang" type="xsd:string" />
-					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="picture" type="xsd:integer" />
 					<xsd:element name="hidepicture" type="xsd:integer" />
 					<xsd:element name="timecreated" type="xsd:integer" />
