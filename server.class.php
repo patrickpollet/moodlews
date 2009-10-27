@@ -75,7 +75,7 @@ class server {
 		if (!isset ($CFG->ws_debug))
 			$CFG->ws_debug = 0;
         if (!isset ($CFG->ws_enforceipcheck))
-            $CFG->ws_enforceipcheck = 1;
+            $CFG->ws_enforceipcheck = 0;
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
