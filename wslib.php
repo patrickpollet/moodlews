@@ -93,9 +93,18 @@ function ws_fixuserrecord(&$user) {
 function ws_checkuserrecord(&$user,$newuser) {
 	global $CFG;
 	$errmsg="";
-     unset($user->action); // remove it
+	unset($user->action); // remove it
+	//rev 1.6.1 possible sync with external systems where pwd are also in md5 
+	if (!empty($user->passwordmd5)) {
+		$user->password=$user->passwordmd5;
+		unset($user->passwordmd5);
+	} else { if (!empty($user->password))
+		$user->password=md5($user->password);
+	}	
+	unset($user->passwordmd5); //must unset it even if empty ( still there !)
 	//first check for required values
 	if ($newuser) {
+		
 		$required=array('username','email','firstname','lastname','idnumber','password');
 		ws_fixuserrecord($user);
 		foreach ($required as $field) {
@@ -140,10 +149,10 @@ function ws_checkuserrecord(&$user,$newuser) {
 			if (empty($user->id) || ($user->id !=$collision->id))
 				$errmsg.=" ".get_string('emailexists')." ".$user->email;
 		}
-	}
+	} 
 
-     if (!empty($user->password))
-        $user->password = hash_internal_user_password($user->password);
+    // if (!empty($user->password))
+    //    $user->password = hash_internal_user_password($user->password);
 
 	return $errmsg;
 }
