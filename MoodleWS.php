@@ -67,10 +67,6 @@ require_once 'resourceRecord.php';
  */
 require_once 'activityRecord.php';
 /**
- * groupRecord class
- */
-require_once 'groupRecord.php';
-/**
  * labelRecord class
  */
 require_once 'labelRecord.php';

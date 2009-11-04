@@ -41,6 +41,10 @@ class userDatum {
 	/** 
 	* @var  string
 	*/
+	public $passwordmd5;
+	/** 
+	* @var  string
+	*/
 	public $idnumber;
 	/** 
 	* @var  string
@@ -139,6 +143,7 @@ class userDatum {
 		 $this->username='';
 		 $this->auth='';
 		 $this->password='';
+		 $this->passwordmd5='';
 		 $this->idnumber='';
 		 $this->firstname='';
 		 $this->lastname='';
@@ -194,6 +199,10 @@ class userDatum {
 
 	public function getPassword(){
 		 return $this->password;
+	}
+
+	public function getPasswordmd5(){
+		 return $this->passwordmd5;
 	}
 
 	public function getIdnumber(){
@@ -319,6 +328,10 @@ class userDatum {
 
 	public function setPassword($password){
 		$this->password=$password;
+	}
+
+	public function setPasswordmd5($passwordmd5){
+		$this->passwordmd5=$passwordmd5;
 	}
 
 	public function setIdnumber($idnumber){

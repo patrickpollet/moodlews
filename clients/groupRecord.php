@@ -27,14 +27,6 @@ class groupRecord {
 	*/
 	public $description;
 	/** 
-	* @var  string
-	*/
-	public $lang;
-	/** 
-	* @var  string
-	*/
-	public $theme;
-	/** 
 	* @var  integer
 	*/
 	public $picture;
@@ -55,14 +47,12 @@ class groupRecord {
 	*/
 	public $enrolmentkey;
 	/* full constructor */
-	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$lang='',$theme='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0,$enrolmentkey=''){
+	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0,$enrolmentkey=''){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
 		 $this->courseid=$courseid   ;
 		 $this->name=$name   ;
 		 $this->description=$description   ;
-		 $this->lang=$lang   ;
-		 $this->theme=$theme   ;
 		 $this->picture=$picture   ;
 		 $this->hidepicture=$hidepicture   ;
 		 $this->timecreated=$timecreated   ;
@@ -88,14 +78,6 @@ class groupRecord {
 
 	public function getDescription(){
 		 return $this->description;
-	}
-
-	public function getLang(){
-		 return $this->lang;
-	}
-
-	public function getTheme(){
-		 return $this->theme;
 	}
 
 	public function getPicture(){
@@ -137,14 +119,6 @@ class groupRecord {
 
 	public function setDescription($description){
 		$this->description=$description;
-	}
-
-	public function setLang($lang){
-		$this->lang=$lang;
-	}
-
-	public function setTheme($theme){
-		$this->theme=$theme;
 	}
 
 	public function setPicture($picture){

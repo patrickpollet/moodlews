@@ -41,6 +41,10 @@ class userDatum {
 	/** 
 	* @var  string
 	*/
+	public $passwordmd5;
+	/** 
+	* @var  string
+	*/
 	public $idnumber;
 	/** 
 	* @var  string
@@ -131,7 +135,7 @@ class userDatum {
 	*/
 	public $mnethostid;
 	/* full constructor */
-	 public function userDatum($action='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
+	 public function userDatum($action='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$passwordmd5='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
 		 $this->action=$action   ;
 		 $this->id=$id   ;
 		 $this->confirmed=$confirmed   ;
@@ -140,6 +144,7 @@ class userDatum {
 		 $this->username=$username   ;
 		 $this->auth=$auth   ;
 		 $this->password=$password   ;
+		 $this->passwordmd5=$passwordmd5   ;
 		 $this->idnumber=$idnumber   ;
 		 $this->firstname=$firstname   ;
 		 $this->lastname=$lastname   ;
@@ -195,6 +200,10 @@ class userDatum {
 
 	public function getPassword(){
 		 return $this->password;
+	}
+
+	public function getPasswordmd5(){
+		 return $this->passwordmd5;
 	}
 
 	public function getIdnumber(){
@@ -320,6 +329,10 @@ class userDatum {
 
 	public function setPassword($password){
 		$this->password=$password;
+	}
+
+	public function setPasswordmd5($passwordmd5){
+		$this->passwordmd5=$passwordmd5;
 	}
 
 	public function setIdnumber($idnumber){

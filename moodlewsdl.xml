@@ -623,6 +623,7 @@
 					<xsd:element name="username" type="xsd:string" />
 					<xsd:element name="auth" type="xsd:string" />
 					<xsd:element name="password" type="xsd:string" />
+					<xsd:element name="passwordmd5" type="xsd:string" />
 					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="firstname" type="xsd:string" />
 					<xsd:element name="lastname" type="xsd:string" />

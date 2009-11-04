@@ -21,6 +21,7 @@ $user->setDeleted(0);
 $user->setUsername('');
 $user->setAuth('');
 $user->setPassword('');
+$user->setPasswordmd5('');
 $user->setIdnumber('');
 $user->setFirstname('');
 $user->setLastname('');

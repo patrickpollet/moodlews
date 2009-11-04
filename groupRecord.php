@@ -27,10 +27,6 @@ class groupRecord {
 	*/
 	public $description;
 	/** 
-	* @var  string
-	*/
-	public $enrolmentkey;
-	/** 
 	* @var  integer
 	*/
 	public $picture;
@@ -46,17 +42,21 @@ class groupRecord {
 	* @var  integer
 	*/
 	public $timemodified;
+	/** 
+	* @var  string
+	*/
+	public $enrolmentkey;
 	 public function groupRecord() {
 		 $this->error='';
 		 $this->id=0;
 		 $this->courseid=0;
 		 $this->name='';
 		 $this->description='';
-		 $this->enrolmentkey='';
 		 $this->picture=0;
 		 $this->hidepicture=0;
 		 $this->timecreated=0;
 		 $this->timemodified=0;
+		 $this->enrolmentkey='';
 	}
 	/* get accessors */
 	public function getError(){
@@ -79,10 +79,6 @@ class groupRecord {
 		 return $this->description;
 	}
 
-	public function getEnrolmentkey(){
-		 return $this->enrolmentkey;
-	}
-
 	public function getPicture(){
 		 return $this->picture;
 	}
@@ -97,6 +93,10 @@ class groupRecord {
 
 	public function getTimemodified(){
 		 return $this->timemodified;
+	}
+
+	public function getEnrolmentkey(){
+		 return $this->enrolmentkey;
 	}
 
 	/*set accessors */
@@ -120,10 +120,6 @@ class groupRecord {
 		$this->description=$description;
 	}
 
-	public function setEnrolmentkey($enrolmentkey){
-		$this->enrolmentkey=$enrolmentkey;
-	}
-
 	public function setPicture($picture){
 		$this->picture=$picture;
 	}
@@ -138,6 +134,10 @@ class groupRecord {
 
 	public function setTimemodified($timemodified){
 		$this->timemodified=$timemodified;
+	}
+
+	public function setEnrolmentkey($enrolmentkey){
+		$this->enrolmentkey=$enrolmentkey;
 	}
 
 }
