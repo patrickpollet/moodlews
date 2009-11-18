@@ -409,6 +409,21 @@ class mdl_soapserver extends server {
           'groups', 'groupRecord', get_string('nogroupsin','wspp',$courseid)));
 	}
 
+
+/**
+*  internal, not published (yet) in wsdl.
+*  return an array of groups
+*  @see get_group_byid, get_groups_byname
+*/
+       function get_groups($client,$sesskey,$groups,$idfield,$courseid=0) {
+        return $this->send($this->to_soap_array(
+                    parent::get_groups($client, $sesskey,$groups,$idfield,$courseid),
+                       'groups','groupRecord',
+                        get_string('nogroups','wspp')));
+        }
+
+
+
 	/**
 	* return one groupRecord  identified by Moodle's id
 	*/

@@ -956,6 +956,44 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     }
 
 
+    function get_groups($client, $sesskey,$groups,$idfield,$courseid){
+
+	    if (empty($groups) && $courseid) {
+		    return server::get_groups_bycourse ($client,$sesskey,$courseid);
+	    }
+	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+	    }
+
+	    global $CFG;
+	    $ret = array();
+	    if ($courseid) {
+		    $courseselect = 'AND g.courseid ='.$courseid ;
+	    } else {
+		    $courselect = '';
+	    }
+
+	    foreach ($groups as $group) {
+		    $sql= "SELECT g.*
+			    FROM {$CFG->prefix}groups g
+			    WHERE g.$idfield ='$group' $courseselect ";
+
+		    if ($g = get_records_sql($sql)) {
+			    $g=filter_groups($client,$g);
+			    foreach($g as $one) {
+				    $ret[] = $one;
+			    }
+
+		    } else {
+			    $ret[]=$this->non_fatal_error(get_string('nogroups','wspp')); // "Invalid group $idfield :$group ");
+		    }
+	    }
+
+	    return $ret;
+    }
+
+
+
     /**
     * Add user to group
     * @uses $CFG
