@@ -158,6 +158,8 @@ class server {
 		unset ($USER->access); // important for get_my_courses !
 		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
 
+        $this->debug_output(print_r($CFG,true));
+
 		//LOG INTO MOODLE'S LOG
 		if ($operation && $CFG->ws_logoperations)
 			add_to_log(SITEID, 'webservice', 'webservice pp', '', $operation);
@@ -691,15 +693,19 @@ class server {
                          $a=new StdClass();
                         $a->user=fullname($user);
                         $a->course= $course->fullname;
+                        $rgrade=new StdClass();
                         $rgrade->error = get_string('ws_nogrades','wspp',$a);
+                        $return[] = $rgrade;
 					}
 				}
 			} else {
+                 $rgrade=new StdClass();
 				$rgrade->error = get_string('ws_noseegrades','wspp',$course->fullname);
 				$return[] = $rgrade;
 			}
 		} else {
-			$rgrade->error = get_string('ws_courseunknown','wspp', $cid);
+             $rgrade=new StdClass();
+			$rgrade->error = get_string('ws_courseunknown','wspp', $courseid);
 			$return[] = $rgrade;
 		}
 		//$this->debug_output("GcG".print_r($return, true));
@@ -1134,14 +1140,14 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     * @return affectRecord Return data (affectRecord object) to be converted into a
     *               specific data format for sending to the client.
     */
-    function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
+    function affect_group_to_course($client, $sesskey, $groupid, $courseid,$idfield='id') {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
 
-        if (!$course = get_record('course', $idfield, $idcourse)) {
-            return $this->error(get_string('ws_courseunknown','wspp',"id=".$idcourse ));
+        if (!$course = get_record('course', $idfield, $courseid)) {
+            return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid ));
         }
 
         /// Check for correct permissions.
@@ -1172,7 +1178,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 
 
-    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid) {
+    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid,$idfield='id') {
           /**
     * Add  group to course
     * @uses $CFG
@@ -1188,8 +1194,8 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
             return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
 
-        if (!$course = get_record('course', $idfield, $idcourse)) {
-            return $this->error(get_string('ws_courseunknown','wspp',"id=".$idcourse ));
+        if (!$course = get_record('course', $idfield, $courseid)) {
+            return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid ));
         }
 
         /// Check for correct permissions.
@@ -1824,13 +1830,13 @@ EOSS;
 
                         break;
                     case 'delete' :
-                        /// Deleting an existing group.
-                        $ret=$group;
+                        /// Deleting an existing grouping.
+                        $ret=$grouping;
                           if (! $oldgrouping = get_record('groupings', 'id', $grouping->id)) {
                             $ret->error = get_string('ws_groupingunknown','wspp',"id=".$grouping->id );
                             break;
                         }
-                        $ret=$oldgroup;
+                        $ret=$oldgrouping;
 
                         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgrouping->courseid)) {
                             $ret->error=get_string('ws_operationnotallowed','wspp');
@@ -2071,41 +2077,7 @@ EOSS;
 
 				    case 'delete' :
 					    /// Deleting an existing category.
-
-					    $cid = $category->id;
-
-					    /// Check for correct permissions.
-					    if (!$this->has_capability("moodle/category:delete", CONTEXT_SYSTEM, 0)) {
-						    $rcategory->error=get_string('ws_operationnotallowed','wspp');
-						    break;
-					    }
-					    //initial no record found and none deleted
-					    $deleted_commit = false;
-					    if (!$categories = get_records("course_categories", "", "", "id,name")) {
-						    $rcategory->error = "EDIT_CATEGORIES:   Could not find category ID: $cid or name: $cname";
-						    break;
-					    }
-					    foreach ($categories as $_category) {
-						    if ($_category->id == $cid ) {
-							    //at least a record was found and deleted
-							    $deleted_commit = true;
-							    $rcategory = $_category;
-							    //we delete the courses of that category and theirs students and teachers
-							    //Lille bug found
-							    //category_delete_full's second parameter should notify the function not to print status messages
-							    //it doesn't work...this case it's not implemented inside the course/lib.php library function
-							    if (!category_delete_full($_category, false)) {
-								    $rcategory->error = "EDIT_CATEGORIES: Error deleting category with id: $_category->id";
-								    break;
-							    }
-
-						    }
-					    }
-					    if (!$deleted_commit) {
-						    $rcategory->error = "EDIT_CATEGORIES:   Could not delete category with id $cid or name $cname.";
-						    break;
-					    }
-
+                        $ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$category->action);
 					    break;
 				    default :
 					    $ret->error=get_string('ws_invalidaction','wspp',$category->action);
@@ -2144,8 +2116,13 @@ EOSS;
 					case 'add' :
 						/// Adding a new label.
 						$ret = $label;
+
+                         if (!$course = get_record("course", "id", $label->course)) {
+                            $ret->error=get_string('ws_courseunknown','wspp',"id=".$label->course );
+                            break;
+                        }
 						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
                              $ret->error=get_string('ws_operationnotallowed','wspp');
 
 							break;
@@ -2208,10 +2185,14 @@ EOSS;
 
 						$this->debug_output('EDIT_SECTIONS:    Trying to add a new section.');
 
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/course:update', CONTEXT_SYSTEM, 0)) {
-							$ret->error=get_string('ws_operationnotallowed','wspp');
+                          if (!$course = get_record("course", "id", $section->course)) {
+                            $ret->error=get_string('ws_courseunknown','wspp',"id=".$section->course );
+                            break;
+                        }
 
+						/// Check for correct permissions.
+						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)) {
+							$ret->error=get_string('ws_operationnotallowed','wspp');
 							break;
 						}
 						// verify if current section is already in database
@@ -2220,7 +2201,7 @@ EOSS;
 							$ret->error=get_string('ws_sectionexists','wspp',$section->course);
 							break;
 						}
-						if (!$resultInsertion = insert_record("course_sections", $sectionadd)) {
+						if (!$resultInsertion = insert_record("course_sections", $section)) {
 							$ret->error =get_string('ws_errorcreatingsection','wspp',$section->summary);
 							break;
 						}
@@ -2296,13 +2277,21 @@ EOSS;
 							$ret->error = get_string('ws_illegaleforumtype','wspp',$forum->type);
 							break;
 						}
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
-							$ret->error=get_string('ws_operationnotallowed','wspp');
-							break;
-						}
 						//TODO in debugging mode do the operation but send and error in libgrade
 						// since courseid is null
+                          //for some reason lib/gradelib.php test is_null(courseid) and not empty () !!!
+                         // course MUST exist since this activity is graded !
+                          if (! $course = get_record('course', 'id', $forum->course)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$forum->course );
+                            break;
+                          }
+
+                        /// Check for correct permissions.
+                        if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+
 						if (!$resultInsertion = forum_add_instance($forum)) {
 							$ret->error =get_string('ws_errorcreatingforum','wspp', $forum->name);
 							break;
@@ -2348,37 +2337,37 @@ EOSS;
 			foreach ($assignments->assignments as $assignment) {
 				switch (trim(strtolower($assignment->action))) {
 					case 'add' :
-						$assignmentadd = $assignment;
 						//creation of the new assignment
+                        $ret=$assignment;
 
-						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
-                             $rassignment->error=get_string('ws_operationnotallowed','wspp');
 
-							break;
-						}
 						// verification of the field  "assignmenttype"
-						$assignmentadd->assignmenttype == "" ? $assignmentadd->assignmenttype = "online" : "";
-						if (($assignmentadd->assignmenttype != "online") && ($assignmentadd->assignmenttype != "upload") && ($assignmentadd->assignmenttype != "uploadsingle") && ($assignmentadd->assignmenttype != "offline")) {
-							$rassignment->error = "EDIT_ASSIGNMENTS:     The type specified isn't a valid type";
+                        $assignmenttypes = get_list_of_plugins('mod/assignment/type');
+						if (!in_array($assignment->assignmenttype,$assignmenttypes)) {
+                        	$ret->error = get_string('ws_assignmenttypeunknown','wspp',$assignment->assignmenttype);
 							break;
 						}
-						//verify if current assignment is already in database
-						if ($assignmentExist = get_record("assignment", "assignmenttype", $assignment->assignmenttype, "name", $assignment->name, "description", $assignment->description)) {
-							$rassignment = $assignmentExist;
+
+                        //TODO in debugging mode do the operation but send and error in libgrade
+                        // since courseid may be empty
+                        //for some reason lib/gradelib.php test is_null(courseid) and not empty () !!!
+                       // if (empty($assignment->course)) $assignment->course=NULL;
+                       // course MUST exist since this activity is graded !
+						  if (! $course = get_record('course', 'id', $assignment->course)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$assignment->course );
+                            break;
+                          }
+                        /// Check for correct permissions.
+                        if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
+                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
+
+                        if (!($assignId = assignment_add_instance($assignment))) {
+							$ret->error = get_string('ws_errorcreatingassignment','wspp', $assignment->name);
 							break;
 						}
-						$add->name = $assignmentadd->name;
-						$add->assignmenttype = $assignmentadd->assignmenttype;
-						$add->description = $assignmentadd->description;
-						$add->timeavailable = time();
-						$add->timedue = time() + 7 * 24 * 3600;
-						$add->preventate = 0;
-						if (!($assignId = assignment_add_instance($add))) {
-							$rassignment->error = "EDIT_ASSIGNMENTS:  Could not create assignment instance with name: $add->name";
-							break;
-						}
-						$add->id = $assignId;
-						$rassignment = $add;
+						$ret = get_record("assignment",'id',$assignId);
 
 						break;
 					case 'update' :
@@ -2386,48 +2375,17 @@ EOSS;
 						break;
 					case 'delete' :
 						//delete assignment
-						$del = $assignment;
-
-						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
-                             $rassignment->error=get_string('ws_operationnotallowed','wspp');
-
-							break;
-						}
-						$assign = get_record("assignment", "id", $del->id);
-						if (!$assign) {
-							$rassignment->error = "EDIT_ASSIGNMENTS: Assignment with id $del->id not found.";
-							break;
-						}
-						$delete = assignment_delete_instance($del->id);
-						if (!($delete)) {
-							$rassignment->error = "EDIT_ASSIGNMENTS: The instance with id $del->id can't be deleted";
-							break;
-						}
-						$module = get_record("modules", "name", "assignment");
-						if (!$module) {
-							$rassignment->error = "EDIT_ASSIGNMENTS: Assignment module wasn't found";
-							break;
-						}
-						$course_mod = get_record("course_modules", "course", $assign->course, "module", $module->id, "instance", $del->id);
-						if ($course_mod) {
-							if (!delete_records("course_modules", "id", $course_mod->id)) {
-								$rassignment->error = "EDIT_ASSIGNMENTS:     Error on deleting in COURSE_MODULES";
-								break;
-							}
-							delete_mod_from_section($course_mod->id, $course_mod->section);
-						}
-						$rassignment = $assign;
-						//delete_mod_from_section
+                        $ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$assignment->action);
 
 						break;
 					default :
-						$ret->error =$ret->error = get_string('ws_invalidaction','wspp',$assignment->action);
+						$ret->error = get_string('ws_invalidaction','wspp',$assignment->action);
 						break;
 				}
 				$rets[] = $ret;
 			}
 		}
-		return $ret;
+		return $rets;
 	}
 
 	/**
@@ -2454,19 +2412,25 @@ EOSS;
 						//add a new database
 						$ret = $database;
 
-						if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_SYSTEM, 0)) {
 
-							 $ret->error=get_string('ws_operationnotallowed','wspp');
-							break;
-						}
 						if (empty ($database->name)) {
-							$ret->error = "EDIT_DATABASES:    The name of the database is missing";
+							$ret->error =get_string('ws_missingvalue','wspp','name');
 							break;
 						}
+                         // course MUST exist since this activity is graded !
+                          if (! $course = get_record('course', 'id', $database->course)) {
+                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$database->course );
+                            break;
+                          }
+
+                        if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_COURSE, $course->id)) {
+                             $ret->error=get_string('ws_operationnotallowed','wspp');
+                            break;
+                        }
 
 						// database creation
-						if (!$dbid = data_add_instance($dtbadd)) {
-							$ret->error = "EDIT_DATABASES:    This database could't be saved";
+						if (!$dbid = data_add_instance($database)) {
+                            $ret->error=get_string('ws_errorcreatingdatabase','wspp', $ret->name);
 							break;
 						}
 						$ret = get_record('data','id',$dbid);
@@ -2514,89 +2478,66 @@ EOSS;
 					case 'add' :
 						$this->debug_output('EDIT_WIKIS:     Trying to add a new wiki.');
 						/// Adding a new wiki
-						$wikiadd = $wiki;
+						$rwiki = $wiki;
 
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
+                         // course MUST exist since this activity is graded !
+                          if (! $course = get_record('course', 'id', $wiki->course)) {
+                            $rwiki->error = get_string('ws_courseunknown','wspp',"id=".$assignment->course );
+                            break;
+                          }
+
+                        /// Check for correct permissions.
+                        if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
                              $rwiki->error=get_string('ws_operationnotallowed','wspp');
 
-							break;
-						}
+                            break;
+                        }
+
 						//verify if current wiki is already in database
 						if ($wikiExist = get_record("wiki", "name", $wiki->name, "course", $wiki->course)) {
 							$rwiki = $wikiExist;
 							break;
 						}
-						$wikiadd->pagename = empty ($wikiadd->pagename) ? $wikiadd->name : $wikiadd->pagename;
-						$wikiadd->wtype = empty ($wikiadd->wtype) ? 'group' : $wikiadd->wtype;
-						if ($wikiadd->wtype != 'group' && $wikiadd->wtype != 'teacher' && $wikiadd->wtype != 'student') {
-							$rwiki->error = "EDIT_WIKIS:     The type of wiki is incorrect.";
+						$rwiki->pagename = empty ($rwiki->pagename) ? $rwiki->name : $rwiki->pagename;
+						$rwiki->wtype = empty ($rwiki->wtype) ? 'group' : $rwiki->wtype;
+                        $allowedtypes=array('group','teacher','student');
+						if (! in_array($rwiki->wtype,$allowedtypes)) {
+							$rwiki->error = get_string('ws_wikiincorrecttype','wspp',$rwiki->wtype);
 							break;
 						}
 						//add instance of wiki
-						if (!($wikiId = wiki_add_instance($wikiadd))) {
-							$rwiki = "EDIT_WIKIS:     It is impossible to create an instance of wiki.";
+						if (!($wikiId = wiki_add_instance($rwiki))) {
+							$rwiki->error=get_string('ws_errorcreatingwiki','wspp', $rwiki->pagename);
 							break;
 						}
-						$wikiadd->id = $wikiId;
-						$my_id = $USER->id;
+						$rwiki->id = $wikiId;
+                        $wiki_entry=new StdClass();
 						$wiki_entry->wikiid = $wikiadd->id;
 						$wiki_entry->course = 0;
 						$wiki_entry->groupid = 0;
-						$wiki_entry->userid = $my_id;
-						$wiki_entry->pagename = $wikiadd->pagename;
+						$wiki_entry->userid = $USER->id;
+						$wiki_entry->pagename = $rwiki->pagename;
 						if (!$result = insert_record("wiki_entries", $wiki_entry)) {
-							$rwiki->error = "EDIT_WIKIS:     Error inserting a new record in wiki_entries";
+							$rwiki->error = get_string('ws_errorcreatingwikientry','wspp', $rwiki->pagename);
 							break;
 						}
 						$rwiki = get_record('wiki', 'id', $wikiId);
 
 						break;
 					case 'update' :
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$wiki->action);
+						$rwiki->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$wiki->action);
 						break;
 					case 'delete' :
-
-						$this->debug_output('EDIT_WIKIS:     Trying to remove wiki.');
-						$wikidelete = $wiki;
-						$wikiId = $wikidelete->id;
-
-						/// Check for correct permissions.
-						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
-                             $rwiki->error=get_string('ws_operationnotallowed','wspp');
-							break;
-						}
-						if (!$module = get_record("modules", "name", "wiki")) {
-							$rwiki->error = "EDIT_WIKIS:     Module wiki was not found";
-							break;
-						}
-						if (!$_wiki = get_record("wiki", "id", $wikiId)) {
-							$rwiki->error = "EDIT_WIKIS:     The wiki was not found";
-							break;
-						}
-						if (!($delete = wiki_delete_instance($wikiId))) {
-							$rwiki->error = "EDIT_WIKIS:     It is impossible to delete the instance of wiki.";
-							break;
-						}
-						$course_module = get_record("course_modules", "course", $_wiki->course, "module", $module->id, "instance", $wikiId);
-						if (!(delete_records("course_modules", "course", $_wiki->course, "module", $module->id, "instance", $wikiId))) {
-							$rwiki->error = "EDIT_WIKIS:     Error in deleting wiki from database.";
-							break;
-						}
-						// removes from course_sections
-						if (!delete_mod_from_section($course_module->id, $course_module->section)) {
-							$rwiki->error = "EDIT_WIKIS:     Error in deleting  from course_sections.";
-						}
-						$rwiki = $_wiki;
-
+                        $rwiki->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$wiki->action);
 						break;
 					default :
-						$ret->error = $ret->error = get_string('ws_invalidaction','wspp',$wiki->action);
+                        $rwiki=new StdClass();
+						$rwiki->error = $ret->error = get_string('ws_invalidaction','wspp',$wiki->action);
 				}
-				$rets[] = $ret;
+				$rets[] = $rwiki;
 			}
 		}
-		return $ret;
+		return $rets;
 	}
 
 	/**
@@ -2611,7 +2552,7 @@ EOSS;
 	*
 	*/
 	function edit_pagesWiki($client, $sesskey, $pagesWiki) {
-		global $CFG;
+		global $CFG,$USER;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
@@ -2625,7 +2566,7 @@ EOSS;
 
 						$this->debug_output('EDIT_PAGESWIKI:     Trying to add a new pageWiki.');
 						$pageadd = $page;
-						$pageadd->userid = $this->get_my_id($client, $sesskey);
+						$pageadd->userid = $USER->id;
 						$pageadd->created = time();
 						$pageadd->lastmodified = time();
 
@@ -2647,16 +2588,16 @@ EOSS;
 
 						break;
 					case 'update' :
-						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
+						$rpage->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
 						break;
 					case 'delete' :
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
+						$rpage->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
 						break;
 					default :
-						$ret->error = get_string('ws_invalidaction','wspp',$page->action);
+						$rpage->error = get_string('ws_invalidaction','wspp',$page->action);
 				}
 			}
-			$rets[] = $ret;
+			$rets[] = $rpage;
 		}
 		return $rets;
 	}
@@ -2940,6 +2881,7 @@ EOSS;
                 $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
 
 		    }
+            $wiki2=new StdClass();
 		    $wiki2->id = $wiki_entry->id;
 		    $wiki2->wikiid = $wikiid;
 		    $wiki2->course = $section->course;
@@ -2963,12 +2905,18 @@ EOSS;
 	* @return affectRecord Return data (affectRecord object) to be converted into a
 	*               specific data format for sending to the client.
 	*/
-	function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
+	function affect_section_to_course($client, $sesskey, $sectionid, $courseid,$idfield='id') {
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
 		}
+
+        if (!$course = get_record("course", $idfield, $courseid)) {
+              return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
+
+        }
+
 	/// Check for correct permissions.
 		if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)) {
             return $this->error(get_string('ws_operationnotallowed','wspp'));
@@ -2978,9 +2926,7 @@ EOSS;
                 return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
         }
 
-		if (!$cur_course = get_record("course", "id", $courseid)) {
-			return $this->error("AFFECT_SECTION_TO_COURSE:     Course with id $courseid not found.");
-		}
+
 		if ($cur_section->section > $cur_course->numsections) {
 			return $this->error("AFFECT_SECTION_TO_COURSE:     Section index $cur_section->section too big. Maximum section number: $cur_course->numsections.");
 		}
@@ -3144,18 +3090,21 @@ EOSS;
           return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
 
-        /// Check for correct permissions.
-        if (!$this->has_capability('moodle/category:manage', CONTEXT_SYSTEM, 0)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
-        }
+
         /// Check if category with id specified exists
         if (!$destcategory = get_record('course_categories', 'id', $categoryid)) {
             return $this->error(get_string('ws_categoryunkown','wspp',"id=".$categoryid));
         }
         /// Check if course with id specified exists
-        if (!$courss = get_record('course', 'id', $courseid)) {
+        if (!$course = get_record('course', 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid));
         }
+
+         /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:create', CONTEXT_COURSECAT, $categoryid)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+
         move_courses(array (
             $courseid
         ), $categoryid);

@@ -43,6 +43,7 @@ class mdl_soapserver extends server {
         //turn off output of calls to debugging() that messup the XML
         // see lib/gradelib.php
         $CFG->debug=0;
+       // $this->debug_output(print_r($CFG,true));
 
 		ob_start(); //rev 1.6 buffer all Moodle ouptuts see send function
 	}
@@ -727,7 +728,7 @@ class mdl_soapserver extends server {
      function delete_user ($client,$sesskey,$userid,$useridfield='idnumber') {
         $user = get_record('user', $useridfield, $userid);
         if (!$user)
-            return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$uid ));
+            return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid ));
         $tmp= new  editUsersInput();
         $datum=new userDatum();
         $datum->setAction('delete');

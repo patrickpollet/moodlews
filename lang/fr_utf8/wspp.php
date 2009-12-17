@@ -58,7 +58,7 @@ $string['ws_wikipageunknown']='wiki $a inconnu.';
 $string['ws_labelunknown']='étiquette $a inconnue.';
 
 
-
+$string['ws_assignmenttypeunknown']='type de devoir $a inconnu.';
 
 
 $string['ws_noseegrades']='pas autorisé à voir les notes de $a';
@@ -137,13 +137,25 @@ $string['ws_errorcreatingforum']='erreur en créant le forum $a.';
 $string['ws_errorcreatingassignment']='erreur en créant le devoir $a.';
 $string['ws_errorcreatingdatabase']='erreur en créant la base de données $a.';
 $string['ws_errorcreatingwiki']='erreur en créant le wiki $a.';
+$string['ws_errorcreatingwikientry']='erreur en créant la première entrée du wiki $a';
 $string['ws_errorcreatingpagewiki']='erreur en créant la page de wiki $a.';
+
+
+$string['ws_errorcreatingassignment']='erreur en créant le devoir $a.';
+$string['ws_errorupdatingassignment']='erreur en modifiant le devoir $a.';
+$string['ws_errordeletingassignment']='erreur en supprimant le devoir $a.';
+
+$string['ws_errorcreatingdatabase']='erreur en créant la base de donnée $a.';
+$string['ws_errorupdatingdatabase']='erreur en modifiant la base de donnée $a.';
 
 $string['ws_errorcreatingsection']='erreur en créant la section $a.';
 $string['ws_errorupdatingsection']='erreur en modifiant la section $a.';
 
 
 $string['ws_unvalidgroupmode']='type de groupe invalide $a';
+
+
+$string['ws_wikiincorrecttype']='type de wiki invalide $a';
 
 
 

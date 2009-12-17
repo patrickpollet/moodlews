@@ -82,7 +82,7 @@ function filter_forums($client, $forums) {
     if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $assignment->course)) return false;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/assignment:view', $context))return false;
-    return $assignement;
+    return $assignment;
     }
 
     function filter_assignments($client, $assignments) {
