@@ -409,8 +409,67 @@
 					</xsd:restriction>
 				</xsd:complexContent>
 			</xsd:complexType>
-
-
+			
+			
+			<xsd:complexType name="fileRecord">
+				<xsd:all>
+					<xsd:element name="fileurl" type="xsd:string" />
+					<xsd:element name="filename" type="xsd:string" />
+					<xsd:element name="filepath" type="xsd:string" />
+					<xsd:element name="filecontent" type="xsd:string" />
+					
+				</xsd:all>
+			</xsd:complexType>
+			
+			
+			
+			<xsd:complexType name="fileRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:fileRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			
+			
+			
+			<xsd:complexType name="assignmentSubmissionRecord">
+				<xsd:all>
+					<xsd:element name="error" type="xsd:string" />		
+					<!-- database content of table mdl_assignment_submissions -->
+					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="assignment" type="xsd:integer" />
+					<xsd:element name="userid" type="xsd:integer" />
+					<xsd:element name="timecreated" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="numfiles" type="xsd:integer" />
+					<xsd:element name="data1" type="xsd:string" />
+					<xsd:element name="data2" type="xsd:string" />
+					<xsd:element name="grade" type="xsd:integer" />
+					<xsd:element name="submissioncomment" type="xsd:string" />
+					<xsd:element name="format" type="xsd:integer" />
+					<xsd:element name="teacher" type="xsd:integer" />
+					<xsd:element name="timemarked" type="xsd:integer" />
+					<xsd:element name="mailed" type="xsd:integer" />
+					<!--  extra fields -->
+					<xsd:element name="useridnumber" type="xsd:string" />
+					<xsd:element name="userusername" type="xsd:string" />
+					<xsd:element name="useremail" type="xsd:string" />
+					<xsd:element name="files" type="tns:fileRecords" />
+					
+			    </xsd:all>
+			</xsd:complexType>
+			
+			
+			<xsd:complexType name="assignmentSubmissionRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:assignmentSubmissionRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
 
 
 			<xsd:complexType name="labelRecord">
@@ -985,10 +1044,6 @@
 				</xsd:complexContent>
 			</xsd:complexType>
 
-
-
-
-
 			<xsd:complexType name="loginReturn">
 				<xsd:all>
 					<xsd:element name="client" type="xsd:integer" />
@@ -1129,6 +1184,12 @@
 			<xsd:complexType name="getActivitiesReturn">
 				<xsd:all>
 					<xsd:element name="activities" type="tns:activityRecords" />
+				</xsd:all>
+			</xsd:complexType>
+			
+			<xsd:complexType name="getAssignmentSubmissionsReturn">
+				<xsd:all>
+					<xsd:element name="submissions" type="tns:assignmentSubmissionRecords" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1785,6 +1846,21 @@
 	<message name="get_activitiesResponse">
 		<part name="return" type="tns:getActivitiesReturn" />
 	</message>
+	
+	<!--  added rev 1.6.2 -->
+	<message name="get_assignment_submissionsRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="assignmentid" type="xsd:integer" />
+		<part name="userids" type="tns:getUsersInput" />
+		<part name="useridfield" type="xsd:string" />
+		<part name="timemodified" type="xsd:integer" />
+	</message>
+	
+	<message name="get_assignment_submissionsResponse">
+		<part name="return" type="tns:getAssignmentSubmissionsReturn" />
+	</message>
+	
 
 
 	<!-- MESSAGES FROM LILLE -->
@@ -2615,6 +2691,15 @@
 			<input message="tns:twoValuesAndIdsRequest" />
 			<output message="tns:integerResponse" />
 		</operation>
+		
+		<!--  added rev 1.6.2  -->
+		<operation name="get_assignment_submissions">
+			<documentation>MoodleWS: get files submitted
+				in a Moodle assignment</documentation>
+			<input message="tns:get_assignment_submissionsRequest" />
+			<output message="tns:get_assignment_submissionsResponse" />
+		</operation>
+		
 
 		<!-- OPERATION FROM LILLE -->
 
@@ -3504,6 +3589,20 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		<operation name="get_assignment_submissions">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_assignment_submissions"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 
 		<operation name="add_user">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_user"

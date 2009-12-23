@@ -94,17 +94,25 @@ function ws_checkuserrecord(&$user,$newuser) {
 	global $CFG;
 	$errmsg="";
 	unset($user->action); // remove it
-	//rev 1.6.1 possible sync with external systems where pwd are also in md5 
+    if (empty($user->auth))
+        $user->auth = 'manual';
+	//rev 1.6.1 possible sync with external systems where pwd are also in md5
 	if (!empty($user->passwordmd5)) {
 		$user->password=$user->passwordmd5;
-		unset($user->passwordmd5);
-	} else { if (!empty($user->password))
-		$user->password=md5($user->password);
-	}	
+	} else if (!empty($user->password))  {
+        // rev 1.6.2 use official hashing technics as per moodle 1.9.7
+		//$user->password=md5($user->password);
+		$authplugin = get_auth_plugin($user->auth);
+		if ($authplugin->prevent_local_passwords()) {
+			$user->password = 'not cached';
+		} else {
+			$user->password = hash_internal_user_password($user->password);
+		}
+	}
 	unset($user->passwordmd5); //must unset it even if empty ( still there !)
 	//first check for required values
 	if ($newuser) {
-		
+
 		$required=array('username','email','firstname','lastname','idnumber','password');
 		ws_fixuserrecord($user);
 		foreach ($required as $field) {
@@ -134,13 +142,13 @@ function ws_checkuserrecord(&$user,$newuser) {
 
 	//check for other collisions in database
 
-    if (!empty($user->idnumber)) {
-        if ($collision=get_record('user', 'idnumber', $user->idnumber)) {
-            if (empty($user->id) || ($user->id !=$collision->id))
-                $errmsg=get_string('ws_useridnumberexists','wspp',$user->idnumber);
-        }
+	if (!empty($user->idnumber)) {
+		if ($collision=get_record('user', 'idnumber', $user->idnumber)) {
+			if (empty($user->id) || ($user->id !=$collision->id))
+				$errmsg=get_string('ws_useridnumberexists','wspp',$user->idnumber);
+		}
 
-    }
+	}
 
 	if (!empty($user->email)) {
 		if (!validate_email($user->email)) {
@@ -149,10 +157,7 @@ function ws_checkuserrecord(&$user,$newuser) {
 			if (empty($user->id) || ($user->id !=$collision->id))
 				$errmsg.=" ".get_string('emailexists')." ".$user->email;
 		}
-	} 
-
-    // if (!empty($user->password))
-    //    $user->password = hash_internal_user_password($user->password);
+	}
 
 	return $errmsg;
 }

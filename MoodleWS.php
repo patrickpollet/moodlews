@@ -67,6 +67,14 @@ require_once 'resourceRecord.php';
  */
 require_once 'activityRecord.php';
 /**
+ * fileRecord class
+ */
+require_once 'fileRecord.php';
+/**
+ * assignmentSubmissionRecord class
+ */
+require_once 'assignmentSubmissionRecord.php';
+/**
  * labelRecord class
  */
 require_once 'labelRecord.php';
@@ -206,6 +214,10 @@ require_once 'getSectionsReturn.php';
  * getActivitiesReturn class
  */
 require_once 'getActivitiesReturn.php';
+/**
+ * getAssignmentSubmissionsReturn class
+ */
+require_once 'getAssignmentSubmissionsReturn.php';
 /**
  * editLabelsInput class
  */

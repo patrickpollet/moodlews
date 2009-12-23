@@ -649,6 +649,17 @@ class mdl_soapserver extends server {
 
 	}
 
+     public function get_assignment_submissions ($client,$sesskey,$assignmentid,$userids=array(),$useridfield='idnumber',$timemodified=0,$zipfiles=1) {
+        $res = $this->send($this->to_soap_array(
+    parent :: get_assignment_submissions($client, $sesskey, $assignmentid,$userids,$useridfield,$timemodified,$zipfiles),
+     'submissions', 'assignmentSubmissionRecord',get_string('nosubmissions','wspp')));
+
+        return $res;
+
+
+     }
+
+
 
 
       /**

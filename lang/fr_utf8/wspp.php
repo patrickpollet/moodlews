@@ -104,6 +104,7 @@ $string['nodatabases']='pas d\'activités base de données';
 $string['noforums']='pas d\'activités forum';
 $string['nowikis']='pas d\'activités wiki';
 $string['noassignments']='pas d\'activités devoirs';
+$string['nosubmissions']='pas de remises de ce devoir';
 $string['nowikipages']='pas de pages wiki';
 $string['nolabels']='pas d\'étiquettes';
 

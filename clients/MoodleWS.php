@@ -67,6 +67,14 @@ require_once 'resourceRecord.php';
  */
 require_once 'activityRecord.php';
 /**
+ * fileRecord class
+ */
+require_once 'fileRecord.php';
+/**
+ * assignmentSubmissionRecord class
+ */
+require_once 'assignmentSubmissionRecord.php';
+/**
  * labelRecord class
  */
 require_once 'labelRecord.php';
@@ -206,6 +214,10 @@ require_once 'getSectionsReturn.php';
  * getActivitiesReturn class
  */
 require_once 'getActivitiesReturn.php';
+/**
+ * getAssignmentSubmissionsReturn class
+ */
+require_once 'getAssignmentSubmissionsReturn.php';
 /**
  * editLabelsInput class
  */
@@ -1562,6 +1574,36 @@ class MoodleWS {
            )
       );
    return $res;
+  }
+
+  /**
+   * MoodleWS: get files submitted
+				in a Moodle 
+   * assignment 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $assignmentid
+   * @param (getUsersInput) array of string $userids
+   * @param string $useridfield
+   * @param integer $timemodified
+   * @return getAssignmentSubmissionsReturn
+   */
+  public function get_assignment_submissions($client, $sesskey, $assignmentid, $userids, $useridfield, $timemodified) {
+    $res= $this->client->__call('get_assignment_submissions', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($assignmentid, 'assignmentid'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield'),
+            new SoapParam($timemodified, 'timemodified')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAssignmentSubmissionsReturn',$res);
   }
 
   /**

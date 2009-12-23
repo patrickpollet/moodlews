@@ -1441,6 +1441,96 @@ EOSS;
 		//reconvert dates using userdate()
 	}
 
+
+	/**
+	 * added rev 1.6.2
+	 */
+	function get_assignment_submissions ($client,$sesskey,$assignmentid,$userids=array(),$useridfield='idnumber',$timemodified=0,$zipfiles=1) {
+		global $CFG, $USER;
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
+		}
+		//get the assignment record
+		if (!$assignment = get_record("assignment", "id", $assignmentid)) {
+			return $this->error(get_string('ws_assignmentunknown','wspp','id='.$assignmentid));
+		}
+		/// Check for correct permissions.
+		if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
+		}
+
+		//set up all required variables any error is fatal
+
+		if (!$course = get_record("course", "id", $assignment->course))
+			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+
+		if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id))
+			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+
+		if( !$context = get_context_instance(CONTEXT_COURSE, $assignment->course))
+			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+
+
+		$ret=array();
+
+		//champs a envoyer à la PF
+		$fields='u.id, u.username,u.idnumber, u.email';
+		$roleid=5; //students
+
+		$moodleUserIds=array();
+		if (!empty($userids)) {
+			foreach ($userids as $userid) {
+				if ($user=get_record('user',$useridfield,$userid,'','','','',$fields))
+					$moodleUserIds[$user->id]=$user;
+			}
+		}else {
+			/// Get all existing participants in this context.
+			if ($cm->groupingid==0 || !$cm->groupmembersonly)
+				$moodleUserIds = get_role_users($roleid, $context, false,$fields);
+			else
+				$moodleUserIds=groups_get_grouping_members($cm->groupingid);
+		}
+
+        require_once($CFG->libdir.'/filelib.php');
+		require_once("$CFG->dirroot/mod/assignment/lib.php");
+		require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
+		$assignmentclass = "assignment_$assignment->assignmenttype";
+		$assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+
+		foreach($moodleUserIds as $studentid=>$student) {
+			//  Get the submission for this student
+			$submission = $assignmentinstance->get_submission($studentid);
+			//if($submission && $submission->timemodified > $timemodified) {
+				$submission->useridnumber=$student->idnumber;
+                $submission->userusername=$student->username;
+                $submission->useremail=$student->email;
+                $submission->files=array();
+				//todo collect file(s)
+                if ($basedir = $assignmentinstance->file_area_name($studentid)) {
+                   //if ($files = get_directory_list($CFG->dataroot.'/'.$basedir,'',true,false,true)) {
+                   $files=array('1'=>'1','2'=>'2');
+                     foreach ($files as $key => $file) {
+                         $file=new fileRecord();
+                         $file->setFilename($file);
+                         $file->setFilePath($basedir);
+                         $file->setFileurl(get_file_url("$basedir/$file", array('forcedownload'=>1)));
+                         $file->setFilecontent('');
+                         $submission->files[]=$file;
+                     }
+                   }
+                //}
+				$ret[]=$submission;
+			//}
+
+		}
+
+
+		return $ret;
+
+	}
+
+
+
 	/**
 	 * Enrol users with the given role name  in the given course
 	 *
