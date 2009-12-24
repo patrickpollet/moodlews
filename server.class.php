@@ -158,7 +158,7 @@ class server {
 		unset ($USER->access); // important for get_my_courses !
 		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
 
-        $this->debug_output(print_r($CFG,true));
+        //$this->debug_output(print_r($CFG,true));
 
 		//LOG INTO MOODLE'S LOG
 		if ($operation && $CFG->ws_logoperations)
@@ -1480,9 +1480,15 @@ EOSS;
 		$moodleUserIds=array();
 		if (!empty($userids)) {
 			foreach ($userids as $userid) {
-				if ($user=get_record('user',$useridfield,$userid,'','','','',$fields))
+                //$this->debug_output($userid.' '.$useridfield);
+                //does not work ????
+				//if ($user=get_record('user',$useridfield,$userid,'','','','',$fields)) {
+                if ($user=get_record('user',$useridfield,$userid)) {
 					$moodleUserIds[$user->id]=$user;
+                    $this->debug_output(print_r($user,true));
+                }
 			}
+
 		}else {
 			/// Get all existing participants in this context.
 			if ($cm->groupingid==0 || !$cm->groupmembersonly)
@@ -1490,7 +1496,7 @@ EOSS;
 			else
 				$moodleUserIds=groups_get_grouping_members($cm->groupingid);
 		}
-
+         //$this->debug_output(print_r($moodleUserIds,true));
         require_once($CFG->libdir.'/filelib.php');
 		require_once("$CFG->dirroot/mod/assignment/lib.php");
 		require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
