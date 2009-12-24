@@ -1485,7 +1485,7 @@ EOSS;
 				//if ($user=get_record('user',$useridfield,$userid,'','','','',$fields)) {
                 if ($user=get_record('user',$useridfield,$userid)) {
 					$moodleUserIds[$user->id]=$user;
-                    $this->debug_output(print_r($user,true));
+                   // $this->debug_output(print_r($user,true));
                 }
 			}
 
