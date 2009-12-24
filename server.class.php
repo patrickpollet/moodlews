@@ -1500,30 +1500,38 @@ EOSS;
 		foreach($moodleUserIds as $studentid=>$student) {
 			//  Get the submission for this student
 			$submission = $assignmentinstance->get_submission($studentid);
-			//if($submission && $submission->timemodified > $timemodified) {
+			if($submission && $submission->timemodified > $timemodified) {
 				$submission->useridnumber=$student->idnumber;
                 $submission->userusername=$student->username;
                 $submission->useremail=$student->email;
                 $submission->files=array();
-				//todo collect file(s)
+				//collect file(s)
                 if ($basedir = $assignmentinstance->file_area_name($studentid)) {
-                   //if ($files = get_directory_list($CFG->dataroot.'/'.$basedir,'',true,false,true)) {
-                   $files=array('1'=>'1','2'=>'2');
-                     foreach ($files as $key => $file) {
+                    $basedir=$CFG->dataroot.'/'.$basedir;
+                   if ($files = get_directory_list($basedir,'',true,false,true)) {
+                   $numfiles=0;
+                  foreach ($files as $key => $value) {
                          $file=new fileRecord();
-                         $file->setFilename($file);
+                         $file->setFilename($value);
                          $file->setFilePath($basedir);
-                         $file->setFileurl(get_file_url("$basedir/$file", array('forcedownload'=>1)));
-                         $file->setFilecontent('');
+                         $file->setFileurl(get_file_url("$basedir/$value", array('forcedownload'=>1)));
+                         if ($binary = file_get_contents("$basedir/$value")) {
+                             $file->setFilecontent(base64_encode( $binary ));
+                             $file->setFilesize(strlen($binary));
+                             $numfiles++;
+                        }else {
+                             $file->setFilecontent('');
+                             $file->setFilesize(0);
+                         }
                          $submission->files[]=$file;
                      }
+                     //for some reasons this field is 0 in table mdl_assignment_submissions
+                     $submission->numfiles=$numfiles;
                    }
-                //}
+                }
 				$ret[]=$submission;
-			//}
-
-		}
-
+			}
+        }
 
 		return $ret;
 

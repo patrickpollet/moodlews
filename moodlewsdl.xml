@@ -416,8 +416,8 @@
 					<xsd:element name="fileurl" type="xsd:string" />
 					<xsd:element name="filename" type="xsd:string" />
 					<xsd:element name="filepath" type="xsd:string" />
-					<xsd:element name="filecontent" type="xsd:string" />
-					
+					<xsd:element name="filesize" type="xsd:integer" />	
+					<xsd:element name="filecontent" type="xsd:string" />				
 				</xsd:all>
 			</xsd:complexType>
 			
