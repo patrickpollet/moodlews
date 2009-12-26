@@ -440,6 +440,8 @@
 					<!-- database content of table mdl_assignment_submissions -->
 					<xsd:element name="id" type="xsd:integer" />
 					<xsd:element name="assignment" type="xsd:integer" />
+					<xsd:element name="assignmenttype" type="xsd:string" />
+					
 					<xsd:element name="userid" type="xsd:integer" />
 					<xsd:element name="timecreated" type="xsd:integer" />
 					<xsd:element name="timemodified" type="xsd:integer" />

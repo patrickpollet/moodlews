@@ -19,6 +19,10 @@ class assignmentSubmissionRecord {
 	*/
 	public $assignment;
 	/** 
+	* @var  string
+	*/
+	public $assignmenttype;
+	/** 
 	* @var  integer
 	*/
 	public $userid;
@@ -83,10 +87,11 @@ class assignmentSubmissionRecord {
 	*/
 	public $files;
 	/* full constructor */
-	 public function assignmentSubmissionRecord($error='',$id=0,$assignment=0,$userid=0,$timecreated=0,$timemodified=0,$numfiles=0,$data1='',$data2='',$grade=0,$submissioncomment='',$format=0,$teacher=0,$timemarked=0,$mailed=0,$useridnumber='',$userusername='',$useremail='',$files=array()){
+	 public function assignmentSubmissionRecord($error='',$id=0,$assignment=0,$assignmenttype='',$userid=0,$timecreated=0,$timemodified=0,$numfiles=0,$data1='',$data2='',$grade=0,$submissioncomment='',$format=0,$teacher=0,$timemarked=0,$mailed=0,$useridnumber='',$userusername='',$useremail='',$files=array()){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
 		 $this->assignment=$assignment   ;
+		 $this->assignmenttype=$assignmenttype   ;
 		 $this->userid=$userid   ;
 		 $this->timecreated=$timecreated   ;
 		 $this->timemodified=$timemodified   ;
@@ -115,6 +120,10 @@ class assignmentSubmissionRecord {
 
 	public function getAssignment(){
 		 return $this->assignment;
+	}
+
+	public function getAssignmenttype(){
+		 return $this->assignmenttype;
 	}
 
 	public function getUserid(){
@@ -192,6 +201,10 @@ class assignmentSubmissionRecord {
 
 	public function setAssignment($assignment){
 		$this->assignment=$assignment;
+	}
+
+	public function setAssignmenttype($assignmenttype){
+		$this->assignmenttype=$assignmenttype;
 	}
 
 	public function setUserid($userid){

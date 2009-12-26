@@ -19,6 +19,10 @@ class assignmentSubmissionRecord {
 	*/
 	public $assignment;
 	/** 
+	* @var  string
+	*/
+	public $assignmenttype;
+	/** 
 	* @var  integer
 	*/
 	public $userid;
@@ -86,6 +90,7 @@ class assignmentSubmissionRecord {
 		 $this->error='';
 		 $this->id=0;
 		 $this->assignment=0;
+		 $this->assignmenttype='';
 		 $this->userid=0;
 		 $this->timecreated=0;
 		 $this->timemodified=0;
@@ -114,6 +119,10 @@ class assignmentSubmissionRecord {
 
 	public function getAssignment(){
 		 return $this->assignment;
+	}
+
+	public function getAssignmenttype(){
+		 return $this->assignmenttype;
 	}
 
 	public function getUserid(){
@@ -191,6 +200,10 @@ class assignmentSubmissionRecord {
 
 	public function setAssignment($assignment){
 		$this->assignment=$assignment;
+	}
+
+	public function setAssignmenttype($assignmenttype){
+		$this->assignmenttype=$assignmenttype;
 	}
 
 	public function setUserid($userid){

@@ -1481,9 +1481,8 @@ EOSS;
 		if (!empty($userids)) {
 			foreach ($userids as $userid) {
                 //$this->debug_output($userid.' '.$useridfield);
-                //does not work ????
-				//if ($user=get_record('user',$useridfield,$userid,'','','','',$fields)) {
-                if ($user=get_record('user',$useridfield,$userid)) {
+                //caution :  alias u is not set in get_record, so add it !!!
+				if ($user=get_record('user u',$useridfield,$userid,'','','','',$fields)) {
 					$moodleUserIds[$user->id]=$user;
                    // $this->debug_output(print_r($user,true));
                 }
@@ -1494,7 +1493,7 @@ EOSS;
 			if ($cm->groupingid==0 || !$cm->groupmembersonly)
 				$moodleUserIds = get_role_users($roleid, $context, false,$fields);
 			else
-				$moodleUserIds=groups_get_grouping_members($cm->groupingid);
+				$moodleUserIds=groups_get_grouping_members($cm->groupingid,$fields);
 		}
          //$this->debug_output(print_r($moodleUserIds,true));
         require_once($CFG->libdir.'/filelib.php');
@@ -1510,6 +1509,9 @@ EOSS;
 				$submission->useridnumber=$student->idnumber;
                 $submission->userusername=$student->username;
                 $submission->useremail=$student->email;
+                //if upload of upoassingle, submissions are in files
+                //if online, submission is in data1
+                $submission->assignmenttype=$assignment->assignmenttype;
                 $submission->files=array();
 				//collect file(s)
                 if ($basedir = $assignmentinstance->file_area_name($studentid)) {
