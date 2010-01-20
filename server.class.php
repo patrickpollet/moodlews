@@ -1509,7 +1509,7 @@ EOSS;
 				$submission->useridnumber=$student->idnumber;
                 $submission->userusername=$student->username;
                 $submission->useremail=$student->email;
-                //if upload of upoassingle, submissions are in files
+                //if upload of uploadsingle, submissions are in files
                 //if online, submission is in data1
                 $submission->assignmenttype=$assignment->assignmenttype;
                 $submission->files=array();
