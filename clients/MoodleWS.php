@@ -340,7 +340,7 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://prope.insa-lyon.fr/moodle.195/wspp/wsdl';
+  private $uri = 'http://cipcnet.insa-lyon.fr/moodle.195/wspp/wsdl';
 
   public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
