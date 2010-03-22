@@ -257,7 +257,9 @@ function filter_forums($client, $forums) {
         $resource->timemodified_ut = userdate($resource->timemodified);
         //return false if resource->visible is false AND $client not "teacher"
         $context = get_context_instance(CONTEXT_COURSE, $resource->course);
-        if (has_capability('moodle/course:update', $context))
+        //if (has_capability('moodle/course:update', $context))
+        // 1.6.3  there is a special capability for hiddensection
+        if (has_capability('moodle/course:viewhiddenactivities', $context))
                 return $resource;
         if (! has_capability('moodle/course:view', $context))
                 return false;
@@ -279,7 +281,9 @@ function filter_forums($client, $forums) {
         if (!empty($section->error))
             return $section;
           $context = get_context_instance(CONTEXT_COURSE, $section->course);
-        if (has_capability('moodle/course:update', $context))
+        //if (has_capability('moodle/course:update', $context))
+        // 1.6.3  there is a special capability for hiddensection
+         if (has_capability('moodle/course:viewhiddensections', $context))
                 return $section;
         if (! has_capability('moodle/course:view', $context))
                 return false;
