@@ -2448,6 +2448,13 @@
 			<output message="tns:get_coursesResponse" />
 		</operation>
 
+		<operation name="get_courses_search">
+			<documentation>MoodleWS: Get Courses Information
+			</documentation>
+			<input message="tns:oneValueRequest" />
+			<output message="tns:get_coursesResponse" />
+		</operation>
+		
 		<operation name="get_resources">
 			<documentation>MoodleWS: Get resources in courses
 			</documentation>
@@ -2553,7 +2560,7 @@
 			<input message="tns:oneValueRequest" />
 			<output message="tns:get_categoriesResponse" />
 		</operation>
-
+		
 
 		<operation name="get_my_courses">
 			<documentation>MoodleWS: Get Courses user identified by id
@@ -3003,6 +3010,19 @@
 		</operation>
 		<operation name="get_courses">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_courses"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+<operation name="get_courses_search">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_courses_search"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

@@ -221,6 +221,18 @@ class mdl_soapserver extends server {
          'courses', 'courseRecord', get_string('nocourses','wspp')));
 	}
 
+
+    /**
+     * rev 1.6.2
+     * find and return a list of courses having $search in their name, fullname or description
+     */
+    function get_courses_search($client, $sesskey, $search) {
+        return $this->send($this->to_soap_array(parent :: get_courses_search($client, $sesskey, $search),
+         'courses', 'courseRecord', get_string('nocourses','wspp')));
+
+    }
+
+
 	/**
 	* Find and return a list of resources within one or several courses.
 	* TODO cast returned data to more specific types

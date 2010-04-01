@@ -340,7 +340,7 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://cipcnet.insa-lyon.fr/moodle.195/wspp/wsdl';
+  private $uri = 'http://localhost/moodle.195/wspp/wsdl';
 
   public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
@@ -482,6 +482,28 @@ class MoodleWS {
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($courseids, 'courseids'),
             new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCoursesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get Courses Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value
+   * @return getCoursesReturn
+   */
+  public function get_courses_search($client, $sesskey, $value) {
+    $res= $this->client->__call('get_courses_search', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value')
       ),
       array(
             'uri' => $this->uri ,

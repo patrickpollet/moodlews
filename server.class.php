@@ -431,6 +431,31 @@ class server {
 		return filter_courses($client,$ret);
 	}
 
+
+	function get_courses_search($client, $sesskey, $search) {
+    	global $USER;
+    	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+        	return $this->error(get_string('ws_invalidclient', 'wspp'));
+    	}
+    	$search = trim(strip_tags($search)); // trim & clean raw searched string
+
+    	if (empty ($search)) {
+        	// all courses wanted
+        	$res = get_records('course', '', '');
+        	return filter_courses($client, $res);
+    	}
+
+    	$searchterms = explode(" ", $search);    // Search for words independently
+    	foreach ($searchterms as $key => $searchterm) {
+        	if (strlen($searchterm) < 2) {
+            	unset($searchterms[$key]);
+        	}
+    	}
+        $totalcount=0;
+    	$ret = get_courses_search($searchterms, "fullname ASC",0,9999,$totalcount);
+    	return filter_courses($client,$ret);
+	}
+
 	/**
 	 * Find and return a list of resources within one or several courses.
 	 * OK PP tested with php5 5 and python clients

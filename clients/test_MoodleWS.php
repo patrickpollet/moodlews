@@ -85,6 +85,20 @@ print($res->getCourses());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: Get Courses Information
+* @param integer $client
+* @param string $sesskey
+* @param string $value
+* @return getCoursesReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_courses_search($lr->getClient(),$lr->getSessionKey(),'');
+print_r($res);
+print($res->getCourses());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 /**test code for MoodleWS: Get resources in courses
 * @param integer $client
 * @param string $sesskey
