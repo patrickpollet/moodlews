@@ -29,5 +29,12 @@
 $wsdl=file_get_contents("$CFG->wwwroot/wspp/moodlewsdl.xml");
 
 $wsdl=str_replace('CFGWWWROOT',$CFG->wwwroot,$wsdl);
+
+// bug avec php 5.3.0 si taille >8192 bytes
+// http://www.magentocommerce.com/boards/viewthread/56528/
+// revision 1035 lenght était mal écrit (lenght) !!!
+
+header ('Content-Length:'.strlen($wsdl));
+
 echo $wsdl;
 ?>
