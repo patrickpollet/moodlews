@@ -1215,6 +1215,13 @@
 					<xsd:element name="submissions" type="tns:assignmentSubmissionRecords" />
 				</xsd:all>
 			</xsd:complexType>
+			
+			<xsd:complexType name="setUserProfileValuesReturn">
+				<xsd:all>
+					<xsd:element name="profiles" type="tns:profileitemRecords" />
+				</xsd:all>
+			</xsd:complexType>
+			
 
 			<!-- TYPES FROM LILLE -->
 
@@ -1903,7 +1910,7 @@
 	</message>
 	
 	<message name="set_users_profile_valuesResponse">
-		<part name="return" type="tns:profileitemRecords" />
+		<part name="return" type="tns:setUserProfileValuesReturn" />
 	</message>
 	
 	<message name="get_users_byprofileRequest">
@@ -2767,12 +2774,6 @@
 			<output message="tns:get_usersResponse" />
 		</operation>
 		
-		<operation name="set_users_profile_values">
-			<documentation>MoodleWS: set users profile values
-				</documentation>
-			<input message="tns:set_users_profile_valuesRequest" />
-			<output message="tns:set_users_profile_valuesResponse" />
-		</operation>
 		
 		<operation name="set_user_profile_values">
 			<documentation>MoodleWS: set one user profile values
@@ -4410,18 +4411,6 @@
 			</output>
 		</operation>
 
-		<operation name="set_users_profile_values">
-			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#set_users_profile_values"
-				style="rpc" />
-			<input>
-				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
 		
 		<operation name="set_user_profile_values">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#set_user_profile_values"

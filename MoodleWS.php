@@ -223,6 +223,10 @@ require_once 'getActivitiesReturn.php';
  */
 require_once 'getAssignmentSubmissionsReturn.php';
 /**
+ * setUserProfileValuesReturn class
+ */
+require_once 'setUserProfileValuesReturn.php';
+/**
  * editLabelsInput class
  */
 require_once 'editLabelsInput.php';

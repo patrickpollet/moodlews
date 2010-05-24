@@ -223,6 +223,10 @@ require_once 'getActivitiesReturn.php';
  */
 require_once 'getAssignmentSubmissionsReturn.php';
 /**
+ * setUserProfileValuesReturn class
+ */
+require_once 'setUserProfileValuesReturn.php';
+/**
  * editLabelsInput class
  */
 require_once 'editLabelsInput.php';
@@ -2899,32 +2903,6 @@ class MoodleWS {
   }
 
   /**
-   * MoodleWS: set users profile values 
-   *
-   * @param integer $client
-   * @param string $sesskey
-   * @param (getUsersInput) array of string $userids
-   * @param string $useridfield
-   * @param (profileitemRecords) array of profileitemRecord $values
-   * @return profileitemRecords
-   */
-  public function set_users_profile_values($client, $sesskey, $userids, $useridfield, $values) {
-    $res= $this->client->__call('set_users_profile_values', array(
-            new SoapParam($client, 'client'),
-            new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($userids, 'userids'),
-            new SoapParam($useridfield, 'useridfield'),
-            new SoapParam($values, 'values')
-      ),
-      array(
-            'uri' => $this->uri ,
-            'soapaction' => ''
-           )
-      );
-   return $res;
-  }
-
-  /**
    * MoodleWS: set one user profile values 
    *
    * @param integer $client
@@ -2932,7 +2910,7 @@ class MoodleWS {
    * @param string $userid
    * @param string $useridfield
    * @param (profileitemRecords) array of profileitemRecord $values
-   * @return profileitemRecords
+   * @return setUserProfileValuesReturn
    */
   public function set_user_profile_values($client, $sesskey, $userid, $useridfield, $values) {
     $res= $this->client->__call('set_user_profile_values', array(
@@ -2947,7 +2925,7 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castTo ('setUserProfileValuesReturn',$res);
   }
 
   /**

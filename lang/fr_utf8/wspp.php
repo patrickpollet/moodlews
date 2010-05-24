@@ -167,4 +167,12 @@ $string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le $a->type  $a->
 $string['ws_erroraddingmoduletosection']='impossible d\'ajouter le $a->type  $a->id à la section $a->section du cours $a->course.';
 
 $string['ws_errorupdatingmodule']='erreur en affectant le module $a->id au cours $a->course';
+
+
+
+
+$string['ws_profileinvalidvaluemenu']='la valeur $a n\'est pas dans les options permises';
+$string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
+
+		
 ?>

@@ -962,15 +962,11 @@ class mdl_soapserver extends server {
     }
     
     // rev 1.6.4
-    //an array of usersids
-    function set_users_profile_values ($client,$sesskey,$userids,$useridfield,$values) {
-    	return $this->send($this->to_soap_array(parent :: set_users_profile_values($client, $sesskey,$userids,$useridfield,$values),
-         'profiles', 'profileitemRecord',get_string('nothingtodo','wspp')));
-    }
+  
     
     //one user
 	function set_user_profile_values ($client,$sesskey,$userid,$useridfield,$values) {
-    	return $this->send($this->to_soap_array(parent :: set_users_profile_values($client, $sesskey,array($userid),$useridfield,$values),
+    	return $this->send($this->to_soap_array(parent :: set_user_profile_values($client, $sesskey,$userid,$useridfield,$values),
          'profiles', 'profileitemRecord',get_string('nothingtodo','wspp')));
     }
 	

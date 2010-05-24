@@ -9,13 +9,15 @@ require_once ('../auth.php');
 * @param string $userid
 * @param string $useridfield
 * @param (profileitemRecords) array of profileitemRecord $values
-* @return profileitemRecords
+* @return setUserProfileValuesReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $values=array();
 $res=$moodle->set_user_profile_values($lr->getClient(),$lr->getSessionKey(),'','',$values);
 print_r($res);
+print($res->getProfiles());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

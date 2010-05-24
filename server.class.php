@@ -3393,7 +3393,11 @@ EOSS;
     
     
      // rev 1.6.4
-    function set_profile_values ($client,$sesskey,$userids,$useridfield,$values) {
+    function set_user_profile_values ($client,$sesskey,$userid,$useridfield,$values) {
+    	
+    	global $CFG;
+    	require_once($CFG->dirroot.'/user/profile/lib.php');
+    	
     	 if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
@@ -3401,24 +3405,55 @@ EOSS;
             return $this->error(get_string('ws_operationnotallowed','wspp'));
         }
         
+        if (!$user = get_record('user', $useridfield, $userid)) {
+					$st->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
+        }
+        
         
         $ret=array();
+       
         
-        
-        
-        
-        
-        //todo
-        /***** final
-           require_once($CFG->dirroot.'/user/profile/lib.php');
-         if ($fields = get_records_select('user_info_field')) {
-        foreach ($fields as $field) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id, $usernew->id);
-            $formfield->edit_save_data($usernew);
+        foreach($values as $value) {
+	        if (!isset($value->name) && !isset($value->value)) 
+		        continue;
+	        if (!$field = get_record('user_info_field', 'shortname', $value->name)) 
+		        return  $this->error(get_string('ws_profileunknown','wspp','shortname='.$value->name));
+	        $fvalue=$value->value;
+	        
+	        switch ($field->datatype) {
+	        	
+	        	case 'menu': 
+	        	    //convert the passed string to an indice in array of possible values
+	        		$fvalue=array_search($fvalue,explode("\n", $field->param1));        		
+	        		if ( FALSE===$fvalue)
+	        			return $this->error(get_string('ws_profileinvalidvaluemenu','wspp',$value->value)); 				   	
+	        		break;
+	        	case 'checkbox':
+	        		if ((int)$fvalue != 0 && (int)$fvalue != 1)
+	        			return $this->error(get_string('ws_profileinvalidvaluecheckbox','wspp'));
+	        		break;
+	        	case 'text':
+	        		$fvalue = substr($fvalue, 0, $field->param2);
+	        		break;		
+	        }
+	        
+	        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+	        $newfield = 'profile_field_'.$field->datatype;
+	        $formfield = new $newfield($field->id, $user->id);
+	        
+	        //probleme avec elements de type menu 
+	        // ne sauve rien (et vide $user->field)
+	        
+	        $user->{$formfield->inputname}=$fvalue;
+	        $this->debug_output(print_r($formfield,true));
+	       //$formfield->datakey=2;
+	        $formfield->edit_save_data($user);
+	        $ret[]=$value; 
         }
-        ********/
+        
+        
+        
+
         
         return $ret;
         
