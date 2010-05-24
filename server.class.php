@@ -3420,8 +3420,7 @@ EOSS;
 		        return  $this->error(get_string('ws_profileunknown','wspp','shortname='.$value->name));
 	        $fvalue=$value->value;
 	        
-	        switch ($field->datatype) {
-	        	
+	        switch ($field->datatype) {        	
 	        	case 'menu': 
 	        	    //convert the passed string to an indice in array of possible values
 	        		$fvalue=array_search($fvalue,explode("\n", $field->param1));        		
@@ -3440,21 +3439,14 @@ EOSS;
 	        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
 	        $newfield = 'profile_field_'.$field->datatype;
 	        $formfield = new $newfield($field->id, $user->id);
-	        
-	        //probleme avec elements de type menu 
-	        // ne sauve rien (et vide $user->field)
+	      
 	        
 	        $user->{$formfield->inputname}=$fvalue;
 	        $this->debug_output(print_r($formfield,true));
-	       //$formfield->datakey=2;
 	        $formfield->edit_save_data($user);
 	        $ret[]=$value; 
         }
-        
-        
-        
-
-        
+       
         return $ret;
         
     }
