@@ -138,6 +138,7 @@ function filter_forums($client, $forums) {
     * these function mask attributes or remove records depending of logged-in user rights
     */
     function filter_user($client, $user, $role) {
+    	global $CFG;
         /**   COMMENTED OUT TO ALOW UNDELETE ati OPERTAION
         if (isset($user->deleted) && $user->deleted)
             return false;
@@ -147,6 +148,19 @@ function filter_forums($client, $forums) {
         $user->password = ''; //no way, even in  md5, can be cracked by reverse dictionnary
         if (empty($user->role))
             $user->role= $role; // add a basic role info if available (see get_users_bycourse)
+        // rev 1.6.4 add custom profile fields to user record as and array of (name,value) tuples
+         require_once($CFG->dirroot.'/user/profile/lib.php');
+        $fields=profile_user_record($user->id);  
+        $ret=array();
+        foreach($fields as $name=>$value) {
+        	$tmp=new profileitemRecord();
+        	$tmp->setName($name);
+        	$tmp->setValue($value);
+        	$ret[]=$tmp;
+        }
+        $user-> profile=$ret; 
+            
+            
         return $user;
     }
 

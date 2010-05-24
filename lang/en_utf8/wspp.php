@@ -56,6 +56,7 @@ $string['ws_assignmentunknown']='devoir $a inconnu.';
 $string['ws_wikiunknown']='wiki $a inconnu.';
 $string['ws_wikipageunknown']='wiki $a inconnu.';
 $string['ws_labelunknown']='étiquette $a inconnue.';
+$string['ws_profileunknown']='champ de profil $a inconnu.';
 
 
 

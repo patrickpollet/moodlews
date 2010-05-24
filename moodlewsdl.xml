@@ -58,6 +58,7 @@
 					<xsd:element name="description" type="xsd:string"
 						nillable="true" />
 					<xsd:element name="role" type="xsd:integer" />
+					<xsd:element name="profile" type="tns:profileitemRecords" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -428,6 +429,26 @@
 					<xsd:restriction base="SOAP-ENC:Array">
 						<xsd:attribute ref="SOAP-ENC:arrayType"
 							wsdl:arrayType="tns:fileRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			
+			
+			
+			<xsd:complexType name="profileitemRecord">
+				<xsd:all>
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="value" type="xsd:string" />			
+				</xsd:all>
+			</xsd:complexType>
+			
+			
+			
+			<xsd:complexType name="profileitemRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:profileitemRecord[]" />
 					</xsd:restriction>
 				</xsd:complexContent>
 			</xsd:complexType>
@@ -1863,6 +1884,35 @@
 		<part name="return" type="tns:getAssignmentSubmissionsReturn" />
 	</message>
 	
+	
+	<!--  added rev 1.6.4 -->
+	<message name="set_users_profile_valuesRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="userids" type="tns:getUsersInput" />
+		<part name="useridfield" type="xsd:string" />		
+		<part name="values" type="tns:profileitemRecords" />
+	</message>
+	
+	<message name="set_user_profile_valuesRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="userid" type="xsd:string" />
+		<part name="useridfield" type="xsd:string" />		
+		<part name="values" type="tns:profileitemRecords" />
+	</message>
+	
+	<message name="set_users_profile_valuesResponse">
+		<part name="return" type="tns:profileitemRecords" />
+	</message>
+	
+	<message name="get_users_byprofileRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="profilefieldname" type="xsd:string" />		
+		<part name="profilefieldvalue" type="xsd:string" />			
+	</message>
+	
 
 
 	<!-- MESSAGES FROM LILLE -->
@@ -2708,6 +2758,29 @@
 			<input message="tns:get_assignment_submissionsRequest" />
 			<output message="tns:get_assignment_submissionsResponse" />
 		</operation>
+		
+		<!--  added rev 1.6.4  -->
+		<operation name="get_users_byprofile">
+			<documentation>MoodleWS: get users having some value in a profile field
+				</documentation>
+			<input message="tns:get_users_byprofileRequest" />
+			<output message="tns:get_usersResponse" />
+		</operation>
+		
+		<operation name="set_users_profile_values">
+			<documentation>MoodleWS: set users profile values
+				</documentation>
+			<input message="tns:set_users_profile_valuesRequest" />
+			<output message="tns:set_users_profile_valuesResponse" />
+		</operation>
+		
+		<operation name="set_user_profile_values">
+			<documentation>MoodleWS: set one user profile values
+				</documentation>
+			<input message="tns:set_user_profile_valuesRequest" />
+			<output message="tns:set_users_profile_valuesResponse" />
+		</operation>
+		
 		
 
 		<!-- OPERATION FROM LILLE -->
@@ -4337,6 +4410,45 @@
 			</output>
 		</operation>
 
+		<operation name="set_users_profile_values">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#set_users_profile_values"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="set_user_profile_values">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#set_user_profile_values"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		
+		<operation name="get_users_byprofile">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_users_byprofile"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
 
 	</binding>
 	<service name="MoodleWS">

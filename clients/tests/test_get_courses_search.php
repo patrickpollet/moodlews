@@ -11,7 +11,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_courses_search($lr->getClient(),$lr->getSessionKey(),'pascal 2a pp');
+$res=$moodle->get_courses_search($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
 print($res->getCourses());
 

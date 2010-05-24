@@ -3390,5 +3390,65 @@ EOSS;
         }
         return $ret;
     }
+    
+    
+     // rev 1.6.4
+    function set_profile_values ($client,$sesskey,$userids,$useridfield,$values) {
+    	 if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'wspp'));
+        }
+        if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
+            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        }
+        
+        
+        $ret=array();
+        
+        
+        
+        
+        
+        //todo
+        /***** final
+           require_once($CFG->dirroot.'/user/profile/lib.php');
+         if ($fields = get_records_select('user_info_field')) {
+        foreach ($fields as $field) {
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $formfield = new $newfield($field->id, $usernew->id);
+            $formfield->edit_save_data($usernew);
+        }
+        ********/
+        
+        return $ret;
+        
+    }
+	
+	
+	
+    function get_users_byprofile($client,$sesskey,$profilefieldname,$profilefieldvalue) {
+	    global $CFG;
+	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+	    }
+	    if (!$this->has_capability('moodle/site:viewparticipants',CONTEXT_SYSTEM, 0)) {
+		    return $this->error(get_string('ws_operationnotallowed','wspp'));
+	    }
+	    //make sure required custom field exists
+	    if (!($field = get_record("user_info_field", "shortname", $profilefieldname))) {
+		    return $this->error(get_string('ws_profileunknown','wspp','shortname='.$profilefieldname));
+	    }
+	    
+	    $profilefieldvalue=addslashes($profilefieldvalue);
+	    
+	    $where = "where fieldid={$field->id} and data='$profilefieldvalue'" ;
+	    $where="id in (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
+	    // return $this->error($where);
+	    
+    	 $ret=get_records_select('user',$where);	    
+	    //also add custom profile values
+	    return filter_users($client, $ret, 0);     
+    }
+    
 }
 ?>

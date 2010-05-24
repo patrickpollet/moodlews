@@ -130,6 +130,10 @@ class userRecord {
 	* @var  integer
 	*/
 	public $role;
+	/** 
+	* @var  (profileitemRecords) array of profileitemRecord
+	*/
+	public $profile;
 	 public function userRecord() {
 		 $this->error='';
 		 $this->id=0;
@@ -162,6 +166,7 @@ class userRecord {
 		 $this->theme='';
 		 $this->description='';
 		 $this->role=0;
+		 $this->profile=array();
 	}
 	/* get accessors */
 	public function getError(){
@@ -288,6 +293,10 @@ class userRecord {
 		 return $this->role;
 	}
 
+	public function getProfile(){
+		 return $this->profile;
+	}
+
 	/*set accessors */
 	public function setError($error){
 		$this->error=$error;
@@ -411,6 +420,10 @@ class userRecord {
 
 	public function setRole($role){
 		$this->role=$role;
+	}
+
+	public function setProfile($profile){
+		$this->profile=$profile;
 	}
 
 }

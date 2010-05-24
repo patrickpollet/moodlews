@@ -71,6 +71,10 @@ require_once 'activityRecord.php';
  */
 require_once 'fileRecord.php';
 /**
+ * profileitemRecord class
+ */
+require_once 'profileitemRecord.php';
+/**
  * assignmentSubmissionRecord class
  */
 require_once 'assignmentSubmissionRecord.php';

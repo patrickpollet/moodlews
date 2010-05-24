@@ -71,6 +71,10 @@ require_once 'activityRecord.php';
  */
 require_once 'fileRecord.php';
 /**
+ * profileitemRecord class
+ */
+require_once 'profileitemRecord.php';
+/**
  * assignmentSubmissionRecord class
  */
 require_once 'assignmentSubmissionRecord.php';
@@ -342,7 +346,7 @@ class MoodleWS {
 
   private $uri = 'http://localhost/moodle.195/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://cipcnet.insa-lyon.fr/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -2892,6 +2896,83 @@ class MoodleWS {
            )
       );
   return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: set users profile values 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param (getUsersInput) array of string $userids
+   * @param string $useridfield
+   * @param (profileitemRecords) array of profileitemRecord $values
+   * @return profileitemRecords
+   */
+  public function set_users_profile_values($client, $sesskey, $userids, $useridfield, $values) {
+    $res= $this->client->__call('set_users_profile_values', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield'),
+            new SoapParam($values, 'values')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
+  }
+
+  /**
+   * MoodleWS: set one user profile values 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $userid
+   * @param string $useridfield
+   * @param (profileitemRecords) array of profileitemRecord $values
+   * @return profileitemRecords
+   */
+  public function set_user_profile_values($client, $sesskey, $userid, $useridfield, $values) {
+    $res= $this->client->__call('set_user_profile_values', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($useridfield, 'useridfield'),
+            new SoapParam($values, 'values')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+   return $res;
+  }
+
+  /**
+   * MoodleWS: get users having some value in a profile 
+   * field 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $profilefieldname
+   * @param string $profilefieldvalue
+   * @return getUsersReturn
+   */
+  public function get_users_byprofile($client, $sesskey, $profilefieldname, $profilefieldvalue) {
+    $res= $this->client->__call('get_users_byprofile', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($profilefieldname, 'profilefieldname'),
+            new SoapParam($profilefieldvalue, 'profilefieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getUsersReturn',$res);
   }
 
 }

@@ -130,8 +130,12 @@ class userRecord {
 	* @var  integer
 	*/
 	public $role;
+	/** 
+	* @var  (profileitemRecords) array of profileitemRecord
+	*/
+	public $profile;
 	/* full constructor */
-	 public function userRecord($error='',$id=0,$auth='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$emailstop=0,$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$mnethostid=0,$lastip='',$theme='',$description='',$role=0){
+	 public function userRecord($error='',$id=0,$auth='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$emailstop=0,$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$mnethostid=0,$lastip='',$theme='',$description='',$role=0,$profile=array()){
 		 $this->error=$error   ;
 		 $this->id=$id   ;
 		 $this->auth=$auth   ;
@@ -163,6 +167,7 @@ class userRecord {
 		 $this->theme=$theme   ;
 		 $this->description=$description   ;
 		 $this->role=$role   ;
+		 $this->profile=$profile   ;
 	}
 	/* get accessors */
 	public function getError(){
@@ -289,6 +294,10 @@ class userRecord {
 		 return $this->role;
 	}
 
+	public function getProfile(){
+		 return $this->profile;
+	}
+
 	/*set accessors */
 	public function setError($error){
 		$this->error=$error;
@@ -412,6 +421,10 @@ class userRecord {
 
 	public function setRole($role){
 		$this->role=$role;
+	}
+
+	public function setProfile($profile){
+		$this->profile=$profile;
 	}
 
 }

@@ -960,6 +960,26 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap_array(parent::edit_categories($client,$sesskey,$tmp),
         'categories', 'categoryRecord', get_string('nothingtodo','wspp')));
     }
+    
+    // rev 1.6.4
+    //an array of usersids
+    function set_users_profile_values ($client,$sesskey,$userids,$useridfield,$values) {
+    	return $this->send($this->to_soap_array(parent :: set_users_profile_values($client, $sesskey,$userids,$useridfield,$values),
+         'profiles', 'profileitemRecord',get_string('nothingtodo','wspp')));
+    }
+    
+    //one user
+	function set_user_profile_values ($client,$sesskey,$userid,$useridfield,$values) {
+    	return $this->send($this->to_soap_array(parent :: set_users_profile_values($client, $sesskey,array($userid),$useridfield,$values),
+         'profiles', 'profileitemRecord',get_string('nothingtodo','wspp')));
+    }
+	
+	
+    function get_users_byprofile($client,$sesskey,$profilefieldname,$profilefieldvalue) {
+    	return $this->send($this->to_soap_array(parent :: get_users_byprofile($client, $sesskey,$profilefieldname,$profilefieldvalue),
+         'users', 'userRecord',get_string('nousers','wspp')));
+    }
+  
 
 
 	/*
