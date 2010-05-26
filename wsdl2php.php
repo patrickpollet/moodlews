@@ -81,8 +81,12 @@ if( $_SERVER['argc'] != 2 && $_SERVER['argc'] != 3  ) {
 */
 
 $wsdl = $_SERVER['argv'][1];
-$server= $_SERVER['argv'][2]=="server";
-$useNuSOAP=$_SERVER['argv'][2]=="nusoap";
+if (isset($_SERVER['argv'][2])) {
+	$server= $_SERVER['argv'][2]=="server";
+	$useNuSOAP=$_SERVER['argv'][2]=="nusoap";
+}else {
+    $server=$useNuSOAP=false;
+}
 
 try {
   $client = new SoapClient($wsdl);
