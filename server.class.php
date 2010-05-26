@@ -135,6 +135,11 @@ class server {
 	 */
 	function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
+		
+		 // rev 1.6.3 added extra securityu checks 
+		 $client  = clean_param($client, PARAM_INT);
+         $sesskey = clean_param($sesskey, PARAM_ALPHANUM);
+		
 		/// We can't validate a session that hasn't even been initialized yet.
 		if (!$sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			return false;
@@ -250,6 +255,10 @@ class server {
             return $this->error(get_string('ws_accessrestricted', 'wspp',$userip));
 
          }
+         
+         // rev 1.6.3 added extra security checks
+         $username = clean_param($username, PARAM_NOTAGS);
+         $password = clean_param($password, PARAM_NOTAGS);
 
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....

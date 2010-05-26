@@ -22,7 +22,7 @@
  require_once('../config.php');
 
 
- header('Content-Type: application/xml; charset=UTF-8');
+ header('Content-Type: text/xml; charset=UTF-8');
 
  header('Content-Disposition: attachment; filename="moodlews.wsdl"');
 
@@ -37,4 +37,5 @@ $wsdl=str_replace('CFGWWWROOT',$CFG->wwwroot,$wsdl);
 header ('Content-Length:'.strlen($wsdl));
 
 echo $wsdl;
+die();
 ?>
