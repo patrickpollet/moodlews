@@ -292,7 +292,8 @@ foreach($types as $type) {
 // add types
 foreach($service['types'] as $type) {
   $code = "/**\n";
-  $code .= " * ".$type['doc']."\n";
+  if (isset($type['doc']))
+  	$code .= " * ".$type['doc']."\n";
   $code .= " * \n";
   $code .= " * @package\t".PACKAGE."\n";
   $code .= " * @copyright\t".COPYRIGHT."\n";
@@ -498,7 +499,7 @@ function parse_doc($prefix, $doc) {
 
 function gen_def_constructor ($type) {
 
-  $code .="\t public function ${type['class']}() {\n";
+  $code ="\t public function ${type['class']}() {\n";
 
   foreach($type['members'] as $member) {
     $code.="\t\t \$this->${member['member']}=".get_default_value($member['type']).";\n";
