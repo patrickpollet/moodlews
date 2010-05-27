@@ -3451,7 +3451,7 @@ EOSS;
 	      
 	        
 	        $user->{$formfield->inputname}=$fvalue;
-	        $this->debug_output(print_r($formfield,true));
+	        //$this->debug_output(print_r($formfield,true));
 	        $formfield->edit_save_data($user);
 	        $ret[]=$value; 
         }

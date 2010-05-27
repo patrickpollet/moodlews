@@ -28,9 +28,15 @@
     $temp->add(new admin_setting_configcheckbox('ws_debug',
                    get_string('ws_debug', 'wspp'),
                    get_string('config_ws_debug', 'wspp'), 0));
-     $temp->add(new admin_setting_configtext('ws_sessiontimeout',
+    $temp->add(new admin_setting_configtext('ws_sessiontimeout',
                  get_string('ws_sessiontimeout','wspp'),
                  get_string('config_ws_sessiontimeout', 'wspp'),1800,PARAM_INT));
+    $temp->add(new admin_setting_configcheckbox('ws_uselocalwsdl',
+                   get_string('ws_uselocalwsdl', 'wspp'),
+                   get_string('config_ws_uselocalwsdl', 'wspp'), 0));
+                 
+                 
+                 
     $ADMIN->add('misc', $temp);
 
 

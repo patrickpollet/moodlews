@@ -174,5 +174,10 @@ $string['ws_errorupdatingmodule']='erreur en affectant le module $a->id au cours
 $string['ws_profileinvalidvaluemenu']='la valeur $a n\'est pas dans les options permises';
 $string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
 
+$string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
+$string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
+
+ 
+
 		
 ?>

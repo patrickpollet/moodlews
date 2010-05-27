@@ -9,8 +9,9 @@ class setUserProfileValuesReturn {
 	* @var  (profileitemRecords) array of profileitemRecord
 	*/
 	public $profiles;
-	 public function setUserProfileValuesReturn() {
-		 $this->profiles=array();
+	/* full constructor */
+	 public function setUserProfileValuesReturn($profiles=array()){
+		 $this->profiles=$profiles   ;
 	}
 	/* get accessors */
 	public function getProfiles(){

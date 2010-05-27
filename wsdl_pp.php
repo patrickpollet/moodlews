@@ -19,8 +19,11 @@
  */
 
 
+ob_start(); //important rev 1.6.4
+
  require_once('../config.php');
 
+while (@ob_end_clean());  //important rev 1.6.4 
 
  header('Content-Type: text/xml; charset=UTF-8');
 

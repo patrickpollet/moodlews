@@ -15,9 +15,28 @@ require_once('../config.php');
 // SOAP service class
 require('mdl_soapserver.class.php');
 
+//$CFG->ws_uselocalwsdl=1;
+
 // use Internet to fetch operations & types
 // so as to be in sync with clients
-$wsdl=$CFG->wwwroot."/wspp/wsdl_pp.php";
+if (empty($CFG->ws_uselocalwsdl)) { 
+    $wsdl=$CFG->wwwroot."/wspp/wsdl_pp.php";
+} else {
+    //some versions of PHP 5 have a problem reading 'big wsdls over the Internet'
+    // but not from a 'locally copied' wsdl file 
+    // see http://bugs.php.net/bug.php?id=48216
+    // so we create the appropriate wsdl file in moodle's data dir and use it ' 	
+    $wsdl=$CFG->dataroot.'/wspp/moodlews.wsdl';
+    if (!file_exists($wsdl)) {
+        make_upload_directory('wspp');
+        $data=file_get_contents("$CFG->wwwroot/wspp/moodlewsdl.xml");
+        $data=str_replace('CFGWWWROOT',$CFG->wwwroot,$data);
+        if ($fd = @fopen($wsdl, 'wb')) {
+            fwrite($fd, $data);
+            fclose($fd);
+        }	
+    }
+}
 
 $server=new SoapServer($wsdl);
 
@@ -29,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	$server->handle();
 /*************/
 else { 
-echo "Ce serveur SOAP peut gérer les fonctions suivantes : ";
+echo "Ce serveur SOAP peut gï¿½rer les fonctions suivantes : ";
   $functions = $server->getFunctions();
   foreach($functions as $func) {
     echo $func . "\n";

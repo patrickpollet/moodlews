@@ -60,6 +60,8 @@
 */
 
 
+//error_reporting(E_ALL ^ E_NOTICE);
+
 define ('PACKAGE','MoodleWS');
 define ('AUTHOR','Patrick Pollet :<patrick.pollet@insa-lyon.fr>');
 define ('COPYRIGHT','(c) P.Pollet 2007 under GPL');
@@ -87,6 +89,8 @@ if (isset($_SERVER['argv'][2])) {
 }else {
     $server=$useNuSOAP=false;
 }
+
+
 
 try {
   $client = new SoapClient($wsdl);
