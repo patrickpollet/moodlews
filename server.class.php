@@ -3426,10 +3426,9 @@ EOSS;
         }
         
         if (!$user = get_record('user', $useridfield, $userid)) {
-					$st->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
+			return $this->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
         }
-        
-        
+             
         $ret=array();
        
         
