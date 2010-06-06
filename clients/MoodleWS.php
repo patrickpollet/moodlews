@@ -335,6 +335,10 @@ require_once 'getAllAssignmentsReturn.php';
  */
 require_once 'getAllDatabasesReturn.php';
 /**
+ * getAllQuizzesReturn class
+ */
+require_once 'getAllQuizzesReturn.php';
+/**
  * getAllGroupingsReturn class
  */
 require_once 'getAllGroupingsReturn.php';
@@ -354,7 +358,7 @@ class MoodleWS {
 
   private $uri = 'http://localhost/moodle.195/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array("trace"=>1)) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -2789,6 +2793,30 @@ class MoodleWS {
   }
 
   /**
+   * MoodleWS: Get All quizzes 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getAllQuizzesReturn
+   */
+  public function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_quizzes', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getAllQuizzesReturn',$res);
+  }
+
+  /**
    * MoodleWS: Get All groupings 
    *
    * @param integer $client
@@ -2958,7 +2986,7 @@ class MoodleWS {
   }
 
   /**
-   * MoodleWS: export all data aut a quiz 
+   * MoodleWS: export all data of a quiz 
    *
    * @param integer $client
    * @param string $sesskey

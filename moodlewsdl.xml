@@ -706,6 +706,15 @@
 				</xsd:all>
 			</xsd:complexType>
 			
+			<xsd:complexType name="quizRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:quizRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			
 
 			<!--
 				record expected in entry for edit operations note that these are no
@@ -1443,6 +1452,14 @@
 			<!-- /get_all_databases -->
 
 			<!-- /TYPES FROM LILLE -->
+			
+			<!-- get_all_quizzes -->
+			<xsd:complexType name="getAllQuizzesReturn">
+				<xsd:all>
+					<xsd:element name="quizzes" type="tns:quizRecords" />
+				</xsd:all>
+			</xsd:complexType>
+			<!-- /get_all_quizzes -->
 
 			<!-- get_all_groupings -->
 			<xsd:complexType name="getAllGroupingsReturn">
@@ -1938,7 +1955,7 @@
 		<part name="profilefieldvalue" type="xsd:string" />			
 	</message>
 	
-	<!-- rev 16.5 added upon request of tstc.edu  -->
+	<!-- rev 1.6.5 added upon request of tstc.edu  -->
 	<message name="get_quizRequest">
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
@@ -2276,6 +2293,13 @@
 
 
 	<!-- /MESSAGES FROM LILLE -->
+	
+	<!-- get_all_quizzes -->
+	<message name="get_all_quizzesResponse">
+		<part name="return" type="tns:getAllQuizzesReturn" />
+	</message>
+	<!-- /get_all_quizzes -->
+	
 
 	<!-- get_all_groupings -->
 	<message name="get_all_groupingsResponse">
@@ -3013,6 +3037,12 @@
 
 
 		<!-- /OPERATION FROM LILLE -->
+		
+		<operation name="get_all_quizzes">
+			<documentation>MoodleWS: Get All quizzes</documentation>
+			<input message="tns:get_genericRequest" />
+			<output message="tns:get_all_quizzesResponse" />
+		</operation>
 
 
 		<operation name="remove_user_from_group">
@@ -4365,6 +4395,19 @@
 
 		<operation name="get_all_databases">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_all_databases"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="get_all_quizzes">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_all_quizzes"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

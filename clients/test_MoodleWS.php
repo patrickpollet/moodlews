@@ -1832,6 +1832,21 @@ print($res->getDatabases());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: Get All quizzes
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getAllQuizzesReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_quizzes($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getQuizzes());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 /**test code for MoodleWS: Get All groupings
 * @param integer $client
 * @param string $sesskey
@@ -1943,7 +1958,7 @@ print($res->getUsers());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
-/**test code for MoodleWS: export all data aut a quiz
+/**test code for MoodleWS: export all data of a quiz
 * @param integer $client
 * @param string $sesskey
 * @param integer $quizid

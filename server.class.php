@@ -3380,6 +3380,17 @@ EOSS;
 		}
 		return $ret;
 	}
+	
+	function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
+		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+			return $this->error(get_string('ws_invalidclient', 'wspp'));
+		}
+		$ret = array ();
+		if ($quizzes = get_records("quiz", $fieldname, $fieldvalue, "name")) {
+			$ret = filter_resources($client, $quizzes);
+		}
+		return $ret;
+	}
 
 	/*
 	*****************************************************************************************************************************
@@ -3496,7 +3507,7 @@ EOSS;
 	    }
 	    
 	    //get the quiz record
-		if (!$quiz = get_record("quiz", "id", $quiz)) {
+		if (!$quiz = get_record("quiz", "id", $quizid)) {
 			return $this->error(get_string('ws_quizunknown','wspp','id='.$quizid));
 		}
 		/// Check for correct permissions.
@@ -3504,7 +3515,13 @@ EOSS;
 			return $this->error(get_string('ws_operationnotallowed','wspp'));
 		}
 		
-		return filter_quiz($quiz);
+		require_once("libquiz.php");
+		
+		if (! ws_libquiz_is_supported_format ($format))
+		return $this->error(get_string('ws_quizexportunknownformat','wspp','format='.$format));
+		
+		$quiz->data=ws_libquiz_export($quiz,$format);
+		return filter_quiz($client,$quiz);
 	    
    }
     

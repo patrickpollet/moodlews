@@ -109,6 +109,7 @@ $string['nowikis']='pas d\'activités wiki';
 $string['noassignments']='pas d\'activités devoirs';
 $string['nowikipages']='pas de pages wiki';
 $string['nolabels']='pas d\'étiquettes';
+$string['noquizzes']='pas de quizs';
 
 
 $string['ws_groupalreadyaffected']='le groupe $a->group appartient déja au cours $a->course.';

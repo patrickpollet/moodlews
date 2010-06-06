@@ -335,6 +335,10 @@ require_once 'getAllAssignmentsReturn.php';
  */
 require_once 'getAllDatabasesReturn.php';
 /**
+ * getAllQuizzesReturn class
+ */
+require_once 'getAllQuizzesReturn.php';
+/**
  * getAllGroupingsReturn class
  */
 require_once 'getAllGroupingsReturn.php';

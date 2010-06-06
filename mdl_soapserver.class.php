@@ -980,7 +980,8 @@ class mdl_soapserver extends server {
    * rev 1.6.5 added upon request on tstc.edu
    */
    function get_quiz ($client,$sesskey,$quizid,$format='xml') {
-   	$this->debug_output('mdl');
+   	
+       if (empty($format)) $format='xml';
   		return $this->send($this->to_soap(parent :: get_quiz($client, $sesskey,$quizid,$format),'quizRecord'));
          //return one single record 
    }
@@ -1147,6 +1148,12 @@ class mdl_soapserver extends server {
 	*                                                                                                                           *
 	*****************************************************************************************************************************
 	*/
+	
+	function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
+		return $this->send($this->to_soap_array(parent :: get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue),
+          'quizzes', 'quizRecord', get_string('noquizzes','wspp')));
+	}
+	
 
 }
 ?>

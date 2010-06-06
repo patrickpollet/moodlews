@@ -108,7 +108,7 @@ $string['noassignments']='pas d\'activités devoirs';
 $string['nosubmissions']='pas de remises de ce devoir';
 $string['nowikipages']='pas de pages wiki';
 $string['nolabels']='pas d\'étiquettes';
-
+$string['noquizzes']='pas de quizs';
 
 $string['ws_groupalreadyaffected']='le groupe $a->group appartient déja au cours $a->course.';
 $string['ws_groupingalreadyaffected']='le groupement $a->group appartient déja au cours $a->course.';

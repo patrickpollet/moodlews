@@ -15,7 +15,7 @@ require_once('../config.php');
 // SOAP service class
 require('mdl_soapserver.class.php');
 
-$CFG->ws_uselocalwsdl=1;
+//$CFG->ws_uselocalwsdl=1;
 
 // use Internet to fetch operations & types
 // so as to be in sync with clients
