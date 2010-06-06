@@ -103,6 +103,10 @@ require_once 'wikiRecord.php';
  */
 require_once 'pageWikiRecord.php';
 /**
+ * quizRecord class
+ */
+require_once 'quizRecord.php';
+/**
  * userDatum class
  */
 require_once 'userDatum.php';

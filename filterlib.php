@@ -409,6 +409,11 @@ function filter_change($client, $change) {
                 return $event;
         }
     }
+    
+    
+    function filter_quiz($client,$quiz) {
+    	return $quiz;
+    }
 
 
 ?>

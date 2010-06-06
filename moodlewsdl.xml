@@ -688,7 +688,24 @@
 				</xsd:complexContent>
 			</xsd:complexType>
 
-
+			<xsd:complexType name="quizRecord">
+				<xsd:all>
+					<xsd:element name="error" type="xsd:string" />
+					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="intro" type="xsd:string" />
+					<xsd:element name="timeopen" type="xsd:integer" />
+					<xsd:element name="timeclose" type="xsd:integer" />
+					<xsd:element name="shufflequestions" type="xsd:integer" />
+					<xsd:element name="shuffleanswers" type="xsd:integer" />					
+					<xsd:element name="questions" type="xsd:string" />
+					<xsd:element name="timelimit" type="xsd:integer" />
+					<xsd:element name="data" type="xsd:string" />
+					
+				</xsd:all>
+			</xsd:complexType>
+			
 
 			<!--
 				record expected in entry for edit operations note that these are no
@@ -1532,6 +1549,7 @@
 	<message name="edit_usersResponse">
 		<part name="return" type="tns:editUsersOutput" />
 	</message>
+
 	<message name="get_usersRequest">
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
@@ -1920,7 +1938,17 @@
 		<part name="profilefieldvalue" type="xsd:string" />			
 	</message>
 	
-
+	<!-- rev 16.5 added upon request of tstc.edu  -->
+	<message name="get_quizRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="quizid" type="xsd:integer" />
+		<part name="quizformat" type="xsd:string" />
+	</message>
+	
+	<message name="get_quizResponse">
+		<part name="return" type="tns:quizRecord" />
+	</message>
 
 	<!-- MESSAGES FROM LILLE -->
 
@@ -2782,7 +2810,12 @@
 			<output message="tns:set_users_profile_valuesResponse" />
 		</operation>
 		
-		
+		<operation name="get_quiz">
+			<documentation>MoodleWS: export all data of a quiz
+				</documentation>
+			<input message="tns:get_quizRequest" />
+			<output message="tns:get_quizResponse" />
+		</operation>
 
 		<!-- OPERATION FROM LILLE -->
 
@@ -4428,6 +4461,19 @@
 		
 		<operation name="get_users_byprofile">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_users_byprofile"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="get_quiz">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_quiz"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

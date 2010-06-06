@@ -103,6 +103,10 @@ require_once 'wikiRecord.php';
  */
 require_once 'pageWikiRecord.php';
 /**
+ * quizRecord class
+ */
+require_once 'quizRecord.php';
+/**
  * userDatum class
  */
 require_once 'userDatum.php';
@@ -348,9 +352,9 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://prope.insa-lyon.fr/moodle.195/wspp/wsdl';
+  private $uri = 'http://localhost/moodle.195/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array("trace"=>1)) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -2951,6 +2955,30 @@ class MoodleWS {
            )
       );
   return $this->castTo ('getUsersReturn',$res);
+  }
+
+  /**
+   * MoodleWS: export all data aut a quiz 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $quizid
+   * @param string $quizformat
+   * @return quizRecord
+   */
+  public function get_quiz($client, $sesskey, $quizid, $quizformat) {
+    $res= $this->client->__call('get_quiz', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($quizid, 'quizid'),
+            new SoapParam($quizformat, 'quizformat')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('quizRecord',$res);
   }
 
 }

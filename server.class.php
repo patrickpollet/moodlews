@@ -3486,5 +3486,27 @@ EOSS;
 	    return filter_users($client, $ret, 0);     
     }
     
+    
+    /**
+   * rev 1.6.5 added upon request on tstc.edu
+   */
+   function get_quiz ($client,$sesskey,$quizid,$format='xml') {
+   	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+	    }
+	    
+	    //get the quiz record
+		if (!$quiz = get_record("quiz", "id", $quiz)) {
+			return $this->error(get_string('ws_quizunknown','wspp','id='.$quizid));
+		}
+		/// Check for correct permissions.
+		if (!$this->has_capability('mod/quiz:manage', CONTEXT_COURSE, $quiz->course)) {
+			return $this->error(get_string('ws_operationnotallowed','wspp'));
+		}
+		
+		return filter_quiz($quiz);
+	    
+   }
+    
 }
 ?>

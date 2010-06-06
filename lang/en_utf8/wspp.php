@@ -58,6 +58,8 @@ $string['ws_wikipageunknown']='wiki $a inconnu.';
 $string['ws_labelunknown']='étiquette $a inconnue.';
 $string['ws_profileunknown']='champ de profil $a inconnu.';
 
+$string['ws_quizunknown']='QCM $a inconnu.';
+
 
 
 

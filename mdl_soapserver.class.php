@@ -976,6 +976,14 @@ class mdl_soapserver extends server {
          'users', 'userRecord',get_string('nousers','wspp')));
     }
   
+  /**
+   * rev 1.6.5 added upon request on tstc.edu
+   */
+   function get_quiz ($client,$sesskey,$quizid,$format='xml') {
+   	$this->debug_output('mdl');
+  		return $this->send($this->to_soap(parent :: get_quiz($client, $sesskey,$quizid,$format),'quizRecord'));
+         //return one single record 
+   }
 
 
 	/*

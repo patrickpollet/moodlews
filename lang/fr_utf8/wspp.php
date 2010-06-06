@@ -59,6 +59,7 @@ $string['ws_labelunknown']='étiquette $a inconnue.';
 $string['ws_profileunknown']='champ de profil $a inconnu.';
 
 $string['ws_assignmenttypeunknown']='type de devoir $a inconnu.';
+$string['ws_quizunknown']='QCM $a inconnu.';
 
 
 $string['ws_noseegrades']='pas autorisé à voir les notes de $a';
@@ -178,6 +179,5 @@ $string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
 $string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
 
  
-
 		
 ?>
