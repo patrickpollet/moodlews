@@ -179,5 +179,5 @@ $string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
 $string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
 
  
-		
+$string['ws_quizexportunknownformat']='format d\'exportation $a inconnu';	
 ?>
