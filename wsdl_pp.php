@@ -29,7 +29,7 @@ while (@ob_end_clean());  //important rev 1.6.4
 
  header('Content-Disposition: attachment; filename="moodlews.wsdl"');
 
-$wsdl=file_get_contents("$CFG->wwwroot/wspp/moodlewsdl.xml");
+$wsdl=file_get_contents("$CFG->dirroot/wspp/moodlewsdl.xml");
 
 $wsdl=str_replace('CFGWWWROOT',$CFG->wwwroot,$wsdl);
 

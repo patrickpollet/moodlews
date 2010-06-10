@@ -29,7 +29,7 @@ if (empty($CFG->ws_uselocalwsdl)) {
     $wsdl=$CFG->dataroot.'/wspp/moodlews.wsdl';
     if (!file_exists($wsdl)) {
         make_upload_directory('wspp');
-        $data=file_get_contents("$CFG->wwwroot/wspp/moodlewsdl.xml");
+        $data=file_get_contents("$CFG->dirroot/wspp/moodlewsdl.xml");
         $data=str_replace('CFGWWWROOT',$CFG->wwwroot,$data);
         if ($fd = @fopen($wsdl, 'wb')) {
             fwrite($fd, $data);
