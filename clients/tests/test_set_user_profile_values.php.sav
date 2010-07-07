@@ -13,7 +13,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$values=array(new profileitemRecord('groupePC','99'),
+$values=array(new profileitemRecord('groupePC',''),
 //              new profileitemRecord('typeUser' ,'enseignant'),
 //              new profileitemRecord('prof' ,'1')
 
