@@ -1,7 +1,7 @@
 <?php
-require_once ('../MoodleWS.php');
+require_once ('../MoodleWS_NS.php');
 
-$moodle=new MoodleWS();
+$moodle=new MoodleWS_NS();
 require_once ('../auth.php');
 /**test code for MoodleWS: export all data of a quiz
 * @param integer $client
@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_quiz($lr->getClient(),$lr->getSessionKey(),10,'');
+$res=$moodle->get_quiz($lr->getClient(),$lr->getSessionKey(),0,'');
 print_r($res);
 print($res->getError());
 print($res->getId());

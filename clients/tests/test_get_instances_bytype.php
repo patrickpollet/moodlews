@@ -1,7 +1,7 @@
 <?php
-require_once ('../MoodleWS.php');
+require_once ('../MoodleWS_NS.php');
 
-$moodle=new MoodleWS();
+$moodle=new MoodleWS_NS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get resources in courses
 * @param integer $client
@@ -14,7 +14,7 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
-$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'id','quiz');
+$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','');
 print_r($res);
 print($res->getResources());
 
