@@ -135,11 +135,11 @@ class server {
 	 */
 	function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
-		
-		 // rev 1.6.3 added extra securityu checks 
+
+		 // rev 1.6.3 added extra securityu checks
 		 $client  = clean_param($client, PARAM_INT);
          $sesskey = clean_param($sesskey, PARAM_ALPHANUM);
-		
+
 		/// We can't validate a session that hasn't even been initialized yet.
 		if (!$sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			return false;
@@ -255,7 +255,7 @@ class server {
             return $this->error(get_string('ws_accessrestricted', 'wspp',$userip));
 
          }
-         
+
          // rev 1.6.3 added extra security checks
          $username = clean_param($username, PARAM_NOTAGS);
          $password = clean_param($password, PARAM_NOTAGS);
@@ -1698,6 +1698,9 @@ EOSS;
 							$ruser->error=$errmsg;
 							break;
 						}
+                        $user->timecreated = time();
+                        $user->timemodified = $user->timecreated;
+
 						if ($userid=insert_record('user',$user)) {
 							$ruser = get_record('user','id',$userid);
                              events_trigger('user_created', $ruser);
@@ -3380,7 +3383,7 @@ EOSS;
 		}
 		return $ret;
 	}
-	
+
 	function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return $this->error(get_string('ws_invalidclient', 'wspp'));
@@ -3410,41 +3413,41 @@ EOSS;
         }
         return $ret;
     }
-    
-    
+
+
      // rev 1.6.4
     function set_user_profile_values ($client,$sesskey,$userid,$useridfield,$values) {
-    	
+
     	global $CFG;
     	require_once($CFG->dirroot.'/user/profile/lib.php');
-    	
+
     	 if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'wspp'));
         }
         if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
             return $this->error(get_string('ws_operationnotallowed','wspp'));
         }
-        
+
         if (!$user = get_record('user', $useridfield, $userid)) {
 			return $this->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
         }
-             
+
         $ret=array();
-       
-        
+
+
         foreach($values as $value) {
-	        if (!isset($value->name) && !isset($value->value)) 
+	        if (!isset($value->name) && !isset($value->value))
 		        continue;
-	        if (!$field = get_record('user_info_field', 'shortname', $value->name)) 
+	        if (!$field = get_record('user_info_field', 'shortname', $value->name))
 		        return  $this->error(get_string('ws_profileunknown','wspp','shortname='.$value->name));
 	        $fvalue=$value->value;
-	        
-	        switch ($field->datatype) {        	
-	        	case 'menu': 
+
+	        switch ($field->datatype) {
+	        	case 'menu':
 	        	    //convert the passed string to an indice in array of possible values
-	        		$fvalue=array_search($fvalue,explode("\n", $field->param1));        		
+	        		$fvalue=array_search($fvalue,explode("\n", $field->param1));
 	        		if ( FALSE===$fvalue)
-	        			return $this->error(get_string('ws_profileinvalidvaluemenu','wspp',$value->value)); 				   	
+	        			return $this->error(get_string('ws_profileinvalidvaluemenu','wspp',$value->value));
 	        		break;
 	        	case 'checkbox':
 	        		if ((int)$fvalue != 0 && (int)$fvalue != 1)
@@ -3452,26 +3455,26 @@ EOSS;
 	        		break;
 	        	case 'text':
 	        		$fvalue = substr($fvalue, 0, $field->param2);
-	        		break;		
+	        		break;
 	        }
-	        
+
 	        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
 	        $newfield = 'profile_field_'.$field->datatype;
 	        $formfield = new $newfield($field->id, $user->id);
-	      
-	        
+
+
 	        $user->{$formfield->inputname}=$fvalue;
 	        //$this->debug_output(print_r($formfield,true));
 	        $formfield->edit_save_data($user);
-	        $ret[]=$value; 
+	        $ret[]=$value;
         }
-       
+
         return $ret;
-        
+
     }
-	
-	
-	
+
+
+
     function get_users_byprofile($client,$sesskey,$profilefieldname,$profilefieldvalue) {
 	    global $CFG;
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
@@ -3484,19 +3487,19 @@ EOSS;
 	    if (!($field = get_record("user_info_field", "shortname", $profilefieldname))) {
 		    return $this->error(get_string('ws_profileunknown','wspp','shortname='.$profilefieldname));
 	    }
-	    
+
 	    $profilefieldvalue=addslashes($profilefieldvalue);
-	    
+
 	    $where = "where fieldid={$field->id} and data='$profilefieldvalue'" ;
 	    $where="id in (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
 	    // return $this->error($where);
-	    
-    	 $ret=get_records_select('user',$where);	    
+
+    	 $ret=get_records_select('user',$where);
 	    //also add custom profile values
-	    return filter_users($client, $ret, 0);     
+	    return filter_users($client, $ret, 0);
     }
-    
-    
+
+
     /**
    * rev 1.6.5 added upon request on tstc.edu
    */
@@ -3504,7 +3507,7 @@ EOSS;
    	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 		    return $this->error(get_string('ws_invalidclient', 'wspp'));
 	    }
-	    
+
 	    //get the quiz record
 		if (!$quiz = get_record("quiz", "id", $quizid)) {
 			return $this->error(get_string('ws_quizunknown','wspp','id='.$quizid));
@@ -3513,16 +3516,16 @@ EOSS;
 		if (!$this->has_capability('mod/quiz:manage', CONTEXT_COURSE, $quiz->course)) {
 			return $this->error(get_string('ws_operationnotallowed','wspp'));
 		}
-		
+
 		require_once("libquiz.php");
-		
+
 		if (! ws_libquiz_is_supported_format ($format))
 		return $this->error(get_string('ws_quizexportunknownformat','wspp','format='.$format));
-		
+
 		$quiz->data=ws_libquiz_export($quiz,$format);
 		return filter_quiz($client,$quiz);
-	    
+
    }
-    
+
 }
 ?>
