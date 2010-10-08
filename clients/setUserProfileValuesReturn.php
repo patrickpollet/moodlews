@@ -6,7 +6,7 @@
  */
 class setUserProfileValuesReturn {
 	/** 
-	* @var  (profileitemRecords) array of profileitemRecord
+	* @var profileitemRecord[]
 	*/
 	public $profiles;
 	/* full constructor */

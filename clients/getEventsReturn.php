@@ -6,7 +6,7 @@
  */
 class getEventsReturn {
 	/** 
-	* @var  (eventRecords) array of eventRecord
+	* @var eventRecord[]
 	*/
 	public $events;
 	/* full constructor */

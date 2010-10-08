@@ -6,7 +6,7 @@
  */
 class getRolesReturn {
 	/** 
-	* @var  (roleRecords) array of roleRecord
+	* @var roleRecord[]
 	*/
 	public $roles;
 	/* full constructor */

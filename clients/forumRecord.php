@@ -6,79 +6,79 @@
  */
 class forumRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $type;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $intro;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $assessed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $assesstimestart;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $assesstimefinish;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $scale;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $maxbytes;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $forcesubscribe;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $trackingtype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $rsstype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $rssarticles;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $warnafter;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $blockafter;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $blockperiod;
 	/* full constructor */

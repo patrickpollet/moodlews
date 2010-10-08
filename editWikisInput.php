@@ -6,7 +6,7 @@
  */
 class editWikisInput {
 	/** 
-	* @var  (wikiData) array of wikiDatum
+	* @var wikiDatum[]
 	*/
 	public $wikis;
 	 public function editWikisInput() {

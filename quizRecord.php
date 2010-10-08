@@ -6,51 +6,51 @@
  */
 class quizRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $intro;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeopen;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeclose;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $shufflequestions;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $shuffleanswers;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $questions;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timelimit;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $data;
 	 public function quizRecord() {

@@ -6,31 +6,31 @@
  */
 class sectionDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $section;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $summary;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $sequence;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/* full constructor */

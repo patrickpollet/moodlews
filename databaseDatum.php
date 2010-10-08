@@ -6,127 +6,127 @@
  */
 class databaseDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $intro;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $comments;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeavailablefrom;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeavailableto;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeviewfrom;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeviewto;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $requiredentries;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $requiredentriestoview;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $maxentries;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $ressarticles;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $singletemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $listtemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $listtemplateheader;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $listtemplatefooter;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $addtemplatee;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $rsstemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $rsstitletemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $csstemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $jstemplate;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $asearchtemplate;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $approval;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $scale;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $assessed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $defaultsort;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $defaultsortdir;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $editany;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $notification;
 	 public function databaseDatum() {

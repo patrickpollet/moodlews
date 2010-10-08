@@ -6,35 +6,35 @@
  */
 class groupDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $courseid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $enrolmentkey;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $picture;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $hidepicture;
 	 public function groupDatum() {

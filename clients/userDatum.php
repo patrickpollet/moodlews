@@ -6,131 +6,131 @@
  */
 class userDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $confirmed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $policyagreed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $deleted;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $username;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $auth;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $password;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $passwordmd5;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $idnumber;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $firstname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lastname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $email;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $emailstop;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $icq;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $skype;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $yahoo;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $aim;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $msn;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $phone1;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $phone2;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $institution;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $department;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $address;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $city;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $country;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lang;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timezone;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lastip;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $theme;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $mnethostid;
 	/* full constructor */

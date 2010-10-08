@@ -6,43 +6,43 @@
  */
 class groupRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $courseid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $picture;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $hidepicture;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timecreated;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $enrolmentkey;
 	 public function groupRecord() {

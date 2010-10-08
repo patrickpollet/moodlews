@@ -6,11 +6,11 @@
  */
 class affectRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  boolean
+	* @var boolean
 	*/
 	public $status;
 	/* full constructor */

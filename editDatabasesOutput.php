@@ -6,7 +6,7 @@
  */
 class editDatabasesOutput {
 	/** 
-	* @var  (databaseRecords) array of databaseRecord
+	* @var databaseRecord[]
 	*/
 	public $databases;
 	 public function editDatabasesOutput() {

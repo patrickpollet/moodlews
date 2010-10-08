@@ -6,7 +6,7 @@
  */
 class editPagesWikiInput {
 	/** 
-	* @var  (pageWikiData) array of pageWikiDatum
+	* @var pageWikiDatum[]
 	*/
 	public $pagesWiki;
 	 public function editPagesWikiInput() {

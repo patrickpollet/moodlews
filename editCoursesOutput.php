@@ -6,7 +6,7 @@
  */
 class editCoursesOutput {
 	/** 
-	* @var  (courseRecords) array of courseRecord
+	* @var courseRecord[]
 	*/
 	public $courses;
 	 public function editCoursesOutput() {

@@ -6,23 +6,23 @@
  */
 class fileRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $fileurl;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $filename;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $filepath;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $filesize;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $filecontent;
 	 public function fileRecord() {

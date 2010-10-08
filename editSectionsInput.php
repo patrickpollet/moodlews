@@ -6,7 +6,7 @@
  */
 class editSectionsInput {
 	/** 
-	* @var  (sectionData) array of sectionDatum
+	* @var sectionDatum[]
 	*/
 	public $sections;
 	 public function editSectionsInput() {

@@ -6,23 +6,23 @@
  */
 class gradeRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $itemid;
 	/** 
-	* @var  float
+	* @var float
 	*/
 	public $grade;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $str_grade;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $feedback;
 	 public function gradeRecord() {

@@ -6,7 +6,7 @@
  */
 class getSectionsReturn {
 	/** 
-	* @var  (sectionRecords) array of sectionRecord
+	* @var sectionRecord[]
 	*/
 	public $sections;
 	/* full constructor */

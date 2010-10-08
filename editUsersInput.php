@@ -6,7 +6,7 @@
  */
 class editUsersInput {
 	/** 
-	* @var  (userData) array of userDatum
+	* @var userDatum[]
 	*/
 	public $users;
 	 public function editUsersInput() {

@@ -6,23 +6,23 @@
  */
 class labelDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $content;
 	/* full constructor */

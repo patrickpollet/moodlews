@@ -1,7 +1,7 @@
 <?php
-require_once ('../MoodleWS_NS.php');
+require_once ('../MoodleWS.php');
 
-$moodle=new MoodleWS_NS();
+$moodle=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get All roles defined in Moodle
 * @param integer $client
@@ -12,7 +12,7 @@ require_once ('../auth.php');
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_roles($lr->getClient(),$lr->getSessionKey());
 print_r($res);
-print($res->getRoles());
+print_r($res->getRoles());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

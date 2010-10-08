@@ -6,7 +6,7 @@
  */
 class getAssignmentSubmissionsReturn {
 	/** 
-	* @var  (assignmentSubmissionRecords) array of assignmentSubmissionRecord
+	* @var assignmentSubmissionRecord[]
 	*/
 	public $submissions;
 	 public function getAssignmentSubmissionsReturn() {

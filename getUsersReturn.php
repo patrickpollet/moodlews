@@ -6,7 +6,7 @@
  */
 class getUsersReturn {
 	/** 
-	* @var  (userRecords) array of userRecord
+	* @var userRecord[]
 	*/
 	public $users;
 	 public function getUsersReturn() {

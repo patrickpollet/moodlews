@@ -6,31 +6,31 @@
  */
 class enrolRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $userid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $course;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timestart;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeend;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeaccess;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $enrol;
 	/* full constructor */

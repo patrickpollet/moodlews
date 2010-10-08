@@ -6,47 +6,47 @@
  */
 class categoryRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $parent;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $sortorder;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $coursecount;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $depth;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $path;
 	/* full constructor */

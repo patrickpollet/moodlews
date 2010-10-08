@@ -6,7 +6,7 @@
  */
 class editForumsOutput {
 	/** 
-	* @var  (forumRecords) array of forumRecord
+	* @var forumRecord[]
 	*/
 	public $forums;
 	/* full constructor */

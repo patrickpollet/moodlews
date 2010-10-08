@@ -6,59 +6,59 @@
  */
 class pageWikiDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $pagename;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $version;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $flags;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $content;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $author;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $userid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $created;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $lastmodified;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $refs;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $meta;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $hits;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $wiki;
 	 public function pageWikiDatum() {

@@ -6,7 +6,7 @@
  */
 class getAllPagesWikiReturn {
 	/** 
-	* @var  (pageWikiRecords) array of pageWikiRecord
+	* @var pageWikiRecord[]
 	*/
 	public $pageswiki;
 	/* full constructor */

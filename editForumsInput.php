@@ -6,7 +6,7 @@
  */
 class editForumsInput {
 	/** 
-	* @var  (forumData) array of forumDatum
+	* @var forumDatum[]
 	*/
 	public $forums;
 	 public function editForumsInput() {

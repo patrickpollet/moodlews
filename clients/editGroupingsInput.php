@@ -6,7 +6,7 @@
  */
 class editGroupingsInput {
 	/** 
-	* @var  (groupingData) array of groupDatum
+	* @var groupDatum[]
 	*/
 	public $groupings;
 	/* full constructor */

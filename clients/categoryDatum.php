@@ -6,43 +6,43 @@
  */
 class categoryDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $parent;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $sortorder;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $depth;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $path;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $theme;
 	/* full constructor */

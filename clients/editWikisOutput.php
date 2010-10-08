@@ -6,7 +6,7 @@
  */
 class editWikisOutput {
 	/** 
-	* @var  (wikiRecords) array of wikiRecord
+	* @var wikiRecord[]
 	*/
 	public $wikis;
 	/* full constructor */

@@ -6,7 +6,7 @@
  */
 class getAllGroupingsReturn {
 	/** 
-	* @var  (groupingRecords) array of groupingRecord
+	* @var groupingRecord[]
 	*/
 	public $groupings;
 	 public function getAllGroupingsReturn() {

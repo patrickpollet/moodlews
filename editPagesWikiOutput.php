@@ -6,7 +6,7 @@
  */
 class editPagesWikiOutput {
 	/** 
-	* @var  (pageWikiRecords) array of pageWikiRecord
+	* @var pageWikiRecord[]
 	*/
 	public $pagesWiki;
 	 public function editPagesWikiOutput() {

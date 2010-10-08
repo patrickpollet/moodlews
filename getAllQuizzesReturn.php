@@ -6,7 +6,7 @@
  */
 class getAllQuizzesReturn {
 	/** 
-	* @var  (quizRecords) array of quizRecord
+	* @var quizRecord[]
 	*/
 	public $quizzes;
 	 public function getAllQuizzesReturn() {

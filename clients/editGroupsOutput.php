@@ -6,7 +6,7 @@
  */
 class editGroupsOutput {
 	/** 
-	* @var  (groupRecords) array of groupRecord
+	* @var groupRecord[]
 	*/
 	public $groups;
 	/* full constructor */

@@ -6,7 +6,7 @@
  */
 class getResourcesReturn {
 	/** 
-	* @var  (resourceRecords) array of resourceRecord
+	* @var resourceRecord[]
 	*/
 	public $resources;
 	/* full constructor */

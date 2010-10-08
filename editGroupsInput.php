@@ -6,7 +6,7 @@
  */
 class editGroupsInput {
 	/** 
-	* @var  (groupData) array of groupDatum
+	* @var groupDatum[]
 	*/
 	public $groups;
 	 public function editGroupsInput() {

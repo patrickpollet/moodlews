@@ -6,71 +6,71 @@
  */
 class resourceRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $type;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $reference;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $summary;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $alltext;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $popup;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $options;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $section;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $groupmode;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $coursemodule;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $url;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $timemodified_ut;
 	/* full constructor */

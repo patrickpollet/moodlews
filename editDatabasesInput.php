@@ -6,7 +6,7 @@
  */
 class editDatabasesInput {
 	/** 
-	* @var  (databaseData) array of databaseDatum
+	* @var databaseDatum[]
 	*/
 	public $databases;
 	 public function editDatabasesInput() {

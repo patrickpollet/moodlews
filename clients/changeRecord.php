@@ -6,55 +6,55 @@
  */
 class changeRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $courseid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $instance;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $resid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $date;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timestamp;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $type;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $author;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $link;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $url;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/* full constructor */

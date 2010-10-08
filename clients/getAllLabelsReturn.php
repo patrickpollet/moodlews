@@ -6,7 +6,7 @@
  */
 class getAllLabelsReturn {
 	/** 
-	* @var  (labelRecords) array of labelRecord
+	* @var labelRecord[]
 	*/
 	public $labels;
 	/* full constructor */

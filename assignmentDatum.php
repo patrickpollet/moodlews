@@ -6,83 +6,83 @@
  */
 class assignmentDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $format;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $assignmenttype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $resubmit;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $preventlate;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $emailteachers;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $var1;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $var2;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $var3;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $var4;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $var5;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $maxbytes;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timedue;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeavailable;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $grade;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	 public function assignmentDatum() {

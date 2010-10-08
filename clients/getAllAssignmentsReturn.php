@@ -6,7 +6,7 @@
  */
 class getAllAssignmentsReturn {
 	/** 
-	* @var  (assignmentRecords) array of assignmentRecord
+	* @var assignmentRecord[]
 	*/
 	public $assignments;
 	/* full constructor */

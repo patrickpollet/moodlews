@@ -6,7 +6,7 @@
  */
 class getAllDatabasesReturn {
 	/** 
-	* @var  (databaseRecords) array of databaseRecord
+	* @var databaseRecord[]
 	*/
 	public $databases;
 	 public function getAllDatabasesReturn() {

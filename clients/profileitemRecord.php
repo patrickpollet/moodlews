@@ -6,11 +6,11 @@
  */
 class profileitemRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $value;
 	/* full constructor */

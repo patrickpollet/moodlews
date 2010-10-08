@@ -6,7 +6,7 @@
  */
 class editGroupingsOutput {
 	/** 
-	* @var  (groupingRecords) array of groupingRecord
+	* @var groupingRecord[]
 	*/
 	public $groupings;
 	 public function editGroupingsOutput() {

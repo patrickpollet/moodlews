@@ -6,7 +6,7 @@
  */
 class enrolStudentsReturn {
 	/** 
-	* @var  (enrolRecords) array of enrolRecord
+	* @var enrolRecord[]
 	*/
 	public $students;
 	/* full constructor */

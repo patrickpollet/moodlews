@@ -6,7 +6,7 @@
  */
 class editCategoriesInput {
 	/** 
-	* @var  (categoryData) array of categoryDatum
+	* @var categoryDatum[]
 	*/
 	public $categories;
 	 public function editCategoriesInput() {

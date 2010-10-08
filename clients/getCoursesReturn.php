@@ -6,7 +6,7 @@
  */
 class getCoursesReturn {
 	/** 
-	* @var  (courseRecords) array of courseRecord
+	* @var courseRecord[]
 	*/
 	public $courses;
 	/* full constructor */

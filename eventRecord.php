@@ -6,75 +6,75 @@
  */
 class eventRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $format;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $courseid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $groupid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $userid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $repeatid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $modulename;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $instance;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $eventtype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timestart;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timeduration;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $uuid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $sequence;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	 public function eventRecord() {

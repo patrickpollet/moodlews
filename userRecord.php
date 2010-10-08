@@ -6,131 +6,131 @@
  */
 class userRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $auth;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $confirmed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $policyagreed;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $deleted;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $username;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $idnumber;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $firstname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lastname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $email;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $icq;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $emailstop;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $skype;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $yahoo;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $aim;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $msn;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $phone1;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $phone2;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $institution;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $department;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $address;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $city;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $country;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lang;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timezone;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $mnethostid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lastip;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $theme;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $role;
 	/** 
-	* @var  (profileitemRecords) array of profileitemRecord
+	* @var profileitemRecord[]
 	*/
 	public $profile;
 	 public function userRecord() {

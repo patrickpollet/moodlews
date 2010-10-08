@@ -6,27 +6,27 @@
  */
 class labelRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $content;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/* full constructor */

@@ -6,7 +6,7 @@
  */
 class editLabelsInput {
 	/** 
-	* @var  (labelData) array of labelDatum
+	* @var labelDatum[]
 	*/
 	public $labels;
 	 public function editLabelsInput() {

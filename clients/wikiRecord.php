@@ -6,71 +6,71 @@
  */
 class wikiRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $summary;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $wtype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $ewikiacceptbinary;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $pagename;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $ewikiprinttitle;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $htmlmode;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $disablecamelcase;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $setpageflags;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $strippages;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $removepages;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $revertchanges;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $initialcontent;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/* full constructor */

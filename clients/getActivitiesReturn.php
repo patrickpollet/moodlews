@@ -6,7 +6,7 @@
  */
 class getActivitiesReturn {
 	/** 
-	* @var  (activityRecords) array of activityRecord
+	* @var activityRecord[]
 	*/
 	public $activities;
 	/* full constructor */

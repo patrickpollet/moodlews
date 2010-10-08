@@ -6,35 +6,35 @@
  */
 class groupingRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $courseid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $name;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $description;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $configdata;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timecreated;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/* full constructor */

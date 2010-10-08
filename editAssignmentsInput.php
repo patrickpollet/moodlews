@@ -6,7 +6,7 @@
  */
 class editAssignmentsInput {
 	/** 
-	* @var  (assignmentData) array of assignmentDatum
+	* @var assignmentDatum[]
 	*/
 	public $assignments;
 	 public function editAssignmentsInput() {

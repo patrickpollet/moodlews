@@ -6,11 +6,11 @@
  */
 class loginReturn {
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $client;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $sessionkey;
 	/* full constructor */

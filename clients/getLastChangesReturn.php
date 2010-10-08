@@ -6,7 +6,7 @@
  */
 class getLastChangesReturn {
 	/** 
-	* @var  (changeRecords) array of changeRecord
+	* @var changeRecord[]
 	*/
 	public $changes;
 	/* full constructor */

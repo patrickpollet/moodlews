@@ -48,7 +48,7 @@ class server {
 	 * @param none
 	 * @return none
 	 */
-	function server() {
+	function server () {
 		global $CFG;
 		$this->debug_output("Server init...");
 		$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
@@ -84,7 +84,7 @@ class server {
 	 * @param int $oldversion The old version number we are upgrading from.
 	 * @return boolean True if successful, False otherwise.
 	 */
-	function upgrade($oldversion) {
+	private function upgrade($oldversion) {
 		global $CFG;
 		$this->debug_output('Starting WS upgrade from version ' . $oldversion . 'to version ' . $this->version);
 		$return = true;
@@ -116,7 +116,7 @@ class server {
 	 * @param none
 	 * @return string A 32 character session key.
 	 */
-	function add_session_key() {
+	private function add_session_key() {
 		$time = (string) time();
 		$randstr = (string) random_string(10);
 		/// XOR the current time and a random string.
@@ -133,7 +133,7 @@ class server {
 	 * @param string $sesskey The client session key.
 	 * @return boolean True if the client is valid, False otherwise.
 	 */
-	function validate_client($client = 0, $sesskey = '', $operation = '') {
+	private function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
 
 		 // rev 1.6.3 added extra securityu checks
@@ -178,7 +178,7 @@ class server {
 	 * @param string $msg The error message to return.
 	 * @return An object with the error message string.(required by mdl_soapserver)
 	 */
-	function error($msg) {
+	private function error($msg) {
         global $CFG;
 		$res = new StdClass();
 		$res->error = $msg;
@@ -203,10 +203,10 @@ class server {
 	 * Do server-side debugging output (to file).
 	 *
 	 * @uses $CFG
-	 * @param mixed $output Debugging output.
-	 * @return none
+	 * @param string $output Debugging output.
+	 * @return void
 	 */
-	function debug_output($output) {
+	 function debug_output($output) {
 		global $CFG;
 		if ($CFG->ws_debug) {
 			$fp = fopen($CFG->dataroot . '/debug.out', 'a');
@@ -223,7 +223,7 @@ class server {
 	 * @param  object moodle's id
      * @param int $userid : user to chcek, default me
 	 */
-	function has_capability($capability, $context_type, $instance_id,$userid=NULL) {
+	private function has_capability($capability, $context_type, $instance_id,$userid=NULL) {
 		global $USER;
 		$context = get_context_instance($context_type, $instance_id);
 		if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
@@ -996,7 +996,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     }
 
 
-    function get_groups($client, $sesskey,$groups,$idfield,$courseid){
+    private function get_groups($client, $sesskey,$groups,$idfield,$courseid){
 
 	    if (empty($groups) && $courseid) {
 		    return server::get_groups_bycourse ($client,$sesskey,$courseid);

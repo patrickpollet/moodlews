@@ -6,7 +6,7 @@
  */
 class editCoursesInput {
 	/** 
-	* @var  (courseData) array of courseDatum
+	* @var courseDatum[]
 	*/
 	public $courses;
 	 public function editCoursesInput() {

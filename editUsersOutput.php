@@ -6,7 +6,7 @@
  */
 class editUsersOutput {
 	/** 
-	* @var  (userRecords) array of userRecord
+	* @var userRecord[]
 	*/
 	public $users;
 	 public function editUsersOutput() {

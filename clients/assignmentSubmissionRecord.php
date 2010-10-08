@@ -6,83 +6,83 @@
  */
 class assignmentSubmissionRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $assignment;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $assignmenttype;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $userid;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timecreated;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemodified;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $numfiles;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $data1;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $data2;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $grade;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $submissioncomment;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $format;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $teacher;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $timemarked;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $mailed;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $useridnumber;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $userusername;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $useremail;
 	/** 
-	* @var  (fileRecords) array of fileRecord
+	* @var fileRecord[]
 	*/
 	public $files;
 	/* full constructor */

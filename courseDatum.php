@@ -6,119 +6,119 @@
  */
 class courseDatum {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $category;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $sortorder;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $password;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $fullname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $shortname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $idnumber;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $summary;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $format;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $showgrades;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $newsitems;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $teacher;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $teachers;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $student;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $students;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $guest;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $startdate;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $enrolperiod;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $marker;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $maxbytes;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $hiddensections;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $groupmode;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $groupmodeforce;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lang;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $theme;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $cost;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $metacourse;
 	 public function courseDatum() {

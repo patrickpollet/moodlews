@@ -6,7 +6,7 @@
  */
 class editCategoriesOutput {
 	/** 
-	* @var  (categoryRecords) array of categoryRecord
+	* @var categoryRecord[]
 	*/
 	public $categories;
 	 public function editCategoriesOutput() {

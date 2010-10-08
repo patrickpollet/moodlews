@@ -6,31 +6,31 @@
  */
 class sectionRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $section;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $sequence;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $summary;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $visible;
 	/* full constructor */

@@ -1,7 +1,7 @@
 <?php
-require_once ('../MoodleWS_NS.php');
+require_once ('../MoodleWS.php');
 
-$moodle=new MoodleWS_NS();
+$moodle=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: get users having some value in a profile field
 * @param integer $client

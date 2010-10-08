@@ -6,7 +6,7 @@
  */
 class getAllForumsReturn {
 	/** 
-	* @var  (forumRecords) array of forumRecord
+	* @var forumRecord[]
 	*/
 	public $forums;
 	 public function getAllForumsReturn() {

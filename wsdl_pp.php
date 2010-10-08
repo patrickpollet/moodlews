@@ -23,15 +23,39 @@ ob_start(); //important rev 1.6.4
 
  require_once('../config.php');
 
-while (@ob_end_clean());  //important rev 1.6.4 
+while (@ob_end_clean());  //important rev 1.6.4
 
  header('Content-Type: text/xml; charset=UTF-8');
 
  header('Content-Disposition: attachment; filename="moodlews.wsdl"');
 
-$wsdl=file_get_contents("$CFG->dirroot/wspp/moodlewsdl.xml");
+// $CFG->ws_uselocalwsdl=0;
 
-$wsdl=str_replace('CFGWWWROOT',$CFG->wwwroot,$wsdl);
+ // use Internet to fetch operations & types
+// so as to be in sync with clients
+if (empty ($CFG->ws_uselocalwsdl)) {
+    $wsdl=file_get_contents("$CFG->dirroot/wspp/moodlewsdl.xml");
+    $wsdl=str_replace('CFGWWWROOT',$CFG->wwwroot,$wsdl);
+
+} else {
+    //tests avec un wsdl generé par la suite wshelper
+    // et placé dans chemin_ressources
+        $wsdl=$CFG->dataroot.'/wspp/moodlews.wsdl';
+    if (!file_exists($wsdl)) {
+        make_upload_directory('wspp');
+        $data=file_get_contents("$CFG->dirroot/wspp/moodlewsdl.xml");
+        $data=str_replace('CFGWWWROOT',$CFG->wwwroot,$data);
+        if ($fd = @fopen($wsdl, 'wb')) {
+            fwrite($fd, $data);
+            fclose($fd);
+        }
+    }
+    //lecture XML
+    $wsdl=file_get_contents($wsdl);
+}
+
+
+
 
 // bug avec php 5.3.0 si taille >8192 bytes
 // http://www.magentocommerce.com/boards/viewthread/56528/

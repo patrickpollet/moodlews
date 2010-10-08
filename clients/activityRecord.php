@@ -6,99 +6,99 @@
  */
 class activityRecord {
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $error;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $id;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $time;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $userid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $ip;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $course;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $module;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $cmid;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $action;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $url;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $info;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $DATE;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $auth;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $firstname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $lastname;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $email;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $firstaccess;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $lastaccess;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $lastlogin;
 	/** 
-	* @var  integer
+	* @var integer
 	*/
 	public $currentlogin;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $DLA;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $DFA;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $DLL;
 	/** 
-	* @var  string
+	* @var string
 	*/
 	public $DCL;
 	/* full constructor */

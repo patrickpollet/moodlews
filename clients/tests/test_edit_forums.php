@@ -1,7 +1,7 @@
 <?php
-require_once ('../MoodleWS_NS.php');
+require_once ('../MoodleWS.php');
 
-$moodle=new MoodleWS_NS();
+$moodle=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Edit Forum Information
 * @param integer $client
