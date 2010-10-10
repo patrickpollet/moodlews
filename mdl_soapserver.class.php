@@ -703,6 +703,7 @@ class mdl_soapserver extends server {
 
     /**
     * return teachers and non editing teachers of a course $idcourse identified by $idfield
+    * rev 1.6.7 role ids 3 and 4 are not anymore hardcoded
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $courseid
@@ -710,10 +711,12 @@ class mdl_soapserver extends server {
     * @return userRecord[]
     */
     public function get_teachers($client, $sesskey, $idcourse, $idfield = 'idnumber') {
-        $te = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, 3);
+        $role = get_record('role', 'shortname', 'editingteacher');
+        $te = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
         if (!empty ($te->error)) // cancel any errors if no teachers found
             $te = array ();
-        $net = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, 4);
+        $role = get_record('role', 'shortname', 'teacher');
+        $net = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
         if (!empty ($net->error)) // cancel any errors if no non editing teachers found
             $net = array ();
         return $this->send($this->to_soap_array(array_merge($te, $net), 'users', 'userRecord', get_string('noteachers', 'wspp')));
@@ -721,6 +724,7 @@ class mdl_soapserver extends server {
 
     /**
     * return students of a course $idcourse identified by $idfield
+    * rev 1.6.7 role id (4) is not anymore hardcoded
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $courseid
@@ -729,7 +733,8 @@ class mdl_soapserver extends server {
         */
 
     public function get_students($client, $sesskey, $idcourse, $idfield = 'idnumber') {
-        return $this->get_users_bycourse($client, $sesskey, $idcourse, $idfield, 5);
+        $role = get_record('role', 'shortname', 'student');
+        return $this->get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
     }
 
     /**
