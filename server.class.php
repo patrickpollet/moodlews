@@ -9,7 +9,7 @@
  * @version $Id: server.class.php,v 1.5 2007/04//26 04:05:36 ppollet Exp $
  * @author Open Knowledge Technologies - http://www.oktech.ca/
  * @author Justin Filip <jfilip@oktech.ca> v 1.4
- * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.5, v 1.6
+ * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.5, v 1.6, v 1.7
  * @author
  */
 /* rev history
@@ -38,7 +38,7 @@ define('cal_show_user', 8);
 
  */
 class server {
-	var $version = 2009091000; // added ip in mdl_webservice_sessions
+	var $version = 2010101000; // also Moodle 2.0  compatible
 	var $using17;
 	var $using19 = false;
 	/**
@@ -231,6 +231,9 @@ class server {
 		}
 		return has_capability($capability, $context, $userid);
 	}
+
+
+
 
 	/**
 	 * Validates a client's login request.
