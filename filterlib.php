@@ -10,9 +10,14 @@
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
  */
 
-
-
+/*
+ * 
+ * rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+ * so we check for error before calling get_context_instance in all filter_* operation
+*/
 function filter_forum($client, $forum) {
+	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($forum->error)) return $forum;
 	if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) return false;
 	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 	if (!has_capability('mod/forum:viewdiscussion', $context))return false;
@@ -32,6 +37,8 @@ function filter_forums($client, $forums) {
 
 
     function filter_wiki($client, $wiki) {
+    	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($wiki->error)) return $wiki;
     if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $wiki->course)) return false;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/wiki:participate', $context))return false;
@@ -52,10 +59,12 @@ function filter_forums($client, $forums) {
     function filter_pagewiki($client, $pagewiki) {
 	    //todo return only those where user is teacher
 	    //$uid = $this->get_session_user($client);
-	    if (! $wiki = get_record("wiki", "id", $pagewiki->wiki)) {
+	     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($pagewiki->error)) return $pagewiki;
+	    if (! $wiki = ws_get_record("wiki", "id", $pagewiki->wiki)) {
 		    return false ; //orphaned ????;
 	    }
-	    if (! $course = get_record("course", "id", $wiki->course)) {
+	    if (! $course = ws_get_record("course", "id", $wiki->course)) {
 		    return false ;
 	    }
 	    if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
@@ -79,6 +88,8 @@ function filter_forums($client, $forums) {
     }
 
     function filter_assignment($client, $assignment) {
+    	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($assignment->error)) return $assignment;
     if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $assignment->course)) return false;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/assignment:view', $context))return false;
@@ -97,6 +108,8 @@ function filter_forums($client, $forums) {
     }
 
     function filter_database($client, $database) {
+    	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($database->error)) return $database;
     if (!$cm = get_coursemodule_from_instance("data", $database->id, $database->course)) return false;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/data:viewentry', $context))return false;
@@ -115,8 +128,11 @@ function filter_forums($client, $forums) {
     }
 
         function filter_label($client, $label) {
+        	global $USER;
+         // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($label->error)) return $label;	
         $context = get_context_instance(CONTEXT_COURSE, $label->course);
-        if (has_capability('moodle/course:view', $context)) {
+        if (! ws_is_enrolled($label->course,$USER->id)) {
                 return $label;
         }
         return $label;
@@ -140,9 +156,11 @@ function filter_forums($client, $forums) {
     function filter_user($client, $user, $role) {
     	global $CFG;
         /**   COMMENTED OUT TO ALOW UNDELETE ati OPERTAION
-        if (isset($user->deleted) && $user->deleted)
+        if (!empty($user->deleted))
             return false;
         */
+         // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($user->error)) return $user;
         if ($user->emailstop)
             $user->email = "not disclosed by user's will";
         $user->password = ''; //no way, even in  md5, can be cracked by reverse dictionnary
@@ -151,6 +169,7 @@ function filter_forums($client, $forums) {
         // rev 1.6.4 add custom profile fields to user record as and array of (name,value) tuples
          require_once($CFG->dirroot.'/user/profile/lib.php');
         $fields=profile_user_record($user->id);  
+        
         $ret=array();
         foreach($fields as $name=>$value) {
         	$tmp=new profileitemRecord();
@@ -173,15 +192,18 @@ function filter_forums($client, $forums) {
         }
         return $res;
     }
+    
     function filter_course($client, $course) {
         global $USER;
+        // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($course->error)) return $course;
         //return false if not visible to $client
         // check capability , course maybe non visible
         //TODO ajouter ici le role primaire ;-)
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('moodle/course:update', $context))
                 return $course;
-        if (has_capability('moodle/course:view', $context)) {
+        if (ws_is_enrolled($course->id,$USER->id)) {
                 $course->password = ''; // do not disclose it to non teacher
                 return $course;
         }
@@ -200,6 +222,8 @@ function filter_forums($client, $forums) {
 
     function filter_category($client, $category) {
 	    global $USER;
+	     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($category->error)) return $category;
 	    //return false if not visible to $client
 	    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
 	    if (!$category->visible) {
@@ -223,11 +247,14 @@ function filter_forums($client, $forums) {
 
 
     function filter_group($client, $group) {
+    	global $USER;
+    	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($group->error)) return $group;
         // check user's membership to this group ?
          $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
         if (has_capability('moodle/course:update', $context))
                 return $group;
-        if (! has_capability('moodle/course:view', $context))
+        if (! ws_is_enrolled($group->courseid,$USER->id))
                 return false;
         $group->enrolmentkey = '';
         return $group;
@@ -244,13 +271,16 @@ function filter_forums($client, $forums) {
     }
 
        function filter_grouping($client, $group) {
+       	global $USER;
+       	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($group->error)) return $group;
         // check user's membership to this group ?
          $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
         if (has_capability('moodle/course:update', $context))
                 return $group;
-        if (! has_capability('moodle/course:view', $context))
+        if (! ws_is_enrolled($group->courseid,$USER->id))
                 return false;
-        $group->confifdata = '';
+        $group->configdata = '';
         return $group;
     }
 
@@ -266,7 +296,8 @@ function filter_forums($client, $forums) {
 
 
     function filter_resource($client, $resource) {
-        if (isset ($resource->error) && $resource->error)
+    	global $USER;
+        if (!empty($resource->error))
             return $resource;
         $resource->timemodified_ut = userdate($resource->timemodified);
         //return false if resource->visible is false AND $client not "teacher"
@@ -275,7 +306,7 @@ function filter_forums($client, $forums) {
         // 1.6.3  there is a special capability for hiddensection
         if (has_capability('moodle/course:viewhiddenactivities', $context))
                 return $resource;
-        if (! has_capability('moodle/course:view', $context))
+        if (! ws_is_enrolled($resource->course,$USER->id))
                 return false;
         return $resource->visible ? $resource : false;
      }
@@ -291,7 +322,7 @@ function filter_forums($client, $forums) {
     }
 
     function filter_section($client, $section) {
-
+		global $USER;
         if (!empty($section->error))
             return $section;
           $context = get_context_instance(CONTEXT_COURSE, $section->course);
@@ -299,7 +330,7 @@ function filter_forums($client, $forums) {
         // 1.6.3  there is a special capability for hiddensection
          if (has_capability('moodle/course:viewhiddensections', $context))
                 return $section;
-        if (! has_capability('moodle/course:view', $context))
+        if (! ws_is_enrolled($section->course,$USER->id))
                 return false;
         return $section->visible ? $section : false;
     }
@@ -361,6 +392,8 @@ function filter_forums($client, $forums) {
     }
 
 function filter_change($client, $change) {
+	 // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($change->error)) return $change;
         //return false if ressource changed is not visible to $client
          $context = get_context_instance(CONTEXT_COURSE, $change->courseid);
         if (has_capability('moodle/course:update', $context))
@@ -381,6 +414,8 @@ function filter_change($client, $change) {
 
     function filter_event($client, $eventype, $event) {
         global $USER;
+         // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($event->error)) return $event;
         if (has_capability("moodle/calendar:manageentries",get_context_instance(CONTEXT_SYSTEM))) // admin user
             return $event;
         switch ($eventype) {
@@ -401,7 +436,7 @@ function filter_change($client, $change) {
                 break;
             case cal_show_course :
                 //TODO check course rights and visibility
-                if (has_capability("moodle/course:view",get_context_instance(CONTEXT_COURSE, $event->courseid)))
+                if (ws_is_enrolled($event->courseid,$USER->id))
                 return $event;
                 else return false;
                 break;

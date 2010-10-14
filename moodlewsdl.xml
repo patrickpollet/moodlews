@@ -1533,7 +1533,7 @@
 	</message>
 
 	<message name="twoValuesAndIdsRequest">
-		<documentation>PP one value to search for in column id
+		<documentation>PP two value to search for in column id
 		</documentation>
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
@@ -1841,7 +1841,9 @@
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="uid" type="xsd:integer" />
+		<part name="idfield" type="xsd:string" />	
 		<part name="courseid" type="xsd:integer" />
+		<part name="courseidfield" type="xsd:string" />
 	</message>
 
 	<message name="get_my_groupsRequest">
@@ -3078,6 +3080,43 @@
 			<input message="tns:edit_groupingsRequest" />
 			<output message="tns:edit_groupingsResponse" />
 		</operation>
+		
+		<operation name="add_teacher">
+		<documentation>MoodleWS: add a teacher in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />		
+		</operation>
+		
+		<operation name="remove_teacher">
+		<documentation>MoodleWS: remove a teacher in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />			
+		</operation>
+		
+		<operation name="add_noneditingteacher">
+		<documentation>MoodleWS: add a non editing teacher in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />		
+		</operation>
+		
+		<operation name="remove_noneditingteacher">
+		<documentation>MoodleWS: remove  a non edting teacher in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />		
+		</operation>
+		
+		<operation name="add_student">
+		<documentation>MoodleWS: add a student in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />		
+		</operation>
+		
+		<operation name="remove_student">
+		<documentation>MoodleWS: remove a student in the course</documentation>
+			<input message="tns:twoValuesAndIdsRequest" />
+			<output message="tns:affectResponse" />		
+		</operation>
+		
 
 
 	</portType>
@@ -4517,6 +4556,84 @@
 		
 		<operation name="get_quiz">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_quiz"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="add_teacher">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_teacher"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_teacher">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_teacher"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+				<operation name="add_noneditingteacher">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_noneditingteacher"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_noneditingteacher">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_noneditingteacher"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="add_student">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_student"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_student">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_student"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

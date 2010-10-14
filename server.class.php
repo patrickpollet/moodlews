@@ -22,7 +22,7 @@ require_once ('filterlib.php');
 /// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
 // j'ai 11000 comptes
 @ raise_memory_limit("192M"); //fonction de lib/setuplib.php incluse via config.php
-set_time_limit(0);
+//set_time_limit(0);
 //define('DEBUG', true);  rev. 1.5.16 already set (or not) in  MoodleWS.php
 define('cal_show_global', 1);
 define('cal_show_course', 2);
@@ -51,16 +51,23 @@ class server {
 	function server () {
 		global $CFG;
 		$this->debug_output("Server init...");
-		$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
-		$this->using19 = file_exists($CFG->libdir . '/grouplib.php');
-		/// Check for any DB upgrades.
-		if (empty ($CFG->webservices_version)) {
-			$this->upgrade(0);
-		} else
-			if ($CFG->webservices_version < $this->version) {
-				$this->upgrade($CFG->webservices_version);
-			}
-
+		$this->debug_output('    Version: ' . $this->version);
+        $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+		
+		
+		if (! $CFG->wspp_using_moodle20) { 
+			$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
+			$this->using19 = file_exists($CFG->libdir . '/grouplib.php');
+			//Check for any DB upgrades.
+			if (empty ($CFG->webservices_version)) {
+				$this->upgrade(0);
+			} else
+				if ($CFG->webservices_version < $this->version) {
+					$this->upgrade($CFG->webservices_version);
+				}
+		} else {
+			$this->using17 = $this->using19 = true; 
+		}
 		// setup default values if not set in admin screens (see admin/wspp.php)
 		if (empty ($CFG->ws_sessiontimeout))
 			$CFG->ws_sessiontimeout = 1800;
@@ -79,13 +86,17 @@ class server {
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
-	 *
+	 *  Moodle < 2.0 ONLY 
 	 * @uses $CFG
 	 * @param int $oldversion The old version number we are upgrading from.
 	 * @return boolean True if successful, False otherwise.
 	 */
 	private function upgrade($oldversion) {
 		global $CFG;
+		
+		if ($CFG->wspp_using_moodle20)
+			return $this->error(get_string('ws_not_installed_moodle20', 'local_wspp'));
+		
 		$this->debug_output('Starting WS upgrade from version ' . $oldversion . 'to version ' . $this->version);
 		$return = true;
 		require_once ($CFG->libdir . '/ddllib.php');
@@ -135,13 +146,15 @@ class server {
 	 */
 	private function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
+		
+		//return true;
 
 		 // rev 1.6.3 added extra securityu checks
 		 $client  = clean_param($client, PARAM_INT);
          $sesskey = clean_param($sesskey, PARAM_ALPHANUM);
 
 		/// We can't validate a session that hasn't even been initialized yet.
-		if (!$sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
+		if (!$sess = ws_get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			return false;
 		}
 		/// Validate this session.
@@ -152,7 +165,7 @@ class server {
 		// rev 1.6 make sure the session has not timed out
 		if ($sess->sessionbegin + $this->sessiontimeout < time()) {
 			$sess->sessionend = time();
-			update_record('webservices_sessions', $sess, 'id');
+			ws_update_record('webservices_sessions', $sess);
 			return false;
 		}
 
@@ -161,7 +174,7 @@ class server {
 		$USER->mnethostid = $CFG->mnet_localhost_id; //Moodle 1.95+ build sept 2009
         $USER->ip= getremoteaddr();
 		unset ($USER->access); // important for get_my_courses !
-		$this->debug_output("validate_client OK $client user=" . print_r($USER, true));
+		$this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
 
         //$this->debug_output(print_r($CFG,true));
 
@@ -178,7 +191,7 @@ class server {
 	 * @param string $msg The error message to return.
 	 * @return An object with the error message string.(required by mdl_soapserver)
 	 */
-	private function error($msg) {
+	protected function error($msg) {
         global $CFG;
 		$res = new StdClass();
 		$res->error = $msg;
@@ -248,14 +261,14 @@ class server {
 		global $CFG;
 
 		if (!empty ($CFG->ws_disable))
-			return $this->error(get_string('ws_accessdisabled', 'wspp'));
+			return $this->error(get_string('ws_accessdisabled', 'local_wspp'));
 		if (!$this->using17)
-			return $this->error(get_string('ws_nomoodle16', 'wspp'));
+			return $this->error(get_string('ws_nomoodle16', 'local_wspp'));
 
          $userip = getremoteaddr(); // rev 1.5.4
          if (!empty($CFG->ws_enforceipcheck)) {
             if (!record_exists('webservices_clients_allow','client',$userip))
-            return $this->error(get_string('ws_accessrestricted', 'wspp',$userip));
+            return $this->error(get_string('ws_accessrestricted', 'local_wspp',$userip));
 
          }
 
@@ -265,18 +278,20 @@ class server {
 
 		/// Use Moodle authentication.
 		/// FIRST make sure user exists , otherwise account WILL be created with CAS authentification ....
-		if (!$knownuser = get_record('user', 'username', $username)) {
-			return $this->error(get_string('ws_invaliduser', 'wspp'));
+		if (!$knownuser = ws_get_record('user', 'username', $username)) {
+			return $this->error(get_string('ws_invaliduser', 'local_wspp'));
 		}
+		//$this->debug_output(print_r($knownuser, true));
+		
 
 		$user=false;
 
 		//revision 1.6.1 try to use a custom auth plugin
         if (!exists_auth_plugin("webservice") || ! is_enabled_auth("webservice")) {
-
+$this->debug_output('internal ');
 			/// also make sure internal_authentication is used  (a limitation to fix ...)
 			if (!is_internal_auth($knownuser->auth)) {
-				return $this->error(get_string('ws_invaliduser', 'wspp'));
+				return $this->error(get_string('ws_invaliduser', 'local_wspp'));
 			}
             // regular manual authentification (should not be allowed !)
 			$user = authenticate_user_login(addslashes($username), $password);
@@ -285,6 +300,7 @@ class server {
 
 		}
 		else {
+			$this->debug_output('auth plugin');
 			$auth=get_auth_plugin("webservice");
 			if ($auth->user_login_webservice($username,$password)) {
 				$user=$knownuser;
@@ -293,25 +309,29 @@ class server {
 
         if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
 
-			return $this->error(get_string('ws_invaliduser', 'wspp'));
+			return $this->error(get_string('ws_invaliduser', 'local_wspp'));
 		}
+		
+		//$this->debug_output(print_r($user,true));
 		/// Verify that an active session does not already exist for this user.
 		$userip = getremoteaddr(); // rev 1.5.4
 
-		$sql = "SELECT s.* FROM {$CFG->prefix}webservices_sessions s
-							WHERE s.userid = {$user->id} AND
-							s.verified = 1 AND
-                            ip='$userip' AND
-							s.sessionend = 0 AND
-							(" . time() . " - s.sessionbegin) < " . $this->sessiontimeout;
-		if ($sess = get_record_sql($sql, 0)) {
+		$sql = "userid = {$user->id} AND verified = 1 AND
+                            ip='$userip' AND sessionend = 0 AND
+							(" . time() . "- sessionbegin) < " . $this->sessiontimeout;
+		
+		//$this->debug_output($sql);
+		if ($sess = ws_get_record_select('webservices_sessions',$sql)) {
 			//return $this->error('A session already exists for this user (' . $user->login . ')');
             /*
 			if ($sess->ip != $userip)
-				return $this->error(get_string('ws_ipadressmismatch', 'wspp',$userip."!=".$sess->ip));
+				return $this->error(get_string('ws_ipadressmismatch', 'local_wspp',$userip."!=".$sess->ip));
             */
+            //give him more time 
+            ws_set_field('webservices_sessions','sessionbegin',time(),'id',$sess->id);
 			// V1.6 reuse current session
 		} else {
+			$this->debug_output('nouvelle session ');
 			/// Login valid, create a new session record for this client.
 			$sess = new stdClass;
 			$sess->userid = $user->id;
@@ -320,11 +340,11 @@ class server {
 			$sess->sessionbegin = time();
 			$sess->sessionend = 0;
 			$sess->sessionkey = $this->add_session_key();
-			if ($sess->id = insert_record('webservices_sessions', $sess)) {
+			if ($sess->id = ws_insert_record('webservices_sessions', $sess)) {
 				if ($CFG->ws_logoperations)
 					add_to_log(SITEID, 'webservice', 'webservice pp', '', __FUNCTION__);
 			} else
-				return $this->error(get_string('ws_errorregistersession','wspp'));
+				return $this->error(get_string('ws_errorregistersession','local_wspp'));
 
 		}
 		/// Return standard data to be converted into the appropriate data format
@@ -350,12 +370,12 @@ class server {
 	function logout($client, $sesskey) {
                 global $CFG;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
-		if ($sess = get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
+		if ($sess = ws_get_record('webservices_sessions', 'id', $client, 'sessionend', 0, 'verified', 1)) {
 			$sess->verified = 0;
 			$sess->sessionend = time();
-			if (update_record('webservices_sessions', $sess)) {
+			if (ws_update_record('webservices_sessions', $sess)) {
 				return true;
 			} else {
 				return false;
@@ -369,7 +389,7 @@ class server {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 			return -1; //invalid Moodle's ID
 		}
-		return $CFG->webservices_version;
+		return $this->version;
 	}
 
 	/**
@@ -385,7 +405,7 @@ class server {
 	function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		/// Verify that the user for this session can perform this operation.
 		//nothing to check user database is public ?
@@ -394,12 +414,12 @@ class server {
 			return filter_users($client, get_users(true), 0);
 		}
 		foreach ($userids as $userid) {
-			$users = get_records('user', $idfield, $userid); //may have more than one !
+			$users = ws_get_records('user', $idfield, $userid); //may have more than one !
 			if (empty ($users)) {
 				$a = new StdClass();
 				$a->critere = $idfield;
 				$a->valeur = $userid;
-				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 			} else {
 				$ret = array_merge($ret, $users);
 			}
@@ -421,22 +441,22 @@ class server {
 	function get_courses($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
 			// all courses wanted
-			$res = get_records('course', '', '');
+			$res = ws_get_records('course', '', '');
 			return filter_courses($client, $res);
 		}
 		foreach ($courseids as $courseid) {
-			if ($courses = get_records('course', $idfield, $courseid)) { //may have more than one
+			if ($courses = ws_get_records('course', $idfield, $courseid)) { //may have more than one
 				$ret = array_merge($ret, $courses);
 			} else {
 				$a = new StdClass();
 				$a->critere = $idfield;
 				$a->valeur = $courseid;
-				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 			}
 		}
 
@@ -447,13 +467,13 @@ class server {
 	function get_courses_search($client, $sesskey, $search) {
     	global $USER;
     	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-        	return $this->error(get_string('ws_invalidclient', 'wspp'));
+        	return $this->error(get_string('ws_invalidclient', 'local_wspp'));
     	}
     	$search = trim(strip_tags($search)); // trim & clean raw searched string
 
     	if (empty ($search)) {
         	// all courses wanted
-        	$res = get_records('course', '', '');
+        	$res = ws_get_records('course', '', '');
         	return filter_courses($client, $res);
     	}
 
@@ -480,22 +500,22 @@ class server {
 	function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
-		  $courses = get_my_courses($USER->id);
+		  $courses = ws_get_my_courses($USER->id);
 		} else {
 			$courses = array ();
 			foreach ($courseids as $courseid) {
-				if ($course = get_record('course', $idfield, $courseid))
+				if ($course = ws_get_record('course', $idfield, $courseid))
 					$courses[] = $course;
 				else {
 					//append an error record to the list
 					$a = new StdClass();
 					$a->critere = $idfield;
 					$a->valeur = $courseid;
-					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 				}
 			}
 		}
@@ -526,28 +546,31 @@ class server {
 	public function get_sections($client, $sesskey, $courseids, $idfield = 'idnumber') {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
-			$courses = get_my_courses($USER->id);
+			$courses = ws_get_my_courses($USER->id);
 		} else {
 			$courses = array ();
 			foreach ($courseids as $courseid) {
-				if ($course = get_record('course', $idfield, $courseid))
+				if ($course = ws_get_record('course', $idfield, $courseid))
 					$courses[] = $course;
 				else {
 					//append an error record to the list
 					$a = new StdClass();
 					$a->critere = $idfield;
 					$a->valeur = $courseid;
-					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 				}
 			}
 		}
 		//remove courses not available to current user
 		$courses = filter_courses($client, $courses);
 		foreach ($courses as $course) {
+			if ($CFG->wspp_using_moodle20)
+				require_once ($CFG->dirroot.'/course/lib.php');
+				
 			if ($resources = get_all_sections($course->id))
 				foreach ($resources as $resource) {
 				$ret[] = $resource;
@@ -561,25 +584,25 @@ class server {
 		//TODO merge with get_resources by giving $type="resource"
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		if (empty($type)) {
-			return $this->error(get_string('ws_emptyparameter', 'wspp','type'));
+			return $this->error(get_string('ws_emptyparameter', 'local_wspp','type'));
 		}
 		$ret = array ();
 		if (empty ($courseids)) {
-			$courses = get_my_courses($USER->id);
+			$courses = ws_get_my_courses($USER->id);
 		} else {
 			$courses = array ();
 			foreach ($courseids as $courseid) {
-				if ($course = get_record('course', $idfield, $courseid))
+				if ($course = ws_get_record('course', $idfield, $courseid))
 					$courses[] = $course;
 				else {
 					//append an error record to the list
 					$a = new StdClass();
 					$a->critere = $idfield;
 					$a->valeur = $courseid;
-					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+					$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 				}
 			}
 		}
@@ -591,7 +614,7 @@ class server {
 				$a = new StdClass();
 				$a->critere = 'type';
 				$a->valeur = $type;
-				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'wspp', $a));
+				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
 			}else {
 				$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
 				foreach ($resources as $resource) {
@@ -622,27 +645,27 @@ class server {
 		global $CFG;
 
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
         if (empty ($courseids))
             return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
 
 
          if (!$this->using19)
-            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+            return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
         require_once ($CFG->dirroot . '/grade/lib.php');
         require_once ($CFG->dirroot . '/grade/querylib.php');
 
-		if (!$user = get_record('user', $useridfield, $userid)) {
-			return $this->error(get_string('ws_userunknown','wspp',$userid));
+		if (!$user = ws_get_record('user', $useridfield, $userid)) {
+			return $this->error(get_string('ws_userunknown','local_wspp',$userid));
 		}
 		$return = array ();
 		/// Find grade data for the requested IDs.
 		foreach ($courseids as $cid) {
 			$rgrade = new stdClass;
 			/// Get the student grades for each course requested.
-			if ($course = get_record('course', $courseidfield, $cid)) {
+			if ($course = ws_get_record('course', $courseidfield, $cid)) {
 				if ($this->has_capability('moodle/grade:viewall', CONTEXT_COURSE, $course->id)) {
 					//  get the floating point final grade
 					if ($legrade = grade_get_course_grade($user->id, $course->id)) {
@@ -653,13 +676,13 @@ class server {
                         $a=new StdClass();
                         $a->user=fullname($user);
                         $a->course= $course->fullname;
-						$rgrade->error = get_string('ws_nogrades','wspp',$a);
+						$rgrade->error = get_string('ws_nogrades','local_wspp',$a);
 					}
 				} else {
-					$rgrade->error= get_string('ws_noseegrades','wspp',$course->fullname);
+					$rgrade->error= get_string('ws_noseegrades','local_wspp',$course->fullname);
 				}
 			} else {
-				$rgrade->error = get_string('ws_courseunknown','wspp', $cid);
+				$rgrade->error = get_string('ws_courseunknown','local_wspp', $cid);
 			}
 			$return[] = $rgrade;
 		}
@@ -674,17 +697,17 @@ class server {
 	public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         if (!$this->using19)
-            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+            return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
-        if (!$user = get_record('user', $idfield, $userid)) {
-			return $this->error(get_string('ws_userunknown','wspp',$idfield.'='.$userid));
+        if (!$user = ws_get_record('user', $idfield, $userid)) {
+			return $this->error(get_string('ws_userunknown','local_wspp',$idfield.'='.$userid));
 		}
 		// we cannot call  API grade_get_course_grade($user->id) since it does not set the courseid as we want it
-		if (!$courses = get_my_courses($user->id, $sort = 'sortorder ASC', $fields = 'idnumber')) {
-			return $this->error(get_string('ws_nocourseforuser','wspp',$userid));
+		if (!$courses = ws_get_my_courses($user->id, $sort = 'sortorder ASC', $fields = 'idnumber')) {
+			return $this->error(get_string('ws_nocourseforuser','local_wspp',$userid));
 		}
 		$courseids = array ();
 		foreach ($courses as $c)
@@ -693,7 +716,7 @@ class server {
 		//$this->debug_output("GUG=" . print_r($courseids, true));
 
 		if (empty ($courseids))
-			return $this->error(get_string('ws_nocoursewithidnumberforuser','wspp', $userid));
+			return $this->error(get_string('ws_nocoursewithidnumberforuser','local_wspp', $userid));
 		// caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
 		// resulting in two calls of to_soaparray !!!!
 		return server :: get_grades($client, $sesskey, $userid, $idfield, $courseids, 'idnumber');
@@ -702,18 +725,18 @@ class server {
 	public function get_course_grades($client, $sesskey, $courseid, $idfield = "idnumber") {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 
          if (!$this->using19)
-            return $this->error(get_string(' ws_notsupportedgradebook', 'wspp'));
+            return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
         require_once ($CFG->dirroot . '/grade/lib.php');
         require_once ($CFG->dirroot . '/grade/querylib.php');
 
 		$return = array ();
 		//Get all student grades for course requested.
-		if ($course = get_record('course', $idfield, $courseid)) {
+		if ($course = ws_get_record('course', $idfield, $courseid)) {
 			$context = get_context_instance(CONTEXT_COURSE, $course->id);
 			if (has_capability('moodle/grade:viewall', $context)) {
 				$students = array ();
@@ -731,18 +754,18 @@ class server {
                         $a->user=fullname($user);
                         $a->course= $course->fullname;
                         $rgrade=new StdClass();
-                        $rgrade->error = get_string('ws_nogrades','wspp',$a);
+                        $rgrade->error = get_string('ws_nogrades','local_wspp',$a);
                         $return[] = $rgrade;
 					}
 				}
 			} else {
                  $rgrade=new StdClass();
-				$rgrade->error = get_string('ws_noseegrades','wspp',$course->fullname);
+				$rgrade->error = get_string('ws_noseegrades','local_wspp',$course->fullname);
 				$return[] = $rgrade;
 			}
 		} else {
              $rgrade=new StdClass();
-			$rgrade->error = get_string('ws_courseunknown','wspp', $courseid);
+			$rgrade->error = get_string('ws_courseunknown','local_wspp', $courseid);
 			$return[] = $rgrade;
 		}
 		//$this->debug_output("GcG".print_r($return, true));
@@ -770,17 +793,17 @@ class server {
 	*/
 	function get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		// convert user request criteria to an userid
-		$user = get_record('user', $useridfield, $userid);
+		$user = ws_get_record('user', $useridfield, $userid);
 		if (!$user)
-			return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid));
+			return $this->error(get_string('ws_userunknown','local_wspp',$useridfield."=".$userid));
 		$userid = $user->id;
 		// convert course request criteria to a courseid
-		$course = get_record('course', $courseidfield, $courseid);
+		$course = ws_get_record('course', $courseidfield, $courseid);
 		if (!$course)
-			return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
+			return $this->error(get_string('ws_courseunknown','local_wspp',$courseidfield."=".$courseid ));
 		return ws_get_primaryrole_incourse($course, $userid);
 	}
 
@@ -813,44 +836,49 @@ class server {
 	     *               data format for sending to the client.
 	     */
 	function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
-		global $USER;
+		global $CFG,$USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp')." ".__FUNCTION__);
+			return $this->error(get_string('ws_invalidclient', 'local_wspp')." ".__FUNCTION__);
 		}
 		$cuid = $USER->id;
 		if (!empty($uinfo)) {
 			// find userid if not current user
-				if (!$user = get_record('user', $idfield, $uinfo))
-					return $this->error(get_string('ws_userunknown','wspp',idfield."=".$uinfo));
+				if (!$user = ws_get_record('user', $idfield, $uinfo))
+					return $this->error(get_string('ws_userunknown','local_wspp',idfield."=".$uinfo));
                 $uid=$user->id;
 		} else
 			$uid = $cuid; //use current user and ignore $idfield
 		//only admin user can request courses for others
 		if ($uid != $cuid) {
 			if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
-				return $this->error(get_string('ws_operationnotallowed','wspp'));
+				return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 			}
 		}
 
 		$sort = $sort ? $sort : 'fullname';
 		if (isguestuser($user))
-			$res = get_records('course', 'guest', 1, $sort);
+			$res = ws_get_records('course', 'guest', 1, $sort);
 		else {
            //Moodle 1.95 do not return all fields set in wsdl
-           $extrafields=array("password,c.summary,c.format,c.showgrades,c.newsitems,c.enrolperiod,c.numsections,c.marker,c.maxbytes,
-c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse");
+           if (!$CFG->wspp_using_moodle20)
+           $extrafields="password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
+hiddensections,lang,theme,cost,timecreated,timemodified,metacourse";
+			else 
+			// some fields are not anymore defined in Moodle 2.0
+			$extrafields="summary,format,showgrades,newsitems,numsections,marker,maxbytes,
+hiddensections,lang,theme,timecreated,timemodified";
 
-			$res = get_my_courses($uid, $sort,$extrafields);
+			$res = ws_get_my_courses($uid, $sort,$extrafields);
         }
 		if ($res) {
 		   //rev 1.6 return primary role for each course
              foreach ($res as $id=>$value)
-                    $res[$id]->myrole=ws_get_primaryrole_incourse($res[$id],$uid);
+                   $res[$id]->myrole= ws_get_primaryrole_incourse($res[$id],$uid);
              //return $res;
              return filter_courses($client, $res);
         }
 		else
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 	}
 
 /**
@@ -863,16 +891,17 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 	function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole = 0) {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
-		if (!$course = get_record('course', $idfield, $idcourse)) {
-			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$idcourse ));
+		if (!$course = ws_get_record('course', $idfield, $idcourse)) {
+			return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$idcourse ));
 		}
-		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
+		if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)
+		 && !ws_is_enrolled($course->id,$USER->id))
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 
-		if (!empty ($roleid) && !record_exists('role', 'id', $idrole))
-            return $this->error(get_string('ws_roleunknown','wspp',$idrole ));
+		if (!empty ($roleid) && !ws_record_exists('role', 'id', $idrole))
+            return $this->error(get_string('ws_roleunknown','local_wspp',$idrole ));
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		if ($res = get_role_users($idrole, $context, true, '')) {
             //rev 1.6 if $idrole is empty return primary role for each user
@@ -884,32 +913,32 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 			return filter_users($client, $res, $idrole);
 		} else {
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
 	}
 
 	function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		// Get a list of all the roles in the database, sorted by their short names.
-		if ($res = get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
+		if ($res = ws_get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
 			return $res;
 		} else {
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
 	}
 
 	function get_categories($client, $sesskey, $catid = '', $idfield = '') {
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
 		// Get a list of all the categories in the database, sorted by their name
-		if ($res = get_records('course_categories', $idfield, $catid, 'name', '*')) {
+		if ($res = ws_get_records('course_categories', $idfield, $catid, 'name', '*')) {
 			return filter_categories($client, $res);
 		} else {
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
 	}
 
@@ -917,7 +946,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 		global $USER;
 
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
 
@@ -930,22 +959,22 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 				break;
 			case cal_show_course :
 				$idfield = 'courseid';
-                if (!$course =get_record('course',$owneridfield,$ownerid)) {
-                    return $this->error(get_string('ws_courseunknown','wspp',$owneridfield."=".$ownerid ));
+                if (!$course =ws_get_record('course',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_courseunknown','local_wspp',$owneridfield."=".$ownerid ));
                 }
                 $ownerid=$course->id;
 				break;
 			case cal_show_group :
 				$idfield = 'groupid';
-                if (!$group =get_record('groups',$owneridfield,$ownerid)) {
-                    return $this->error(get_string('ws_groupunknown','wspp',$owneridfield."=".$ownerid ));
+                if (!$group =ws_get_record('groups',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_groupunknown','local_wspp',$owneridfield."=".$ownerid ));
                 }
                  $ownerid=$group->id;
 				break;
 			case cal_show_user :
 				$idfield = 'userid';
-                if (!$user =get_record('user',$owneridfield,$ownerid)) {
-                    return $this->error(get_string('ws_userunknown','wspp',$owneridfield."=".$ownerid ));
+                if (!$user =ws_get_record('user',$owneridfield,$ownerid)) {
+                    return $this->error(get_string('ws_userunknown','local_wspp',$owneridfield."=".$ownerid ));
                 }
                  $ownerid=$user->id;
 				break;
@@ -953,59 +982,64 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 				$idfield = '';
 				$ownerid = '';
 		}
-		if ($res = get_records('event', $idfield, $ownerid)) {
+		if ($res = ws_get_records('event', $idfield, $ownerid)) {
 			foreach ($res as $r) {
 				$r = filter_event($client, $eventtype, $r);
 				if ($r)
 					$ret[] = $r;
 			}
 		} else {
-			$ret[]=$this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			$ret[]=$this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
 
 		return $ret;
 	}
 
 	function get_group_members($client, $sesskey, $groupid,$groupidfield='id') {
+		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
-		if (!$group = get_record('groups', $groupidfield, $groupid)) {
-			return $this->error(get_string('ws_groupunknown','wspp',$groupid));
+		if (!$group = ws_get_record('groups', $groupidfield, $groupid)) {
+			return $this->error(get_string('ws_groupunknown','local_wspp',$groupid));
 		}
 
-		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
-		$res = get_group_users($group->id);
+		if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $group->courseid)
+		    && ! ws_is_enrolled($group->courseid,$USER->id))
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+		//$res = get_group_users($group->id);   deprecated Moodle 1.9 removed Moodle 2.0
+		$res=groups_get_members($group->id);
 		if (!$res)
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		return filter_users($client, $res, 0);
 	}
 
     function get_grouping_members($client, $sesskey, $groupid,$groupidfield='id') {
+    	global $USER;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
-        if (!$group = get_record('groupings', $groupidfield, $groupid)) {
-            return $this->error(get_string('ws_groupingunknown','wspp',$groupid));
+        if (!$group = ws_get_record('groupings', $groupidfield, $groupid)) {
+            return $this->error(get_string('ws_groupingunknown','local_wspp',$groupid));
         }
 
-        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid))
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+        if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $group->courseid)
+          && ! ws_is_enrolled($group->courseid,$USER->id))
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         $res = groups_get_grouping_members($group->id);
         if (!$res)
-            return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+            return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
         return filter_users($client, $res, 0);
     }
 
 
-    private function get_groups($client, $sesskey,$groups,$idfield,$courseid){
+    protected function get_groups($client, $sesskey,$groups,$idfield,$courseid){
 
 	    if (empty($groups) && $courseid) {
 		    return server::get_groups_bycourse ($client,$sesskey,$courseid);
 	    }
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
 
 	    global $CFG;
@@ -1017,18 +1051,16 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 	    }
 
 	    foreach ($groups as $group) {
-		    $sql= "SELECT g.*
-			    FROM {$CFG->prefix}groups g
-			    WHERE g.$idfield ='$group' $courseselect ";
+		    $sql= "$idfield ='$group' $courseselect ";
 
-		    if ($g = get_records_sql($sql)) {
+		    if ($g = ws_get_records_select('groups',$sql)) {
 			    $g=filter_groups($client,$g);
 			    foreach($g as $one) {
 				    $ret[] = $one;
 			    }
 
 		    } else {
-			    $ret[]=$this->non_fatal_error(get_string('nogroups','wspp')); // "Invalid group $idfield :$group ");
+			    $ret[]=$this->non_fatal_error(get_string('nogroups','local_wspp')); // "Invalid group $idfield :$group ");
 		    }
 	    }
 
@@ -1048,61 +1080,77 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     *               specific data format for sending to the client.
     */
     function affect_user_to_group($client, $sesskey, $userid, $groupid) {
-;
+    	global $CFG;
+
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+            
         }
 
-        if (!$group = get_record('groups', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
+        }
+        	/// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
 
-        if (!$user = get_record("user", "id", $userid)) {
-            return $this->error(get_string('ws_userunknown','wspp','id='.$userid));
+        if (!$user = ws_get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
         }
 
             /// Check user is enroled in course
-        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $group->courseid,$user->id)) {
+          if (!ws_is_enrolled( $group->courseid, $user->id)) {
             $a=new StdClass();
             $a->user=$user->username;
             $a->course=$group->courseid;
-            return $this->error(get_string('ws_user_notenroled','wspp',$a));
+            return $this->error(get_string('ws_user_notenroled','local_wspp',$a));
+        }
+        
+        if ($CFG->wspp_using_moodle20) {
+        	// not anymore included by defualt in Moodle 2.0
+        	require_once ($CFG->dirroot.'/group/lib.php');
         }
 
-        /// Check for correct permissions.
-        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
-        }
+        
         $resp = new stdClass();
         $resp->status = groups_add_member($group->id, $user->id);
         return $resp;
     }
 
     function remove_user_from_group($client, $sesskey, $userid, $groupid) {
-;
+		global $CFG;
+		
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$group = get_record('groups', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
+        
+         /// Check for correct permissions.
+        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+        
 
-        if (!$user = get_record("user", "id", $userid)) {
-            return $this->error(get_string('ws_userunknown','wspp','id='.$userid));
+        if (!$user = ws_get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
         }
 
             /// Check user is member
-        if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE,$group->courseid, $user->id)) {
+        if (!ws_is_enrolled( $group->courseid, $user->id)) {
             $a=new StdClass();
             $a->user=$user->username;
             $a->course=$group->courseid;
-            return $this->error(get_string('ws_user_notenroled','wspp',$a));
+            return $this->error(get_string('ws_user_notenroled','local_wspp',$a));
         }
 
-        /// Check for correct permissions.
-        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+ 
+          if ($CFG->wspp_using_moodle20) {
+        	// not anymore included by defualt in Moodle 2.0
+        	require_once ($CFG->dirroot.'/group/lib.php');
         }
         $resp = new stdClass();
         $resp->status = groups_remove_member($group->id, $user->id);
@@ -1112,25 +1160,31 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 
      function affect_group_to_grouping($client, $sesskey, $groupid, $groupingid) {
+     	global $CFG;
          if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$group = get_record('groups', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
-        if (!$grouping = get_record('groupings', 'id', $groupingid)) {
-            return $this->error(get_string('ws_groupidunknown','wspp','id='.$groupid));
+        if (!$grouping = ws_get_record('groupings', 'id', $groupingid)) {
+            return $this->error(get_string('ws_groupidunknown','local_wspp','id='.$groupid));
         }
         if ($group->courseid != $grouping->courseid) {
              $a=new StdClass();
             $a->group=$group->id;
             $a->grouping=$grouping->id;
-            return $this->error(get_string('ws_group_grouping_notsamecourse','wspp',$a));
+            return $this->error(get_string('ws_group_grouping_notsamecourse','local_wspp',$a));
         }
          /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+        
+           if ($CFG->wspp_using_moodle20) {
+        	// not anymore included by defualt in Moodle 2.0
+        	require_once ($CFG->dirroot.'/group/lib.php');
         }
         $resp = new stdClass();
         $resp->status = groups_assign_grouping($grouping->id, $group->id);
@@ -1140,27 +1194,33 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     }
 
      function remove_group_from_grouping($client, $sesskey, $groupid, $groupingid) {
+     		global $CFG;
              if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$group = get_record('groups', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
-        if (!$grouping = get_record('groupings', 'id', $groupingid)) {
-            return $this->error(get_string('ws_groupidunknown','wspp','id='.$groupid));
+        if (!$grouping = ws_get_record('groupings', 'id', $groupingid)) {
+            return $this->error(get_string('ws_groupidunknown','local_wspp','id='.$groupid));
         }
         if ($group->courseid != $grouping->courseid) {
              $a=new StdClass();
             $a->group=$group->id;
             $a->grouping=$grouping->id;
-            return $this->error(get_string('ws_group_grouping_notsamecourse','wspp',$a));
+            return $this->error(get_string('ws_group_grouping_notsamecourse','local_wspp',$a));
         }
          /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
         //$this->debug_output("RGG  gid=$group->id gpip= $grouping->id");
+        
+        if ($CFG->wspp_using_moodle20) {
+	        // not anymore included by defualt in Moodle 2.0
+	        require_once ($CFG->dirroot.'/group/lib.php');
+        }
         $resp = new stdClass();
         $resp->status = groups_unassign_grouping($grouping->id, $group->id);
         return $resp;
@@ -1180,21 +1240,21 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     function affect_group_to_course($client, $sesskey, $groupid, $courseid,$idfield='id') {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = get_record('course', $idfield, $courseid)) {
-            return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid ));
+        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+            return $this->error(get_string('ws_courseunknown','local_wspp',"id=".$courseid ));
         }
 
         /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
 
         //verify if this grup exists
-        if (!$group = get_record('groups', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groups', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
 
         //verify if this group is assigned of any course
@@ -1209,7 +1269,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 
         $resp = new stdClass();
-        $resp->status = update_record('groups', $group);
+        $resp->status = ws_update_record('groups', $group);
         return $resp;
     }
 
@@ -1228,21 +1288,21 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
     */
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = get_record('course', $idfield, $courseid)) {
-            return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid ));
+        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+            return $this->error(get_string('ws_courseunknown','local_wspp',"id=".$courseid ));
         }
 
         /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
 
         //verify if this grup exists
-        if (!$group = get_record('groupings', 'id', $groupid)) {
-            return $this->error(get_string('ws_groupingunknown','wspp','id='.$groupid));
+        if (!$group = ws_get_record('groupings', 'id', $groupid)) {
+            return $this->error(get_string('ws_groupingunknown','local_wspp','id='.$groupid));
         }
 
         //verify if this group is assigned of any course
@@ -1255,7 +1315,7 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 
 
         $resp = new stdClass();
-        $resp->status =update_record('groupings', $group);
+        $resp->status =ws_update_record('groupings', $group);
         return $resp;
     }
 
@@ -1275,17 +1335,19 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 	function get_groups_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
 		global $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
-		if (!$course = get_record('course', $idfield, $courseid)) {
-			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
+		if (!$course = ws_get_record('course', $idfield, $courseid)) {
+			return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$courseid ));
 		}
-
-		if (!$this->has_capability('moodle/course:view', CONTEXT_COURSE, $course->id))
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
-		$res = get_groups($course->id);
+		if (! $this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id))
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));	
+		// deprecated in Moodle 1.9
+		// gone in Moodle 2.0
+		//$res = get_groups($course->id);
+		$res=groups_get_all_groups($course->id);
 		if (!$res)
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		return filter_groups($client, $res);
 	}
 
@@ -1301,43 +1363,46 @@ c.hiddensections,c.lang,c.theme,c.cost,c.timecreated,c.timemodified,c.metacourse
 	function get_my_groups($client, $sesskey, $uinfo = '', $idfield = "idnumber") {
 		global $USER, $CFG;
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$cuid = $USER->id;
 		if (!empty($uinfo)) {
 			 // find userid if not current user
-				if (!$user = get_record('user', $idfield, $uinfo))
-					return $this->error(get_string('ws_userunknown','wspp',$idfield."=".$uinfo));
+				if (!$user = ws_get_record('user', $idfield, $uinfo))
+					return $this->error(get_string('ws_userunknown','local_wspp',$idfield."=".$uinfo));
 				$uid = $user->id;
 		} else
 			$uid = $cuid; //use current user and ignore $idfield
 		//only an user that can login as another can request  for others
 		if ($uid != $cuid) {
 			if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
-				return $this->error(get_string('ws_operationnotallowed','wspp'));
+				return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 			}
 		}
-		$sql = "SELECT g.*
-															 FROM {$CFG->prefix}groups g,
-															 {$CFG->prefix}groups_members m
-															 WHERE g.id = m.groupid
-															 AND m.userid = '$uid'
-															 ORDER BY name ASC";
-		$res = get_records_sql($sql);
+		if ($CFG->wspp_using_moodle20)
+			$from=" {groups} g,{groups_members} m" ;
+		else 
+			$from="{$CFG->prefix}groups g,{$CFG->prefix}groups_members m";	
+		$sql = "SELECT g.* " .
+			"FROM $from
+		     WHERE g.id = m.groupid
+			 AND m.userid = '$uid'
+			 ORDER BY name ASC";
+		$res = ws_get_records_sql($sql);
 		return filter_groups($client, $res);
 	}
 
 	function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
-		if (!$course = get_record('course', $idfield, $courseid)) {
-			return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
+		if (!$course = ws_get_record('course', $idfield, $courseid)) {
+			return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$courseid ));
 		}
 		$cuid = $USER->id;
 		$isTeacher = $this->has_capability("moodle/course:update", CONTEXT_COURSE, $course->id);
-        $fmtdate=get_string('ws_sqlstrftimedatetime','wspp'); // '%d/%m/%Y %H:%i:%s'
+        $fmtdate=get_string('ws_sqlstrftimedatetime','local_wspp'); // '%d/%m/%Y %H:%i:%s'
         //$this->debug_output('date='.$fmtdate);
 
 		//must have id as first field for proper array indexing !
@@ -1356,7 +1421,7 @@ EOS;
 		$return = array ();
         //$this->debug_output($sqlAct);
 		if (!$resultAct = get_records_sql($sqlAct)) {
-			return $this->non_fatal_error(get_string('ws_nothingfound','wspp'));
+			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
 		foreach ($resultAct as $rowAct) {
 			if ($limit-- <= 0)
@@ -1423,19 +1488,19 @@ EOS;
 	 */
 
 	function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
-		global $USER;
+		global $USER,$CFG;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		//resolve user criteria to an user  Moodle's id
-		if (!$user = get_record('user', $useridfield, $userid)) {
-			return $this->error(get_string('ws_userunknown','wspp',$useridfield."=".$userid));
+		if (!$user = ws_get_record('user', $useridfield, $userid)) {
+			return $this->error(get_string('ws_userunknown','local_wspp',$useridfield."=".$userid));
 		}
 		$cuid = $USER->id;
 		if ($courseid) {
 			//resolve course criteria to a course Moodle's id
-			if (!$course = get_record('course', $courseidfield, $courseid))
-				return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
+			if (!$course = ws_get_record('course', $courseidfield, $courseid))
+				return $this->error(get_string('ws_courseunknown','local_wspp',$courseidfield."=".$courseid ));
 			$sql_course = " AND  l.course=$course->id ";
 			$canRead = $this->has_capability('coursereport/log:view', CONTEXT_COURSE, $course->id);
 		} else {
@@ -1443,12 +1508,12 @@ EOS;
 			$canRead = $this->has_capability('coursereport/log:view', CONTEXT_SYSTEM, 0);
 		}
 		if (($cuid != $user->id) && !$canRead) {
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 		if ($doCount) // caution result MUST have some id value to fetch result later
 			$sql_select = " SELECT 1,count(l.userid) as CPT ";
 		else {
-            $fmtdate=get_string('ws_sqlstrftimedatetime','wspp'); // '%d/%m/%Y %H:%i:%s'
+            $fmtdate=get_string('ws_sqlstrftimedatetime','local_wspp'); // '%d/%m/%Y %H:%i:%s'
 			$sql_select =<<<EOS
 
 SELECT l.*,u.auth,u.firstname,u.lastname,u.email,
@@ -1462,7 +1527,7 @@ EOS;
 		}
 		$sql =<<<EOSS
 $sql_select
-FROM mdl_log l , mdl_user u
+FROM {$CFG->prefix}log l , {$CFG->prefix}user u
 WHERE l.userid = u.id
 AND u.id = $user->id
 $sql_course
@@ -1485,27 +1550,27 @@ EOSS;
 	function get_assignment_submissions ($client,$sesskey,$assignmentid,$userids=array(),$useridfield='idnumber',$timemodified=0,$zipfiles=1) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		//get the assignment record
-		if (!$assignment = get_record("assignment", "id", $assignmentid)) {
-			return $this->error(get_string('ws_assignmentunknown','wspp','id='.$assignmentid));
+		if (!$assignment = ws_get_record("assignment", "id", $assignmentid)) {
+			return $this->error(get_string('ws_assignmentunknown','local_wspp','id='.$assignmentid));
 		}
 		/// Check for correct permissions.
 		if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 
 		//set up all required variables any error is fatal
 
-		if (!$course = get_record("course", "id", $assignment->course))
-			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+		if (!$course = ws_get_record("course", "id", $assignment->course))
+			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
 		if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id))
-			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
 		if( !$context = get_context_instance(CONTEXT_COURSE, $assignment->course))
-			return $this->error(get_string('ws_databaseinconsistent','wspp'));
+			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
 
 		$ret=array();
@@ -1518,8 +1583,8 @@ EOSS;
 		if (!empty($userids)) {
 			foreach ($userids as $userid) {
                 //$this->debug_output($userid.' '.$useridfield);
-                //caution :  alias u is not set in get_record, so add it !!!
-				if ($user=get_record('user u',$useridfield,$userid,'','','','',$fields)) {
+                //caution :  alias u is not set in ws_get_record, so add it !!!
+				if ($user=ws_get_record('user u',$useridfield,$userid,'','','','',$fields)) {
 					$moodleUserIds[$user->id]=$user;
                    // $this->debug_output(print_r($user,true));
                 }
@@ -1600,41 +1665,42 @@ EOSS;
 	 */
 	function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		global $CFG, $USER;
 
-		if (!($role = get_record('role', 'shortname', $rolename))) {
-            return $this->non_fatal_error(get_string('ws_roleunknown','wspp',$rolename));
+		if (!($role = ws_get_record('role', 'shortname', $rolename))) {
+            return $this->error(get_string('ws_roleunknown','local_wspp',$rolename));
 		}
 
-		$groupid = 0; // for the role_assign function (what does this )
-		if (!$course = get_record('course', $courseidfield, $courseid)) {
-			return $this->error(get_string('ws_courseunknown','wspp',$courseidfield."=".$courseid ));
+		//$groupid = 0; // for the role_assign function (what does this ? not anymore in Moodle 2.0
+		if (!$course = ws_get_record('course', $courseidfield, $courseid)) {
+			return $this->error(get_string('ws_courseunknown','local_wspp',$courseidfield."=".$courseid ));
 		}
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		if (!has_capability("moodle/role:assign", $context))
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
-		if ($course->enrolperiod) {
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+		//not anymore in Moodle 2.0 ...	
+		if (!empty($course->enrolperiod)) {
 			$timestart = time();
 			$timeend = $timestart + $course->enrolperiod;
 		} else {
 			$timestart = $timeend = 0;
 		}
-		$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol);
+		$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol ."\n ctx=".$context->id);
 		$return = array ();
 		if (!empty ($userids)) {
 			foreach ($userids as $userid) {
 				$st = new enrolRecord();
-				if (!$leuser = get_record('user', $useridfield, $userid)) {
-					$st->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
+				if (!$leuser = ws_get_record('user', $useridfield, $userid)) {
+					$st->error =get_string('ws_userunknown','local_wspp',$useridfield."=".$userid);
 				} else {
 					$st->userid = $leuser-> $useridfield; //return the sent value
 					$st->course = $course-> $courseidfield;
 					$st->timestart = $timestart;
 					$st->timeend = $timeend;
 					if ($enrol) {
-						if (!role_assign($role->id, $leuser->id, $groupid, $context->id, $timestart, $timeend, 0, 'webservice')) {
+						if (!ws_role_assign($role->id, $leuser->id, $context->id, $timestart, $timeend,$course)) {
 							$st->error = "error enroling";
 							$op = "error enroling " . $st->userid . " to " . $st->course;
 						} else {
@@ -1642,7 +1708,7 @@ EOSS;
 							$op = $rolename . " " . $st->userid . " added to " . $st->course;
 						}
 					} else {
-						if (!role_unassign($role->id, $leuser->id, $groupid, $context->id)) {
+						if (!ws_role_unassign($role->id, $leuser->id, $context->id,$course)) {
 							$st->error = "error unenroling";
 							$op = "error unenroling " . $st->userid . " from " . $st->course;
 						} else {
@@ -1657,7 +1723,7 @@ EOSS;
 			}
 		} else {
 			$st = new enrolRecord();
-			$st->error = get_string('ws_nothingtodo','wspp');
+			$st->error = get_string('ws_nothingtodo','local_wspp');
 			$return[] = $st;
 		}
 		//$this->debug_output("ES" . print_r($return, true));
@@ -1682,7 +1748,7 @@ EOSS;
 	function edit_users($client, $sesskey, $users) {
 		global $CFG, $USER;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rusers = array ();
 		//$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
@@ -1692,35 +1758,39 @@ EOSS;
 				//$this->debug_output('traitement de ' . print_r($user, true));
 				switch (trim(strtolower($user->action))) {
 					case 'add' :
-						if (!$this->has_capability('moodle/user:add', CONTEXT_SYSTEM, 0)) {
-							$ruser->error=get_string('ws_operationnotallowed','wspp');
+					
+						if (!$this->has_capability('moodle/user:create', CONTEXT_SYSTEM, 0)) {
+							$ruser->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
+						
 						// fix record if needed and check for missing values or database collision
 						if ($errmsg=ws_checkuserrecord($user,true)) {
 							$ruser->error=$errmsg;
 							break;
 						}
+
                         $user->timecreated = time();
                         $user->timemodified = $user->timecreated;
-
-						if ($userid=insert_record('user',$user)) {
-							$ruser = get_record('user','id',$userid);
+						if ($userid=ws_insert_record('user',$user)) {
+							$ruser = ws_get_record('user','id',$userid);
+							$this->debug_output('inserion ok'.print_r($ruser,true));
                              events_trigger('user_created', $ruser);
 
 						}else {
-							$ruser->error=get_string('ws_errorcreatinguser','wspp',$user->idnumber);
+							$ruser->error=get_string('ws_errorcreatinguser','local_wspp',$user->idnumber);
+							$this->debug_output('insertion KO '.print_r($user,true));
 						}
 						$this->debug_output('traitement de ' . print_r($ruser, true));
 						break;
 
 					case 'update' :
 						if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
-							$ruser->error=get_string('ws_operationnotallowed','wspp');
+							$ruser->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
-						if (! $olduser = get_record('user', 'id', $user->id)) {
-							$rcourse->error = get_string('ws_userunknown','wspp',"id=".$user->id );
+						if (! $olduser = ws_get_record('user', 'id', $user->id)) {
+							$rcourse->error = get_string('ws_userunknown','local_wspp',"id=".$user->id );
 							break;
 						}
 						$ruser=$user;
@@ -1738,11 +1808,11 @@ EOSS;
 						/// Update values in the $user database record with what
 						/// the client supplied.
 
-						if (update_record('user', $user)) {
-							$ruser = get_record('user', 'id', $user->id);
+						if (ws_update_record('user', $user)) {
+							$ruser = ws_get_record('user', 'id', $user->id);
                             events_trigger('user_updated', $ruser);
 						} else {
-							$ruser->error=get_string('ws_errorupdatinguser','wspp',$user->id);
+							$ruser->error=get_string('ws_errorupdatinguser','local_wspp',$user->id);
 						}
 				break;
 
@@ -1750,26 +1820,30 @@ EOSS;
 
 					/// Deleting an existing user.
 					if (!$this->has_capability('moodle/user:delete', CONTEXT_SYSTEM, 0)) {
-						$ruser->error=get_string('ws_operationnotallowed','wspp');
+						$ruser->error=get_string('ws_operationnotallowed','local_wspp');
 						break;
 					}
 
-					if (! $user = get_record('user', 'id', $user->id)) {
-						$ruser->error = get_string('ws_userunknown','wspp',"id=".$user->id );
+					if (! $user = ws_get_record('user', 'id', $user->id)) {
+						$ruser->error = get_string('ws_userunknown','local_wspp',"id=".$user->id );
 						break;
 					}
+				
 					$ruser = $user;
-					if (!delete_user($user)) {
-						$ruser->error=get_string('ws_errordeletinguser','wspp',$user->idnumber);
+					if ($user->deleted) // rev 1.7
+						$ruser->error=get_string('ws_erroralreadydeleteduser','local_wspp',$user->id);
+					else 
+						if (!delete_user($user)) {
+						$ruser->error=get_string('ws_errordeletinguser','local_wspp',$user->idnumber);
 					}
 					break;
                   default :
-                        $ruser->error=get_string('ws_invalidaction','wspp',$user->action);
+                        $ruser->error=get_string('ws_invalidaction','local_wspp',$user->action);
 			}
 			$rusers[] = $ruser;
 		}
 	}
-	return $rusers;
+	return filter_users($client,$rusers,0);
 }
 
 	/**
@@ -1790,7 +1864,7 @@ EOSS;
 		global $CFG, $USER;
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
        // $this->debug_output("EDC".print_r($courses,true));
@@ -1810,7 +1884,7 @@ EOSS;
 
 						/// Now check for correct permissions.
 						if (!$this->has_capability("moodle/course:create",CONTEXT_COURSECAT,$course->category)) {
-							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							$rcourse->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
 
@@ -1818,20 +1892,20 @@ EOSS;
 							$rcourse = $courseadd;
 
 						}else {
-							$rcourse->error=get_string('ws_errorcreatingcourse','wspp',$course->idnumber);
+							$rcourse->error=get_string('ws_errorcreatingcourse','local_wspp',$course->idnumber);
 						}
 
 						break;
 
 					case 'update' :
 						/// Updating an existing course.
-						if (! $oldcourse = get_record('course', 'id', $course->id)) {
-							$rcourse->error = get_string('ws_courseunknown','wspp',"idnumber=".$course->id );
+						if (! $oldcourse = ws_get_record('course', 'id', $course->id)) {
+							$rcourse->error = get_string('ws_courseunknown','local_wspp',"idnumber=".$course->id );
 							break;
 						}
 						$rcourse=$course;
 						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE,$oldcourse->id)) {
-							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							$rcourse->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 
 						}
@@ -1842,23 +1916,17 @@ EOSS;
 							break;
 						}
 
-                         //TODO if the category has changed ....
-                        if ($oldcourse->category != $course->category) {
-                            //check that target category exists
-                        }
-
-
-						$course->timemodified = time(); //not done in update_course ?
+						$course->timemodified = time(); //not done in Moodle 1.9 update_course ?
 
                         //GROS PB avec le record rempli de 0 !!!!
                         foreach($course as $key=>$value) {
                             if (empty($value)) unset ($course->$key);
                         }
-
-						if (!update_course($course)) {
-							$rcourse->error=get_string('ws_errorupdatingcourse','wspp',$course->id);
+// in Moodle 2.0 update_course returns nothing !
+						if (!ws_update_course($course)) {
+							$rcourse->error=get_string('ws_errorupdatingcourse','local_wspp',$course->id);
 						} else  {
-							$rcourse = get_record('course', 'id', $course->id); //return new value
+							$rcourse = ws_get_record('course', 'id', $course->id); //return new value
                             break;
                         }
                         //TODO if the category has changed ....
@@ -1872,24 +1940,24 @@ EOSS;
 					case 'delete' :
 						/// Deleting an existing course
 
-						if (! $course = get_record('course', 'id', $course->id)) {
-							$rcourse->error = get_string('ws_courseunknown','wspp',"id=".$course->id );
+						if (! $course = ws_get_record('course', 'id', $course->id)) {
+							$rcourse->error = get_string('ws_courseunknown','local_wspp',"id=".$course->id );
 							break;
 						}
 						$rcourse=$course;
                         //$this->debug_output("DC".print_r($course,true));
 						/// Now check for correct permissions.
 						if (!$this->has_capability("moodle/course:delete",CONTEXT_COURSECAT,$course->category)) {
-							$rcourse->error=get_string('ws_operationnotallowed','wspp');
+							$rcourse->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
 						if (!delete_course($course->id,false)) {
-							$rcourse->error=get_string('ws_errordeletingcourse','wspp',$course->id);
+							$rcourse->error=get_string('ws_errordeletingcourse','local_wspp',$course->id);
 						}
 
 						break;
                     default :
-                        $rcourse->error=get_string('ws_invalidaction','wspp',$course->action);
+                        $rcourse->error=get_string('ws_invalidaction','local_wspp',$course->action);
 				}
                 $ret[] = $rcourse;
 			}
@@ -1912,8 +1980,14 @@ EOSS;
     function edit_groupings($client, $sesskey, $groupings) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
+        
+        if ($CFG->wspp_using_moodle20) {
+        	// not anymore included by defualt in Moodle 2.0
+        	require_once ($CFG->dirroot.'/group/lib.php');
+        }
+        
         $rets = array ();
         if (!empty ($groupings)) {
             foreach ($groupings->groupings as $grouping) {
@@ -1923,42 +1997,42 @@ EOSS;
                     case 'add' :
                         /// Adding a new group.
                         if (!empty($grouping->courseid)) {
-                            if (! $course = get_record('course', 'id', $grouping->courseid)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$grouping->courseid );
+                            if (! $course = ws_get_record('course', 'id', $grouping->courseid)) {
+                            $ret->error = get_string('ws_courseunknown','local_wspp',"id=".$grouping->courseid );
                             break;
                             }
-                            if (get_record('groupings','name',$grouping->name,'courseid',$grouping->courseid)) {
-                                $ret->error = get_string('ws_duplicategroupingname','wspp',$grouping->name );
+                            if (ws_get_record('groupings','name',$grouping->name,'courseid',$grouping->courseid)) {
+                                $ret->error = get_string('ws_duplicategroupingname','local_wspp',$grouping->name );
                                 break;
                             }
                             if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $grouping->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                             }
                         } else {
                         /// Check for correct permissions. at site level
                             if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
-                                $ret->error=get_string('ws_operationnotallowed','wspp');
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
                                 break;
                             }
                         }
-                        if ($id=groups_create_grouping($grouping,false)) {
-                        $ret = get_record('groupings', 'id', $id);
+                        if ($id=groups_create_grouping($grouping)) {
+                        $ret = ws_get_record('groupings', 'id', $id);
                         }else {
-                            $ret->error=get_string('ws_errorcreatinggrouping','wspp',$grouping->name);
+                            $ret->error=get_string('ws_errorcreatinggrouping','local_wspp',$grouping->name);
                         }
 
                         break;
                     case 'update' :
                         /// Updating an existing group
                                    $ret=$grouping;
-                        if (! $oldgrouping = get_record('groupings', 'id', $grouping->id)) {
-                            $ret->error = get_string('ws_groupingunknown','wspp',"id=".$grouping->id );
+                        if (! $oldgrouping = ws_get_record('groupings', 'id', $grouping->id)) {
+                            $ret->error = get_string('ws_groupingunknown','local_wspp',"id=".$grouping->id );
                             break;
                         }
 
                         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgrouping->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
                         //TODO check for changing course
@@ -1969,31 +2043,31 @@ EOSS;
                         }
 
                         if (groups_update_grouping($grouping)) {
-                        $ret = get_record('groupings', 'id', $grouping->id);
+                        $ret = ws_get_record('groupings', 'id', $grouping->id);
                         }else {
-                            $ret->error=get_string('ws_errorupdatinggrouping','wspp',$grouping->name);
+                            $ret->error=get_string('ws_errorupdatinggrouping','local_wspp',$grouping->name);
                         }
 
                         break;
                     case 'delete' :
                         /// Deleting an existing grouping.
                         $ret=$grouping;
-                          if (! $oldgrouping = get_record('groupings', 'id', $grouping->id)) {
-                            $ret->error = get_string('ws_groupingunknown','wspp',"id=".$grouping->id );
+                          if (! $oldgrouping = ws_get_record('groupings', 'id', $grouping->id)) {
+                            $ret->error = get_string('ws_groupingunknown','local_wspp',"id=".$grouping->id );
                             break;
                         }
                         $ret=$oldgrouping;
 
                         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgrouping->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
                         if (!groups_delete_grouping($grouping)) {
-                            $ret->error==get_string('ws_errordeletinggrouping','wspp',$grouping->id);
+                            $ret->error==get_string('ws_errordeletinggrouping','local_wspp',$grouping->id);
                         }
                         break;
                     default :
-                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
+                     $ret->error=get_string('ws_invalidaction','local_wspp',$group->action);
 
                         break;
                 }
@@ -2029,8 +2103,14 @@ EOSS;
     function edit_groups($client, $sesskey, $groups) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
+        
+        if ($CFG->wspp_using_moodle20) {
+        	// not anymore included by defualt in Moodle 2.0
+        	require_once ($CFG->dirroot.'/group/lib.php');
+        }
+        
         $rets = array ();
         if (!empty ($groups)) {
             foreach ($groups->groups as $group) {
@@ -2040,76 +2120,76 @@ EOSS;
                     case 'add' :
                         /// Adding a new group.
                         if (!empty($group->courseid)) {
-                            if (! $course = get_record('course', 'id', $group->courseid)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$group->courseid );
+                            if (! $course = ws_get_record('course', 'id', $group->courseid)) {
+                            $ret->error = get_string('ws_courseunknown','local_wspp',"id=".$group->courseid );
                             break;
                             }
-                            if (get_record('groups','name',$group->name,'courseid',$group->courseid)) {
-                                $ret->error = get_string('ws_duplicategroupname','wspp',$group->name );
+                            if (ws_get_record('groups','name',$group->name,'courseid',$group->courseid)) {
+                                $ret->error = get_string('ws_duplicategroupname','local_wspp',$group->name );
                                 break;
                             }
                             if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                             }
                         } else {
                         /// Check for correct permissions. at site level
                             if (!$this->has_capability('moodle/course:managegroups', CONTEXT_SYSTEM, 0)) {
-                                $ret->error=get_string('ws_operationnotallowed','wspp');
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
                                 break;
                             }
                         }
                         if ($id=groups_create_group($group,false)) {
-                        $ret = get_record('groups', 'id', $id);
+                        $ret = ws_get_record('groups', 'id', $id);
                         }else {
-                            $ret->error=get_string('ws_errorcreatinggroup','wspp',$group->name);
+                            $ret->error=get_string('ws_errorcreatinggroup','local_wspp',$group->name);
                         }
 
                         break;
                     case 'update' :
                         /// Updating an existing group
                          $ret=$group;
-                        if (! $oldgroup = get_record('groups', 'id', $group->id)) {
-                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                        if (! $oldgroup = ws_get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','local_wspp',"id=".$group->id );
                             break;
                         }
 
                         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
                         //TODO check for changing course
 
                         foreach ($group as $key => $value) {
-                            if (!empty ($value))
+                            if (empty ($value))
                                 unset($group-> $key);
                         }
                         if (groups_update_group($group,false)) {
-                        $ret = get_record('groups', 'id', $group->id);
+                        $ret = ws_get_record('groups', 'id', $group->id);
                         }else {
-                            $ret->error=get_string('ws_errorupdatinggroup','wspp',$group->name);
+                            $ret->error=get_string('ws_errorupdatinggroup','local_wspp',$group->name);
                         }
 
                         break;
                     case 'delete' :
                         /// Deleting an existing group.
                           $ret=$group;
-                          if (! $oldgroup = get_record('groups', 'id', $group->id)) {
-                            $ret->error = get_string('ws_groupunknown','wspp',"id=".$group->id );
+                          if (! $oldgroup = ws_get_record('groups', 'id', $group->id)) {
+                            $ret->error = get_string('ws_groupunknown','local_wspp',"id=".$group->id );
                             break;
                         }
                         $ret=$oldgroup;
 
                         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $oldgroup->courseid)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
                         if (!groups_delete_group($group)) {
-                            $ret->error==get_string('ws_errordeletinggroup','wspp',$group->id);
+                            $ret->error==get_string('ws_errordeletinggroup','local_wspp',$group->id);
                         }
                         break;
                     default :
-                     $ret->error=get_string('ws_invalidaction','wspp',$group->action);
+                     $ret->error=get_string('ws_invalidaction','local_wspp',$group->action);
 
                         break;
                 }
@@ -2134,7 +2214,7 @@ EOSS;
 	    global $CFG;
 	    require_once ("{$CFG->dirroot}/course/lib.php");
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
 	    $rets = array ();
 	    if (!empty ($categories)) {
@@ -2147,53 +2227,53 @@ EOSS;
 					    $ret=$category; // returns proposed values
 					    if (!empty($category->parent)) {
 						    /// Check if category with id specified exists
-						    if (!$parent = get_record('course_categories', 'id', $category->parent)) {
-							    $ret->error(get_string('ws_categoryunkown','wspp',"id=".$category->parent));
+						    if (!$parent = ws_get_record('course_categories', 'id', $category->parent)) {
+							    $ret->error(get_string('ws_categoryunkown','local_wspp',"id=".$category->parent));
 							    break;
 						    }
-						    if (!$this->has_capability('moodle/category:create', CONTEXT_COURSECAT, $parent->id)) {
-							    $ret->error=get_string('ws_operationnotallowed','wspp');
+						    if (!$this->has_capability('moodle/category:manage', CONTEXT_COURSECAT, $parent->id)) {
+							    $ret->error=get_string('ws_operationnotallowed','local_wspp');
 							    break;
 						    }
 					    } else {
 						    /// Check for correct permissions.
-						    if (!$this->has_capability('moodle/category:create', CONTEXT_SYSTEM, 0)) {
-							    $ret->error=get_string('ws_operationnotallowed','wspp');
+						    if (!$this->has_capability('moodle/category:manage', CONTEXT_SYSTEM, 0)) {
+							    $ret->error=get_string('ws_operationnotallowed','local_wspp');
 							    break;
 						    }
 					    }
 
 					    $category->sortorder = 999; // will be fixed later
                         //find the max of parent category and add 1
-					    if (!$cid = insert_record('course_categories', $category)) {
-						    $ret->error =get_string('ws_errorcreatingcategory','wspp',$category->name);
+					    if (!$cid = ws_insert_record('course_categories', $category)) {
+						    $ret->error =get_string('ws_errorcreatingcategory','local_wspp',$category->name);
 						    break;
 					    }
 					    $context = get_context_instance(CONTEXT_COURSECAT, $cid);
 					    mark_context_dirty($context->path);
 					    fix_course_sortorder(); // Required to build course_categories.depth and .path.
 
-					    $ret = get_record('course_categories', 'id', $cid);
+					    $ret = ws_get_record('course_categories', 'id', $cid);
 
 					    break;
 				    case 'update' :
 					    /// Updating an existing category.
 					    $cid = $category->id;
-					    if (!$oldcategory = get_record('course_categories', 'id', $cid)) {
-						    $ret->error =   $ret->error(get_string('ws_categoryunkown','wspp',"id=".$cid));
+					    if (!$oldcategory = ws_get_record('course_categories', 'id', $cid)) {
+						    $ret->error =   $ret->error(get_string('ws_categoryunkown','local_wspp',"id=".$cid));
 						    break;
 					    }
 					    if (!$this->has_capability("moodle/category:update", CONTEXT_COURSECAT, $cid)) {
-						    $ret->error=get_string('ws_operationnotallowed','wspp');
+						    $ret->error=get_string('ws_operationnotallowed','local_wspp');
 						    break;
 					    }
 					    if ($oldcategory->parent != $category->parent) {
 						    if (!$this->has_capability("moodle/category:create", CONTEXT_COURSECAT, $category->parent)) {
-							    $ret->error=get_string('ws_operationnotallowed','wspp');
+							    $ret->error=get_string('ws_operationnotallowed','local_wspp');
 							    break;
 						    }
 						    if (!$this->has_capability("moodle/category:delete", CONTEXT_COURSECAT, $oldcategory->parent)) {
-							    $ret->error=get_string('ws_operationnotallowed','wspp');
+							    $ret->error=get_string('ws_operationnotallowed','local_wspp');
 							    break;
 						    }
 					    }
@@ -2207,26 +2287,26 @@ EOSS;
 					     **/
 					    if ($oldcategory->parent != $category->parent) {
 						    if (!move_category($cid, $category->parent)) {
-							    $ret->error = get_string('ws_errorupdatingcategory','wspp',$cid);
+							    $ret->error = get_string('ws_errorupdatingcategory','local_wspp',$cid);
 							    break;
 						    }
 					    }
 
 					    $category->timemodified = time();
-					    if (! update_record('course_categories', $category)) {
-						    $ret->error = get_string('ws_errorupdatingcategory','wspp',$cid);
+					    if (! ws_update_record('course_categories', $category)) {
+						    $ret->error = get_string('ws_errorupdatingcategory','local_wspp',$cid);
 						    break;
 					    }
-					    $ret = get_record('course_categories', 'id', $cid);
+					    $ret = ws_get_record('course_categories', 'id', $cid);
 
 					    break;
 
 				    case 'delete' :
 					    /// Deleting an existing category.
-                        $ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$category->action);
+                        $ret->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$category->action);
 					    break;
 				    default :
-					    $ret->error=get_string('ws_invalidaction','wspp',$category->action);
+					    $ret->error=get_string('ws_invalidaction','local_wspp',$category->action);
 				    break;
 			    }
 			    $rets[] = $ret;
@@ -2253,7 +2333,7 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/label/lib.php");
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($labels)) {
@@ -2263,13 +2343,13 @@ EOSS;
 						/// Adding a new label.
 						$ret = $label;
 
-                         if (!$course = get_record("course", "id", $label->course)) {
-                            $ret->error=get_string('ws_courseunknown','wspp',"id=".$label->course );
+                         if (!$course = ws_get_record("course", "id", $label->course)) {
+                            $ret->error=get_string('ws_courseunknown','local_wspp',"id=".$label->course );
                             break;
                         }
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
-                             $ret->error=get_string('ws_operationnotallowed','wspp');
+                             $ret->error=get_string('ws_operationnotallowed','local_wspp');
 
 							break;
 						}
@@ -2282,20 +2362,20 @@ EOSS;
 						$name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
 						*/
 						if (!$labelid = label_add_instance($label)) {
-							$ret->error = get_string('ws_errorcreatinglabel','wspp', $label->name);
+							$ret->error = get_string('ws_errorcreatinglabel','local_wspp', $label->name);
 							break;
 						}
-						$ret = get_record('label', 'id', $labelid);
+						$ret = ws_get_record('label', 'id', $labelid);
 
 						break;
 					case 'update' :
-						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$label->action);
+						$ret->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$label->action);
 						break;
 					case 'delete' :
-						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$label->action);
+						$ret->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$label->action);
 						break;
 					default :
-						$ret->error =get_string('ws_invalidaction','wspp',$label->action);
+						$ret->error =get_string('ws_invalidaction','local_wspp',$label->action);
 				}
 				$rets[] = $ret;
 			}
@@ -2317,7 +2397,7 @@ EOSS;
 	function edit_sections($client, $sesskey, $sections) {
 		global $CFG;
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets= array ();
 
@@ -2331,37 +2411,37 @@ EOSS;
 
 						$this->debug_output('EDIT_SECTIONS:    Trying to add a new section.');
 
-                          if (!$course = get_record("course", "id", $section->course)) {
-                            $ret->error=get_string('ws_courseunknown','wspp',"id=".$section->course );
+                          if (!$course = ws_get_record("course", "id", $section->course)) {
+                            $ret->error=get_string('ws_courseunknown','local_wspp',"id=".$section->course );
                             break;
                         }
 
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)) {
-							$ret->error=get_string('ws_operationnotallowed','wspp');
+							$ret->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
 						// verify if current section is already in database
-						if ($sectionExist = get_record("course_sections", "course", $section->course, "section", $section->section)) {
+						if ($sectionExist = ws_get_record("course_sections", "course", $section->course, "section", $section->section)) {
 							$ret = $sectionExist;
-							$ret->error=get_string('ws_sectionexists','wspp',$section->course);
+							$ret->error=get_string('ws_sectionexists','local_wspp',$section->course);
 							break;
 						}
-						if (!$resultInsertion = insert_record("course_sections", $section)) {
-							$ret->error =get_string('ws_errorcreatingsection','wspp',$section->summary);
+						if (!$resultInsertion = ws_insert_record("course_sections", $section)) {
+							$ret->error =get_string('ws_errorcreatingsection','local_wspp',$section->summary);
 							break;
 						}
-						$ret = get_record('course_sections', 'id', $resultInsertion);
+						$ret = ws_get_record('course_sections', 'id', $resultInsertion);
 
 						break;
 					case 'update' :
 						//get the section record
-						if (!($oldsection = get_record('course_sections', 'id', $section->id))) {
-							return $this->error(get_string('ws_sectionunknown','wspp','id='.$section->id));
+						if (!($oldsection = ws_get_record('course_sections', 'id', $section->id))) {
+							return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$section->id));
 						}
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $oldsection->course)) {
-							$ret->error=get_string('ws_operationnotallowed','wspp');
+							$ret->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
 
@@ -2370,11 +2450,11 @@ EOSS;
                              unset($section->course);
                         if (empty($section->section)) //TODO move_sections ?
                             unset($section->section);
-						if (! update_record('course_sections', $section)) {
-							$ret->error = get_string('ws_errorupdatingsection','wspp',$section->id);
+						if (! ws_update_record('course_sections', $section)) {
+							$ret->error = get_string('ws_errorupdatingsection','local_wspp',$section->id);
 							break;
 						}
-						$ret = get_record('course_sections', 'id', $section->id);
+						$ret = ws_get_record('course_sections', 'id', $section->id);
 
                         if ($section->visible !=$oldsection->visible) {
                              set_section_visible($oldsection->course, $oldsection->section, $section->visible);
@@ -2382,10 +2462,10 @@ EOSS;
 
 						break;
 					case 'delete' :
-						$ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$section->action);
+						$ret->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$section->action);
 						break;
 					default :
-						$ret->error = get_string('ws_invalidaction','wspp',$section->action);
+						$ret->error = get_string('ws_invalidaction','local_wspp',$section->action);
 				}
 				$rets[] = $ret;
 			}
@@ -2407,7 +2487,7 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($forums)) {
@@ -2420,38 +2500,38 @@ EOSS;
 							$forum->type = "general";
 						}
 						if (!array_key_exists($forum->type, forum_get_forum_types_all())) {
-							$ret->error = get_string('ws_illegaleforumtype','wspp',$forum->type);
+							$ret->error = get_string('ws_illegaleforumtype','local_wspp',$forum->type);
 							break;
 						}
 						//TODO in debugging mode do the operation but send and error in libgrade
 						// since courseid is null
                           //for some reason lib/gradelib.php test is_null(courseid) and not empty () !!!
                          // course MUST exist since this activity is graded !
-                          if (! $course = get_record('course', 'id', $forum->course)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$forum->course );
+                          if (! $course = ws_get_record('course', 'id', $forum->course)) {
+                            $ret->error = get_string('ws_courseunknown','local_wspp',"id=".$forum->course );
                             break;
                           }
 
                         /// Check for correct permissions.
                         if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
 
 						if (!$resultInsertion = forum_add_instance($forum)) {
-							$ret->error =get_string('ws_errorcreatingforum','wspp', $forum->name);
+							$ret->error =get_string('ws_errorcreatingforum','local_wspp', $forum->name);
 							break;
 						}
-						$ret = get_record('forum', 'id', $resultInsertion);
+						$ret = ws_get_record('forum', 'id', $resultInsertion);
 						break;
 					case 'update' :
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$forum->action);
+						$ret->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$forum->action);
 						break;
 					case 'delete' :
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$forum->action);
+						$ret->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$forum->action);
 						break;
 					default :
-						$ret->error = get_string('ws_invalidaction','wspp',$forum->action);
+						$ret->error = get_string('ws_invalidaction','local_wspp',$forum->action);
 				}
 				$rets[] = $ret;
 			}
@@ -2476,7 +2556,7 @@ EOSS;
 		require_once ("{$CFG->dirroot}/mod/assignment/lib.php");
 		require_once ("{$CFG->dirroot}/course/lib.php");
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($assignments)) {
@@ -2490,7 +2570,7 @@ EOSS;
 						// verification of the field  "assignmenttype"
                         $assignmenttypes = get_list_of_plugins('mod/assignment/type');
 						if (!in_array($assignment->assignmenttype,$assignmenttypes)) {
-                        	$ret->error = get_string('ws_assignmenttypeunknown','wspp',$assignment->assignmenttype);
+                        	$ret->error = get_string('ws_assignmenttypeunknown','local_wspp',$assignment->assignmenttype);
 							break;
 						}
 
@@ -2499,33 +2579,33 @@ EOSS;
                         //for some reason lib/gradelib.php test is_null(courseid) and not empty () !!!
                        // if (empty($assignment->course)) $assignment->course=NULL;
                        // course MUST exist since this activity is graded !
-						  if (! $course = get_record('course', 'id', $assignment->course)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$assignment->course );
+						  if (! $course = ws_get_record('course', 'id', $assignment->course)) {
+                            $ret->error = get_string('ws_courseunknown','local_wspp',"id=".$assignment->course );
                             break;
                           }
                         /// Check for correct permissions.
                         if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
-                            $ret->error=get_string('ws_operationnotallowed','wspp');
+                            $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
 
                         if (!($assignId = assignment_add_instance($assignment))) {
-							$ret->error = get_string('ws_errorcreatingassignment','wspp', $assignment->name);
+							$ret->error = get_string('ws_errorcreatingassignment','local_wspp', $assignment->name);
 							break;
 						}
-						$ret = get_record("assignment",'id',$assignId);
+						$ret = ws_get_record("assignment",'id',$assignId);
 
 						break;
 					case 'update' :
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$assignment->action);
+						$ret->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$assignment->action);
 						break;
 					case 'delete' :
 						//delete assignment
-                        $ret->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$assignment->action);
+                        $ret->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$assignment->action);
 
 						break;
 					default :
-						$ret->error = get_string('ws_invalidaction','wspp',$assignment->action);
+						$ret->error = get_string('ws_invalidaction','local_wspp',$assignment->action);
 						break;
 				}
 				$rets[] = $ret;
@@ -2548,7 +2628,7 @@ EOSS;
 		global $CFG;
 		require_once ("{$CFG->dirroot}/mod/data/lib.php");
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($databases)) {
@@ -2560,38 +2640,38 @@ EOSS;
 
 
 						if (empty ($database->name)) {
-							$ret->error =get_string('ws_missingvalue','wspp','name');
+							$ret->error =get_string('ws_missingvalue','local_wspp','name');
 							break;
 						}
                          // course MUST exist since this activity is graded !
-                          if (! $course = get_record('course', 'id', $database->course)) {
-                            $ret->error = get_string('ws_courseunknown','wspp',"id=".$database->course );
+                          if (! $course = ws_get_record('course', 'id', $database->course)) {
+                            $ret->error = get_string('ws_courseunknown','local_wspp',"id=".$database->course );
                             break;
                           }
 
                         if (!$this->has_capability('moodle/category:manageactivities', CONTEXT_COURSE, $course->id)) {
-                             $ret->error=get_string('ws_operationnotallowed','wspp');
+                             $ret->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
                         }
 
 						// database creation
 						if (!$dbid = data_add_instance($database)) {
-                            $ret->error=get_string('ws_errorcreatingdatabase','wspp', $ret->name);
+                            $ret->error=get_string('ws_errorcreatingdatabase','local_wspp', $ret->name);
 							break;
 						}
-						$ret = get_record('data','id',$dbid);
+						$ret = ws_get_record('data','id',$dbid);
 
 						break;
 					case 'update' :
 						//not implemented
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$database->action);
+						$ret->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$database->action);
 						break;
 					case 'delete' :
 						//not implemented
-						$ret->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$database->action);
+						$ret->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$database->action);
 						break;
 					default :
-						$ret->error = $ret->error = get_string('ws_invalidaction','wspp',$database->action);
+						$ret->error = $ret->error = get_string('ws_invalidaction','local_wspp',$database->action);
 						break;
 				}
 				$rets[] = $ret;
@@ -2615,7 +2695,7 @@ EOSS;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($wikis)) {
@@ -2627,20 +2707,20 @@ EOSS;
 						$rwiki = $wiki;
 
                          // course MUST exist since this activity is graded !
-                          if (! $course = get_record('course', 'id', $wiki->course)) {
-                            $rwiki->error = get_string('ws_courseunknown','wspp',"id=".$assignment->course );
+                          if (! $course = ws_get_record('course', 'id', $wiki->course)) {
+                            $rwiki->error = get_string('ws_courseunknown','local_wspp',"id=".$assignment->course );
                             break;
                           }
 
                         /// Check for correct permissions.
                         if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $course->id)) {
-                             $rwiki->error=get_string('ws_operationnotallowed','wspp');
+                             $rwiki->error=get_string('ws_operationnotallowed','local_wspp');
 
                             break;
                         }
 
 						//verify if current wiki is already in database
-						if ($wikiExist = get_record("wiki", "name", $wiki->name, "course", $wiki->course)) {
+						if ($wikiExist = ws_get_record("wiki", "name", $wiki->name, "course", $wiki->course)) {
 							$rwiki = $wikiExist;
 							break;
 						}
@@ -2648,12 +2728,12 @@ EOSS;
 						$rwiki->wtype = empty ($rwiki->wtype) ? 'group' : $rwiki->wtype;
                         $allowedtypes=array('group','teacher','student');
 						if (! in_array($rwiki->wtype,$allowedtypes)) {
-							$rwiki->error = get_string('ws_wikiincorrecttype','wspp',$rwiki->wtype);
+							$rwiki->error = get_string('ws_wikiincorrecttype','local_wspp',$rwiki->wtype);
 							break;
 						}
 						//add instance of wiki
 						if (!($wikiId = wiki_add_instance($rwiki))) {
-							$rwiki->error=get_string('ws_errorcreatingwiki','wspp', $rwiki->pagename);
+							$rwiki->error=get_string('ws_errorcreatingwiki','local_wspp', $rwiki->pagename);
 							break;
 						}
 						$rwiki->id = $wikiId;
@@ -2663,22 +2743,22 @@ EOSS;
 						$wiki_entry->groupid = 0;
 						$wiki_entry->userid = $USER->id;
 						$wiki_entry->pagename = $rwiki->pagename;
-						if (!$result = insert_record("wiki_entries", $wiki_entry)) {
-							$rwiki->error = get_string('ws_errorcreatingwikientry','wspp', $rwiki->pagename);
+						if (!$result = ws_insert_record("wiki_entries", $wiki_entry)) {
+							$rwiki->error = get_string('ws_errorcreatingwikientry','local_wspp', $rwiki->pagename);
 							break;
 						}
-						$rwiki = get_record('wiki', 'id', $wikiId);
+						$rwiki = ws_get_record('wiki', 'id', $wikiId);
 
 						break;
 					case 'update' :
-						$rwiki->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$wiki->action);
+						$rwiki->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$wiki->action);
 						break;
 					case 'delete' :
-                        $rwiki->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$wiki->action);
+                        $rwiki->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$wiki->action);
 						break;
 					default :
                         $rwiki=new StdClass();
-						$rwiki->error = $ret->error = get_string('ws_invalidaction','wspp',$wiki->action);
+						$rwiki->error = $ret->error = get_string('ws_invalidaction','local_wspp',$wiki->action);
 				}
 				$rets[] = $rwiki;
 			}
@@ -2701,7 +2781,7 @@ EOSS;
 		global $CFG,$USER;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$rets = array ();
 		if (!empty ($pagesWiki)) {
@@ -2718,29 +2798,29 @@ EOSS;
 
 						/// Check for correct permissions.
 						if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_SYSTEM, 0)) {
-							 $rpage->error=get_string('ws_operationnotallowed','wspp');
+							 $rpage->error=get_string('ws_operationnotallowed','local_wspp');
                             break;
 						}
 						//verify if current page is already in database
-						if ($pg = get_record("wiki_pages", "pagename", $pageadd->pagename, "wiki", $pageadd->wiki)) {
+						if ($pg = ws_get_record("wiki_pages", "pagename", $pageadd->pagename, "wiki", $pageadd->wiki)) {
 							$rpage = $pg;
 							break;
 						}
-						if (!$resultInsertion = insert_record("wiki_pages", $pageadd)) {
+						if (!$resultInsertion = ws_insert_record("wiki_pages", $pageadd)) {
 							$rpage->error = "EDIT_PAGESWIKI:     Error at insertion of the page.";
 							break;
 						}
-						$rpage = get_record('wiki_pages', 'id', $resultInsertion);
+						$rpage = ws_get_record('wiki_pages', 'id', $resultInsertion);
 
 						break;
 					case 'update' :
-						$rpage->error = get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
+						$rpage->error = get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$page->action);
 						break;
 					case 'delete' :
-						$rpage->error =  get_string('ws_notimplemented','wspp',__FUNCTION__." ".$page->action);
+						$rpage->error =  get_string('ws_notimplemented','local_wspp',__FUNCTION__." ".$page->action);
 						break;
 					default :
-						$rpage->error = get_string('ws_invalidaction','wspp',$page->action);
+						$rpage->error = get_string('ws_invalidaction','local_wspp',$page->action);
 				}
 			}
 			$rets[] = $rpage;
@@ -2772,20 +2852,20 @@ EOSS;
 	function affect_label_to_section($client, $sesskey, $labelid, $sectionid) {
 		global $CFG;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 
 		//get the section record
-		if (!($section = get_record('course_sections', 'id', $sectionid))) {
-			return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
+		if (!($section = ws_get_record('course_sections', 'id', $sectionid))) {
+			return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$sectionid));
 		}
 		/// Check for correct permissions.
 		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 		//get the label record
-		if (!($label = get_record('label', 'id', $labelid))) {
-			return $this->error(get_string('ws_labelunknown','wspp','id='.$labelid));
+		if (!($label = ws_get_record('label', 'id', $labelid))) {
+			return $this->error(get_string('ws_labelunknown','local_wspp','id='.$labelid));
 		}
 		//make compatible with the return type
 		$r = new stdClass();
@@ -2794,11 +2874,11 @@ EOSS;
 			$r->error=$errmsg;
 		}else {
 			$label->course = $section->course;
-			if (!update_record("label", $label)) {
+			if (!ws_update_record("label", $label)) {
                      $a=new StdClass();
                 $a->id=$labelid;
                 $a->course=$section->course;
-                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                $r->error=get_string('ws_errorupdatingmodule','local_wspp',$a);
 			}
 		}
 		$r->status =empty($r->error);
@@ -2820,26 +2900,26 @@ EOSS;
 	function affect_forum_to_section($client, $sesskey, $forumid, $sectionid, $groupmode) {
 		global $CFG;
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		  return $this->error(get_string('ws_invalidclient', 'wspp'));
+		  return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 
 		//get the section record
-        if (!($section = get_record('course_sections', 'id', $sectionid))) {
+        if (!($section = ws_get_record('course_sections', 'id', $sectionid))) {
                 return $this->error(get_string('ws_sectionunknown','id='.$sectionid));
         }
 		/// Check for correct permissions.
 		if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 
 		}
 		// check "groupmode" field
 		if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-			return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
+			return $this->error(get_string('ws_invalidgroupmode','local_wspp', $groupmode));
 		}
 
 		//get the forum record
-		if (!($forum = get_record('forum', 'id', $forumid))) {
-			return $this->error(get_string('ws_forumunknown','wspp','id='.$forumid));
+		if (!($forum = ws_get_record('forum', 'id', $forumid))) {
+			return $this->error(get_string('ws_forumunknown','local_wspp','id='.$forumid));
 		}
 
 //make compatible with the return type
@@ -2849,11 +2929,11 @@ EOSS;
             $r->error=$errmsg;
         }else {
             $forum->course = $section->course;
-            if (!update_record("forum", $forum)) {
+            if (!ws_update_record("forum", $forum)) {
                 $a=new StdClass();
                 $a->id=$forumid;
                 $a->course=$section->course;
-                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                $r->error=get_string('ws_errorupdatingmodule','local_wspp',$a);
             }
         }
         $r->status =empty($r->error);
@@ -2875,20 +2955,20 @@ EOSS;
 
         $this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
         //get the section record
-        if (!($section = get_record('course_sections', 'id', $sectionid))) {
-                return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
+        if (!($section = ws_get_record('course_sections', 'id', $sectionid))) {
+                return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$sectionid));
         }
         /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
         //get record of database
-        if (!$database = get_record("data", "id", $databaseid)) {
-            return $this->error(get_string('ws_databaseunknown','wspp','id='.$databaseid));
+        if (!$database = ws_get_record("data", "id", $databaseid)) {
+            return $this->error(get_string('ws_databaseunknown','local_wspp','id='.$databaseid));
             }
 
         //make compatible with the return type
@@ -2898,11 +2978,11 @@ EOSS;
             $r->error=$errmsg;
         }else {
             $database->course = $section->course;
-            if (!update_record("data", $database)) {
+            if (!ws_update_record("data", $database)) {
                      $a=new StdClass();
                 $a->id=$databaseid;
                 $a->course=$section->course;
-                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                $r->error=get_string('ws_errorupdatingmodule','local_wspp',$a);
                  }
         }
         $r->status =empty($r->error);
@@ -2926,23 +3006,23 @@ EOSS;
 
         $this->debug_output('AFFECT_DATABASE_TO_SECTION:     Trying to affect database to section.');
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
         //get the section record
-        if (!($section = get_record('course_sections', 'id', $sectionid))) {
-                return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
+        if (!($section = ws_get_record('course_sections', 'id', $sectionid))) {
+                return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$sectionid));
         }
         /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
         if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-           return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
+           return $this->error(get_string('ws_invalidgroupmode','local_wspp', $groupmode));
         }
         //get the assignment record
-        if (!$assign = get_record("assignment", "id", $assignmentid)) {
-            return $this->error(get_string('ws_assignmentunknown','wspp','id='.$assignmentid));
+        if (!$assign = ws_get_record("assignment", "id", $assignmentid)) {
+            return $this->error(get_string('ws_assignmentunknown','local_wspp','id='.$assignmentid));
         }
 
        //make compatible with the return type
@@ -2952,11 +3032,11 @@ EOSS;
             $r->error=$errmsg;
         }else {
             $assign->course = $section->course;
-            if (!update_record("assignment", $assign)) {
+            if (!ws_update_record("assignment", $assign)) {
                      $a=new StdClass();
                 $a->id=$assignmentid;
                 $a->course=$section->course;
-                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                $r->error=get_string('ws_errorupdatingmodule','local_wspp',$a);
                  }
         }
         $r->status =empty($r->error);
@@ -2980,27 +3060,27 @@ EOSS;
 
 	    $this->debug_output('AFFECT_WIKI_TO_SECTION:     Trying to affect a wiki to section.');
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
 	    //get the section record
-	    if (!($section = get_record('course_sections', 'id', $sectionid))) {
-		    return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
+	    if (!($section = ws_get_record('course_sections', 'id', $sectionid))) {
+		    return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$sectionid));
 	    }
 	    /// Check for correct permissions.
 	    if (!$this->has_capability($client, $sesskey, 'moodle/course:manageactivities', CONTEXT_COURSE, $section->course)) {
-		    return $this->error(get_string('ws_operationnotallowed','wspp'));
+		    return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 	    }
 	    //check if exists in db this id & get wiki record
-	    if (!$wiki = get_record("wiki", "id", $wikiid)) {
-		    return $this->error(get_string('ws_wikiunknown','wspp','id='.$wikiid));
+	    if (!$wiki = ws_get_record("wiki", "id", $wikiid)) {
+		    return $this->error(get_string('ws_wikiunknown','local_wspp','id='.$wikiid));
 	    }
 	    // check "groupmode" field
 	    if (($groupmode != NOGROUPS) && ($groupmode != SEPARATEGROUPS) && ($groupmode != VISIBLEGROUPS)) {
-		    return $this->error(get_string('ws_invalidgroupmode','wspp', $groupmode));
+		    return $this->error(get_string('ws_invalidgroupmode','local_wspp', $groupmode));
 	    }
 
 	    if (($groupmode == SEPARATEGROUPS) || ($groupmode == VISIBLEGROUPS)) {
-		    if ($group = get_record("groups", "courseid", $section->course)) {
+		    if ($group = ws_get_record("groups", "courseid", $section->course)) {
 
 			    $wiki2->groupid = $group->id;
 		    } else {
@@ -3008,7 +3088,7 @@ EOSS;
 		    }
 	    }
 
-	    if (!$wiki_entry = get_record("wiki_entries", "wikiid", $wikiid)) {
+	    if (!$wiki_entry = ws_get_record("wiki_entries", "wikiid", $wikiid)) {
 		    return $this->error("AFFECT_WIKI_TO_SECTION:  Wiki with ID $wikiid does not have an entry");
 	    }
 
@@ -3020,11 +3100,11 @@ EOSS;
 		    $r->error=$errmsg;
 	    }else {
 		    $wiki->course = $section->course;
-		    if (!update_record("wiki", $wiki)) {
+		    if (!ws_update_record("wiki", $wiki)) {
                      $a=new StdClass();
                 $a->id=$wikiid;
                 $a->course=$section->course;
-                $r->error=get_string('ws_errorupdatingmodule','wspp',$a);
+                $r->error=get_string('ws_errorupdatingmodule','local_wspp',$a);
 
 		    }
             $wiki2=new StdClass();
@@ -3032,7 +3112,7 @@ EOSS;
 		    $wiki2->wikiid = $wikiid;
 		    $wiki2->course = $section->course;
 		    //update "wiki_entries"
-		    if (!update_record("wiki_entries", $wiki2)) {
+		    if (!ws_update_record("wiki_entries", $wiki2)) {
 			    return $this->error("AFFECT_WIKI_TO_SECTION:     Impossible to acces WIKI_ENTRIES table");
 		    }
 	    }
@@ -3055,21 +3135,21 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/course/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 
-        if (!$course = get_record("course", $idfield, $courseid)) {
-              return $this->error(get_string('ws_courseunknown','wspp',$idfield."=".$courseid ));
+        if (!$course = ws_get_record("course", $idfield, $courseid)) {
+              return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$courseid ));
 
         }
 
 	/// Check for correct permissions.
 		if (!$this->has_capability('moodle/course:update', CONTEXT_COURSE, $course->id)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 		//get section
-        if (!($cur_section = get_record('course_sections', 'id', $sectionid))) {
-                return $this->error(get_string('ws_sectionunknown','wspp','id='.$sectionid));
+        if (!($cur_section = ws_get_record('course_sections', 'id', $sectionid))) {
+                return $this->error(get_string('ws_sectionunknown','local_wspp','id='.$sectionid));
         }
 
 
@@ -3077,7 +3157,7 @@ EOSS;
 			return $this->error("AFFECT_SECTION_TO_COURSE:     Section index $cur_section->section too big. Maximum section number: $cur_course->numsections.");
 		}
 		//verify if current course has already assigned this section
-		if ($duplicate = get_record("course_sections", "course", $courseid, "section", $cur_section->section)) {
+		if ($duplicate = ws_get_record("course_sections", "course", $courseid, "section", $cur_section->section)) {
 			if ($sectionid != $duplicate->id) {
 				if (!empty ($duplicate->sequence)) {
 					$modarray = explode(",", $duplicate->sequence);
@@ -3086,9 +3166,9 @@ EOSS;
 					else
 						$modarray2 = array ();
 					foreach ($modarray as $key) {
-						$module = get_record("course_modules", "id", $key);
+						$module = ws_get_record("course_modules", "id", $key);
 						$module->section = $sectionid;
-						update_record("course_modules", $module);
+						ws_update_record("course_modules", $module);
 						array_push($modarray2, $key);
 					}
 					$cur_section->sequence = implode(",", $modarray2);
@@ -3097,11 +3177,11 @@ EOSS;
 			}
 		}
 		$cur_section->course = $courseid;
-		if (!update_record("course_sections", $cur_section)) {
+		if (!ws_update_record("course_sections", $cur_section)) {
             $a=new StdClass();
             $a->id=$cur_section->id;
                 $a->course=$courseid;
-                $r->error=get_string('ws_errorupdatingsection','wspp',$a);
+                $r->error=get_string('ws_errorupdatingsection','local_wspp',$a);
 		}
 
 		$r = new stdClass();
@@ -3127,7 +3207,7 @@ EOSS;
 		global $CFG;
 		require_once ($CFG->dirroot . '/mod/wiki/lib.php');
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 
 		//we verify if we have the permission to do this operation
@@ -3135,20 +3215,20 @@ EOSS;
 			return $this->error("Course Module ID was not found. We can't verify if you have permission to do this operation");
 		}
 		if (!$this->has_capability('mod/wiki:participate', CONTEXT_MODULE, $cm->id)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 		//verify if the wiki exist in the database
-		if (!($wiki = get_record("wiki", "id", $wikiid))) {
-            return $this->error(get_string('ws_wikiunknown','wspp','id='.$wikiid));
+		if (!($wiki = ws_get_record("wiki", "id", $wikiid))) {
+            return $this->error(get_string('ws_wikiunknown','local_wspp','id='.$wikiid));
 
 		}
 		//we verify if the wiki exist in wiki_entries
-		if (!($wiki_entry = get_record("wiki_entries", "wikiid", $wiki->id))) {
+		if (!($wiki_entry = ws_get_record("wiki_entries", "wikiid", $wiki->id))) {
 			return $this->error("AFFECT_PAGEWIKI_TO_WIKI:     The wiki does not exist in wiki_entries");
 		}
 		//verify if the page of wiki exist in DB
-		if (!($page = get_record("wiki_pages", "id", $pageid))) {
-            return $this->error(get_string('ws_wikipageunknown','wspp','id='.$pageid));
+		if (!($page = ws_get_record("wiki_pages", "id", $pageid))) {
+            return $this->error(get_string('ws_wikipageunknown','local_wspp','id='.$pageid));
 		}
 		//verify if the page is not assigned to a wiki
 		if ($page->wiki > 0) {
@@ -3176,10 +3256,10 @@ EOSS;
 			$first_page->flags = 1;
 			$first_page->userid = $this->get_my_id($client, $sesskey);
 			;
-			if (!($result = insert_record("wiki_pages", $first_page, true))) {
+			if (!($result = ws_insert_record("wiki_pages", $first_page, true))) {
 				return $this->error = "AFFECT_PAGEWIKI_TO_WIKI:      Error at insertion of the first page of wiki.";
 			}
-			$first_page = get_record("wiki_pages", "id", $result);
+			$first_page = ws_get_record("wiki_pages", "id", $result);
 		}
 		$res = new stdClass();
 		//we verify if our page has the same name as the wiki's pagename
@@ -3191,26 +3271,26 @@ EOSS;
 			$page->created = time();
 			$page->lastmodified = time();
 			$page->content = $first_page->content . "<br>" . $page->content;
-			if (!update_record("wiki_pages", $page)) {
+			if (!ws_update_record("wiki_pages", $page)) {
 				return $this->error = "AFFECT_PAGEWIKI_TO_WIKI:      Error at update page of wiki.";
 			}
 			$res->status = true;
 			return $res;
 		}
 		//verify if in database exist another page with the same name assigned to this wiki
-		if ($page2 = get_record("wiki_pages", "pagename", $page->pagename, "wiki", $wiki_entry->id)) {
+		if ($page2 = ws_get_record("wiki_pages", "pagename", $page->pagename, "wiki", $wiki_entry->id)) {
 			return $this->error("AFFECT_PAGEWIKI_TO_WIKI:     A page of wiki with this name (id=$page2->id)is already assigned to the wiki with ID:$wiki->id");
 		}
 		$page->wiki = $wiki_entry->id;
 		$page->version = 1;
 		$page->flags = 1;
 		//  update of the page of wiki
-		if (!update_record("wiki_pages", $page)) {
+		if (!ws_update_record("wiki_pages", $page)) {
 			return $this->error = "AFFECT_PAGEWIKI_TO_WIKI:      Error at update page of wiki.";
 		}
 		//create link for the page affected
 		$first_page->content = $first_page->content . "<br>[" . $page->pagename . "]";
-		if (!update_record("wiki_pages", $first_page)) {
+		if (!ws_update_record("wiki_pages", $first_page)) {
 			return $this->error = "AFFECT_PAGEWIKI_TO_WIKI:      Can not create link to the page new created.";
 		}
 
@@ -3233,22 +3313,22 @@ EOSS;
         global $CFG;
         require_once ($CFG->dirroot . '/course/lib.php');
         if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-          return $this->error(get_string('ws_invalidclient', 'wspp'));
+          return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
 
         /// Check if category with id specified exists
-        if (!$destcategory = get_record('course_categories', 'id', $categoryid)) {
-            return $this->error(get_string('ws_categoryunkown','wspp',"id=".$categoryid));
+        if (!$destcategory = ws_get_record('course_categories', 'id', $categoryid)) {
+            return $this->error(get_string('ws_categoryunkown','local_wspp',"id=".$categoryid));
         }
         /// Check if course with id specified exists
-        if (!$course = get_record('course', 'id', $courseid)) {
-            return $this->error(get_string('ws_courseunknown','wspp',"id=".$courseid));
+        if (!$course = ws_get_record('course', 'id', $courseid)) {
+            return $this->error(get_string('ws_courseunknown','local_wspp',"id=".$courseid));
         }
 
          /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:create', CONTEXT_COURSECAT, $categoryid)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
 
         move_courses(array (
@@ -3275,7 +3355,7 @@ EOSS;
 	function affect_user_to_course($client, $sesskey, $userid, $courseid, $rolename) {
 
 		//if it isn't specified the role name, this will be set as Student
-		$rolename = empty ($rolename) ? "Student" : $rolename;
+		$rolename = empty ($rolename) ? "student" : $rolename;
 		$res = $this->affect_role_incourse($client, $sesskey, $rolename, $courseid, 'id', array (
 			$userid
 		), 'id', true);
@@ -3318,70 +3398,70 @@ EOSS;
 	*/
 	function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
-		  return $this->error(get_string('ws_invalidclient', 'wspp'));
+		  return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($res = get_records('wiki', $fieldname, $fieldvalue, 'name', '*')) {
+		if ($res = ws_get_records('wiki', $fieldname, $fieldvalue, 'name', '*')) {
 			$ret = filter_wikis($client, $res);
 		}
 		return $ret;
 	}
 	function get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, 'get_all_pagesWiki')) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($res = get_records('wiki_pages', $fieldname, $fieldvalue, 'pagename', '*')) {
+		if ($res = ws_get_records('wiki_pages', $fieldname, $fieldvalue, 'pagename', '*')) {
 			$ret = filter_pagesWiki($client, $res);
 		}
 		return $ret;
 	}
 	function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($res = get_records('groups', $fieldname, $fieldvalue, 'name', '*')) {
+		if ($res = ws_get_records('groups', $fieldname, $fieldvalue, 'name', '*')) {
 			$ret = filter_groups($client, $res);
 		}
 		return $ret;
 	}
 	function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($forums = get_records("forum", $fieldname, $fieldvalue, "name")) {
+		if ($forums = ws_get_records("forum", $fieldname, $fieldvalue, "name")) {
 			$ret = filter_forums($client, $forums);
 		}
 		return $ret;
 	}
 	function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-	         return $this->error(get_string('ws_invalidclient', 'wspp'));
+	         return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($labels = get_records("label", $fieldname, $fieldvalue, "name")) {
+		if ($labels = ws_get_records("label", $fieldname, $fieldvalue, "name")) {
 			$ret = filter_labels($client, $labels);
 		}
 		return $ret;
 	}
 	function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($assignments = get_records("assignment", $fieldname, $fieldvalue, "name")) {
+		if ($assignments = ws_get_records("assignment", $fieldname, $fieldvalue, "name")) {
 			$ret = filter_assignments($client, $assignments);
 		}
 		return $ret;
 	}
 	function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($databases = get_records("data", $fieldname, $fieldvalue, "name")) {
+		if ($databases = ws_get_records("data", $fieldname, $fieldvalue, "name")) {
 			$ret = filter_databases($client, $databases);
 		}
 		return $ret;
@@ -3389,10 +3469,10 @@ EOSS;
 
 	function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
 		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'wspp'));
+			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 		}
 		$ret = array ();
-		if ($quizzes = get_records("quiz", $fieldname, $fieldvalue, "name")) {
+		if ($quizzes = ws_get_records("quiz", $fieldname, $fieldvalue, "name")) {
 			$ret = filter_resources($client, $quizzes);
 		}
 		return $ret;
@@ -3408,10 +3488,10 @@ EOSS;
 
   function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         $ret = array ();
-        if ($res = get_records('groupings', $fieldname, $fieldvalue, 'name', '*')) {
+        if ($res = ws_get_records('groupings', $fieldname, $fieldvalue, 'name', '*')) {
             $ret = filter_groupings($client, $res);
         }
         return $ret;
@@ -3425,14 +3505,14 @@ EOSS;
     	require_once($CFG->dirroot.'/user/profile/lib.php');
 
     	 if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         if (!$this->has_capability('moodle/user:update', CONTEXT_SYSTEM, 0)) {
-            return $this->error(get_string('ws_operationnotallowed','wspp'));
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
 
-        if (!$user = get_record('user', $useridfield, $userid)) {
-			return $this->error =get_string('ws_userunknown','wspp',$useridfield."=".$userid);
+        if (!$user = ws_get_record('user', $useridfield, $userid)) {
+			return $this->error =get_string('ws_userunknown','local_wspp',$useridfield."=".$userid);
         }
 
         $ret=array();
@@ -3441,8 +3521,10 @@ EOSS;
         foreach($values as $value) {
 	        if (!isset($value->name) && !isset($value->value))
 		        continue;
-	        if (!$field = get_record('user_info_field', 'shortname', $value->name))
-		        return  $this->error(get_string('ws_profileunknown','wspp','shortname='.$value->name));
+
+	        if (!$field = ws_get_record('user_info_field', 'shortname', $value->name)) 
+
+		        return  $this->error(get_string('ws_profileunknown','local_wspp','shortname='.$value->name));
 	        $fvalue=$value->value;
 
 	        switch ($field->datatype) {
@@ -3450,11 +3532,11 @@ EOSS;
 	        	    //convert the passed string to an indice in array of possible values
 	        		$fvalue=array_search($fvalue,explode("\n", $field->param1));
 	        		if ( FALSE===$fvalue)
-	        			return $this->error(get_string('ws_profileinvalidvaluemenu','wspp',$value->value));
+	        			return $this->error(get_string('ws_profileinvalidvaluemenu','local_wspp',$value->value));
 	        		break;
 	        	case 'checkbox':
 	        		if ((int)$fvalue != 0 && (int)$fvalue != 1)
-	        			return $this->error(get_string('ws_profileinvalidvaluecheckbox','wspp'));
+	        			return $this->error(get_string('ws_profileinvalidvaluecheckbox','local_wspp'));
 	        		break;
 	        	case 'text':
 	        		$fvalue = substr($fvalue, 0, $field->param2);
@@ -3481,14 +3563,14 @@ EOSS;
     function get_users_byprofile($client,$sesskey,$profilefieldname,$profilefieldvalue) {
 	    global $CFG;
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
 	    if (!$this->has_capability('moodle/site:viewparticipants',CONTEXT_SYSTEM, 0)) {
-		    return $this->error(get_string('ws_operationnotallowed','wspp'));
+		    return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 	    }
 	    //make sure required custom field exists
-	    if (!($field = get_record("user_info_field", "shortname", $profilefieldname))) {
-		    return $this->error(get_string('ws_profileunknown','wspp','shortname='.$profilefieldname));
+	    if (!($field = ws_get_record("user_info_field", "shortname", $profilefieldname))) {
+		    return $this->error(get_string('ws_profileunknown','local_wspp','shortname='.$profilefieldname));
 	    }
 
 	    $profilefieldvalue=addslashes($profilefieldvalue);
@@ -3496,8 +3578,9 @@ EOSS;
 	    $where = "where fieldid={$field->id} and data='$profilefieldvalue'" ;
 	    $where="id in (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
 	    // return $this->error($where);
+	    
+    	 $ret=ws_get_records_select('user',$where);	    
 
-    	 $ret=get_records_select('user',$where);
 	    //also add custom profile values
 	    return filter_users($client, $ret, 0);
     }
@@ -3508,22 +3591,22 @@ EOSS;
    */
    function get_quiz ($client,$sesskey,$quizid,$format='xml') {
    	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-		    return $this->error(get_string('ws_invalidclient', 'wspp'));
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
 
 	    //get the quiz record
-		if (!$quiz = get_record("quiz", "id", $quizid)) {
-			return $this->error(get_string('ws_quizunknown','wspp','id='.$quizid));
+		if (!$quiz = ws_get_record("quiz", "id", $quizid)) {
+			return $this->error(get_string('ws_quizunknown','local_wspp','id='.$quizid));
 		}
 		/// Check for correct permissions.
 		if (!$this->has_capability('mod/quiz:manage', CONTEXT_COURSE, $quiz->course)) {
-			return $this->error(get_string('ws_operationnotallowed','wspp'));
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		}
 
 		require_once("libquiz.php");
 
 		if (! ws_libquiz_is_supported_format ($format))
-		return $this->error(get_string('ws_quizexportunknownformat','wspp','format='.$format));
+		return $this->error(get_string('ws_quizexportunknownformat','local_wspp','format='.$format));
 
 		$quiz->data=ws_libquiz_export($quiz,$format);
 		return filter_quiz($client,$quiz);

@@ -25,6 +25,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * this plugin should not be installed under Moodle 2.0 (it is already provided) 
+ */
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
@@ -67,8 +71,11 @@ class auth_plugin_webservice extends auth_plugin_base {
     function user_login_webservice($username, $password) {
         global $CFG, $DB;
         // special web service login
+        
+        
        // if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
-        if ($user = get_record('user','username', $username,'mnethostid',$CFG->mnet_localhost_id)) {
+       // if ($user = get_record('user','username', $username,'mnethostid',$CFG->mnet_localhost_id)) {
+         if ($user = get_complete_user_data('username', $username)) {
             if ($user->auth == $this->authtype)
             return validate_internal_user_password($user, $password);
         }

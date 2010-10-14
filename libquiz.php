@@ -28,14 +28,18 @@ function ws_libquiz_export($quiz, $format) {
 
 	$questionlist = quiz_questions_in_quiz($quiz->questions);
 
+	if ($CFG->wspp_using_moodle20)
+		$from="{question} q,{quiz_question_instances} i";
+	else 
+		$from="{$CFG->prefix}question q,{$CFG->prefix}quiz_question_instances i";
+    	
 	$sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance" .
-	"  FROM {$CFG->prefix}question q," .
-	"       {$CFG->prefix}quiz_question_instances i" .
+	"  FROM $from ".
 	" WHERE i.quiz = '$quiz->id' AND q.id = i.question" .
 	"   AND q.id IN ($questionlist)";
 
 	// Load the questions
-	if (!$questions = get_records_sql($sql)) {
+	if (!$questions = ws_get_records_sql($sql)) {
 		return "";
 	}
 	//$qformat->setQuestions($questions);

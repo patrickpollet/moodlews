@@ -643,12 +643,14 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param integer $client
 * @param string $sesskey
 * @param integer $uid
+* @param string $idfield
 * @param integer $courseid
+* @param string $courseidfield
 * @return getGroupsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_my_group($lr->getClient(),$lr->getSessionKey(),0,0);
+$res=$moodle->get_my_group($lr->getClient(),$lr->getSessionKey(),0,'',0,'');
 print_r($res);
 print($res->getGroups());
 
@@ -1981,6 +1983,114 @@ print($res->getShuffleanswers());
 print($res->getQuestions());
 print($res->getTimelimit());
 print($res->getData());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a teacher in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->add_teacher($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: remove a teacher in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_teacher($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a non editing teacher in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->add_noneditingteacher($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: remove  a non edting teacher in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_noneditingteacher($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add a student in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->add_student($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: remove a student in the course
+* @param integer $client
+* @param string $sesskey
+* @param string $value1
+* @param string $id1
+* @param string $value2
+* @param string $id2
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_student($lr->getClient(),$lr->getSessionKey(),'','','','');
+print_r($res);
+print($res->getError());
+print($res->getStatus());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

@@ -356,9 +356,9 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://prope.insa-lyon.fr/moodle.195/wspp/wsdl';
+  private $uri = 'http://localhost/moodle.20/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.20/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -1400,15 +1400,19 @@ class MoodleWS {
    * @param integer $client
    * @param string $sesskey
    * @param integer $uid
+   * @param string $idfield
    * @param integer $courseid
+   * @param string $courseidfield
    * @return getGroupsReturn
    */
-  public function get_my_group($client, $sesskey, $uid, $courseid) {
+  public function get_my_group($client, $sesskey, $uid, $idfield, $courseid, $courseidfield) {
     $res= $this->client->__call('get_my_group', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($uid, 'uid'),
-            new SoapParam($courseid, 'courseid')
+            new SoapParam($idfield, 'idfield'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield')
       ),
       array(
             'uri' => $this->uri ,
@@ -3007,6 +3011,176 @@ class MoodleWS {
            )
       );
   return $this->castTo ('quizRecord',$res);
+  }
+
+  /**
+   * MoodleWS: add a teacher in the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function add_teacher($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('add_teacher', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: remove a teacher in the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function remove_teacher($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('remove_teacher', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: add a non editing teacher in the course 
+   * 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function add_noneditingteacher($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('add_noneditingteacher', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: remove  a non edting teacher in the 
+   * course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function remove_noneditingteacher($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('remove_noneditingteacher', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: add a student in the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function add_student($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('add_student', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: remove a student in the course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $value1
+   * @param string $id1
+   * @param string $value2
+   * @param string $id2
+   * @return affectRecord
+   */
+  public function remove_student($client, $sesskey, $value1, $id1, $value2, $id2) {
+    $res= $this->client->__call('remove_student', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value1, 'value1'),
+            new SoapParam($id1, 'id1'),
+            new SoapParam($value2, 'value2'),
+            new SoapParam($id2, 'id2')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
   }
 
 }

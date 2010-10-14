@@ -12,7 +12,12 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $labels= new editLabelsInput();
-$labels->setLabels(array());
+$lbl= new LabelDatum();
+$lbl->setAction('add');
+//$lbl->setId=1;
+$lbl->setName('une nouvelle étiquette');
+$lbl->setContent('son contenu');
+$labels->setLabels(array($lbl));
 $res=$moodle->edit_labels($lr->getClient(),$lr->getSessionKey(),$labels);
 print_r($res);
 print($res->getLabels());

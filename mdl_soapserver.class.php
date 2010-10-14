@@ -16,6 +16,8 @@
 /**
  * rev 1.6.7 : added phpdoc style comments compatible with wshelper utility
  *   thus allwoing in a near future to generate the wsdl on the fly from this class and data classes
+ * 
+ * rev 1.7 Moodle 2.0 exceptions handling compatible 
  */
 
 // base class that performs data extraction/injection
@@ -39,18 +41,76 @@ class mdl_soapserver extends server {
      */
     function __construct() {
         global $CFG;
-        /// Necessary for processing any DB upgrades.
-        parent :: server();
-        //server::_construct();
 
-        $this->debug_output('    Version: ' . $this->version);
-        $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+		// rev 1.7 use an xception handler to catch all errors sent by Moodle 2.0
+		// with Moodle 1.9 we use our function error() that throw a soap exception
+		// that is also catched here       
+        set_exception_handler(array($this,'exception_handler'));     
+        /// Necessary for processing any DB upgrades in Moodle 1.9 (not in 2.0)
+        parent :: server();
         //turn off output of calls to debugging() that messup the XML
         // see lib/gradelib.php
         $CFG->debug = 0;
-        // $this->debug_output(print_r($CFG,true));
-
         ob_start(); //rev 1.6 buffer all Moodle ouptuts see send function
+    }
+    
+    /**
+     * specific exception handling for Moodle 2.0
+     * code borrowed from Moodle's webservice '
+     */
+    public function  exception_handler($ex) {
+    	if ($CFG->wspp_using_moodle20)
+    		// detect active db transactions, rollback and log as error
+        	abort_all_db_transactions();
+        // now let the plugin send the exception to client
+        $this->send_error($ex);
+        // not much else we can do now, add some logging later
+        exit(1);
+    } 
+    
+      /**
+     * Send the error information to the WS client
+     * formatted as XML document.
+     * @param exception $ex
+     * @return void
+     */
+    protected function send_error($ex=null) {
+        // Zend Soap server fault handling is incomplete compared to XML-RPC :-(
+        // we can not use: echo $this->zend_server->fault($ex);
+        //TODO: send some better response in XML
+        if ($ex) {
+            $info = $ex->getMessage();
+            if (debugging() and isset($ex->debuginfo)) {
+                $info .= ' - '.$ex->debuginfo;
+            }
+        } else {
+            $info = 'Unknown error';
+        }
+        $this->debug_output($info);
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Body><SOAP-ENV:Fault>
+<faultcode>MOODLE:error</faultcode>
+<faultstring>'.$info.'</faultstring>
+</SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>';
+
+        $this->send_headers();
+        header('Content-Type: application/xml');
+        header('Content-Disposition: inline; filename="response.xml"');
+
+        echo $xml;
+    }
+    
+     /**
+     * Internal implementation - sending of page headers.
+     * @return void
+     */
+    protected function send_headers() {
+        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        header('Pragma: no-cache');
+        header('Accept-Ranges: none');
     }
 
     /**
@@ -74,11 +134,11 @@ class mdl_soapserver extends server {
     * Sends an fatal error response back to the client.
     *  @override server
     * @param string $msg The error message to return.
-    * @return An error message string.
+    * @return void
     */
-    private function error($msg) {
+    protected function error($msg) {
         parent :: error($msg); //log in error msg
-        throw new SoapFault("Server", $msg);
+        throw new SoapFault("Wspp Server", $msg);
     }
 
     /** since SOAP requires all attributes fields to be filled, even in case of error
@@ -192,7 +252,7 @@ class mdl_soapserver extends server {
      * @return userRecord[]  An array of user objects.
      */
     public function edit_users($client, $sesskey, $users) {
-        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $users), 'users', 'userRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $users), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -211,7 +271,7 @@ class mdl_soapserver extends server {
      * @return userRecord[]  An array of user records.
      */
     public function get_users($client, $sesskey, $userids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_users($client, $sesskey, $userids, $idfield), 'users', 'userRecord', get_string('nousers', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_users($client, $sesskey, $userids, $idfield), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
     }
 
     /**
@@ -223,7 +283,7 @@ class mdl_soapserver extends server {
      * @return courseRecord[] An array of course records.
      */
     public function edit_courses($client, $sesskey, $courses) {
-        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $courses), 'courses', 'courseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $courses), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -236,7 +296,7 @@ class mdl_soapserver extends server {
      * @return courseRecord[] An array of resource records.
      */
     public function get_courses($client, $sesskey, $courseids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_courses($client, $sesskey, $courseids, $idfield), 'courses', 'courseRecord', get_string('nocourses', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_courses($client, $sesskey, $courseids, $idfield), 'courses', 'courseRecord', get_string('nocourses', 'local_wspp')));
     }
 
     /**
@@ -248,7 +308,7 @@ class mdl_soapserver extends server {
      * @return courseRecord[] An array of resource records.
      */
     function get_courses_search($client, $sesskey, $search) {
-        return $this->send($this->to_soap_array(parent :: get_courses_search($client, $sesskey, $search), 'courses', 'courseRecord', get_string('nocourses', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_courses_search($client, $sesskey, $search), 'courses', 'courseRecord', get_string('nocourses', 'local_wspp')));
 
     }
 
@@ -264,7 +324,7 @@ class mdl_soapserver extends server {
     * @return resourceRecord[] An array of records.
     */
     public function get_instances_bytype($client, $sesskey, $courseids, $idfield = 'idnumber', $type = 'resource') {
-        return $this->send($this->to_soap_array(parent :: get_instances_bytype($client, $sesskey, $courseids, $idfield, $type), 'resources', 'resourceRecord', get_string('noressources', 'wspp') . $type));
+        return $this->send($this->to_soap_array(parent :: get_instances_bytype($client, $sesskey, $courseids, $idfield, $type), 'resources', 'resourceRecord', get_string('noressources', 'local_wspp') . $type));
     }
 
     /**
@@ -277,7 +337,7 @@ class mdl_soapserver extends server {
     * @return resourceRecord[] An array of resource records.
     */
     public function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_resources($client, $sesskey, $courseids, $idfield), 'resources', 'resourceRecord', get_string('noressources', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_resources($client, $sesskey, $courseids, $idfield), 'resources', 'resourceRecord', get_string('noresources', 'local_wspp')));
     }
 
     /**
@@ -290,7 +350,7 @@ class mdl_soapserver extends server {
     * @return sectionRecord[] An array of section records.
     */
     public function get_sections($client, $sesskey, $courseids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_sections($client, $sesskey, $courseids, $idfield), 'sections', 'sectionRecord', get_string('nosections', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_sections($client, $sesskey, $courseids, $idfield), 'sections', 'sectionRecord', get_string('nosections', 'local_wspp')));
     }
 
     /**
@@ -307,7 +367,7 @@ class mdl_soapserver extends server {
      *               specific data format for sending to the client.
      */
     public function enrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'Student', $courseid, $courseidfield, $userids, $idfield, true), 'students', 'enrolRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey,'student', $courseid, $courseidfield, $userids, $idfield, true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -325,7 +385,7 @@ class mdl_soapserver extends server {
          *               specific data format for sending to the client.
          */
     public function unenrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'Student', $courseid, $courseidfield, $userids, $idfield, false), 'students', 'enrolRecord', "no student to unenrol in course $courseid "));
+        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'student', $courseid, $courseidfield, $userids, $idfield, false), 'students', 'enrolRecord', "no student to unenrol in course $courseid "));
     }
 
     /**
@@ -342,7 +402,7 @@ class mdl_soapserver extends server {
          *
     */
     public function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = "idnumber") {
-        return $this->send($this->to_soap_array(parent :: get_grades($client, $sesskey, $userid, $useridfield, $courseids, $courseidfield), 'grades', 'gradeRecord', get_string('nogradesfor', 'wspp', $userid)));
+        return $this->send($this->to_soap_array(parent :: get_grades($client, $sesskey, $userid, $useridfield, $courseids, $courseidfield), 'grades', 'gradeRecord', get_string('nogradesfor', 'local_wspp', $userid)));
 
     }
 
@@ -375,7 +435,7 @@ class mdl_soapserver extends server {
      */
     public function get_course_grades($client, $sesskey, $courseid, $idfield = "idnumber") {
 
-        return $this->send($this->to_soap_array(parent :: get_course_grades($client, $sesskey, $courseid, $idfield), 'grades', 'gradeRecord', get_string('nogradesin', 'wspp', $courseid)));
+        return $this->send($this->to_soap_array(parent :: get_course_grades($client, $sesskey, $courseid, $idfield), 'grades', 'gradeRecord', get_string('nogradesin', 'local_wspp', $courseid)));
 
     }
 
@@ -409,7 +469,7 @@ class mdl_soapserver extends server {
      */
 
     private function _get_mycourses_by($client, $sesskey, $uinfo, $idfield, $sort) {
-        return $this->send($this->to_soap_array(parent :: get_my_courses($client, $sesskey, $uinfo, $idfield, $sort), 'courses', 'courseRecord', get_string('nocourses', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_my_courses($client, $sesskey, $uinfo, $idfield, $sort), 'courses', 'courseRecord', get_string('nocourses', 'local_wspp')));
 
     }
 
@@ -501,7 +561,7 @@ class mdl_soapserver extends server {
     * @return groupRecord[]  Array of groupRecord
     */
     public function get_groups_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_groups_bycourse($client, $sesskey, $courseid, $idfield), 'groups', 'groupRecord', get_string('nogroupsin', 'wspp', $courseid)));
+        return $this->send($this->to_soap_array(parent :: get_groups_bycourse($client, $sesskey, $courseid, $idfield), 'groups', 'groupRecord', get_string('nogroupsin', 'local_wspp', $courseid)));
     }
 
     /**
@@ -509,8 +569,8 @@ class mdl_soapserver extends server {
     *  return an array of groups
     *  @see get_group_byid, get_groups_byname
     */
-    private function get_groups($client, $sesskey, $groups, $idfield, $courseid = 0) {
-        return $this->send($this->to_soap_array(parent :: get_groups($client, $sesskey, $groups, $idfield, $courseid), 'groups', 'groupRecord', get_string('nogroups', 'wspp')));
+    protected function get_groups($client, $sesskey, $groups, $idfield, $courseid = 0) {
+        return $this->send($this->to_soap_array(parent :: get_groups($client, $sesskey, $groups, $idfield, $courseid), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
     }
 
     /**
@@ -552,7 +612,7 @@ class mdl_soapserver extends server {
     */
     public function get_group_members($client, $sesskey, $groupid, $groupidfield = 'id') {
 
-        return $this->send($this->to_soap_array(parent :: get_group_members($client, $sesskey, $groupid, $groupidfield), 'users', 'userRecord', get_string('nousers', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_group_members($client, $sesskey, $groupid, $groupidfield), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
 
     }
 
@@ -566,7 +626,7 @@ class mdl_soapserver extends server {
     */
     public function get_grouping_members($client, $sesskey, $groupid, $groupidfield = 'id') {
 
-        return $this->send($this->to_soap_array(parent :: get_grouping_members($client, $sesskey, $groupid, $groupidfield), 'users', 'userRecord', get_string('nousers', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_grouping_members($client, $sesskey, $groupid, $groupidfield), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
 
     }
 
@@ -583,14 +643,15 @@ class mdl_soapserver extends server {
     *
     */
     public function get_my_groups($client, $sesskey, $uid = '', $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: get_my_groups($client, $sesskey, $uid, $idfield), 'groups', 'groupRecord', get_string('nogroups', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_my_groups($client, $sesskey, $uid, $idfield), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
     }
 
     /**
     * Return user's group(s)  in course identified by $courseid
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param int $uid  Moodle's internal id for user to search
+    * @param int $uid  Moodle's id for user to search
+    * @param int $idfield  Moodle's table column for user to search
     * @param string $courseid course to serach into
     * @param string $courseidfield field used to identify course
     * @return groupRecord[] Return data (array of group  record) to be converted into a specific
@@ -598,21 +659,24 @@ class mdl_soapserver extends server {
     *
     */
 
-    public function get_my_group($client, $sesskey, $uid, $courseid, $courseidfield = 'id') {
+    public function get_my_group($client, $sesskey, $uid, $idfield,$courseid, $courseidfield = 'id') {
         $rres = array ();
-        if ($tmp = parent :: get_my_groups($client, $sesskey, $uid)) {
+        $course = ws_get_record('course', $courseidfield,$courseid );
+        if (!$course)
+            return $this->error(get_string('ws_courseunknown', 'local_wspp', $courseidfield . "=" . $courseid));      
+        if ($tmp = parent :: get_my_groups($client, $sesskey, $uid,$idfield)) {
             $foundOne = false;
             foreach ($tmp as $g) {
-                if ($g->courseid == $courseid) {
+                if ($g->courseid == $course->id) {
                     $rres['groups'][] = $this->to_soap($g, 'groupRecord');
                     $foundOne = true;
                 }
             }
             if (!$foundOne)
-                $rres['groups'][] = $this->error_record('groupRecord', get_string('nothingtodo', 'wspp', $courseid));
+                $rres['groups'][] = $this->error_record('groupRecord', get_string('nothingtodo', 'local_wspp', $courseid));
 
         } else {
-            $rres['groups'][] = $this->error_record('groupRecord', get_string('nogroups', 'wspp'));
+            $rres['groups'][] = $this->error_record('groupRecord', get_string('nogroups', 'local_wspp'));
         }
         return $this->send($rres);
     }
@@ -678,7 +742,7 @@ class mdl_soapserver extends server {
     * @return userRecord[]
     */
     public function get_users_bycourse($client, $sesskey, $idcourse, $idfield = 'idnumber', $idrole = 0) {
-        return $this->send($this->to_soap_array(parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole), 'users', 'userRecord', get_string('nousers', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
 
     }
 
@@ -711,15 +775,15 @@ class mdl_soapserver extends server {
     * @return userRecord[]
     */
     public function get_teachers($client, $sesskey, $idcourse, $idfield = 'idnumber') {
-        $role = get_record('role', 'shortname', 'editingteacher');
+        $role = ws_get_record('role', 'shortname', 'editingteacher');
         $te = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
         if (!empty ($te->error)) // cancel any errors if no teachers found
             $te = array ();
-        $role = get_record('role', 'shortname', 'teacher');
+        $role = ws_get_record('role', 'shortname', 'teacher');
         $net = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
         if (!empty ($net->error)) // cancel any errors if no non editing teachers found
             $net = array ();
-        return $this->send($this->to_soap_array(array_merge($te, $net), 'users', 'userRecord', get_string('noteachers', 'wspp')));
+        return $this->send($this->to_soap_array(array_merge($te, $net), 'users', 'userRecord', get_string('noteachers', 'local_wspp')));
     }
 
     /**
@@ -733,7 +797,7 @@ class mdl_soapserver extends server {
         */
 
     public function get_students($client, $sesskey, $idcourse, $idfield = 'idnumber') {
-        $role = get_record('role', 'shortname', 'student');
+        $role = ws_get_record('role', 'shortname', 'student');
         return $this->get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
     }
 
@@ -747,7 +811,7 @@ class mdl_soapserver extends server {
     */
     public function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
         return $this->send($this->to_soap_array(parent :: get_roles($client, $sesskey, $roleid, $idfield),
-          'roles', 'roleRecord', get_string('noroles', 'wspp')));
+          'roles', 'roleRecord', get_string('noroles', 'local_wspp')));
     }
 
     /**
@@ -781,7 +845,7 @@ class mdl_soapserver extends server {
     * @return categoryRecord[]
     */
     public function get_categories($client, $sesskey, $catid = '', $idfield = '') {
-        return $this->send($this->to_soap_array(parent :: get_categories($client, $sesskey, $catid, $idfield), 'categories', 'categoryRecord', get_string('nocategories', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_categories($client, $sesskey, $catid, $idfield), 'categories', 'categoryRecord', get_string('nocategories', 'local_wspp')));
     }
 
     /**
@@ -828,7 +892,7 @@ class mdl_soapserver extends server {
      * @return eventRecord[]
      */
     public function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield = 'id') {
-        return $this->send($this->to_soap_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield), 'events', 'eventRecord', get_string('noevents', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield), 'events', 'eventRecord', get_string('noevents', 'local_wspp')));
     }
 
     /**
@@ -841,7 +905,7 @@ class mdl_soapserver extends server {
       */
 
     public function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
-        return $this->send($this->to_soap_array(parent :: get_last_changes($client, $sesskey, $courseid, $idfield, $limit), 'changes', 'changeRecord', get_string('nochanges', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_last_changes($client, $sesskey, $courseid, $idfield, $limit), 'changes', 'changeRecord', get_string('nochanges', 'local_wspp')));
     }
 
     /**
@@ -857,7 +921,7 @@ class mdl_soapserver extends server {
     public function get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99) {
         $res = $this->send($this->to_soap_array(
         //array(),  <-- test code 1 empty record return
-    parent :: get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 0), 'activities', 'activityRecord', get_string('noactivities', 'wspp')));
+    parent :: get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 0), 'activities', 'activityRecord', get_string('noactivities', 'local_wspp')));
 
         return $res;
 
@@ -890,7 +954,7 @@ class mdl_soapserver extends server {
      * @return assignmentSubmissionRecord[]
      */
     public function get_assignment_submissions($client, $sesskey, $assignmentid, $userids = array (), $useridfield = 'idnumber', $timemodified = 0, $zipfiles = 1) {
-        $res = $this->send($this->to_soap_array(parent :: get_assignment_submissions($client, $sesskey, $assignmentid, $userids, $useridfield, $timemodified, $zipfiles), 'submissions', 'assignmentSubmissionRecord', get_string('nosubmissions', 'wspp')));
+        $res = $this->send($this->to_soap_array(parent :: get_assignment_submissions($client, $sesskey, $assignmentid, $userids, $useridfield, $timemodified, $zipfiles), 'submissions', 'assignmentSubmissionRecord', get_string('nosubmissions', 'local_wspp')));
 
         return $res;
 
@@ -911,7 +975,7 @@ class mdl_soapserver extends server {
         $tmp->setCourses(array (
             $coursedatum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -923,9 +987,9 @@ class mdl_soapserver extends server {
      * @return courseRecord[] a completed course record juste deleted from DB or error record
      */
     function delete_course($client, $sesskey, $courseid, $courseidfield = 'idnumber') {
-        $course = get_record('course', $courseidfield, $courseid);
+        $course = ws_get_record('course', $courseidfield, $courseid);
         if (!$course)
-            return $this->error(get_string('ws_courseunknown', 'wspp', $courseidfield . "=" . $courseid));
+            return $this->error(get_string('ws_courseunknown', 'local_wspp', $courseidfield . "=" . $courseid));
         $tmp = new editCoursesInput();
         $datum = new courseDatum();
         $datum->setAction('delete');
@@ -933,7 +997,7 @@ class mdl_soapserver extends server {
         $tmp->setCourses(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -944,18 +1008,19 @@ class mdl_soapserver extends server {
      * @param string $courseidfield  what field in the datum is to be used to find him
      * @return courseRecord[]
      */
-    function update_course($client, $sesskey, $datum, $courseidfield = 'idnumber') {
-        $cid = $datum-> $courseidfield;
-        $course = get_record('course', $courseidfield, $cid);
+     function update_course ($client,$sesskey,$datum,$courseidfield='idnumber') {
+        $cid=$datum->$courseidfield;
+        $course = ws_get_record('course', $courseidfield,$cid );
+
         if (!$course)
-            return $this->error(get_string('ws_courseunknown', 'wspp', $courseidfield . "=" . $cid));
+            return $this->error(get_string('ws_courseunknown', 'local_wspp', $courseidfield . "=" . $cid));
         $tmp = new editCoursesInput();
         $datum->action = 'update';
         $datum->id = $course->id; //set Moodle internal id for edit_courses
         $tmp->setCourses(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $tmp), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -970,7 +1035,7 @@ class mdl_soapserver extends server {
         $tmp->setUsers(array (
             $userdatum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -982,9 +1047,9 @@ class mdl_soapserver extends server {
       * @return userRecord[] a completed user record juste deleted from DB or error record
       */
     function delete_user($client, $sesskey, $userid, $useridfield = 'idnumber') {
-        $user = get_record('user', $useridfield, $userid);
+        $user = ws_get_record('user', $useridfield, $userid);
         if (!$user)
-            return $this->error(get_string('ws_userunknown', 'wspp', $useridfield . "=" . $userid));
+            return $this->error(get_string('ws_userunknown', 'local_wspp', $useridfield . "=" . $userid));
         $tmp = new editUsersInput();
         $datum = new userDatum();
         $datum->setAction('delete');
@@ -992,7 +1057,7 @@ class mdl_soapserver extends server {
         $tmp->setUsers(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1005,16 +1070,16 @@ class mdl_soapserver extends server {
      */
     function update_user($client, $sesskey, $datum, $useridfield = 'idnumber') {
         $uid = $datum-> $useridfield;
-        $user = get_record('user', $useridfield, $uid);
+        $user = ws_get_record('user', $useridfield, $uid);
         if (!$user)
-            return $this->error(get_string('ws_userunknown', 'wspp', $useridfield . "=" . $uid));
+            return $this->error(get_string('ws_userunknown', 'local_wspp', $useridfield . "=" . $uid));
         $tmp = new editUsersInput();
         $datum->action = 'update';
         $datum->id = $user->id; //set Moodle internal id for edit_users
         $tmp->setUsers(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $tmp), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1024,7 +1089,7 @@ class mdl_soapserver extends server {
       * @return groupingRecord[]
       */
     function edit_groupings($client, $sesskey, $groupings) {
-        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $groupings), 'groupings', 'groupingRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $groupings), 'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1039,7 +1104,7 @@ class mdl_soapserver extends server {
         $tmp->setGroups(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 'groups', 'groupRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1054,7 +1119,7 @@ class mdl_soapserver extends server {
         $tmp->setGroupings(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp), 'groupings', 'groupingRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp), 'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1066,9 +1131,9 @@ class mdl_soapserver extends server {
       * @return groupRecord[] a completed group record juste deleted from DB or error record
       */
     function delete_group($client, $sesskey, $id, $idfield = 'id') {
-        $old = get_record('groups', $idfield, $id);
+        $old = ws_get_record('groups', $idfield, $id);
         if (!$old)
-            return $this->error(get_string('ws_groupunknown', 'wspp', $idfield . "=" . $id));
+            return $this->error(get_string('ws_groupunknown', 'local_wspp', $idfield . "=" . $id));
         $tmp = new editGroupsInput();
         $datum = new groupDatum();
         $datum->setAction('delete');
@@ -1076,7 +1141,7 @@ class mdl_soapserver extends server {
         $tmp->setGroups(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 'groups', 'groupRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1088,9 +1153,9 @@ class mdl_soapserver extends server {
       * @return groupingRecord[] a completed grouping record juste deleted from DB or error record
       */
     function delete_grouping($client, $sesskey, $id, $idfield = 'id') {
-        $old = get_record('groupings', $idfield, $id);
+        $old = ws_get_record('groupings', $idfield, $id);
         if (!$old)
-            return $this->error(get_string('ws_groupingunknown', 'wspp', $idfield . "=" . $id));
+            return $this->error(get_string('ws_groupingunknown', 'local_wspp', $idfield . "=" . $id));
         $tmp = new editGroupingsInput();
         $datum = new groupingDatum();
         $datum->setAction('delete');
@@ -1098,7 +1163,7 @@ class mdl_soapserver extends server {
         $tmp->setGroupings(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp), 'groupings', 'groupingRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp), 'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1111,16 +1176,19 @@ class mdl_soapserver extends server {
      */
     function update_group($client, $sesskey, $datum, $idfield = 'id') {
         $id = $datum-> $idfield;
-        if (!$old = get_record('groups', $idfield, $id))
-            return $this->error(get_string('ws_groupunknown', 'wspp', $idfield . "=" . $id));
+        if (!$old = ws_get_record('groups', $idfield, $id))
+            return $this->error(get_string('ws_groupunknown', 'local_wspp', $idfield . "=" . $id));
         $tmp = new editGroupsInput();
         $datum->action = 'update';
         $datum->id = $old->id; //set Moodle internal id for edit_users
         $tmp->setGroups(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 'groups', 'groupRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $tmp), 
+          'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
+
     }
+
 
     /**
     * rev 1.6 update a single grouping from Moodle
@@ -1132,15 +1200,17 @@ class mdl_soapserver extends server {
      */
     function update_grouping($client, $sesskey, $datum, $idfield = 'id') {
         $id = $datum-> $idfield;
-        if (!$old = get_record('groupings', $idfield, $id))
-            return $this->error(get_string('ws_groupingunknown', 'wspp', $idfield . "=" . $id));
+        if (!$old = ws_get_record('groupings', $idfield, $id))
+            return $this->error(get_string('ws_groupingunknown', 'local_wspp', $idfield . "=" . $id));
         $tmp = new editGroupingsInput();
         $datum->action = 'update';
         $datum->id = $old->id; //set Moodle internal id for edit_users
         $tmp->setGroupings(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp), 'groupings', 'groupingRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $tmp),
+          'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
+
     }
 
     /**
@@ -1195,7 +1265,7 @@ class mdl_soapserver extends server {
      * @return groupingRecord[]
      */
     function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_groupings($client, $sesskey, $fieldname, $fieldvalue), 'groupings', 'groupingRecord', get_string('nogroupings', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_groupings($client, $sesskey, $fieldname, $fieldvalue), 'groupings', 'groupingRecord', get_string('nogroupings', 'local_wspp')));
     }
 
     /**
@@ -1214,7 +1284,7 @@ class mdl_soapserver extends server {
         $tmp->setLabels(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $tmp), 'labels', 'labelRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $tmp), 'labels', 'labelRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1229,7 +1299,7 @@ class mdl_soapserver extends server {
         $tmp->setForums(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $tmp), 'forums', 'forumRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $tmp), 'forums', 'forumRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1244,7 +1314,7 @@ class mdl_soapserver extends server {
         $tmp->setDatabases(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $tmp), 'databases', 'databaseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $tmp), 'databases', 'databaseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1260,7 +1330,7 @@ class mdl_soapserver extends server {
         $tmp->setAssignments(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $tmp), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $tmp), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1275,7 +1345,7 @@ class mdl_soapserver extends server {
         $tmp->setWikis(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $tmp), 'wikis', 'wikiRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $tmp), 'wikis', 'wikiRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1290,7 +1360,7 @@ class mdl_soapserver extends server {
         $tmp->setPagesWiki(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_pageswiki($client, $sesskey, $tmp), 'pageswikis', 'pageWikiRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_pageswiki($client, $sesskey, $tmp), 'pageswikis', 'pageWikiRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1305,8 +1375,9 @@ class mdl_soapserver extends server {
         $tmp->setSections(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_section($client, $sesskey, $tmp), 'sections', 'sectionRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_section($client, $sesskey, $tmp), 'sections', 'sectionRecord', get_string('nothingtodo', 'local_wspp')));
     }
+
 
     /**
     * rev 1.6 update a single course from Moodle
@@ -1318,8 +1389,8 @@ class mdl_soapserver extends server {
      */
     function update_section($client, $sesskey, $datum, $idfield = 'id') {
         $id = $datum-> $idfield;
-        if (!$old = get_record('course_sections', $idfield, $id))
-            return $this->error(get_string('ws_sectionunknown', 'wspp', $idfield . "=" . $id));
+        if (!$old = ws_get_record('course_sections', $idfield, $id))
+            return $this->error(get_string('ws_sectionunknown', 'local_wspp', $idfield . "=" . $id));
         $tmp = new editSectionsInput();
         $datum->action = 'update';
         $datum->id = $old->id; //set Moodle internal id for edit_sections
@@ -1328,7 +1399,9 @@ class mdl_soapserver extends server {
         ));
         //      $this->debug_output("ES1".print_r($datum,true));
         //  $this->debug_output("ES1".print_r($tmp,true));
-        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $tmp), 'sections', 'sectionRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $tmp),
+          'sections', 'sectionRecord', get_string('nothingtodo', 'local_wspp')));
+
     }
 
     /**
@@ -1343,7 +1416,7 @@ class mdl_soapserver extends server {
         $tmp->setCategories(array (
             $datum
         ));
-        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $tmp), 'categories', 'categoryRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $tmp), 'categories', 'categoryRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     // rev 1.6.4
@@ -1359,7 +1432,7 @@ class mdl_soapserver extends server {
     * @return profileItemRecord[]
     */
     function set_user_profile_values($client, $sesskey, $userid, $useridfield, $values) {
-        return $this->send($this->to_soap_array(parent :: set_user_profile_values($client, $sesskey, $userid, $useridfield, $values), 'profiles', 'profileitemRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: set_user_profile_values($client, $sesskey, $userid, $useridfield, $values), 'profiles', 'profileitemRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1371,7 +1444,7 @@ class mdl_soapserver extends server {
     * @return userRecord[]
     */
     function get_users_byprofile($client, $sesskey, $profilefieldname, $profilefieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_users_byprofile($client, $sesskey, $profilefieldname, $profilefieldvalue), 'users', 'userRecord', get_string('nousers', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_users_byprofile($client, $sesskey, $profilefieldname, $profilefieldvalue), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
     }
 
     /**
@@ -1405,7 +1478,7 @@ class mdl_soapserver extends server {
       * @return labelRecord[]
       */
     function edit_labels($client, $sesskey, $labels) {
-        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $labels), 'labels', 'labelRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $labels), 'labels', 'labelRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1415,7 +1488,7 @@ class mdl_soapserver extends server {
       * @return groupRecord[]
       */
     function edit_groups($client, $sesskey, $groups) {
-        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $groups), 'groups', 'groupRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $groups), 'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1426,7 +1499,7 @@ class mdl_soapserver extends server {
       * @return assignmentRecord[]
       */
     function edit_assignments($client, $sesskey, $assignments) {
-        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $assignments), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $assignments), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1436,7 +1509,7 @@ class mdl_soapserver extends server {
       * @return databaseRecord[]
       */
     function edit_databases($client, $sesskey, $databases) {
-        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $databases), 'databases', 'databaseRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $databases), 'databases', 'databaseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1446,7 +1519,7 @@ class mdl_soapserver extends server {
       * @return categoryRecord[]
       */
     function edit_categories($client, $sesskey, $categories) {
-        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $categories), 'categories', 'categoryRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $categories), 'categories', 'categoryRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1457,7 +1530,7 @@ class mdl_soapserver extends server {
       * @return sectionRecord[]
       */
     function edit_sections($client, $sesskey, $sections) {
-        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $sections), 'sections', 'sectionRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $sections), 'sections', 'sectionRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1468,7 +1541,7 @@ class mdl_soapserver extends server {
       * @return forumRecord[]
       */
     function edit_forums($client, $sesskey, $forums) {
-        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $forums), 'forums', 'forumRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $forums), 'forums', 'forumRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1478,7 +1551,7 @@ class mdl_soapserver extends server {
       * @return wikiRecord[]
       */
     function edit_wikis($client, $sesskey, $wikis) {
-        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $wikis), 'wikis', 'wikiRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $wikis), 'wikis', 'wikiRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1488,7 +1561,7 @@ class mdl_soapserver extends server {
       * @return pageWikiRecord[]
       */
     function edit_pagesWiki($client, $sesskey, $pagesWiki) {
-        return $this->send($this->to_soap_array(parent :: edit_pagesWiki($client, $sesskey, $pagesWiki), 'pagesWiki', 'pageWikiRecord', get_string('nothingtodo', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: edit_pagesWiki($client, $sesskey, $pagesWiki), 'pagesWiki', 'pageWikiRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1599,7 +1672,7 @@ class mdl_soapserver extends server {
     * @param int $client
     * @param string $sesskey
     * @param int $userid
-    * @param int $course
+    * @param int $courseid
     * @param string $rolename
     * @return affectRecord
     */
@@ -1644,7 +1717,7 @@ class mdl_soapserver extends server {
      */
 
     function get_all_wikis($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_wikis($client, $sesskey, $fieldname, $fieldvalue), 'wikis', 'wikiRecord', get_string('nowikis', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_wikis($client, $sesskey, $fieldname, $fieldvalue), 'wikis', 'wikiRecord', get_string('nowikis', 'local_wspp')));
     }
 
     /**
@@ -1655,7 +1728,7 @@ class mdl_soapserver extends server {
      * @return pageWikiRecord[]
      */
     function get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue), 'pageswiki', 'pageWikiRecord', get_string('nowikipages', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_pagesWiki($client, $sesskey, $fieldname, $fieldvalue), 'pageswiki', 'pageWikiRecord', get_string('nowikipages', 'local_wspp')));
     }
 
     /**
@@ -1666,7 +1739,7 @@ class mdl_soapserver extends server {
      * @return groupRecord[]
      */
     function get_all_groups($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_groups($client, $sesskey, $fieldname, $fieldvalue), 'groups', 'groupRecord', get_string('nogroups', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_groups($client, $sesskey, $fieldname, $fieldvalue), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
     }
 
     /**
@@ -1677,7 +1750,7 @@ class mdl_soapserver extends server {
      * @return forumRecord[]
      */
     function get_all_forums($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_forums($client, $sesskey, $fieldname, $fieldvalue), 'forums', 'forumRecord', get_string('noforums', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_forums($client, $sesskey, $fieldname, $fieldvalue), 'forums', 'forumRecord', get_string('noforums', 'local_wspp')));
     }
 
     /**
@@ -1688,7 +1761,7 @@ class mdl_soapserver extends server {
      * @return labelRecord[]
      */
     function get_all_labels($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_labels($client, $sesskey, $fieldname, $fieldvalue), 'labels', 'labelRecord', get_string('nolabels', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_labels($client, $sesskey, $fieldname, $fieldvalue), 'labels', 'labelRecord', get_string('nolabels', 'local_wspp')));
     }
     /**
      * @param int $client
@@ -1698,7 +1771,7 @@ class mdl_soapserver extends server {
      * @return assignmentRecord[]
      */
     function get_all_assignments($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_assignments($client, $sesskey, $fieldname, $fieldvalue), 'assignments', 'assignmentRecord', get_string('noassignments', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_assignments($client, $sesskey, $fieldname, $fieldvalue), 'assignments', 'assignmentRecord', get_string('noassignments', 'local_wspp')));
     }
     /**
      * @param int $client
@@ -1708,7 +1781,7 @@ class mdl_soapserver extends server {
      * @return databaseRecord[]
      */
     function get_all_databases($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_databases($client, $sesskey, $fieldname, $fieldvalue), 'databases', 'databaseRecord', get_string('nodatabases', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_databases($client, $sesskey, $fieldname, $fieldvalue), 'databases', 'databaseRecord', get_string('nodatabases', 'local_wspp')));
     }
 
     /*
@@ -1727,8 +1800,116 @@ class mdl_soapserver extends server {
      * @return quizRecord[]
      */
     function get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue), 'quizzes', 'quizRecord', get_string('noquizzes', 'wspp')));
+        return $this->send($this->to_soap_array(parent :: get_all_quizzes($client, $sesskey, $fieldname, $fieldvalue), 'quizzes', 'quizRecord', get_string('noquizzes', 'local_wspp')));
     }
-
+    
+     /**
+      * generic add some role to userid identified by useridfield to courseid identified by couresidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @param string $rolename
+     * @param boolean $add 
+     * @return affectRecord 
+     */
+    private function add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,$rolename,$add) {	    
+	    if (!$course = ws_get_record('course', $courseidfield,$courseid ))
+		    return $this->error(get_string('ws_courseunknown', 'local_wspp', $courseidfield . "=" . $courseid));
+	    if (! $user = ws_get_record('user', $useridfield, $userid))
+		    return $this->error(get_string('ws_userunknown', 'local_wspp', $useridfield . "=" . $userid));
+	    if ($add)  
+		    $rest = parent :: affect_user_to_course($client, $sesskey, $user->id, $course->id,$rolename);
+	    else 
+		    $rest = parent :: remove_user_from_course($client, $sesskey, $user->id, $course->id,$rolename);   	 
+	    return $this->send($this->to_soap($rest, 'affectRecord'));	
+    }
+    
+    /**
+     * add a editing teacher role to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function add_teacher($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'editingteacher',true);
+    }
+    
+     /**
+     * remove an editing teacher role to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function remove_teacher($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'editingteacher',false);
+    }
+    
+       /**
+     * add a student role to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function add_student($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'student',true);
+    }
+    
+     /**
+     * remove a student role  to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function remove_student($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'student',false);
+    }
+    
+          /**
+     * add a non editing teacher role to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function add_noneditingteacher($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'teacher',true);
+    }
+    
+     /**
+     * remove a non editing teacher role  to userid identified by useridfield to courseid identified by courseidfield
+     * @param int $client
+     * @param string $sesskey
+     * @param string $courseid
+     * @param string $courseidfield
+     * @param string $userid
+     * @param string $useridfield
+     * @return affectRecord 
+     */
+    public function remove_noneditingteacher($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
+    	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'teacher',false);
+    }
+    
 }
 ?>
