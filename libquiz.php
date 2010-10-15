@@ -27,6 +27,8 @@ function ws_libquiz_export($quiz, $format) {
 	$qformat->set_can_access_backupdata(0);
 
 	$questionlist = quiz_questions_in_quiz($quiz->questions);
+	// rev 1.7
+	if (empty($questionlist)) return "";
 
 	if ($CFG->wspp_using_moodle20)
 		$from="{question} q,{quiz_question_instances} i";

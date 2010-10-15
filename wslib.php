@@ -216,10 +216,16 @@ function ws_update_course($course) {
  * added revision 1.7 since get_my_courses has been deprecated in Moodle 2.0
  */
 function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
-	global $CFG;
+	global $CFG,$DB;
 	if ($CFG->wspp_using_moodle20) {
 		try {
-			//require_once();
+			 $context = get_context_instance(CONTEXT_SYSTEM);
+
+    		if (has_capability('moodle/course:create' , $context, $uid,true)) { 
+				//ws_error_log ("ok admin\n");
+				return $DB->get_records('course',array(),$sort);		
+    		}			
+			// does not return annymore all courses for a site admin ...
 			return enrol_get_users_courses($uid, $onlyactive = false, $extrafields, $sort);
 		} catch (Exception $e) {
 			ws_error_log($e);

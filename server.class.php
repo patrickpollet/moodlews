@@ -3607,7 +3607,7 @@ EOSS;
 
 		if (! ws_libquiz_is_supported_format ($format))
 		return $this->error(get_string('ws_quizexportunknownformat','local_wspp','format='.$format));
-
+//$this->debug_output((print_r($quiz,true)));
 		$quiz->data=ws_libquiz_export($quiz,$format);
 		return filter_quiz($client,$quiz);
 
