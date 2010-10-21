@@ -1,4 +1,4 @@
-<?php // $Id: service_pp.php,v 1.5.1 2007/05/02 04:05:36 ppollet Exp $
+<?php // $Id$
 
 /**
  * PHP5 only SOAP server for Moodle

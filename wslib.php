@@ -1,13 +1,13 @@
 <?php
 
 
-// $Id: server.class.php 931 2009-07-23 09:33:54Z ppollet $
+// $Id$
 
 /**
  * utilities functions
  *
  * @package Web Services
- * @version $Id: server.class.php 931 2009-07-23 09:33:54Z ppollet $
+ * @version $Id$
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
  */
 
@@ -19,9 +19,9 @@ $CFG->wspp_using_moodle20 = file_exists($CFG->libdir . '/dml/moodle_database.php
 
 
 /**
- *  log all DB errors specific to new Moodle 2.0 API  
+ *  log all DB errors specific to new Moodle 2.0 API
  */
- 
+
  function ws_error_log ($ex) {
 	global $CFG;
 	if (is_object($ex)){
@@ -86,30 +86,30 @@ function ws_get_record_select($table, $select, $fields = '*') {
 
 function ws_get_records_select($table, $select, array $params = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
 	global $CFG, $DB;
-	if ($CFG->wspp_using_moodle20) { 
-		try { 
+	if ($CFG->wspp_using_moodle20) {
+		try {
 		return $DB->get_records_select($table, $select, null, $sort, $fields, $limitfrom, $limitnum);
 		 } catch (Exception $e) {
 		 	ws_error_log($e);
-			 return false; 
-		 }	
+			 return false;
+		 }
 	}else
 		return get_records_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
 }
 
 function ws_get_records_sql ($sql) {
 	global $CFG,$DB;
-	if ($CFG->wspp_using_moodle20) 
+	if ($CFG->wspp_using_moodle20)
 		return $DB->get_records_sql($sql);
-	else 
-		return get_records_sql($sql);		
+	else
+		return get_records_sql($sql);
 }
 
 function ws_get_field($table, $return, $field1, $value1, $field2 = '', $value2 = '', $field3 = '', $value3 = '') {
 	global $CFG, $DB;
 
 	if ($CFG->wspp_using_moodle20) {
-		try { 
+		try {
 		$params = array ();
 		$params[$field1] = $value1;
 		if ($field2)
@@ -119,8 +119,8 @@ function ws_get_field($table, $return, $field1, $value1, $field2 = '', $value2 =
 		return $DB->get_field($table, $params);
 		 } catch (Exception $e) {
 		 	ws_error_log($e);
-			 return false; 
-		 }	
+			 return false;
+		 }
 	} else
 		return get_field($table, $field1, $value1, $field2, $value2, $field3, $value3);
 }
@@ -196,7 +196,7 @@ function ws_update_record($table, $record) {
 
 }
 /**
- * added revision 1.7 since Moodle 2.0 do not return anymore true/false 
+ * added revision 1.7 since Moodle 2.0 do not return anymore true/false
  */
 function ws_update_course($course) {
 	global $CFG;
@@ -237,7 +237,7 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
 
 /**
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
- * furthermore in Moodle 2.0 we MUST also enrol the user to the course if needed 
+ * furthermore in Moodle 2.0 we MUST also enrol the user to the course if needed
  */
 function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$course){
 	global $CFG,$DB;
@@ -245,8 +245,8 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 	if ($CFG->wspp_using_moodle20) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_assign($roleid, $userid, $contextid);
-		try{ 	
-			if (!$enrol_manual = enrol_get_plugin('manual')) 
+		try{
+			if (!$enrol_manual = enrol_get_plugin('manual'))
 				throw new coding_exception('Can not instantiate enrol_manual');
 			$instance = $DB->get_record('enrol',
 				array('courseid' => $course->id, 'enrol' => 'manual'));
@@ -254,52 +254,52 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 				// Only add an enrol instance to the course if non-existent
 				$enrolid = $enrol_manual->add_instance($course);
 				$instance = $DB->get_record('enrol', array('id' => $enrolid));
-			}		
+			}
 			$enrol_manual->enrol_user($instance, $userid, $roleid, $timestart, $timeend);
 			return true;
 		} catch(Exception $e) {
 			return false;
-		} 	
-		
-		
+		}
+
+
 	} else {
 		return role_assign($roleid, $userid, 0, $contextid, $timestart, $timeend,false,'webservice');
-	} 	
-} 
+	}
+}
 
  /**
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
- *  furthermore in Moodle 2.0 we MUST also unenrol the user to the course 
+ *  furthermore in Moodle 2.0 we MUST also unenrol the user to the course
  */
  function ws_role_unassign($roleid, $userid, $contextid,$course) {
  	global $CFG,$DB;
 	if ($CFG->wspp_using_moodle20) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_unassign($roleid, $userid, $contextid);
-		try{ 	
-			if (!$enrol_manual = enrol_get_plugin('manual')) 
+		try{
+			if (!$enrol_manual = enrol_get_plugin('manual'))
 				throw new coding_exception('Can not instantiate enrol_manual');
 			$instance = $DB->get_record('enrol',
 				array('courseid' => $course->id, 'enrol' => 'manual'));
-			/**  in that case the instance MUST exist 	
+			/**  in that case the instance MUST exist
 			if (empty($instance)) {
 				// Only add an enrol instance to the course if non-existent
 				$enrolid = $enrol_manual->add_instance($course);
 				$instance = $DB->get_record('enrol', array('id' => $enrolid));
-			}	
-			**/	
+			}
+			**/
 			$enrol_manual->unenrol_user($instance, $userid);
 			return true;
 		} catch(Exception $e) {
 			return false;
-		} 	
-		
-		
+		}
+
+
 	} else {
 		return role_unassign($roleid, $userid, 0, $contextid);
 	}
- 	
- } 
+
+ }
 
 /*
  *return primary role of userid in course
@@ -322,14 +322,14 @@ function ws_get_primaryrole_incourse($course, $userid) {
 	//student
 	// strange : guest may has also the course:view capability ?
 	// so we treat it before regular student
-	//guest CRASH in Moodle 2.0  this capability does not exist anymore 
+	//guest CRASH in Moodle 2.0  this capability does not exist anymore
 	//if (has_capability('moodle/legacy:guest', $context, $userid, false))
 	//	return 6;
 	// big change is Moodle 2.0
 	// see http://docs.moodle.org/en/Development:Enrolment_usage_overview
 	if (ws_is_enrolled($course->id,$userid))
 			return 5;
-	// return 0 in Moodle 2.0 if a student ???? 	
+	// return 0 in Moodle 2.0 if a student ????
 	return 0;
 }
 
@@ -340,12 +340,12 @@ function ws_get_primaryrole_incourse($course, $userid) {
 function ws_is_enrolled ($courseid,$userid) {
 	global $CFG;
 	$context = get_context_instance(CONTEXT_COURSE, $courseid);
-	if (!$CFG->wspp_using_moodle20) { 	
+	if (!$CFG->wspp_using_moodle20) {
 		return has_capability('moodle/course:view', $context, $userid, false);
 	} else {
 		return is_enrolled($context,$userid);
-		
-	}	
+
+	}
 }
 
 /**
@@ -449,6 +449,10 @@ function ws_checkuserrecord(& $user, $newuser) {
 		}
 		if (!empty ($user->id))
 			unset ($user->id);
+        // rev 1.7
+        if (empty($user->lang))
+                 $user->lang = $CFG->lang;
+
 
 	} else {
 		if (empty ($user->id))
@@ -516,10 +520,12 @@ function ws_checkcourserecord(& $course, $newcourse) {
 		if (empty ($course->category) or !ws_record_exists('course_categories', 'id', $course->category)) {
 			/// default to first top level directory, hacky but means things don't break
 			$course->category = $CFG->defaultrequestcategory;
-
-			if (!empty ($course->id))
+        }
+	    if (!empty ($course->id))
 				unset ($course->id);
-		}
+        //rev 1.7
+        if (empty($course->lang))
+            $course->lang=$CFG->lang;
 
 	} else {
 		if (empty ($course->id))

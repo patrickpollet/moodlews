@@ -27,6 +27,10 @@ require_once 'groupRecord.php';
  */
 require_once 'groupingRecord.php';
 /**
+ * cohortRecord class
+ */
+require_once 'cohortRecord.php';
+/**
  * sectionRecord class
  */
 require_once 'sectionRecord.php';
@@ -122,6 +126,10 @@ require_once 'labelDatum.php';
  * groupDatum class
  */
 require_once 'groupDatum.php';
+/**
+ * cohortDatum class
+ */
+require_once 'cohortDatum.php';
 /**
  * groupingDatum class
  */
@@ -254,6 +262,14 @@ require_once 'editGroupingsInput.php';
  * editGroupingsOutput class
  */
 require_once 'editGroupingsOutput.php';
+/**
+ * editCohortsInput class
+ */
+require_once 'editCohortsInput.php';
+/**
+ * editCohortsOutput class
+ */
+require_once 'editCohortsOutput.php';
 /**
  * editCategoriesInput class
  */

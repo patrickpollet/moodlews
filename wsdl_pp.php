@@ -1,4 +1,4 @@
-<?php // $Id: wsdl.php,v 1.5 2007/04/28 04:05:36 PP Exp $
+<?php // $Id$
 
 /**
  * This file creates a WSDL file for the web service interfaced running on
@@ -12,7 +12,7 @@
  * will process the PHP statemtents within the file, which returns a WSDL
  * file to the web services call (or your browser).
  *
- * @version $Id: wsdl.php,v 1.4 2007/04/24 04:05:36 jfilip Exp $
+ * @version $Id$
  * @author Justin Filip <jfilip@oktech.ca>
  * @author Open Knowledge Technologies - http://www.oktech.ca/
  * @author PP

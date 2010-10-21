@@ -1,12 +1,12 @@
 <?php
 
 
-// $Id: server.class.php,v 1.5.4 2007/05/02 04:05:36 ppollet Exp $
+// $Id$
 /**
  * Base class for web services server layer. PP 5 ONLY.
  *
  * @package Web Services
- * @version $Id: server.class.php,v 1.5 2007/04//26 04:05:36 ppollet Exp $
+ * @version $Id$
  * @author Open Knowledge Technologies - http://www.oktech.ca/
  * @author Justin Filip <jfilip@oktech.ca> v 1.4
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.5, v 1.6, v 1.7
@@ -53,9 +53,9 @@ class server {
 		$this->debug_output("Server init...");
 		$this->debug_output('    Version: ' . $this->version);
         $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
-		
-		
-		if (! $CFG->wspp_using_moodle20) { 
+
+
+		if (! $CFG->wspp_using_moodle20) {
 			$this->using17 = file_exists($CFG->libdir . '/accesslib.php');
 			$this->using19 = file_exists($CFG->libdir . '/grouplib.php');
 			//Check for any DB upgrades.
@@ -66,7 +66,7 @@ class server {
 					$this->upgrade($CFG->webservices_version);
 				}
 		} else {
-			$this->using17 = $this->using19 = true; 
+			$this->using17 = $this->using19 = true;
 		}
 		// setup default values if not set in admin screens (see admin/wspp.php)
 		if (empty ($CFG->ws_sessiontimeout))
@@ -86,17 +86,17 @@ class server {
 	}
 	/**
 	 * Performs an upgrade of the webservices system.
-	 *  Moodle < 2.0 ONLY 
+	 *  Moodle < 2.0 ONLY
 	 * @uses $CFG
 	 * @param int $oldversion The old version number we are upgrading from.
 	 * @return boolean True if successful, False otherwise.
 	 */
 	private function upgrade($oldversion) {
 		global $CFG;
-		
+
 		if ($CFG->wspp_using_moodle20)
 			return $this->error(get_string('ws_not_installed_moodle20', 'local_wspp'));
-		
+
 		$this->debug_output('Starting WS upgrade from version ' . $oldversion . 'to version ' . $this->version);
 		$return = true;
 		require_once ($CFG->libdir . '/ddllib.php');
@@ -146,7 +146,7 @@ class server {
 	 */
 	private function validate_client($client = 0, $sesskey = '', $operation = '') {
 		global $USER, $CFG;
-		
+
 		//return true;
 
 		 // rev 1.6.3 added extra securityu checks
@@ -282,7 +282,7 @@ class server {
 			return $this->error(get_string('ws_invaliduser', 'local_wspp'));
 		}
 		//$this->debug_output(print_r($knownuser, true));
-		
+
 
 		$user=false;
 
@@ -311,7 +311,7 @@ $this->debug_output('internal ');
 
 			return $this->error(get_string('ws_invaliduser', 'local_wspp'));
 		}
-		
+
 		//$this->debug_output(print_r($user,true));
 		/// Verify that an active session does not already exist for this user.
 		$userip = getremoteaddr(); // rev 1.5.4
@@ -319,7 +319,7 @@ $this->debug_output('internal ');
 		$sql = "userid = {$user->id} AND verified = 1 AND
                             ip='$userip' AND sessionend = 0 AND
 							(" . time() . "- sessionbegin) < " . $this->sessiontimeout;
-		
+
 		//$this->debug_output($sql);
 		if ($sess = ws_get_record_select('webservices_sessions',$sql)) {
 			//return $this->error('A session already exists for this user (' . $user->login . ')');
@@ -327,7 +327,7 @@ $this->debug_output('internal ');
 			if ($sess->ip != $userip)
 				return $this->error(get_string('ws_ipadressmismatch', 'local_wspp',$userip."!=".$sess->ip));
             */
-            //give him more time 
+            //give him more time
             ws_set_field('webservices_sessions','sessionbegin',time(),'id',$sess->id);
 			// V1.6 reuse current session
 		} else {
@@ -570,7 +570,7 @@ $this->debug_output('internal ');
 		foreach ($courses as $course) {
 			if ($CFG->wspp_using_moodle20)
 				require_once ($CFG->dirroot.'/course/lib.php');
-				
+
 			if ($resources = get_all_sections($course->id))
 				foreach ($resources as $resource) {
 				$ret[] = $resource;
@@ -863,7 +863,7 @@ $this->debug_output('internal ');
            if (!$CFG->wspp_using_moodle20)
            $extrafields="password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
 hiddensections,lang,theme,cost,timecreated,timemodified,metacourse";
-			else 
+			else
 			// some fields are not anymore defined in Moodle 2.0
 			$extrafields="summary,format,showgrades,newsitems,numsections,marker,maxbytes,
 hiddensections,lang,theme,timecreated,timemodified";
@@ -1084,7 +1084,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
-            
+
         }
 
         if (!$group = ws_get_record('groups', 'id', $groupid)) {
@@ -1106,13 +1106,13 @@ hiddensections,lang,theme,timecreated,timemodified";
             $a->course=$group->courseid;
             return $this->error(get_string('ws_user_notenroled','local_wspp',$a));
         }
-        
+
         if ($CFG->wspp_using_moodle20) {
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
         }
 
-        
+
         $resp = new stdClass();
         $resp->status = groups_add_member($group->id, $user->id);
         return $resp;
@@ -1120,7 +1120,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 
     function remove_user_from_group($client, $sesskey, $userid, $groupid) {
 		global $CFG;
-		
+
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
@@ -1128,12 +1128,12 @@ hiddensections,lang,theme,timecreated,timemodified";
         if (!$group = ws_get_record('groups', 'id', $groupid)) {
             return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
-        
+
          /// Check for correct permissions.
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
             return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
-        
+
 
         if (!$user = ws_get_record("user", "id", $userid)) {
             return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
@@ -1147,7 +1147,7 @@ hiddensections,lang,theme,timecreated,timemodified";
             return $this->error(get_string('ws_user_notenroled','local_wspp',$a));
         }
 
- 
+
           if ($CFG->wspp_using_moodle20) {
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
@@ -1181,7 +1181,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
             return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
-        
+
            if ($CFG->wspp_using_moodle20) {
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
@@ -1216,7 +1216,7 @@ hiddensections,lang,theme,timecreated,timemodified";
             return $this->error(get_string('ws_operationnotallowed','local_wspp'));
         }
         //$this->debug_output("RGG  gid=$group->id gpip= $grouping->id");
-        
+
         if ($CFG->wspp_using_moodle20) {
 	        // not anymore included by defualt in Moodle 2.0
 	        require_once ($CFG->dirroot.'/group/lib.php');
@@ -1341,7 +1341,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 			return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$courseid ));
 		}
 		if (! $this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id))
-			return $this->error(get_string('ws_operationnotallowed','local_wspp'));	
+			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
 		// deprecated in Moodle 1.9
 		// gone in Moodle 2.0
 		//$res = get_groups($course->id);
@@ -1381,8 +1381,8 @@ hiddensections,lang,theme,timecreated,timemodified";
 		}
 		if ($CFG->wspp_using_moodle20)
 			$from=" {groups} g,{groups_members} m" ;
-		else 
-			$from="{$CFG->prefix}groups g,{$CFG->prefix}groups_members m";	
+		else
+			$from="{$CFG->prefix}groups g,{$CFG->prefix}groups_members m";
 		$sql = "SELECT g.* " .
 			"FROM $from
 		     WHERE g.id = m.groupid
@@ -1680,7 +1680,7 @@ EOSS;
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		if (!has_capability("moodle/role:assign", $context))
 			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
-		//not anymore in Moodle 2.0 ...	
+		//not anymore in Moodle 2.0 ...
 		if (!empty($course->enrolperiod)) {
 			$timestart = time();
 			$timeend = $timestart + $course->enrolperiod;
@@ -1758,12 +1758,12 @@ EOSS;
 				//$this->debug_output('traitement de ' . print_r($user, true));
 				switch (trim(strtolower($user->action))) {
 					case 'add' :
-					
+
 						if (!$this->has_capability('moodle/user:create', CONTEXT_SYSTEM, 0)) {
 							$ruser->error=get_string('ws_operationnotallowed','local_wspp');
 							break;
 						}
-						
+
 						// fix record if needed and check for missing values or database collision
 						if ($errmsg=ws_checkuserrecord($user,true)) {
 							$ruser->error=$errmsg;
@@ -1828,11 +1828,11 @@ EOSS;
 						$ruser->error = get_string('ws_userunknown','local_wspp',"id=".$user->id );
 						break;
 					}
-				
+
 					$ruser = $user;
 					if ($user->deleted) // rev 1.7
 						$ruser->error=get_string('ws_erroralreadydeleteduser','local_wspp',$user->id);
-					else 
+					else
 						if (!delete_user($user)) {
 						$ruser->error=get_string('ws_errordeletinguser','local_wspp',$user->idnumber);
 					}
@@ -1982,12 +1982,12 @@ EOSS;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
-        
+
         if ($CFG->wspp_using_moodle20) {
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
         }
-        
+
         $rets = array ();
         if (!empty ($groupings)) {
             foreach ($groupings->groupings as $grouping) {
@@ -2105,12 +2105,12 @@ EOSS;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
-        
+
         if ($CFG->wspp_using_moodle20) {
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
         }
-        
+
         $rets = array ();
         if (!empty ($groups)) {
             foreach ($groups->groups as $group) {
@@ -3498,6 +3498,18 @@ EOSS;
     }
 
 
+      function get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue) {
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        $ret = array ();
+        if ($res = ws_get_records('cohort', $fieldname, $fieldvalue, 'name', '*')) {
+            $ret = filter_cohorts($client, $res);
+        }
+        return $ret;
+    }
+
+
      // rev 1.6.4
     function set_user_profile_values ($client,$sesskey,$userid,$useridfield,$values) {
 
@@ -3522,7 +3534,7 @@ EOSS;
 	        if (!isset($value->name) && !isset($value->value))
 		        continue;
 
-	        if (!$field = ws_get_record('user_info_field', 'shortname', $value->name)) 
+	        if (!$field = ws_get_record('user_info_field', 'shortname', $value->name))
 
 		        return  $this->error(get_string('ws_profileunknown','local_wspp','shortname='.$value->name));
 	        $fvalue=$value->value;
@@ -3578,8 +3590,8 @@ EOSS;
 	    $where = "where fieldid={$field->id} and data='$profilefieldvalue'" ;
 	    $where="id in (SELECT userid FROM {$CFG->prefix}user_info_data $where)";
 	    // return $this->error($where);
-	    
-    	 $ret=ws_get_records_select('user',$where);	    
+
+    	 $ret=ws_get_records_select('user',$where);
 
 	    //also add custom profile values
 	    return filter_users($client, $ret, 0);

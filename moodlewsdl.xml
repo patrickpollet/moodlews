@@ -118,6 +118,31 @@
 					</xsd:restriction>
 				</xsd:complexContent>
 			</xsd:complexType>
+			
+				<xsd:complexType name="cohortRecord">
+				<xsd:all>
+					<xsd:element name="error" type="xsd:string" />
+					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="contextid" type="xsd:integer" />
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="description" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
+					<xsd:element name="component" type="xsd:string" />
+					<xsd:element name="timecreated" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:integer" />
+				</xsd:all>
+			</xsd:complexType>
+
+			<xsd:complexType name="cohortRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:cohortRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			
+			
 
 
 			<xsd:complexType name="sectionRecord">
@@ -854,6 +879,29 @@
 					</xsd:restriction>
 				</xsd:complexContent>
 			</xsd:complexType>
+			
+			
+			<xsd:complexType name="cohortDatum">
+				<xsd:all>
+					<xsd:element name="action" type="xsd:string" />
+					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="categoryid" type="xsd:integer" />
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="description" type="xsd:string" />
+					<xsd:element name="component" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
+
+				</xsd:all>
+			</xsd:complexType>
+
+			<xsd:complexType name="cohortData">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:cohortDatum[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
 
 			<xsd:complexType name="groupingDatum">
 				<xsd:all>
@@ -884,7 +932,6 @@
 					<xsd:element name="parent" type="xsd:integer" />
 					<xsd:element name="sortorder" type="xsd:integer" />
 					<xsd:element name="visible" type="xsd:integer" />
-
 					<xsd:element name="depth" type="xsd:integer" />
 					<xsd:element name="path" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
@@ -1296,7 +1343,18 @@
 				</xsd:all>
 			</xsd:complexType>
 
+	<!-- edit_cohorts -->
+			<xsd:complexType name="editCohortsInput">
+				<xsd:all>
+					<xsd:element name="cohorts" type="tns:cohortData" />
+				</xsd:all>
+			</xsd:complexType>
 
+			<xsd:complexType name="editCohortsOutput">
+				<xsd:all>
+					<xsd:element name="cohorts" type="tns:cohortRecords" />
+				</xsd:all>
+			</xsd:complexType>
 
 			<!-- edit_categories -->
 			<xsd:complexType name="editCategoriesInput">
@@ -1608,6 +1666,19 @@
 		<part name="group" type="tns:groupDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
+	
+	<message name="add_cohortRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="cohort" type="tns:cohortDatum" />
+	</message>
+
+	<message name="update_cohortRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="cohort" type="tns:cohortDatum" />
+		<part name="idfield" type="xsd:string" />
+	</message>
 
 	<message name="add_groupingRequest">
 		<part name="client" type="xsd:integer" />
@@ -1716,6 +1787,10 @@
 	<message name="get_groupsResponse">
 		<part name="return" type="tns:getGroupsReturn" />
 	</message>
+	
+	<message name="get_cohortsResponse">
+		<part name="return" type="tns:getCohortsReturn" />
+	</message>
 
 	<message name="get_group_membersRequest">
 		<part name="client" type="xsd:integer" />
@@ -1724,6 +1799,12 @@
 	</message>
 
 	<message name="get_grouping_membersRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="groupid" type="xsd:integer" />
+	</message>
+	
+	<message name="get_cohort_membersRequest">
 		<part name="client" type="xsd:integer" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="groupid" type="xsd:integer" />
@@ -2021,6 +2102,18 @@
 		<part name="return" type="tns:editGroupingsOutput" />
 	</message>
 	<!-- /edit_groupings -->
+	
+	<!-- edit_cohorts -->
+	<message name="edit_cohortsRequest">
+		<part name="client" type="xsd:integer" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="cohorts" type="tns:editCohortsInput" />
+	</message>
+
+	<message name="edit_cohortsResponse">
+		<part name="return" type="tns:editCohortsOutput" />
+	</message>
+	<!-- /edit_groupings -->
 
 
 	<!-- edit_assignments -->
@@ -2303,9 +2396,9 @@
 	<!-- /get_all_quizzes -->
 	
 
-	<!-- get_all_groupings -->
-	<message name="get_all_groupingsResponse">
-		<part name="return" type="tns:getAllGroupingsReturn" />
+	<!-- get_groupings -->
+	<message name="get_groupingsResponse">
+		<part name="return" type="tns:getqGroupingsReturn" />
 	</message>
 	<!-- /get_all_groupings-->
 
@@ -2406,6 +2499,14 @@
 			<input message="tns:add_groupingRequest" />
 			<output message="tns:edit_groupingsResponse" />
 		</operation>
+		
+		<operation name="add_cohort">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:add_cohortRequest" />
+			<output message="tns:edit_cohortsResponse" />
+		</operation>
+		
 		<operation name="delete_course">
 			<documentation>MoodleWS: add on course
 			</documentation>
@@ -2432,6 +2533,13 @@
 			</documentation>
 			<input message="tns:valueAndIdRequest" />
 			<output message="tns:edit_groupingsResponse" />
+		</operation>
+		
+		<operation name="delete_cohort">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:valueAndIdRequest" />
+			<output message="tns:edit_cohortsResponse" />
 		</operation>
 
 		<operation name="update_course">
@@ -2460,6 +2568,13 @@
 			</documentation>
 			<input message="tns:update_groupingRequest" />
 			<output message="tns:edit_groupingsResponse" />
+		</operation>
+		
+		<operation name="update_cohort">
+			<documentation>MoodleWS: add on course
+			</documentation>
+			<input message="tns:update_cohortRequest" />
+			<output message="tns:edit_cohortsResponse" />
 		</operation>
 		
 		<operation name="add_category">
@@ -2755,6 +2870,14 @@
 			<input message="tns:get_grouping_membersRequest" />
 			<output message="tns:get_usersResponse" />
 		</operation>
+		
+		<operation name="get_cohort_members">
+			<documentation>MoodleWS: Get users members of a cohort in
+				Moodle</documentation>
+			<input message="tns:get_cohort_membersRequest" />
+			<output message="tns:get_usersResponse" />
+		</operation>
+		
 
 		<operation name="get_my_group">
 			<documentation>MoodleWS: Get user group in course
@@ -2768,6 +2891,13 @@
 			</documentation>
 			<input message="tns:get_my_groupsRequest" />
 			<output message="tns:get_groupsResponse" />
+		</operation>
+		
+		<operation name="get_my_cohorts">
+			<documentation>MoodleWS: Get user groups in all Moodle site
+			</documentation>
+			<input message="tns:get_my_groupsRequest" />
+			<output message="tns:get_cohortsResponse" />
 		</operation>
 
 		<operation name="get_my_id">
@@ -2943,6 +3073,14 @@
 			<input message="tns:affect_user_to_groupRequest" />
 			<output message="tns:affect_user_to_groupResponse" />
 		</operation>
+		
+		<operation name="affect_user_to_cohort">
+			<documentation>MoodleWS: Affect a user to group
+			</documentation>
+			<input message="tns:affect_user_to_groupRequest" />
+			<output message="tns:affect_user_to_groupResponse" />
+		</operation>
+		
 
 
 		<operation name="affect_group_to_course">
@@ -3071,7 +3209,13 @@
 		<operation name="get_all_groupings">
 			<documentation>MoodleWS: Get All groupings</documentation>
 			<input message="tns:get_genericRequest" />
-			<output message="tns:get_all_groupingsResponse" />
+			<output message="tns:get_groupingsResponse" />
+		</operation>
+		
+		<operation name="get_all_cohorts">
+			<documentation>MoodleWS: Get All cohorts</documentation>
+			<input message="tns:get_genericRequest" />
+			<output message="tns:get_cohortsResponse" />
 		</operation>
 
 		<operation name="edit_groupings">
@@ -3669,6 +3813,33 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		<operation name="get_cohort_members">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohort_members"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+
+		<operation name="get_my_cohorts">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_cohorts"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
 
 		<operation name="get_my_id">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_id"
@@ -3709,6 +3880,20 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		<operation name="get_my_cohorts">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_cohorts"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 		<operation name="get_teachers">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_teachers"
 				style="rpc" />
@@ -3843,6 +4028,19 @@
 
 		<operation name="add_grouping">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_grouping"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="add_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#add_cohort"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
@@ -4010,6 +4208,19 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		<operation name="delete_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#delete_cohort"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
 
 
 		<operation name="update_user">
@@ -4066,6 +4277,19 @@
 
 		<operation name="update_grouping">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_grouping"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+			<operation name="update_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#update_cohort"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
@@ -4262,6 +4486,20 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		<operation name="affect_user_to_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#affect_user_to_cohort"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 
 		<operation name="affect_group_to_course">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#affect_group_to_course"
@@ -4460,6 +4698,19 @@
 
 		<operation name="get_all_groupings">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_all_groupings"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="get_all_cohorts">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_all_cohorts"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

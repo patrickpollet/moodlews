@@ -11,7 +11,7 @@
  */
 
 /*
- * 
+ *
  * rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
  * so we check for error before calling get_context_instance in all filter_* operation
 */
@@ -130,7 +130,7 @@ function filter_forums($client, $forums) {
         function filter_label($client, $label) {
         	global $USER;
          // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
-        if (!empty($label->error)) return $label;	
+        if (!empty($label->error)) return $label;
         $context = get_context_instance(CONTEXT_COURSE, $label->course);
         if (! ws_is_enrolled($label->course,$USER->id)) {
                 return $label;
@@ -168,8 +168,8 @@ function filter_forums($client, $forums) {
             $user->role= $role; // add a basic role info if available (see get_users_bycourse)
         // rev 1.6.4 add custom profile fields to user record as and array of (name,value) tuples
          require_once($CFG->dirroot.'/user/profile/lib.php');
-        $fields=profile_user_record($user->id);  
-        
+        $fields=profile_user_record($user->id);
+
         $ret=array();
         foreach($fields as $name=>$value) {
         	$tmp=new profileitemRecord();
@@ -177,9 +177,9 @@ function filter_forums($client, $forums) {
         	$tmp->setValue($value);
         	$ret[]=$tmp;
         }
-        $user-> profile=$ret; 
-            
-            
+        $user-> profile=$ret;
+
+
         return $user;
     }
 
@@ -192,7 +192,7 @@ function filter_forums($client, $forums) {
         }
         return $res;
     }
-    
+
     function filter_course($client, $course) {
         global $USER;
         // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
@@ -294,6 +294,26 @@ function filter_forums($client, $forums) {
         return $res;
     }
 
+   function filter_cohort($client, $group) {
+        global $USER;
+         // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
+        if (!empty($group->error)) return $group;
+         $context = get_context_instance_by_id($group->contextid);
+        if (has_capability('moodle/cohort:manage', $context))
+                return $group;
+        return false;
+    }
+
+
+    function filter_cohorts($client, $groups) {
+        $res = array ();
+        foreach ($groups as $group) {
+            $group = filter_cohort($client, $group);
+            if ($group)
+                $res[] = $group;
+        }
+        return $res;
+    }
 
     function filter_resource($client, $resource) {
     	global $USER;
@@ -444,8 +464,8 @@ function filter_change($client, $change) {
                 return $event;
         }
     }
-    
-    
+
+
     function filter_quiz($client,$quiz) {
     	return $quiz;
     }
