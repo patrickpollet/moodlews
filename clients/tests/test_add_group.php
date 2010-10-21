@@ -12,11 +12,11 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $group= new groupDatum();
-//$group->setAction('');
-//$group->setId(0);
-$group->setCourseid(5);
-$group->setName('gavirer');
-$group->setDescription('groupe a virer');
+$group->setAction('');
+$group->setId(0);
+$group->setCourseid(0);
+$group->setName('');
+$group->setDescription('');
 $group->setEnrolmentkey('');
 $group->setPicture(0);
 $group->setHidepicture(0);

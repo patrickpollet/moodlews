@@ -13,9 +13,8 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$pr=new ProfileItemRecord('etudiant',1);
-$values=array($pr);
-$res=$moodle->set_user_profile_values($lr->getClient(),$lr->getSessionKey(),'toto1','username',$values);
+$values=array();
+$res=$moodle->set_user_profile_values($lr->getClient(),$lr->getSessionKey(),'','',$values);
 print_r($res);
 print($res->getProfiles());
 

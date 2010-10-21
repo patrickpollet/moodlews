@@ -597,6 +597,36 @@ print($res->getGroups());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: Get Course Information
+* @param integer $client
+* @param string $sesskey
+* @param string $info
+* @param integer $courseid
+* @return getCohortsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_cohort_byid($lr->getClient(),$lr->getSessionKey(),'',0);
+print_r($res);
+print($res->getCohorts());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get Course Information
+* @param integer $client
+* @param string $sesskey
+* @param string $info
+* @param integer $courseid
+* @return getCohortsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_cohort_byidnumber($lr->getClient(),$lr->getSessionKey(),'',0);
+print_r($res);
+print($res->getCohorts());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 /**test code for MoodleWS: Get users members of a group in
 				course
 * @param integer $client
@@ -624,6 +654,36 @@ $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_grouping_members($lr->getClient(),$lr->getSessionKey(),0);
 print_r($res);
 print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get users members of a cohort in
+				Moodle
+* @param integer $client
+* @param string $sesskey
+* @param integer $groupid
+* @return getUsersReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_cohort_members($lr->getClient(),$lr->getSessionKey(),0);
+print_r($res);
+print($res->getUsers());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get user groups in all Moodle site
+* @param integer $client
+* @param string $sesskey
+* @param string $uid
+* @param string $idfield
+* @return getCohortsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_my_cohorts($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getCohorts());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -919,6 +979,28 @@ $grouping->setDescription('');
 $res=$moodle->add_grouping($lr->getClient(),$lr->getSessionKey(),$grouping);
 print_r($res);
 print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param cohortDatum $cohort
+* @return editCohortsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$cohort= new cohortDatum();
+$cohort->setAction('');
+$cohort->setId(0);
+$cohort->setCategoryid(0);
+$cohort->setName('');
+$cohort->setDescription('');
+$cohort->setComponent('');
+$cohort->setIdnumber('');
+$res=$moodle->add_cohort($lr->getClient(),$lr->getSessionKey(),$cohort);
+print_r($res);
+print($res->getCohorts());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -1228,6 +1310,21 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 /**test code for MoodleWS: add on course
 * @param integer $client
 * @param string $sesskey
+* @param string $value
+* @param string $id
+* @return editCohortsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->delete_cohort($lr->getClient(),$lr->getSessionKey(),'','');
+print_r($res);
+print($res->getCohorts());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
 * @param userDatum $user
 * @param string $idfield
 * @return editUsersOutput
@@ -1383,6 +1480,29 @@ $grouping->setDescription('');
 $res=$moodle->update_grouping($lr->getClient(),$lr->getSessionKey(),$grouping,'');
 print_r($res);
 print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: add on course
+* @param integer $client
+* @param string $sesskey
+* @param cohortDatum $cohort
+* @param string $idfield
+* @return editCohortsOutput
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$cohort= new cohortDatum();
+$cohort->setAction('');
+$cohort->setId(0);
+$cohort->setCategoryid(0);
+$cohort->setName('');
+$cohort->setDescription('');
+$cohort->setComponent('');
+$cohort->setIdnumber('');
+$res=$moodle->update_cohort($lr->getClient(),$lr->getSessionKey(),$cohort,'');
+print_r($res);
+print($res->getCohorts());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -1605,6 +1725,22 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->affect_user_to_group($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Affect a user to group
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $groupid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->affect_user_to_cohort($lr->getClient(),$lr->getSessionKey(),0,0);
 print_r($res);
 print($res->getError());
 print($res->getStatus());
@@ -1854,13 +1990,26 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param string $sesskey
 * @param string $fieldname
 * @param string $fieldvalue
-* @return getAllGroupingsReturn
+* @return UNKNOWN
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_all_groupings($lr->getClient(),$lr->getSessionKey(),'','');
+print($res);
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get All cohorts
+* @param integer $client
+* @param string $sesskey
+* @param string $fieldname
+* @param string $fieldvalue
+* @return getCohortsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_all_cohorts($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
-print($res->getGroupings());
+print($res->getCohorts());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
@@ -1874,6 +2023,22 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->remove_user_from_group($lr->getClient(),$lr->getSessionKey(),0,0);
+print_r($res);
+print($res->getError());
+print($res->getStatus());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: unAffect a user to group
+* @param integer $client
+* @param string $sesskey
+* @param integer $userid
+* @param integer $groupid
+* @return affectRecord
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->remove_user_from_cohort($lr->getClient(),$lr->getSessionKey(),0,0);
 print_r($res);
 print($res->getError());
 print($res->getStatus());

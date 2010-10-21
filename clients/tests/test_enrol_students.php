@@ -14,8 +14,8 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$userids=array(1,3,4);
-$res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'pp002','idnumber',$userids,'id');
+$userids=array();
+$res=$moodle->enrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
 print_r($res);
 print($res->getStudents());
 

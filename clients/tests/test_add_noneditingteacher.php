@@ -14,7 +14,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->add_noneditingteacher($lr->getClient(),$lr->getSessionKey(),'3','id','guest','username');
+$res=$moodle->add_noneditingteacher($lr->getClient(),$lr->getSessionKey(),'','','','');
 print_r($res);
 print($res->getError());
 print($res->getStatus());

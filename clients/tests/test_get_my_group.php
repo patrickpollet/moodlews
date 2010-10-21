@@ -7,12 +7,14 @@ require_once ('../auth.php');
 * @param integer $client
 * @param string $sesskey
 * @param integer $uid
+* @param string $idfield
 * @param integer $courseid
+* @param string $courseidfield
 * @return getGroupsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_my_group($lr->getClient(),$lr->getSessionKey(),'toto','username',4,'id');
+$res=$moodle->get_my_group($lr->getClient(),$lr->getSessionKey(),0,'',0,'');
 print_r($res);
 print($res->getGroups());
 

@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->delete_group($lr->getClient(),$lr->getSessionKey(),'3','id');
+$res=$moodle->delete_group($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getGroups());
 

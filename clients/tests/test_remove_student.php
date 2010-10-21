@@ -14,7 +14,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->remove_student($lr->getClient(),$lr->getSessionKey(),'3','id','toto','username');
+$res=$moodle->remove_student($lr->getClient(),$lr->getSessionKey(),'','','','');
 print_r($res);
 print($res->getError());
 print($res->getStatus());

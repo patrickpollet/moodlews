@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_students($lr->getClient(),$lr->getSessionKey(),'pp003','idnumber');
+$res=$moodle->get_students($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getUsers());
 

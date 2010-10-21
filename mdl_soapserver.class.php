@@ -608,7 +608,10 @@ class mdl_soapserver extends server {
     *  @see get_group_byid, get_groups_byname
     */
     protected function get_cohorts($client, $sesskey, $groups, $idfield) {
-        return $this->send($this->to_soap_array(parent :: get_cohorts($client, $sesskey, $groups, $idfield), 'cohorts', 'cohortecord', get_string('nocohorts', 'local_wspp')));
+        global $CFG;
+         if (!$CFG->wspp_using_moodle20)
+           return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+        return $this->send($this->to_soap_array(parent :: get_cohorts($client, $sesskey, $groups, $idfield), 'cohorts', 'cohortRecord', get_string('nocohorts', 'local_wspp')));
     }
 
 
@@ -711,6 +714,10 @@ class mdl_soapserver extends server {
     *
     */
     public function get_my_cohorts($client, $sesskey, $uid = '', $idfield = 'idnumber') {
+          global $CFG;
+         if (!$CFG->wspp_using_moodle20)
+           return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+
         return $this->send($this->to_soap_array(parent :: get_my_cohorts($client, $sesskey, $uid, $idfield), 'cohorts', 'cohortRecord', get_string('nocohorts', 'local_wspp')));
     }
 
@@ -1199,6 +1206,7 @@ class mdl_soapserver extends server {
      */
     function add_cohort($client, $sesskey, $datum) {
         $tmp = new editCohortsInput();
+        $this->debug_output(print_r($datum, true));
         $datum->action = 'add';
         $tmp->setCohorts(array (
             $datum
@@ -1385,6 +1393,18 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap(parent :: remove_user_from_group($client, $sesskey, $userid, $groupid), "affectRecord"));
     }
 
+       /**
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $groupid
+     * @return affectRecord
+     */
+    function remove_user_from_cohort($client, $sesskey, $userid, $groupid) {
+        return $this->send($this->to_soap(parent :: remove_user_from_cohort($client, $sesskey, $userid, $groupid), "affectRecord"));
+    }
+
+
     /**
      * @param int $client
      * @param string $sesskey
@@ -1393,6 +1413,7 @@ class mdl_soapserver extends server {
      * @return groupingRecord[]
      */
     function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
+
         return $this->send($this->to_soap_array(parent :: get_all_groupings($client, $sesskey, $fieldname, $fieldvalue), 'groupings', 'groupingRecord', get_string('nogroupings', 'local_wspp')));
     }
 
@@ -1404,7 +1425,10 @@ class mdl_soapserver extends server {
      * @return cohortRecord[]
      */
     function get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue) {
-        return $this->send($this->to_soap_array(parent :: get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
+          global $CFG;
+         if (!$CFG->wspp_using_moodle20)
+           return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+        return $this->send($this->to_soap_array(parent :: get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue), 'cohorts', 'cohortRecord', get_string('nocohorts', 'local_wspp')));
     }
 
     /**

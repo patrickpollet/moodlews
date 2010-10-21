@@ -13,12 +13,12 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $grouping= new groupingDatum();
-//$grouping->setAction('');
-$grouping->setId(2);
-//$grouping->setCourseid(0);
-$grouping->setName('grouping a virer oui oui oui ');
-$grouping->setDescription('vraiment a virer ');
-$res=$moodle->update_grouping($lr->getClient(),$lr->getSessionKey(),$grouping,'id');
+$grouping->setAction('');
+$grouping->setId(0);
+$grouping->setCourseid(0);
+$grouping->setName('');
+$grouping->setDescription('');
+$res=$moodle->update_grouping($lr->getClient(),$lr->getSessionKey(),$grouping,'');
 print_r($res);
 print($res->getGroupings());
 

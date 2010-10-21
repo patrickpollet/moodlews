@@ -1244,6 +1244,12 @@
 					<xsd:element name="groups" type="tns:groupRecords" />
 				</xsd:all>
 			</xsd:complexType>
+			
+			<xsd:complexType name="getCohortsReturn">
+				<xsd:all>
+					<xsd:element name="cohorts" type="tns:cohortRecords" />
+				</xsd:all>
+			</xsd:complexType>
 
 			<xsd:complexType name="getEventsReturn">
 				<xsd:all>
@@ -2398,7 +2404,7 @@
 
 	<!-- get_groupings -->
 	<message name="get_groupingsResponse">
-		<part name="return" type="tns:getqGroupingsReturn" />
+		<part name="return" type="tns:getGroupingsReturn" />
 	</message>
 	<!-- /get_all_groupings-->
 
@@ -2455,6 +2461,20 @@
 			</documentation>
 			<input message="tns:get_group_byRequest" />
 			<output message="tns:get_groupsResponse" />
+		</operation>
+		
+		<operation name="get_cohort_byid">
+			<documentation>MoodleWS: Get Course Information
+			</documentation>
+			<input message="tns:get_group_byRequest" />
+			<output message="tns:get_cohortsResponse" />
+		</operation>
+		
+		<operation name="get_cohort_byidnumber">
+			<documentation>MoodleWS: Get Course Information
+			</documentation>
+			<input message="tns:get_group_byRequest" />
+			<output message="tns:get_cohortsResponse" />
 		</operation>
 
 		<operation name="get_user">
@@ -3191,6 +3211,14 @@
 			<input message="tns:affect_user_to_groupRequest" />
 			<output message="tns:affect_user_to_groupResponse" />
 		</operation>
+		
+		<operation name="remove_user_from_cohort">
+			<documentation>MoodleWS: unAffect a user to group
+			</documentation>
+			<input message="tns:affect_user_to_groupRequest" />
+			<output message="tns:affect_user_to_groupResponse" />
+		</operation>
+		
 
 		<operation name="affect_group_to_grouping">
 			<documentation>MoodleWS: Affect a group to grouping
@@ -3776,6 +3804,32 @@
 
 		<operation name="get_groups_byname">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_groups_byname"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="get_cohort_byid">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohort_byid"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="get_cohort_byidnumber">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohort_byidnumber"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
@@ -4726,6 +4780,19 @@
 
 		<operation name="remove_user_from_group">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_user_from_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_user_from_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_user_from_cohort"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"

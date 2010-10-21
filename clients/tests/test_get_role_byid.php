@@ -11,7 +11,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_role_byid($lr->getClient(),$lr->getSessionKey(),5);
+$res=$moodle->get_role_byid($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
 print($res->getRoles());
 

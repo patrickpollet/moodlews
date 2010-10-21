@@ -27,6 +27,10 @@ require_once 'groupRecord.php';
  */
 require_once 'groupingRecord.php';
 /**
+ * cohortRecord class
+ */
+require_once 'cohortRecord.php';
+/**
  * sectionRecord class
  */
 require_once 'sectionRecord.php';
@@ -123,6 +127,10 @@ require_once 'labelDatum.php';
  */
 require_once 'groupDatum.php';
 /**
+ * cohortDatum class
+ */
+require_once 'cohortDatum.php';
+/**
  * groupingDatum class
  */
 require_once 'groupingDatum.php';
@@ -199,6 +207,10 @@ require_once 'getRolesReturn.php';
  */
 require_once 'getGroupsReturn.php';
 /**
+ * getCohortsReturn class
+ */
+require_once 'getCohortsReturn.php';
+/**
  * getEventsReturn class
  */
 require_once 'getEventsReturn.php';
@@ -254,6 +266,14 @@ require_once 'editGroupingsInput.php';
  * editGroupingsOutput class
  */
 require_once 'editGroupingsOutput.php';
+/**
+ * editCohortsInput class
+ */
+require_once 'editCohortsInput.php';
+/**
+ * editCohortsOutput class
+ */
+require_once 'editCohortsOutput.php';
 /**
  * editCategoriesInput class
  */
@@ -356,9 +376,9 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://localhost/moodle.195/wspp/wsdl';
+  private $uri = 'http://localhost/moodle.20/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.20/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
@@ -1325,6 +1345,54 @@ class MoodleWS {
   }
 
   /**
+   * MoodleWS: Get Course Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $info
+   * @param integer $courseid
+   * @return getCohortsReturn
+   */
+  public function get_cohort_byid($client, $sesskey, $info, $courseid) {
+    $res= $this->client->__call('get_cohort_byid', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($info, 'info'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCohortsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get Course Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $info
+   * @param integer $courseid
+   * @return getCohortsReturn
+   */
+  public function get_cohort_byidnumber($client, $sesskey, $info, $courseid) {
+    $res= $this->client->__call('get_cohort_byidnumber', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($info, 'info'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCohortsReturn',$res);
+  }
+
+  /**
    * MoodleWS: Get users members of a group in
 				course 
    * 
@@ -1370,6 +1438,54 @@ class MoodleWS {
            )
       );
   return $this->castTo ('getUsersReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get users members of a cohort in
+				Moodle 
+   * 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $groupid
+   * @return getUsersReturn
+   */
+  public function get_cohort_members($client, $sesskey, $groupid) {
+    $res= $this->client->__call('get_cohort_members', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($groupid, 'groupid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getUsersReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get user groups in all Moodle site 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $uid
+   * @param string $idfield
+   * @return getCohortsReturn
+   */
+  public function get_my_cohorts($client, $sesskey, $uid, $idfield) {
+    $res= $this->client->__call('get_my_cohorts', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($uid, 'uid'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCohortsReturn',$res);
   }
 
   /**
@@ -1737,6 +1853,28 @@ class MoodleWS {
   }
 
   /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param cohortDatum $cohort
+   * @return editCohortsOutput
+   */
+  public function add_cohort($client, $sesskey, cohortDatum $cohort) {
+    $res= $this->client->__call('add_cohort', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($cohort, 'cohort')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCohortsOutput',$res);
+  }
+
+  /**
    * MoodleWS: add a course section 
    *
    * @param integer $client
@@ -2013,6 +2151,30 @@ class MoodleWS {
    *
    * @param integer $client
    * @param string $sesskey
+   * @param string $value
+   * @param string $id
+   * @return editCohortsOutput
+   */
+  public function delete_cohort($client, $sesskey, $value, $id) {
+    $res= $this->client->__call('delete_cohort', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($value, 'value'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCohortsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
    * @param userDatum $user
    * @param string $idfield
    * @return editUsersOutput
@@ -2126,6 +2288,30 @@ class MoodleWS {
            )
       );
   return $this->castTo ('editGroupingsOutput',$res);
+  }
+
+  /**
+   * MoodleWS: add on course 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param cohortDatum $cohort
+   * @param string $idfield
+   * @return editCohortsOutput
+   */
+  public function update_cohort($client, $sesskey, cohortDatum $cohort, $idfield) {
+    $res= $this->client->__call('update_cohort', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($cohort, 'cohort'),
+            new SoapParam($idfield, 'idfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('editCohortsOutput',$res);
   }
 
   /**
@@ -2435,6 +2621,30 @@ class MoodleWS {
    */
   public function affect_user_to_group($client, $sesskey, $userid, $groupid) {
     $res= $this->client->__call('affect_user_to_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($groupid, 'groupid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Affect a user to group 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $userid
+   * @param integer $groupid
+   * @return affectRecord
+   */
+  public function affect_user_to_cohort($client, $sesskey, $userid, $groupid) {
+    $res= $this->client->__call('affect_user_to_cohort', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($userid, 'userid'),
@@ -2827,7 +3037,7 @@ class MoodleWS {
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
-   * @return getAllGroupingsReturn
+   * @return UNKNOWN
    */
   public function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
     $res= $this->client->__call('get_all_groupings', array(
@@ -2841,7 +3051,31 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-  return $this->castTo ('getAllGroupingsReturn',$res);
+   return $res;
+  }
+
+  /**
+   * MoodleWS: Get All cohorts 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $fieldname
+   * @param string $fieldvalue
+   * @return getCohortsReturn
+   */
+  public function get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue) {
+    $res= $this->client->__call('get_all_cohorts', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($fieldname, 'fieldname'),
+            new SoapParam($fieldvalue, 'fieldvalue')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCohortsReturn',$res);
   }
 
   /**
@@ -2855,6 +3089,30 @@ class MoodleWS {
    */
   public function remove_user_from_group($client, $sesskey, $userid, $groupid) {
     $res= $this->client->__call('remove_user_from_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($groupid, 'groupid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: unAffect a user to group 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param integer $userid
+   * @param integer $groupid
+   * @return affectRecord
+   */
+  public function remove_user_from_cohort($client, $sesskey, $userid, $groupid) {
+    $res= $this->client->__call('remove_user_from_cohort', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($userid, 'userid'),

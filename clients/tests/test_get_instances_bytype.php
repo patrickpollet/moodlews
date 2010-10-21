@@ -13,8 +13,8 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$courseids=array(1,2,3,4);
-$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'id','forum');
+$courseids=array();
+$res=$moodle->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','');
 print_r($res);
 print($res->getResources());
 

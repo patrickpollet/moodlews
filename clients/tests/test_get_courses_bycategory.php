@@ -11,7 +11,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_courses_bycategory($lr->getClient(),$lr->getSessionKey(),2);
+$res=$moodle->get_courses_bycategory($lr->getClient(),$lr->getSessionKey(),0);
 print_r($res);
 print($res->getCourses());
 

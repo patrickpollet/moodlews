@@ -12,8 +12,8 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$userids=array('toto','toto1','admin','guest','unknown');
-$res=$moodle->get_users($lr->getClient(),$lr->getSessionKey(),$userids,'username');
+$userids=array();
+$res=$moodle->get_users($lr->getClient(),$lr->getSessionKey(),$userids,'');
 print_r($res);
 print($res->getUsers());
 

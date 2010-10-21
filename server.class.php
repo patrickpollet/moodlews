@@ -1033,6 +1033,36 @@ hiddensections,lang,theme,timecreated,timemodified";
     }
 
 
+        function get_cohort_members($client, $sesskey, $groupid,$groupidfield='id') {
+        global $DB,$CFG;
+         if (!$CFG->wspp_using_moodle20)
+           return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (!$group = ws_get_record('cohort', $groupidfield, $groupid)) {
+            return $this->error(get_string('ws_cohortunknown','local_wspp',$groupid));
+        }
+        /*
+        if (!$this->has_capability('moodle/cohort:update', CONTEXT_COURSECAT, $group->contextid))
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        */
+        $params['cohortid'] = $group->id;
+        $fields      = 'SELECT u.*';
+        $sql = " FROM {user} u
+                 JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)";
+        try {
+        $res = $DB->get_records_sql($fields . $sql, $params);
+        if (!$res)
+            return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
+        } catch (Exception $e) {
+            ws_error_log($e);
+        }
+        return filter_users($client, $res, 0);
+    }
+
+
     protected function get_groups($client, $sesskey,$groups,$idfield,$courseid){
 
 	    if (empty($groups) && $courseid) {
@@ -1065,6 +1095,35 @@ hiddensections,lang,theme,timecreated,timemodified";
 	    }
 
 	    return $ret;
+    }
+
+     protected function get_cohorts($client, $sesskey,$groups,$idfield){
+
+
+
+        if (empty($groups)) {
+            return server::get_all_cohorts($client,$sesskey);
+        }
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+
+        global $CFG;
+        $ret = array();
+        foreach ($groups as $group) {
+            $sql= "$idfield ='$group' ";
+            if ($g = ws_get_records_select('cohort',$sql)) {
+                $g=filter_cohorts($client,$g);
+                foreach($g as $one) {
+                    $ret[] = $one;
+                }
+
+            } else {
+                $ret[]=$this->non_fatal_error(get_string('nocohorts','local_wspp')); // "Invalid group $idfield :$group ");
+            }
+        }
+
+        return $ret;
     }
 
 
@@ -1156,6 +1215,88 @@ hiddensections,lang,theme,timecreated,timemodified";
         $resp->status = groups_remove_member($group->id, $user->id);
         return $resp;
     }
+
+
+     /**
+    * Add user to cohort
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $userid The user's id
+    * @param int $groupid The group's id
+    * @return affectRecord Return data (affectRecord object) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function affect_user_to_cohort($client, $sesskey, $userid, $groupid) {
+        global $CFG;
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+
+        }
+
+        if (!$group = ws_get_record('cohort', 'id', $groupid)) {
+            return $this->error(get_string('ws_cohortunknown','local_wspp','id='.$groupid));
+        }
+            /// Check for correct permissions.
+        if (!$this->has_capability('moodle/cohort:manage', CONTEXT_COURSECAT, $group->contextid)) {
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+        if (!$user = ws_get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
+        }
+
+        if ($CFG->wspp_using_moodle20) {
+            require_once ($CFG->dirroot.'/cohort/lib.php');
+        }else
+              return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+
+        cohort_add_member($group->id,$user->id);
+        $resp->status = 1;
+        return $resp;
+    }
+
+         /**
+    * Add user to cohort
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $userid The user's id
+    * @param int $groupid The group's id
+    * @return affectRecord Return data (affectRecord object) to be converted into a
+    *               specific data format for sending to the client.
+    */
+    function remove_user_from_cohort($client, $sesskey, $userid, $groupid) {
+        global $CFG;
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+
+        }
+
+        if (!$group = ws_get_record('cohort', 'id', $groupid)) {
+            return $this->error(get_string('ws_cohortunknown','local_wspp','id='.$groupid));
+        }
+            /// Check for correct permissions.
+        if (!$this->has_capability('moodle/cohort:manage', CONTEXT_COURSECAT, $group->contextid)) {
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+        if (!$user = ws_get_record("user", "id", $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
+        }
+
+        if ($CFG->wspp_using_moodle20) {
+            require_once ($CFG->dirroot.'/cohort/lib.php');
+        }else
+              return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+
+        cohort_remove_member($group->id,$user->id);
+        $resp->status = 1;
+        return $resp;
+    }
+
 
 
 
@@ -1391,6 +1532,46 @@ hiddensections,lang,theme,timecreated,timemodified";
 		$res = ws_get_records_sql($sql);
 		return filter_groups($client, $res);
 	}
+
+        /**
+     * Returns the user's cohorts
+     *
+     * @uses $CFG
+     * @param int $uid The id of the user as found in the 'user' table.
+     *         if empty, return logged in user's groups
+     *         if uid is not equal to current's user id, current user must be admin.
+     * @return array of object
+     */
+    function get_my_cohorts($client, $sesskey, $uinfo = '', $idfield = "idnumber") {
+        global $USER, $CFG;
+
+        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        $cuid = $USER->id;
+        if (!empty($uinfo)) {
+             // find userid if not current user
+                if (!$user = ws_get_record('user', $idfield, $uinfo))
+                    return $this->error(get_string('ws_userunknown','local_wspp',$idfield."=".$uinfo));
+                $uid = $user->id;
+        } else
+            $uid = $cuid; //use current user and ignore $idfield
+        //only an user that can login as another can request  for others
+        if ($uid != $cuid) {
+            if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
+                return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+            }
+        }
+        $from=" {cohort} g,{cohort_members} m" ;
+
+        $sql = "SELECT g.* " .
+            "FROM $from
+             WHERE g.id = m.cohortid
+             AND m.userid = '$uid'
+             ORDER BY name ASC";
+        $res = ws_get_records_sql($sql);
+        return filter_cohorts($client, $res);
+    }
 
 	function get_last_changes($client, $sesskey, $courseid, $idfield = 'idnumber', $limit = 10) {
 		global $CFG, $USER;
@@ -2082,6 +2263,7 @@ EOSS;
 
 
 
+
 	/*
 	*****************************************************************************************************************************
 	*                                                                                                                           *
@@ -2090,7 +2272,7 @@ EOSS;
 	*****************************************************************************************************************************
 	*/
 
-      /**
+    /**
     * Edit group records (add/update/delete).
     * @uses $CFG
     * @param int $client The client session ID.
@@ -2187,6 +2369,134 @@ EOSS;
                         if (!groups_delete_group($group)) {
                             $ret->error==get_string('ws_errordeletinggroup','local_wspp',$group->id);
                         }
+                        break;
+                    default :
+                     $ret->error=get_string('ws_invalidaction','local_wspp',$group->action);
+
+                        break;
+                }
+                $rets[] = $ret;
+            }
+        }
+        return $rets;
+    }
+
+
+   /**
+    * Edit cohorts records (add/update/delete).
+    * @uses $CFG
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param array $groups An array of group records (objects or arrays) for editing
+    *                     (including operation to perform).
+    * @return array Return data (group record) to be converted into a
+    *               specific data format for sending to the client.
+    */
+
+
+    function edit_cohorts($client, $sesskey, $groups) {
+        global $CFG;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+
+        if ($CFG->wspp_using_moodle20) {
+            require_once ($CFG->dirroot.'/cohort/lib.php');
+        }else
+           return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+        $rets = array ();
+        //$this->debug_output(print_r($groups,true));
+        if (!empty ($groups)) {
+            foreach ($groups->cohorts as $group) {
+                $ret = new stdClass;
+                $ret->error="";
+                switch (trim(strtolower($group->action))) {
+                    case 'add' :
+                        /// Adding a new cohort.
+                        if (!empty($group->categoryid)) {
+                            if (! $course = ws_get_record('course_categories', 'id', $group->categoryid)) {
+                            $ret->error = get_string('ws_categoryunknown','local_wspp',"id=".$group->categoryid );
+                            break;
+                            }
+                            $context=get_context_instance(CONTEXT_COURSECAT,$group->categoryid);
+                            if (! has_capability('moodle/cohort:manage',$context )) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                            $group->contextid=$context->id;
+                        } else {
+                        /// Check for correct permissions. at site level
+                            if (!$this->has_capability('moodle/cohort:manage', CONTEXT_SYSTEM, 0)) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                            $group->contextid=1; // site cohort
+                        }
+                        // cohorts are Moodle 2.0 only so it will raise an execption for sure
+                        try {
+                            $id=cohort_add_cohort($group);
+                            $ret = ws_get_record('cohort', 'id', $id);
+                        }catch(Exception $e) {
+                            ws_error_log($ex);
+                            $ret->error=get_string('ws_errorcreatingcohort','local_wspp',$group->name);
+                        }
+
+                        break;
+                    case 'update' :
+                        /// Updating an existing group
+                          $ret=$group;
+                          if (! $oldgroup = ws_get_record('cohort', 'id', $group->id)) {
+                            $ret->error = get_string('ws_cohortunknown','local_wspp',"id=".$group->id );
+                            break;
+                        }
+                        $ret=$oldgroup;
+                        if ($oldgroup->contextid==1) {
+                             if (!$this->has_capability('moodle/cohort:manage', CONTEXT_SYSTEM, 0)) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                        } else {
+                            $context=get_context_instance_by_id($oldgroup->contextid);
+                            if (! has_capability('moodle/cohort:manage',$context )) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                        }
+                        // no way to change these !!!
+                        $group->id=$oldgroup->id;
+                        $group->contextid=$oldgroup->contextid;
+
+                        foreach ($group as $key => $value) {
+                            if (empty ($value))
+                                unset($group-> $key);
+                        }
+
+                        cohort_update_cohort($group);
+                        $ret = ws_get_record('cohort', 'id', $group->id);
+
+
+                        break;
+                    case 'delete' :
+                        /// Deleting an existing cohort
+                          $ret=$group;
+                          if (! $oldgroup = ws_get_record('cohort', 'id', $group->id)) {
+                            $ret->error = get_string('ws_cohortunknown','local_wspp',"id=".$group->id );
+                            break;
+                        }
+                        $ret=$oldgroup;
+                        if ($oldgroup->contextid==1) {
+                             if (!$this->has_capability('moodle/cohort:manage', CONTEXT_SYSTEM, 0)) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                        } else {
+                            $context=get_context_instance_by_id($oldgroup->contextid);
+                            if (! has_capability('moodle/cohort:manage',$context )) {
+                                $ret->error=get_string('ws_operationnotallowed','local_wspp');
+                                break;
+                            }
+                        }
+                       cohort_delete_cohort($oldgroup);
                         break;
                     default :
                      $ret->error=get_string('ws_invalidaction','local_wspp',$group->action);
@@ -3499,13 +3809,18 @@ EOSS;
 
 
       function get_all_cohorts($client, $sesskey, $fieldname, $fieldvalue) {
+        global $CFG;
+            if (!$CFG->wspp_using_moodle20) {
+                return $this->error(get_string('ws_moodle20only', 'local_wspp'));
+            }
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         $ret = array ();
         if ($res = ws_get_records('cohort', $fieldname, $fieldvalue, 'name', '*')) {
-            $ret = filter_cohorts($client, $res);
+          $ret = filter_cohorts($client, $res);
         }
+        $this->debug_output(print_r($res,true));
         return $ret;
     }
 

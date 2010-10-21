@@ -17,6 +17,6 @@ $res=$moodle->get_courses($lr->getClient(),$lr->getSessionKey(),$courseids,'');
 print_r($res);
 print($res->getCourses());
 
-$ret=$moodle->logout($lr->getClient(),$lr->getSessionKey());
-print 'logout='.$ret;
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 ?>

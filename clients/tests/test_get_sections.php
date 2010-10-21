@@ -13,7 +13,7 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $courseids=array();
-$res=$moodle->get_sections($lr->getClient(),$lr->getSessionKey(),$courseids,'id');
+$res=$moodle->get_sections($lr->getClient(),$lr->getSessionKey(),$courseids,'');
 print_r($res);
 print($res->getSections());
 

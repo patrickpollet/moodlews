@@ -15,7 +15,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_primaryrole_incourse($lr->getClient(),$lr->getSessionKey(),'toto','username','4','id');
+$res=$moodle->get_primaryrole_incourse($lr->getClient(),$lr->getSessionKey(),'','','','');
 print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

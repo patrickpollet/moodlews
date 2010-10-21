@@ -12,11 +12,11 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $grouping= new groupingDatum();
-//grouping->setAction('');
-//$grouping->setId(0);
-$grouping->setCourseid(4);
-$grouping->setName('grouping a virer');
-$grouping->setDescription('groupement 1 a virer');
+$grouping->setAction('');
+$grouping->setId(0);
+$grouping->setCourseid(0);
+$grouping->setName('');
+$grouping->setDescription('');
 $res=$moodle->add_grouping($lr->getClient(),$lr->getSessionKey(),$grouping);
 print_r($res);
 print($res->getGroupings());

@@ -13,16 +13,14 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $course= new courseDatum();
-//$course->setAction('');
-//$course->setId(0);
-//$course->setCategory(0);
-//$course->setSortorder(0);
-$course->setPassword('passe');
-$course->setFullname('son nouveau nom aaa');
-$course->setShortname('son_nom');
-
-$course->setIdnumber('pp002');
-/*
+$course->setAction('');
+$course->setId(0);
+$course->setCategory(0);
+$course->setSortorder(0);
+$course->setPassword('');
+$course->setFullname('');
+$course->setShortname('');
+$course->setIdnumber('');
 $course->setSummary('');
 $course->setFormat('');
 $course->setShowgrades(0);
@@ -44,8 +42,7 @@ $course->setLang('');
 $course->setTheme('');
 $course->setCost('');
 $course->setMetacourse(0);
-*/
-$res=$moodle->update_course($lr->getClient(),$lr->getSessionKey(),$course,'shortname');
+$res=$moodle->update_course($lr->getClient(),$lr->getSessionKey(),$course,'');
 print_r($res);
 print($res->getCourses());
 

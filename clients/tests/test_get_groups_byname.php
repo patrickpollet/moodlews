@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_groups_byname($lr->getClient(),$lr->getSessionKey(),'g1',0);
+$res=$moodle->get_groups_byname($lr->getClient(),$lr->getSessionKey(),'',0);
 print_r($res);
 print($res->getGroups());
 

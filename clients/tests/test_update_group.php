@@ -13,15 +13,15 @@ require_once ('../auth.php');
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $group= new groupDatum();
-//$group->setAction('');
-$group->setId(3);
-//$group->setCourseid(0);
-$group->setName('groupe a virer vraiment');
-$group->setDescription('descro');
-$group->setEnrolmentkey('azerty');
+$group->setAction('');
+$group->setId(0);
+$group->setCourseid(0);
+$group->setName('');
+$group->setDescription('');
+$group->setEnrolmentkey('');
 $group->setPicture(0);
 $group->setHidepicture(0);
-$res=$moodle->update_group($lr->getClient(),$lr->getSessionKey(),$group,'id');
+$res=$moodle->update_group($lr->getClient(),$lr->getSessionKey(),$group,'');
 print_r($res);
 print($res->getGroups());
 

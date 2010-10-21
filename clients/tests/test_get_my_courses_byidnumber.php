@@ -13,7 +13,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_my_courses_byidnumber($lr->getClient(),$lr->getSessionKey(),'toto','');
+$res=$moodle->get_my_courses_byidnumber($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getCourses());
 
