@@ -1,12 +1,12 @@
 <?php
 
-// $Id: server.class.php 931 2009-07-23 09:33:54Z ppollet $
+// $Id$
 
 /**
  * utilities function to filter off resuts not available to current WS user
  *
  * @package Web Services
- * @version $Id: server.class.php 931 2009-07-23 09:33:54Z ppollet $
+ * @version $Id$
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
  */
 

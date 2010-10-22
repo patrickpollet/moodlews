@@ -97,12 +97,21 @@ function ws_get_records_select($table, $select, array $params = null, $sort = ''
 		return get_records_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
 }
 
-function ws_get_records_sql ($sql) {
+function ws_get_record_sql ($sql) {
 	global $CFG,$DB;
 	if ($CFG->wspp_using_moodle20)
-		return $DB->get_records_sql($sql);
+		return $DB->get_record_sql($sql);
 	else
-		return get_records_sql($sql);
+		return get_record_sql($sql);
+}
+
+
+function ws_get_records_sql ($sql, $limitfrom='', $limitnum='') {
+	global $CFG,$DB;
+	if ($CFG->wspp_using_moodle20)
+		return $DB->get_records_sql($sql,null,$limitfrom, $limitnum);
+	else
+		return get_records_sql($sql, $limitfrom, $limitnum);
 }
 
 function ws_get_field($table, $return, $field1, $value1, $field2 = '', $value2 = '', $field3 = '', $value3 = '') {

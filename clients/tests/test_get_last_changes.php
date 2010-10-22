@@ -14,7 +14,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_last_changes($lr->getClient(),$lr->getSessionKey(),'','',0);
+$res=$moodle->get_last_changes($lr->getClient(),$lr->getSessionKey(),'4','id',10);
 print_r($res);
 print($res->getChanges());
 

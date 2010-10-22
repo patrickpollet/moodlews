@@ -1079,7 +1079,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 	    } else {
 		    $courselect = '';
 	    }
-        $this->debug_output("groupes=".print_r($groups,true));
+       // $this->debug_output("groupes=".print_r($groups,true));
 
 	    foreach ($groups as $group) {
 		    $sql= "$idfield ='$group' $courseselect ";
@@ -1094,7 +1094,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 			    $ret[]=$this->non_fatal_error(get_string('nogroups','local_wspp')); // "Invalid group $idfield :$group ");
 		    }
 	    }
- $this->debug_output("groupes tr=".print_r($ret,true));
+ //$this->debug_output("groupes tr=".print_r($ret,true));
 	    return $ret;
     }
 
@@ -1114,7 +1114,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         } else {
             $courselect = '';
         }
- $this->debug_output("groupings=".print_r($groups,true));
+ //$this->debug_output("groupings=".print_r($groups,true));
         foreach ($groups as $group) {
             $sql= "$idfield ='$group' $courseselect ";
 
@@ -1128,7 +1128,7 @@ hiddensections,lang,theme,timecreated,timemodified";
                 $ret[]=$this->non_fatal_error(get_string('nogroupings','local_wspp')); // "Invalid group $idfield :$group ");
             }
         }
- $this->debug_output("groupings tr=".print_r($ret,true));
+ //$this->debug_output("groupings tr=".print_r($ret,true));
         return $ret;
     }
 
@@ -1156,7 +1156,7 @@ hiddensections,lang,theme,timecreated,timemodified";
                 $ret[]=$this->non_fatal_error(get_string('nocohorts','local_wspp')); // "Invalid group $idfield :$group ");
             }
         }
-$this->debug_output("cohorts tr=".print_r($ret,true));
+//$this->debug_output("cohorts tr=".print_r($ret,true));
 
         return $ret;
     }
@@ -1292,8 +1292,7 @@ $this->debug_output("cohorts tr=".print_r($ret,true));
         return $resp;
     }
 
-         /**
-    * Add user to cohort
+    /**remove user from cohort
     * @uses $CFG
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
@@ -1648,16 +1647,17 @@ time,firstname,lastname,email,
 		FROM {$CFG->prefix}log inner join {$CFG->prefix}user on
 {$CFG->prefix}log.userid={$CFG->prefix}user.id
 		WHERE course =$course->id
-		and (action like 'add%' or action like 'update%')
+		and (action like '%add%' or action like '%update%')
 		and cmid <>0
 		and module <>'label'
 		ORDER BY time DESC
 EOS;
 		$return = array ();
         //$this->debug_output($sqlAct);
-		if (!$resultAct = get_records_sql($sqlAct)) {
+		if (!$resultAct = ws_get_records_sql($sqlAct)) {
 			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		}
+		//$this->debug_output(print_r($resultAct,true));
 		foreach ($resultAct as $rowAct) {
 			if ($limit-- <= 0)
 				break;
@@ -1674,13 +1674,13 @@ EOS;
 			if (!$isTeacher) {
 				$sql .= " and {$CFG->prefix}course_modules.visible=1";
 			}
-			if ($row = get_record_sql($sql)) {
+			if ($row = ws_get_record_sql($sql)) {
 				$sql1 =<<<EOS
 				select * from {$CFG->prefix}{$row->name}
 				where id={$row->instance}
 				and course=$course->id
 EOS;
-				$result1 = get_records_sql($sql1);
+				$result1 = ws_get_records_sql($sql1);
 				foreach ($result1 as $row1) {
 					if ($row1->name) {
 						//retouche  ?id=cc&r=xx ou ?f=xx
@@ -1769,7 +1769,7 @@ $sql_course
 ORDER BY l.time DESC
 EOSS;
 		//$this->debug_output($sql);
-		$res = get_records_sql($sql, '', $limit);
+		$res = ws_get_records_sql($sql, '', $limit);
 		//$this->debug_output(print_r($res,true));
 		if ($doCount)
 			return $res['1']->CPT; //caution
@@ -1922,7 +1922,7 @@ EOSS;
 		} else {
 			$timestart = $timeend = 0;
 		}
-		$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol ."\n ctx=".$context->id);
+		//$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol ."\n ctx=".$context->id);
 		$return = array ();
 		if (!empty ($userids)) {
 			foreach ($userids as $userid) {

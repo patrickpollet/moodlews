@@ -48,6 +48,7 @@ $string['ws_courseunknown']='cours {$a} inconnu.';
 $string['ws_categoryunknown']='categorie {$a} inconnue.';
 $string['ws_groupunknown']='groupe {$a} inconnu.';
 $string['ws_groupingunknown']='groupement {$a} inconnu.';
+$string['ws_cohortunknown']='cohorte {$a} inconnue.';
 $string['ws_roleunknown']='rôle {$a} inconnu.';
 $string['ws_sectionunknown']='section {$a} inconnue.';
 $string['ws_forumunknown']='forum {$a} inconnu.';
@@ -95,7 +96,8 @@ $string['nogradesin']='pas de notes dans {$a}';
 $string['nogroupsin']='pas de groupes dans {$a}';
 $string['nogroups']='pas de groupes';
 $string['nogrouping']='pas de groupements';
-
+$string['nogroupingsin']='pas de groupements dans {$a}';
+$string['nocohorts']='pas de cohortes';
 
 $string['noteachers']='pas d\'enseignants';
 $string['noevents']='pas d\'évenements';
