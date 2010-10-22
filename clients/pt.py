@@ -22,6 +22,6 @@ def show_methods(proxy):
       print " Out #%d: %s (%s)"  % (parm, details.name, details.type) 
       print
 
-proxy = SOAPpy.WSDL.Proxy("http://cipcnet/moodle/wspp/wsdl_pp.php") 
+proxy = SOAPpy.WSDL.Proxy("http://localhost/moodle.20/wspp/wsdl_pp.php") 
 print len(proxy.methods) 
 show_methods(proxy) 
