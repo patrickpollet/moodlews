@@ -207,6 +207,10 @@ require_once 'getRolesReturn.php';
  */
 require_once 'getGroupsReturn.php';
 /**
+ * getGroupingsReturn class
+ */
+require_once 'getGroupingsReturn.php';
+/**
  * getCohortsReturn class
  */
 require_once 'getCohortsReturn.php';
@@ -1351,6 +1355,54 @@ class MoodleWS {
    * @param string $sesskey
    * @param string $info
    * @param integer $courseid
+   * @return getGroupingsReturn
+   */
+  public function get_grouping_byid($client, $sesskey, $info, $courseid) {
+    $res= $this->client->__call('get_grouping_byid', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($info, 'info'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getGroupingsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get Course Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $info
+   * @param integer $courseid
+   * @return getGroupingsReturn
+   */
+  public function get_groupings_byname($client, $sesskey, $info, $courseid) {
+    $res= $this->client->__call('get_groupings_byname', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($info, 'info'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getGroupingsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get Course Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $info
+   * @param integer $courseid
    * @return getCohortsReturn
    */
   public function get_cohort_byid($client, $sesskey, $info, $courseid) {
@@ -1379,6 +1431,30 @@ class MoodleWS {
    */
   public function get_cohort_byidnumber($client, $sesskey, $info, $courseid) {
     $res= $this->client->__call('get_cohort_byidnumber', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($info, 'info'),
+            new SoapParam($courseid, 'courseid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getCohortsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get Course Information 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $info
+   * @param integer $courseid
+   * @return getCohortsReturn
+   */
+  public function get_cohorts_byname($client, $sesskey, $info, $courseid) {
+    $res= $this->client->__call('get_cohorts_byname', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($info, 'info'),
@@ -3037,7 +3113,7 @@ class MoodleWS {
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
-   * @return UNKNOWN
+   * @return getGroupingsReturn
    */
   public function get_all_groupings($client, $sesskey, $fieldname, $fieldvalue) {
     $res= $this->client->__call('get_all_groupings', array(
@@ -3051,7 +3127,7 @@ class MoodleWS {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castTo ('getGroupingsReturn',$res);
   }
 
   /**

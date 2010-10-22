@@ -1079,6 +1079,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 	    } else {
 		    $courselect = '';
 	    }
+        $this->debug_output("groupes=".print_r($groups,true));
 
 	    foreach ($groups as $group) {
 		    $sql= "$idfield ='$group' $courseselect ";
@@ -1093,8 +1094,42 @@ hiddensections,lang,theme,timecreated,timemodified";
 			    $ret[]=$this->non_fatal_error(get_string('nogroups','local_wspp')); // "Invalid group $idfield :$group ");
 		    }
 	    }
-
+ $this->debug_output("groupes tr=".print_r($ret,true));
 	    return $ret;
+    }
+
+     protected function get_groupings($client, $sesskey,$groups,$idfield,$courseid){
+
+        if (empty($groups) && $courseid) {
+            return server::get_groupings_bycourse ($client,$sesskey,$courseid);
+        }
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+
+        global $CFG;
+        $ret = array();
+        if ($courseid) {
+            $courseselect = 'AND g.courseid ='.$courseid ;
+        } else {
+            $courselect = '';
+        }
+ $this->debug_output("groupings=".print_r($groups,true));
+        foreach ($groups as $group) {
+            $sql= "$idfield ='$group' $courseselect ";
+
+            if ($g = ws_get_records_select('groupings',$sql)) {
+                $g=filter_groupings($client,$g);
+                foreach($g as $one) {
+                    $ret[] = $one;
+                }
+
+            } else {
+                $ret[]=$this->non_fatal_error(get_string('nogroupings','local_wspp')); // "Invalid group $idfield :$group ");
+            }
+        }
+ $this->debug_output("groupings tr=".print_r($ret,true));
+        return $ret;
     }
 
      protected function get_cohorts($client, $sesskey,$groups,$idfield){
@@ -1108,7 +1143,6 @@ hiddensections,lang,theme,timecreated,timemodified";
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        global $CFG;
         $ret = array();
         foreach ($groups as $group) {
             $sql= "$idfield ='$group' ";
@@ -1122,6 +1156,7 @@ hiddensections,lang,theme,timecreated,timemodified";
                 $ret[]=$this->non_fatal_error(get_string('nocohorts','local_wspp')); // "Invalid group $idfield :$group ");
             }
         }
+$this->debug_output("cohorts tr=".print_r($ret,true));
 
         return $ret;
     }
@@ -1310,7 +1345,7 @@ hiddensections,lang,theme,timecreated,timemodified";
             return $this->error(get_string('ws_groupunknown','local_wspp','id='.$groupid));
         }
         if (!$grouping = ws_get_record('groupings', 'id', $groupingid)) {
-            return $this->error(get_string('ws_groupidunknown','local_wspp','id='.$groupid));
+            return $this->error(get_string('ws_groupingunknown','local_wspp','id='.$groupingid));
         }
         if ($group->courseid != $grouping->courseid) {
              $a=new StdClass();
@@ -1491,6 +1526,25 @@ hiddensections,lang,theme,timecreated,timemodified";
 			return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
 		return filter_groups($client, $res);
 	}
+
+    function get_groupings_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
+        global $USER;
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+            return $this->error(get_string('ws_courseunknown','local_wspp',$idfield."=".$courseid ));
+        }
+        if (! $this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $course->id))
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        // deprecated in Moodle 1.9
+        // gone in Moodle 2.0
+        //$res = get_groups($course->id);
+        $res=groups_get_all_groupings($course->id);
+        if (!$res)
+            return $this->non_fatal_error(get_string('ws_nothingfound','local_wspp'));
+        return filter_groupings($client, $res);
+    }
 
 	/**
 	 * Returns the user's groups in all courses (not found in Moodle API)

@@ -602,6 +602,36 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param string $sesskey
 * @param string $info
 * @param integer $courseid
+* @return getGroupingsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_grouping_byid($lr->getClient(),$lr->getSessionKey(),'',0);
+print_r($res);
+print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get Course Information
+* @param integer $client
+* @param string $sesskey
+* @param string $info
+* @param integer $courseid
+* @return getGroupingsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_groupings_byname($lr->getClient(),$lr->getSessionKey(),'',0);
+print_r($res);
+print($res->getGroupings());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get Course Information
+* @param integer $client
+* @param string $sesskey
+* @param string $info
+* @param integer $courseid
 * @return getCohortsReturn
 */
 
@@ -622,6 +652,21 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_cohort_byidnumber($lr->getClient(),$lr->getSessionKey(),'',0);
+print_r($res);
+print($res->getCohorts());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Get Course Information
+* @param integer $client
+* @param string $sesskey
+* @param string $info
+* @param integer $courseid
+* @return getCohortsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$res=$moodle->get_cohorts_byname($lr->getClient(),$lr->getSessionKey(),'',0);
 print_r($res);
 print($res->getCohorts());
 
@@ -1990,12 +2035,14 @@ $moodle->logout($lr->getClient(),$lr->getSessionKey());
 * @param string $sesskey
 * @param string $fieldname
 * @param string $fieldvalue
-* @return UNKNOWN
+* @return getGroupingsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_all_groupings($lr->getClient(),$lr->getSessionKey(),'','');
-print($res);
+print_r($res);
+print($res->getGroupings());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 /**test code for MoodleWS: Get All cohorts

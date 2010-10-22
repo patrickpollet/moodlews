@@ -8,12 +8,14 @@ require_once ('../auth.php');
 * @param string $sesskey
 * @param string $fieldname
 * @param string $fieldvalue
-* @return UNKNOWN
+* @return getGroupingsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
 $res=$moodle->get_all_groupings($lr->getClient(),$lr->getSessionKey(),'','');
-print($res);
+print_r($res);
+print($res->getGroupings());
+
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

@@ -207,6 +207,14 @@ require_once 'getRolesReturn.php';
  */
 require_once 'getGroupsReturn.php';
 /**
+ * getGroupingsReturn class
+ */
+require_once 'getGroupingsReturn.php';
+/**
+ * getCohortsReturn class
+ */
+require_once 'getCohortsReturn.php';
+/**
  * getEventsReturn class
  */
 require_once 'getEventsReturn.php';

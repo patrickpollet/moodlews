@@ -3,18 +3,18 @@ require_once ('../MoodleWS.php');
 
 $moodle=new MoodleWS();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get users members of a cohort in
-				Moodle
+/**test code for MoodleWS: Get Course Information
 * @param integer $client
 * @param string $sesskey
-* @param integer $groupid
-* @return getUsersReturn
+* @param string $info
+* @param integer $courseid
+* @return getCohortsReturn
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_cohort_members($lr->getClient(),$lr->getSessionKey(),2);
+$res=$moodle->get_cohorts_byname($lr->getClient(),$lr->getSessionKey(),'',0);
 print_r($res);
-print($res->getUsers());
+print($res->getCohorts());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

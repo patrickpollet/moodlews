@@ -564,6 +564,18 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap_array(parent :: get_groups_bycourse($client, $sesskey, $courseid, $idfield), 'groups', 'groupRecord', get_string('nogroupsin', 'local_wspp', $courseid)));
     }
 
+      /**
+    * return the list of groupings of course identified by courseid
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param string $courseid the course identifier
+    * @param string $idfield  the course identifier field, defaut = idnumber
+    * @return groupingRecord[]  Array of groupRecord
+    */
+    public function get_groupings_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
+        return $this->send($this->to_soap_array(parent :: get_groupings_bycourse($client, $sesskey, $courseid, $idfield), 'groupings', 'groupingRecord', get_string('nogroupingsin', 'local_wspp', $courseid)));
+    }
+
     /**
     *  internal, not published (yet) in wsdl.
     *  return an array of groups
@@ -571,6 +583,15 @@ class mdl_soapserver extends server {
     */
     protected function get_groups($client, $sesskey, $groups, $idfield, $courseid = 0) {
         return $this->send($this->to_soap_array(parent :: get_groups($client, $sesskey, $groups, $idfield, $courseid), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
+    }
+
+    /**
+    *  internal, not published (yet) in wsdl.
+    *  return an array of groups
+    *  @see get_group_byid, get_groups_byname
+    */
+    protected function get_groupings($client, $sesskey, $groups, $idfield, $courseid = 0) {
+        return $this->send($this->to_soap_array(parent :: get_groupings($client, $sesskey, $groups, $idfield, $courseid), 'groupings', 'groupingRecord', get_string('nogroupings', 'local_wspp')));
     }
 
     /**
@@ -598,6 +619,35 @@ class mdl_soapserver extends server {
     */
     public function get_groups_byname($client, $sesskey, $groupname, $courseid = 0) {
         return $this->get_groups($client, $sesskey, array (
+            $groupname
+        ), 'name', $courseid);
+    }
+
+      /**
+    * return one groupRecord  identified by Moodle's id
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $groupid  the group's Moodle identifier
+    * @return groupRecord[]  Array of groupRecord
+    */
+    public function get_grouping_byid($client, $sesskey, $groupid) {
+        return $this->get_groupings($client, $sesskey, array (
+            $groupid
+        ), 'id', 0);
+    }
+
+    /**
+    * return one or several groupRecord for groups having name $name
+    * and (optionally) belonging to course $courseid
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param string $groupname  the group's Moodle name
+    * @param int $courseid
+    * @return groupRecord[]  Array of groupRecord
+    *
+    */
+    public function get_groupings_byname($client, $sesskey, $groupname, $courseid = 0) {
+        return $this->get_groupings($client, $sesskey, array (
             $groupname
         ), 'name', $courseid);
     }
@@ -642,6 +692,18 @@ class mdl_soapserver extends server {
         ), 'idnumber');
     }
 
+      /**
+    * return one groupRecord  identified by Moodle's id
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param int $groupid  the group's Moodle identifier
+    * @return cohortRecord[]  Array of groupRecord
+    */
+    public function get_cohorts_byname($client, $sesskey, $groupid) {
+        return $this->get_cohorts($client, $sesskey, array (
+            $groupid
+        ), 'name');
+    }
 
     /**
     * return members of group identified by $groupeid (Moodle id )

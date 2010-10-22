@@ -1245,6 +1245,12 @@
 				</xsd:all>
 			</xsd:complexType>
 			
+			<xsd:complexType name="getGroupingsReturn">
+				<xsd:all>
+					<xsd:element name="groupings" type="tns:groupingRecords" />
+				</xsd:all>
+			</xsd:complexType>
+			
 			<xsd:complexType name="getCohortsReturn">
 				<xsd:all>
 					<xsd:element name="cohorts" type="tns:cohortRecords" />
@@ -2463,6 +2469,20 @@
 			<output message="tns:get_groupsResponse" />
 		</operation>
 		
+		<operation name="get_grouping_byid">
+			<documentation>MoodleWS: Get Course Information
+			</documentation>
+			<input message="tns:get_group_byRequest" />
+			<output message="tns:get_groupingsResponse" />
+		</operation>
+
+		<operation name="get_groupings_byname">
+			<documentation>MoodleWS: Get Course Information
+			</documentation>
+			<input message="tns:get_group_byRequest" />
+			<output message="tns:get_groupingsResponse" />
+		</operation>
+		
 		<operation name="get_cohort_byid">
 			<documentation>MoodleWS: Get Course Information
 			</documentation>
@@ -2471,6 +2491,13 @@
 		</operation>
 		
 		<operation name="get_cohort_byidnumber">
+			<documentation>MoodleWS: Get Course Information
+			</documentation>
+			<input message="tns:get_group_byRequest" />
+			<output message="tns:get_cohortsResponse" />
+		</operation>
+		
+	<operation name="get_cohorts_byname">
 			<documentation>MoodleWS: Get Course Information
 			</documentation>
 			<input message="tns:get_group_byRequest" />
@@ -3815,6 +3842,32 @@
 			</output>
 		</operation>
 		
+		<operation name="get_grouping_byid">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_grouping_byid"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+
+		<operation name="get_groupings_byname">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_groupings_byname"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 		<operation name="get_cohort_byid">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohort_byid"
 				style="rpc" />
@@ -3830,6 +3883,20 @@
 		
 		<operation name="get_cohort_byidnumber">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohort_byidnumber"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		
+		<operation name="get_cohorts_byname">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_cohorts_byname"
 				style="rpc" />
 			<input>
 				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
