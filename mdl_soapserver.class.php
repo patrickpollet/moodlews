@@ -385,7 +385,7 @@ class mdl_soapserver extends server {
          *               specific data format for sending to the client.
          */
     public function unenrol_students($client, $sesskey, $courseid, $courseidfield, $userids, $idfield = 'idnumber') {
-        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'student', $courseid, $courseidfield, $userids, $idfield, false), 'students', 'enrolRecord', "no student to unenrol in course $courseid "));
+        return $this->send($this->to_soap_array(parent :: affect_role_incourse($client, $sesskey, 'student', $courseid, $courseidfield, $userids, $idfield, false), 'students', 'enrolRecord', get_string('nothingtodo','local_wspp')));
     }
 
     /**
@@ -2145,6 +2145,67 @@ class mdl_soapserver extends server {
      */
     public function remove_noneditingteacher($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield) {
     	return $this->add_remove_xxxx($client,$sesskey,$courseid,$courseidfield,$userid,$useridfield,'teacher',false);
+    }
+
+
+      /**
+     * add users to a cohort
+     * @param int $client
+     * @param string $sesskey
+     * @param string[] $userids
+     * @param string $useridfield
+     * @param string $cohortid
+     * @param string $cohortidfield
+     * @return affectRecord[]
+     */
+    public function affect_users_to_cohort($client,$sesskey,$cohortid,$cohortidfield,$userids,$useridfield) {
+         return $this->send($this->to_soap_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,true), 'users', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+          /**
+     * remove users from a cohort
+     * @param int $client
+     * @param string $sesskey
+     * @param string[] $userids
+     * @param string $useridfield
+     * @param string $cohortid
+     * @param string $cohortidfield
+     * @return affectRecord[]
+     */
+    public function remove_users_from_cohort($client,$sesskey,$cohortid,$cohortidfield,$userids,$useridfield) {
+            return $this->send($this->to_soap_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,false), 'users', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+     /**
+     * add users to a cohort
+     * @param int $client
+     * @param string $sesskey
+     * @param string[] $userids
+     * @param string $useridfield
+     * @param string $cohortid
+     * @param string $cohortidfield
+     * @return affectRecord[]
+     */
+    public function affect_users_to_group($client,$sesskey,$groupid,$groupidfield='id',$userids,$useridfield) {
+            return $this->send($this->to_soap_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,true), 'users', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+    /**
+     * remove users from a cohort
+     * @param int $client
+     * @param string $sesskey
+     * @param string[] $userids
+     * @param string $useridfield
+     * @param string $cohortid
+     * @param string $cohortidfield
+     * @return affectRecord[]
+     */
+    public function remove_users_from_group($client,$sesskey,$groupid,$groupidfield='id',$userids,$useridfield) {
+             return $this->send($this->to_soap_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,false), 'users', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+
     }
 
 }

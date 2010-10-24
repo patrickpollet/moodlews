@@ -12,7 +12,7 @@ provided in wspp/lib  folder is supported (on client only) but with a big penalt
 MOODLE 1.9 :
 ---------------
 
-2) copy wspp/lang/fr_utf8/wspp.php (and possibly other languages files) 
+2) copy wspp/lang/fr_utf8/local_wspp.php (and possibly other languages files) 
 into your moodledata/lang/en_utf8_local folder . You may have to create
 this folder. This will prevent future upgrades of moodle languages packs to
 erase it.

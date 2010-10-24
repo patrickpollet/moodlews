@@ -3317,7 +3317,38 @@
 		</operation>
 		
 
+	<operation name="affect_users_to_cohort">
+			<documentation>
+				MoodleWS: Enrol students in a cohort
+      </documentation>
+			<input message="tns:enrol_studentsRequest" />
+			<output message="tns:enrol_studentsResponse" />
+		</operation>
 
+    <operation name="remove_users_from_cohort">
+			<documentation>
+				MoodleWS: Unenrol students in a cohort
+      </documentation>
+			<input message="tns:enrol_studentsRequest" />
+			<output message="tns:enrol_studentsResponse" />
+		</operation>
+	
+	<operation name="affect_users_to_group">
+			<documentation>
+				MoodleWS: Enrol students in a cohort
+      </documentation>
+			<input message="tns:enrol_studentsRequest" />
+			<output message="tns:enrol_studentsResponse" />
+		</operation>
+
+    <operation name="remove_users_from_group">
+			<documentation>
+				MoodleWS: Unenrol students in a cohort
+      </documentation>
+			<input message="tns:enrol_studentsRequest" />
+			<output message="tns:enrol_studentsResponse" />
+		</operation>
+	
 	</portType>
 
 	<binding name="MoodleWSBinding" type="tns:MoodleWSPortType">
@@ -5029,6 +5060,60 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
+		
+		
+		<operation name="affect_users_to_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#affect_users_to_cohort"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_users_from_cohort">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_users_from_cohort"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+			<operation name="affect_users_to_group">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#affect_users_to_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
+		<operation name="remove_users_from_group">
+			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#remove_users_from_group"
+				style="rpc" />
+			<input>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+		
 
 	</binding>
 	<service name="MoodleWS">
