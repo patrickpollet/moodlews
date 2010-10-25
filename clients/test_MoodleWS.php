@@ -2306,4 +2306,76 @@ print($res->getStatus());
 
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 
+/**test code for MoodleWS: Enrol students in a cohort
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $courseidfield
+* @param (enrolStudentsInput) array of string $userids
+* @param string $useridfield
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->affect_users_to_cohort($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+print_r($res);
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Unenrol students in a cohort
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $courseidfield
+* @param (enrolStudentsInput) array of string $userids
+* @param string $useridfield
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->remove_users_from_cohort($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+print_r($res);
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Enrol students in a cohort
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $courseidfield
+* @param (enrolStudentsInput) array of string $userids
+* @param string $useridfield
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->affect_users_to_group($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+print_r($res);
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
+/**test code for MoodleWS: Unenrol students in a cohort
+* @param integer $client
+* @param string $sesskey
+* @param string $courseid
+* @param string $courseidfield
+* @param (enrolStudentsInput) array of string $userids
+* @param string $useridfield
+* @return enrolStudentsReturn
+*/
+
+$lr=$moodle->login(LOGIN,PASSWORD);
+$userids=array();
+$res=$moodle->remove_users_from_group($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
+print_r($res);
+print($res->getStudents());
+
+$moodle->logout($lr->getClient(),$lr->getSessionKey());
+
 ?>

@@ -15,7 +15,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->count_activities($lr->getClient(),$lr->getSessionKey(),'4','id','','');
+$res=$moodle->count_activities($lr->getClient(),$lr->getSessionKey(),'','','','');
 print($res);
 $moodle->logout($lr->getClient(),$lr->getSessionKey());
 

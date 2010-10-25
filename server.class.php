@@ -4006,7 +4006,10 @@ EOSS;
      * @return affectRecord[]
      */
 
-   function affect_users_from_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,$add) {
+   function affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,$add) {
+   	   
+   	   global $CFG;
+   	   
        if ($CFG->wspp_using_moodle20) {
            require_once ($CFG->dirroot.'/cohort/lib.php');
        }else
@@ -4028,23 +4031,27 @@ EOSS;
 
        foreach ($userids as $userid) {
            $st = new enrolRecord();
+           $st->setCourse($cohort->id);
+           $st->setUserid($userid);
+           
+            $a=new StdClass();
+			$a->user=$userid;
+		    $a->course=$cohortid;
            if (!$user = ws_get_record('user', $useridfield, $userid)) {
                $st->error =get_string('ws_userunknown','local_wspp',$useridfield."=".$userid);
            } else {
                if ($add) {
                    if (ws_get_record('cohort_members','cohortid',$cohortid, 'userid',$user->id))
-                       $st->error=get_string('ws_useralreadymember','local_wspp',$userid,$cohortid);
+                       $st->error=get_string('ws_useralreadymember','local_wspp',$a);
                    else {
                        cohort_add_member($cohort->id,$user->id);
-                       $resp->status = 1;
                    }
                }
                else {
                    if (!ws_get_record('cohort_members','cohortid',$cohortid, 'userid',$user->id))
-                       $st->error=get_string('ws_usernotmember','local_wspp',$userid,$cohortid);
+                       $st->error=get_string('ws_usernotmember','local_wspp',$a);
                    else {
                        cohort_remove_member($cohort->id,$user->id);
-                       $resp->status = 1;
                    }
                }
            }
@@ -4065,26 +4072,64 @@ EOSS;
      * @param boolean $add    true to add users, false to remove users
      * @return affectRecord[]
      */
-     function affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,$add) {
-        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
-        }
-
-        if (!$group = ws_get_record('group', $groupidfield, $groupid)) {
-            return $this->error(get_string('ws_groupunknown','local_wspp',$groupidfield.'='.$groupid));
-        }
-
-        /// Check for correct permissions.
-        if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
-            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
-        }
-
-       $ret=array();
-
-       return $ret;
-
-
-    }
+   function affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,$add) {
+	   global $CFG;
+	   if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+		   return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+	   }
+	   
+	   if (!$group = ws_get_record('groups', $groupidfield, $groupid)) {
+		   return $this->error(get_string('ws_groupunknown','local_wspp',$groupidfield.'='.$groupid));
+	   }
+	   
+	   /// Check for correct permissions.
+	   if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
+		   return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+	   }
+	   if ($CFG->wspp_using_moodle20) {
+		   // not anymore included by defualt in Moodle 2.0
+		   require_once ($CFG->dirroot.'/group/lib.php');
+	   }
+	   
+	   $ret=array();
+	   
+	   foreach ($userids as $userid) {
+		   $st = new enrolRecord();
+		   $st->setCourse($cohort->id);
+		   $st->setUserid($userid);
+		   
+		    $a=new StdClass();
+			$a->user=$userid;
+		    $a->course=$groupid;
+		   if (!$user = ws_get_record('user', $useridfield, $userid)) {
+			   $st->error =get_string('ws_userunknown','local_wspp',$useridfield."=".$userid);
+		   } else {		   
+			   /// Check user is enroled in course
+			   if (!ws_is_enrolled( $group->courseid, $user->id)) {
+				  
+				   $st->error(get_string('ws_user_notenroled','local_wspp',$a));
+			   } else { 
+			   if ($add) {
+					   if (ws_get_record('groups_members','groupid',$group->id, 'userid',$user->id))
+						   $st->error=get_string('ws_useralreadymember','local_wspp',$a);
+					   else {
+						  groups_add_member($group->id,$user->id);						
+					   }
+				   }
+				   else {
+					   if (!ws_get_record('groups_members','groupid',$group->id, 'userid',$user->id))
+						   $st->error=get_string('ws_usernotmember','local_wspp',$a);
+					   else {
+						   groups_remove_member($group->id,$user->id);
+					   }
+				   }
+			   }
+		   }  
+		   $ret[]=$st;
+	   }
+	   return $ret;
+	   
+   }
 
 
 

@@ -185,6 +185,6 @@ $string['ws_quizexportunknownformat']='format d\'exportation {$a} inconnu';
 
 $string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été supprimé';
 
-$string['ws_useralreadymember']='L\'utilisateur  {$a} est déja membre de {$a}';
-$string['ws_usernotmember']='L\'utilisateur  {$a} n\'est pas membre de {$a}';
+$string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja membre de {$a->course}';
+$string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas membre de {$a->course}';
 ?>

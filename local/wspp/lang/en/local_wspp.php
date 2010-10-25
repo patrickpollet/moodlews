@@ -180,8 +180,11 @@ $string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
 $string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
 $string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
 
- 
-$string['ws_quizexportunknownformat']='format d\'exportation {$a} inconnu';	
 
-$string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été supprimé';	
+$string['ws_quizexportunknownformat']='format d\'exportation {$a} inconnu';
+
+$string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été supprimé';
+
+$string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja membre de {$a->course}';
+$string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas membre de {$a->course}';
 ?>

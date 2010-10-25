@@ -3517,6 +3517,118 @@ class MoodleWS {
   return $this->castTo ('affectRecord',$res);
   }
 
+  /**
+   * MoodleWS: Enrol students in a cohort 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $courseidfield
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $useridfield
+   * @return enrolStudentsReturn
+   */
+  public function affect_users_to_cohort($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+    $res= $this->client->__call('affect_users_to_cohort', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Unenrol students in a cohort 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $courseidfield
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $useridfield
+   * @return enrolStudentsReturn
+   */
+  public function remove_users_from_cohort($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+    $res= $this->client->__call('remove_users_from_cohort', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Enrol students in a cohort 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $courseidfield
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $useridfield
+   * @return enrolStudentsReturn
+   */
+  public function affect_users_to_group($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+    $res= $this->client->__call('affect_users_to_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Unenrol students in a cohort 
+   *
+   * @param integer $client
+   * @param string $sesskey
+   * @param string $courseid
+   * @param string $courseidfield
+   * @param (enrolStudentsInput) array of string $userids
+   * @param string $useridfield
+   * @return enrolStudentsReturn
+   */
+  public function remove_users_from_group($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+    $res= $this->client->__call('remove_users_from_group', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($courseid, 'courseid'),
+            new SoapParam($courseidfield, 'courseidfield'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('enrolStudentsReturn',$res);
+  }
+
 }
 
 ?>

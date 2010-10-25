@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->remove_user_from_cohort($lr->getClient(),$lr->getSessionKey(),9973,2);
+$res=$moodle->remove_user_from_cohort($lr->getClient(),$lr->getSessionKey(),0,0);
 print_r($res);
 print($res->getError());
 print($res->getStatus());
