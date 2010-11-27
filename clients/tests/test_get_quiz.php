@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$moodle->login(LOGIN,PASSWORD);
-$res=$moodle->get_quiz($lr->getClient(),$lr->getSessionKey(),0,'');
+$res=$moodle->get_quiz($lr->getClient(),$lr->getSessionKey(),31,'gift');
 print_r($res);
 print($res->getError());
 print($res->getId());

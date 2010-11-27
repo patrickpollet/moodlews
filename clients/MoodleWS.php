@@ -380,9 +380,9 @@ class MoodleWS {
 
   public $client;
 
-  private $uri = 'http://localhost/moodle.20/wspp/wsdl';
+  private $uri = 'http://localhost/moodle.195/wspp/wsdl';
 
-  public function MoodleWS($wsdl = "http://localhost/moodle.20/wspp/wsdl_pp.php", $uri=null, $options = array()) {
+  public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     };
