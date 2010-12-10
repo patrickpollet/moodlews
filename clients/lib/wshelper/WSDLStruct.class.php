@@ -62,6 +62,7 @@ class WSDLStruct {
 	/** @var IPXMLSchema */
 	private $xmlSchema;
 
+
 	//namespaces used
 	const NS_WSDL = "http://schemas.xmlsoap.org/wsdl/";
 	const NS_SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
@@ -172,8 +173,6 @@ class WSDLStruct {
 
         $this->doc->strictErrorChecking=false;
         $this->doc->formatOutput=true;
-
-        echo 'Écrit : ' . $this->doc->save("/tmp/test.xml") . ' bytes'; // Écrit : 72 bytes
 
 		return $this->doc->saveXML();
 	}
