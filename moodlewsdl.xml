@@ -3978,20 +3978,6 @@
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
 			</output>
 		</operation>
-		
-
-		<operation name="get_my_cohorts">
-			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_cohorts"
-				style="rpc" />
-			<input>
-				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-				<soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
 
 		<operation name="get_my_id">
 			<soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_id"
