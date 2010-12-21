@@ -24,12 +24,19 @@
 require_once ('server.class.php');
 
 // list of required classes for input/output data
-require_once ('MoodleWS.php');
+// rev 1.8   main include script and utility classes are now in a directory named classes. (see wsdl2php)
+require_once ('classes/MoodleWS.php');
 
 //define('DEBUG',true);
 
 if (DEBUG)
     ini_set('soap.wsdl_cache_enabled', '0'); // no caching by php in debug mode)
+
+
+//testing new simplified wsdl generated with WSHelper utility
+// the value of the fla is set in script service_pp.php (false) or service_pp2.php (true)
+// @see method to_soap_array()
+//$CFG->wsdl_simplified=0;
 
 class mdl_soapserver extends server {
 
@@ -57,8 +64,14 @@ class mdl_soapserver extends server {
     /**
      * specific exception handling for Moodle 2.0
      * code borrowed from Moodle's webservice '
+     * changed to protected for WsHelper utility that must skip it...
+     * BACK to public otherwise not called !!!
+     * we get  <br />
+<b>Fatal error</b>:  Call to protected method mdl_soapserver::exception_handler() from context '' in <b>Unknown</b> on line <b>0</b><br />
+     * @return void
      */
-    public function  exception_handler($ex) {
+    function  exception_handler($ex) {
+        global $CFG;
     	if ($CFG->wspp_using_moodle20)
     		// detect active db transactions, rollback and log as error
         	abort_all_db_transactions();
@@ -80,7 +93,7 @@ class mdl_soapserver extends server {
         //TODO: send some better response in XML
         if ($ex) {
             $info = $ex->getMessage();
-            if (debugging() and isset($ex->debuginfo)) {
+            if (1 || debugging() and isset($ex->debuginfo)) {
                 $info .= ' - '.$ex->debuginfo;
             }
         } else {
@@ -206,17 +219,30 @@ class mdl_soapserver extends server {
     */
 
     private function to_soap_array($res, $keyName, $className, $emptyMsg) {
+        global $CFG;
         $return = array ();
-        if (!$res || !is_array($res) || (count($res) == 0))
-            $return[$keyName][] = $this->error_record($className, $emptyMsg);
-        else {
-            foreach ($res as $r) {
-                $return[$keyName][] = $this->to_soap($r, $className);
+        if (empty($CFG->wsdl_simplified)) {
+            if (!$res || !is_array($res) || (count($res) == 0))
+                $return[$keyName][] = $this->error_record($className, $emptyMsg);
+            else {
+                foreach ($res as $r) {
+                    $return[$keyName][] = $this->to_soap($r, $className);
+                }
+            }
+        } else {
+            if (!$res || !is_array($res) || (count($res) == 0))
+                $return[] = $this->error_record($className, $emptyMsg);
+            else {
+                foreach ($res as $r) {
+                    $return[] = $this->to_soap($r, $className);
+                }
+
             }
         }
+       // $this->debug_output(print_r($return, true));
         return $return;
 
-    }
+        }
 
     /**
       * Validates a client's login request.
@@ -233,7 +259,7 @@ class mdl_soapserver extends server {
        * session record and any user ID that is assosciated with their particular
        * session.
        *
-       * @param integer $client The client record ID.
+       * @param int $client The client record ID.
        * @param string $sesskey The client session key.
        * @return boolean True if successfully logged out, false otherwise.
        */
@@ -247,9 +273,8 @@ class mdl_soapserver extends server {
      * Edit user records (add/update/delete).
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
-     * @param userDatum[]  $users An array of user records (objects or arrays) for editing
-     *                     (including opertaion to perform).
-     * @return userRecord[]  An array of user objects.
+     * @param userDatum[] $users An array of user records (objects or arrays) for editin   (including opertaion to perform).
+     * @return userRecord[] An array of user objects.
      */
     public function edit_users($client, $sesskey, $users) {
         return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $users), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
@@ -304,7 +329,7 @@ class mdl_soapserver extends server {
      * find and return a list of courses having $search in their name, fullname or description
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
-     * @param string  $search A string of criteria to search eventually separated by space if empty return all course
+     * @param string $search A string of criteria to search eventually separated by space if empty return all course
      * @return courseRecord[] An array of resource records.
      */
     function get_courses_search($client, $sesskey, $search) {
@@ -655,7 +680,7 @@ class mdl_soapserver extends server {
        /**
     *  internal, not published (yet) in wsdl.
     *  return an array of groups
-    *  @see get_group_byid, get_groups_byname
+    *  @see get_cohort_byid, get_cohort_byname
     */
     protected function get_cohorts($client, $sesskey, $groups, $idfield) {
         global $CFG;
@@ -670,8 +695,8 @@ class mdl_soapserver extends server {
     * return one groupRecord  identified by Moodle's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param int $groupid  the group's Moodle identifier
-    * @return cohortRecord[]  Array of groupRecord
+    * @param int $groupid  the cohort's Moodle identifier
+    * @return cohortRecord[]  Array of cohortRecord
     */
     public function get_cohort_byid($client, $sesskey, $groupid) {
         return $this->get_cohorts($client, $sesskey, array (
@@ -683,8 +708,8 @@ class mdl_soapserver extends server {
     * return one groupRecord  identified by Moodle's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param int $groupid  the group's Moodle identifier
-    * @return cohortRecord[]  Array of groupRecord
+    * @param string $cohortIdNumber  the cohort's Moodle identifier
+    * @return cohortRecord[]
     */
     public function get_cohort_byidnumber($client, $sesskey, $groupid) {
         return $this->get_cohorts($client, $sesskey, array (
@@ -696,8 +721,8 @@ class mdl_soapserver extends server {
     * return one groupRecord  identified by Moodle's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param int $groupid  the group's Moodle identifier
-    * @return cohortRecord[]  Array of groupRecord
+    * @param string $cohortName
+    * @return cohortRecord[]  Array of cohortRecord
     */
     public function get_cohorts_byname($client, $sesskey, $groupid) {
         return $this->get_cohorts($client, $sesskey, array (
@@ -755,8 +780,7 @@ class mdl_soapserver extends server {
     * @param string $sesskey The client session key.
     * @param string $uid  Moodle's  user to search
     * @param string $idfield field name to search .
-    * @return groupRecord[] Return data (array of group  record) to be converted into a specific
-    *               data format for sending to the client.
+    * @return groupRecord[]
     *
     */
     public function get_my_groups($client, $sesskey, $uid = '', $idfield = 'idnumber') {
@@ -764,15 +788,14 @@ class mdl_soapserver extends server {
     }
 
        /**
-    * return groups to which user $uid belongs to
+    * return cohorts to which user $uid belongs to
     * if $uid is empty, use current logged in user.
     * otherwise, current logged in user must be admin to fetch data
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $uid  Moodle's  user to search
     * @param string $idfield field name to search .
-    * @return groupRecord[] Return data (array of group  record) to be converted into a specific
-    *               data format for sending to the client.
+    * @return cohortRecord[]
     *
     */
     public function get_my_cohorts($client, $sesskey, $uid = '', $idfield = 'idnumber') {
@@ -818,6 +841,19 @@ class mdl_soapserver extends server {
         }
         return $this->send($rres);
     }
+
+    /**
+     * Return's current user Moodle interanl id
+     * a convenience function
+     * added here for WSHelper to find it and publish it in the WSDL
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @return int
+     */
+      public function get_my_id($client, $sesskey) {
+         return parent :: get_my_id($client, $sesskey);
+      }
+
 
     /**
     * return courseRecord for one course identified by Moodle's id $info
@@ -892,7 +928,7 @@ class mdl_soapserver extends server {
     * @param string $courseid
     * @param string $idfield
     * @param int $roleid
-    * @return integer
+    * @return int
     */
     public function count_users_bycourse($client, $sesskey, $idcourse, $idfield = 'idnumber', $idrole = 0) {
         $res = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole);
@@ -956,7 +992,7 @@ class mdl_soapserver extends server {
     * return one roleRecord identified by it's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param int  $roleid
+    * @param int $roleid
     * @return roleRecord[]
     */
     public function get_role_byid($client, $sesskey, $roleid) {
@@ -967,7 +1003,7 @@ class mdl_soapserver extends server {
     * return one roleRecord identified by it's shortname
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param string  $rolename
+    * @param string $rolename
     * @return roleRecord[]
     */
     public function get_role_byname($client, $sesskey, $rolename) {
@@ -978,7 +1014,7 @@ class mdl_soapserver extends server {
     * return categories roleRecord identified by
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param string  $catid
+    * @param string $catid
     * @param string $idfield
     * @return categoryRecord[]
     */
@@ -990,7 +1026,7 @@ class mdl_soapserver extends server {
     * return categories Record identified by id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param string  $catid
+    * @param string $catid
     * @return categoryRecord[]
     */
     public function get_category_byid($client, $sesskey, $catid) {
@@ -1001,7 +1037,7 @@ class mdl_soapserver extends server {
      * return categories Record identified by name
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
-     * @param string  $catname
+     * @param string $catname
      * @return categoryRecord[]
      */
     public function get_category_byname($client, $sesskey, $catname) {
@@ -1012,7 +1048,7 @@ class mdl_soapserver extends server {
      * return courses if category identified by id
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
-     * @param string  $catid
+     * @param string $catid
      * @return courseRecord[]
      */
     public function get_courses_bycategory($client, $sesskey, $categoryid) {
@@ -1038,7 +1074,7 @@ class mdl_soapserver extends server {
       * @param string $sesskey
       * @param string $courseid
       * @param string $courseidfield
-      * @param int limit
+      * @param int $limit
       * @return changeRecord[]
       */
 
@@ -1073,7 +1109,7 @@ class mdl_soapserver extends server {
      * @param string $courseid
      * @param string $courseidfield
      * @param int $limit
-     * @return integer
+     * @return int
      */
     public function count_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = '', $courseidfield = 'idnumber', $limit = 0) {
         // save  a lot of memory with flag doCount=1
@@ -1121,7 +1157,7 @@ class mdl_soapserver extends server {
       * @param int $client
      * @param string $sesskey
      * @param string $courseid
-     * @param string $courseidfield)
+     * @param string $courseidfield
      * @return courseRecord[] a completed course record juste deleted from DB or error record
      */
     function delete_course($client, $sesskey, $courseid, $courseidfield = 'idnumber') {
@@ -1234,7 +1270,7 @@ class mdl_soapserver extends server {
      * @param int $client
      * @param string $sesskey
      * @param groupDatum $datum
-     * @return groupRecord
+     * @return groupRecord[]
      */
     function add_group($client, $sesskey, $datum) {
         $tmp = new editGroupsInput();
@@ -1249,7 +1285,7 @@ class mdl_soapserver extends server {
      * @param int $client
      * @param string $sesskey
      * @param groupingDatum $datum
-     * @return groupingRecord
+     * @return groupingRecord[]
      */
     function add_grouping($client, $sesskey, $datum) {
         $tmp = new editGroupingsInput();
@@ -1264,7 +1300,7 @@ class mdl_soapserver extends server {
      * @param int $client
      * @param string $sesskey
      * @param cohortDatum $datum
-     * @return cohortRecord
+     * @return cohortRecord[]
      */
     function add_cohort($client, $sesskey, $datum) {
         $tmp = new editCohortsInput();
@@ -1278,7 +1314,7 @@ class mdl_soapserver extends server {
 
     /**
       * rev 1.6 delete a single group from Moodle
-       * @param int $client
+      * @param int $client
       * @param string $sesskey
       * @param string $id
       * @param string $idfield
@@ -1653,8 +1689,8 @@ class mdl_soapserver extends server {
     * @param string $sesskey
     * @param string $userid
     * @param string $useridfield
-    * @param profileItemRecord[] $values
-    * @return profileItemRecord[]
+    * @param profileitemRecord[] $values
+    * @return profileitemRecord[]
     */
     function set_user_profile_values($client, $sesskey, $userid, $useridfield, $values) {
         return $this->send($this->to_soap_array(parent :: set_user_profile_values($client, $sesskey, $userid, $useridfield, $values), 'profiles', 'profileitemRecord', get_string('nothingtodo', 'local_wspp')));
@@ -2207,6 +2243,97 @@ class mdl_soapserver extends server {
              return $this->send($this->to_soap_array(parent :: affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,false), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
+
+     /**  rev 1.8
+     * get all discussions from a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $forumid
+     * @param int $limit
+     * @return forumDiscussionRecord[]
+     */
+    public function get_forum_discussions($client,$sesskey,$forumid,$limit) {
+             return $this->send($this->to_soap_array(parent :: get_forum_discussions($client,$sesskey,$forumid
+            ), 'forumDiscussions', 'forumDiscussionRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+    /**  rev 1.8
+     * get all post from a discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $discussionid
+     * @param int $limit
+     * @return forumPostRecord[]
+     */
+    public function get_forum_posts($client,$sesskey,$discussionid,$limit) {
+             return $this->send($this->to_soap_array(parent :: get_forum_posts($client,$sesskey,$discussionid
+            ), 'forumPosts', 'forumPostRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+    /**  rev 1.8
+     * add a discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $forumid
+     * @param forumDiscussionDatum $discussion
+     * @return forumDiscussionRecord[]
+     */
+
+    public function forum_add_discussion ($client,$sesskey,$forumid,$discussion) {
+           return $this->send($this->to_soap_array(parent :: forum_add_discussion($client,$sesskey,$forumid,$discussion
+            ), 'forumDiscussions', 'forumDiscussionRecord', get_string('nothingtodo', 'local_wspp')));
+
+    }
+
+
+      /**  rev 1.8
+     * add a reply to a post/discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $parenttid
+     * @param forumPostDatum $post
+     * @return forumPostRecord[]
+     */
+
+    public function forum_add_reply ($client,$sesskey,$parentid,$post) {
+          return $this->send($this->to_soap_array(parent :: forum_add_reply($client,$sesskey,$parentid,$post
+            ), 'forumPosts', 'forumPostRecord', get_string('nothingtodo', 'local_wspp')));
+    }
+
+      /**  rev 1.8
+     * send an instant message to user identified if (userid,useridfield)
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @param string $message
+     * @return affectRecord
+     */
+
+    public function message_send ($client,$sesskey,$userid,$useridfield,$message) {
+          return $this->send($this->to_soap(parent :: message_send($client,$sesskey,$userid,$useridfield,$message
+            ), 'affectRecord'));
+
+
+    }
+
+         /**  rev 1.8
+     * retrieve all unread user's messages
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @return messageRecord[]
+     */
+
+    public function get_messages ($client,$sesskey,$userid,$useridfield) {
+              return $this->send($this->to_soap_array(parent :: get_messages ($client,$sesskey,$userid,$useridfield
+            ), 'messages', 'messageRecord', get_string('nomessages', 'local_wspp')));
+    }
+
+
 
 }
 ?>

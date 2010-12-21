@@ -65,6 +65,17 @@ class IPReflectionMethod extends reflectionMethod{
 	 * @return ReflectionParameter[] Associative array with parameter objects
 	 */
 	public function getParameters(){
+		/****
+		$this->parameters = Array();
+		$ar = parent::getParameters();
+		$i = 0;
+
+		foreach((array)$ar as $parameter){
+			$parameter->comment=$this->params[$i]->comment; //PP 
+			$parameter->type = $this->params[$i++]->type;
+			$this->parameters[$parameter->name] = $parameter;
+		}
+		****/
 		return $this->parameters;
 	}
 

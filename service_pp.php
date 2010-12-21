@@ -13,14 +13,17 @@
 // get Moodle site config infos
 require_once('../config.php');
 // SOAP service class
-require('mdl_soapserver.class.php');
 
 //$CFG->ws_uselocalwsdl=0;
+$CFG->wsdl_simplified=false;
+require('mdl_soapserver.class.php');
+
+
 
 // use Internet to fetch operations & types
 // so as to be in sync with clients
 if (empty($CFG->ws_uselocalwsdl)) {
-    $wsdl=$CFG->wwwroot."/wspp/wsdl_pp.php";
+        $wsdl=$CFG->wwwroot."/wspp/wsdl_pp.php";
 } else {
     //some versions of PHP 5 have a problem reading 'big wsdls over the Internet'
     // but not from a 'locally copied' wsdl file

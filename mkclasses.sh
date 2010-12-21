@@ -4,7 +4,7 @@
 # Don't forget to update your clients local or remote  (see clients/mkclasses.sh)  
 # you may have to adjust the exact Moodle location below (localhost should just do fine).
 
-php ./wsdl2php.php http://localhost/moodle.20/wspp/wsdl_pp.php server
+php ./wsdl2php.php http://localhost/moodle20/wspp/wsdl_pp.php server
 
 
  

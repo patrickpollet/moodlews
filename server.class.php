@@ -52,7 +52,7 @@ class server {
 		global $CFG;
 		$this->debug_output("Server init...");
 		$this->debug_output('    Version: ' . $this->version);
-        $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+
 
 
 		if (! $CFG->wspp_using_moodle20) {
@@ -83,7 +83,9 @@ class server {
 			$CFG->ws_debug = 0;
         if (!isset ($CFG->ws_enforceipcheck))
             $CFG->ws_enforceipcheck = 0; // rev 1.6.1 off by default++++
+        $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
 	}
+
 	/**
 	 * Performs an upgrade of the webservices system.
 	 *  Moodle < 2.0 ONLY
@@ -267,7 +269,7 @@ class server {
 
          $userip = getremoteaddr(); // rev 1.5.4
          if (!empty($CFG->ws_enforceipcheck)) {
-            if (!record_exists('webservices_clients_allow','client',$userip))
+            if (!ws_record_exists('webservices_clients_allow','client',$userip))
             return $this->error(get_string('ws_accessrestricted', 'local_wspp',$userip));
 
          }
@@ -619,6 +621,7 @@ $this->debug_output('internal ');
 				$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
 				foreach ($resources as $resource) {
 					$resource->url = $ilink . $resource->coursemodule;
+                    $resource->type=$type;
 					$ret[] = $resource;
 				}
 			}
@@ -638,7 +641,7 @@ $this->debug_output('internal ');
 	     * @param string $useridfield The field used to identify the student.
 	     * @param string $courseids Array of courses ids
 	     * @param string $idfield  field used for course's ids (idnumber, shortname, id ...)
-	     * @return userGrade [] The student grades
+	     * @return gradeRecord[] The student grades
 	     *
 	*/
 	function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = 'idnumber') {
@@ -4007,9 +4010,9 @@ EOSS;
      */
 
    function affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,$add) {
-   	   
+
    	   global $CFG;
-   	   
+
        if ($CFG->wspp_using_moodle20) {
            require_once ($CFG->dirroot.'/cohort/lib.php');
        }else
@@ -4033,7 +4036,7 @@ EOSS;
            $st = new enrolRecord();
            $st->setCourse($cohort->id);
            $st->setUserid($userid);
-           
+
             $a=new StdClass();
 			$a->user=$userid;
 		    $a->course=$cohortid;
@@ -4077,11 +4080,11 @@ EOSS;
 	   if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 		   return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	   }
-	   
+
 	   if (!$group = ws_get_record('groups', $groupidfield, $groupid)) {
 		   return $this->error(get_string('ws_groupunknown','local_wspp',$groupidfield.'='.$groupid));
 	   }
-	   
+
 	   /// Check for correct permissions.
 	   if (!$this->has_capability('moodle/course:managegroups', CONTEXT_COURSE, $group->courseid)) {
 		   return $this->error(get_string('ws_operationnotallowed','local_wspp'));
@@ -4090,30 +4093,30 @@ EOSS;
 		   // not anymore included by defualt in Moodle 2.0
 		   require_once ($CFG->dirroot.'/group/lib.php');
 	   }
-	   
+
 	   $ret=array();
-	   
+
 	   foreach ($userids as $userid) {
 		   $st = new enrolRecord();
 		   $st->setCourse($cohort->id);
 		   $st->setUserid($userid);
-		   
+
 		    $a=new StdClass();
 			$a->user=$userid;
 		    $a->course=$groupid;
 		   if (!$user = ws_get_record('user', $useridfield, $userid)) {
 			   $st->error =get_string('ws_userunknown','local_wspp',$useridfield."=".$userid);
-		   } else {		   
+		   } else {
 			   /// Check user is enroled in course
 			   if (!ws_is_enrolled( $group->courseid, $user->id)) {
-				  
+
 				   $st->error(get_string('ws_user_notenroled','local_wspp',$a));
-			   } else { 
+			   } else {
 			   if ($add) {
 					   if (ws_get_record('groups_members','groupid',$group->id, 'userid',$user->id))
 						   $st->error=get_string('ws_useralreadymember','local_wspp',$a);
 					   else {
-						  groups_add_member($group->id,$user->id);						
+						  groups_add_member($group->id,$user->id);
 					   }
 				   }
 				   else {
@@ -4124,12 +4127,311 @@ EOSS;
 					   }
 				   }
 			   }
-		   }  
+		   }
 		   $ret[]=$st;
 	   }
 	   return $ret;
-	   
+
    }
+
+
+     /**  rev 1.8
+     * get all discussions from a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $forumid
+     * @param int $limit
+     * @return forumDiscussionRecord[]
+     */
+   public function get_forum_discussions($client,$sesskey,$forumid,$limit) {
+       global $CFG;
+       require_once ("libforum.php");
+       if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+           return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+       }
+       if(!$forum=  ws_get_record('forum', 'id', $forumid)) {
+           return $this->error(get_string('ws_forumunknown','local_wspp','id='.$forumid));
+       }
+        if (! $course = ws_get_record("course", 'id',$forum->course)) {
+            return $this->error(get_string('coursemisconf'));
+        }
+
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            return $this->error(get_string('missingparameter'));
+        }
+       $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+       if (!has_capability('mod/forum:viewdiscussion', $context)) {
+           return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+       }
+       return ws_forum_get_discussions($cm, $limit);
+
+   }
+
+     /**  rev 1.8
+     * get all posts from a discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $discussionid
+     * @param int $limit
+     * @return forumPostRecord[]
+     */
+   public function get_forum_posts($client,$sesskey,$discussionid,$limit) {
+       global $CFG;
+       require_once ("libforum.php");
+       if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+           return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+       }
+
+       if(!$discussion=  ws_get_record('forum_discussions', 'id', $discussionid)) {
+           return $this->error(get_string('ws_forumdiscussionunknown','local_wspp','id='.$discussionid));
+       }
+
+       if (!$cm = get_coursemodule_from_instance("forum", $discussion->forum, $discussion->course)) {
+           return $this->error(get_string('missingparameter'));
+       }
+       $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+       if (!has_capability('mod/forum:viewdiscussion', $context)) {
+           return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+       }
+      $ret=ws_get_forum_posts($discussion);
+      //$this->debug_output(print_r($ret,true));
+      return $ret;
+   }
+
+
+
+     /**  rev 1.8
+     * add a discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $forumid
+     * @param forumDiscussionDatum $discussion
+     * @return forumDiscussionRecord[]  the list of all forum's discussions including the new one
+     */
+
+    public function forum_add_discussion ($client,$sesskey,$forumid,$discussion) {
+         global $CFG;
+       require_once ("libforum.php");
+       if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+           return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+       }
+          if(!$forum=  ws_get_record('forum', 'id', $forumid)) {
+           return $this->error(get_string('ws_forumunknown','local_wspp','id='.$forumid));
+       }
+
+        if (! $course = ws_get_record("course", 'id',$forum->course)) {
+            return $this->error(get_string('coursemisconf'));
+        }
+
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            return $this->error(get_string('missingparameter'));
+        }
+
+
+       // cd mod/forum/lib.php forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, $cm=NULL, $context=NULL)
+        if (!forum_user_can_post_discussion($forum,null,-1,$cm,null)) {
+           return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+       }
+
+          $reply='';
+       //fix missing or misnamed values in input data
+       $discussion->course=$course->id;
+       $discussion->forum=$forumid;
+       $discussion->name=$discussion->subject;
+       if (! $CFG->wspp_using_moodle20)
+            $discussion->intro=$discussion->message; // moodle 1.9 calls it intro ...
+       $discussion->messageformat=1; //cannot be null
+       $discussion->messagetrust=0 ; //moodel 2.0
+       $discussion->mailnow=0 ;   //cannot be null
+        //      $this->debug_output(print_r($discussion,true));
+       if ($discussion->id=ws_forum_add_discussion($discussion,$reply)) {
+
+          add_to_log($course->id, "forum", "add discussion",
+                        "discuss.php?d=$discussion->id", $discussion->id, $cm->id);
+          return ws_forum_get_discussions($cm,-1);
+       } else {
+        return $this->error($reply);
+       }
+
+
+
+    }
+
+
+      /**  rev 1.8
+     * add a reply to a post/discussion in a forum
+     * @param int $client
+     * @param string $sesskey
+     * @param int $parenttid
+     * @param forumPostDatum $post
+     * @return forumPostRecord[]  the updated discussion with that new post
+     */
+
+    public function forum_add_reply ($client,$sesskey,$parentid,$post) {
+         global $CFG;
+       require_once ("libforum.php");
+       if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+           return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+       }
+
+        if(!$parentpost=  ws_get_record('forum_posts', 'id', $parentid)) {
+           return $this->error(get_string('ws_forumpostunknown','local_wspp','id='.$parentid));
+        }
+         if(!$discussion=  ws_get_record('forum_discussions', 'id', $parentpost->discussion)) {
+           return $this->error(get_string('ws_forumdiscussionunknown','local_wspp','id='.$parentpost->discussion));
+       }
+
+       //  verifier les droits !!!
+          if(!$forum=  ws_get_record('forum', 'id', $discussion->forum)) {
+           return $this->error(get_string('ws_forumunknown','local_wspp','id='.$discussion->forum));
+       }
+
+        if (! $course = ws_get_record("course", 'id',$forum->course)) {
+            return $this->error(get_string('coursemisconf'));
+        }
+
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            return $this->error(get_string('missingparameter'));
+        }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+
+      // cd mod/forum/lib.php forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=NULL, $context=NULL) //195
+      if ( ! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
+         return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+      }
+
+
+                 //fix missing or misnamed values in input data
+       $post->discussion=$discussion->id;
+       $post->parent=$parentid;
+       $post->messageformat=1; //cannot be null
+       $post->messagetrust=0 ; //moodel 2.0
+       $post->mailnow=0 ;   //cannot be null
+
+       $reply='';
+       if ($postid=ws_forum_add_reply($post,$reply)) {
+          //TODO add to log !
+            if ($forum->type == 'single') {
+                // Single discussion forums are an exception. We show
+                // the forum itself since it only has one discussion
+                // thread.
+                $discussionurl = "view.php?f=$forum->id";
+            } else {
+                $discussionurl = "discuss.php?d=$discussion->id";
+            }
+            add_to_log($course->id, "forum", "add post",
+                      "$discussionurl&amp;parent=$parentid", $postid, $cm->id);
+
+
+            return ws_get_forum_posts($discussion);
+       } else {
+         return $this->error($reply);
+       }
+
+
+    }
+
+
+         /**  rev 1.8
+     * send an instant message to user identified if (userid,useridfield)
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @param string $message
+     * @return affectRecord
+     */
+
+    public function message_send ($client,$sesskey,$userid,$useridfield,$message) {
+        global $CFG,$USER;
+
+        if (empty($CFG->messaging))
+            return $this->error(get_string('ws_messaingdisabled', 'local_wspp'));
+        require_once($CFG->dirroot.'/message/lib.php');
+        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (!$user = ws_get_record("user", $useridfield, $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
+        }
+        if (!has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM)))
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+
+        $ret=new affectRecord();
+        //TODO en Moodle 2.0 les met dans mdl_messages_unread ?
+        // comme $USER les pas complet ... il manque des choses
+        $me= ws_get_record("user", 'id',$USER->id);
+        /**TODO
+         * /// Check that the user is not blocking us!!
+         if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
+         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+         print_heading(get_string('userisblockingyou', 'message'));
+         exit;
+         }
+         }
+         $userpreferences = get_user_preferences(NULL, NULL, $user->id);
+
+         if (!empty($userpreferences['message_blocknoncontacts'])) {  // User is blocking non-contacts
+         if (empty($contact)) {   // We are not a contact!
+         print_heading(get_string('userisblockingyounoncontact', 'message'));
+         exit;
+         }
+         }
+         */
+        if($messageid = message_post_message($me, $user, addslashes($message), $format, 'direct')) {
+             add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
+            $ret->setStatus(true);
+        }
+        else {
+            $ret->setStatus(false);
+            $ret->setError(get_string('ws_err_sending_message',$userid,'local_wspp'));
+        }
+        return $ret;
+    }
+
+
+
+    /**  rev 1.8
+     * retrieve all unread user's messages
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @return messageRecord[]
+     */
+
+    public function get_messages ($client,$sesskey,$userid,$useridfield) {
+        global $CFG,$USER;
+        if (empty($CFG->messaging))
+            return $this->error(get_string('ws_messaingdisabled', 'local_wspp'));
+
+        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (empty($userid)) {  //it is me that send it
+            $userid=$USER->id;
+            $useridfield='id';
+        }
+        if (!$user = ws_get_record("user",$useridfield, $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
+        }
+
+        if ($user->id !=$USER->id && !$this->has_capability('moodle/site:readallmessages', CONTEXT_SYSTEM, 0)) {
+                return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+       if( $ret=ws_get_records ('message','useridto',$user->id,'timecreated DESC')) {
+        //fill some fields about the sender cf wsdl
+            $ret=filter_messages($client,$ret);
+        }
+        return $ret;
+    }
+
+
+
+
+
 
 
 

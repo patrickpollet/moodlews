@@ -52,7 +52,7 @@ class IPReflectionCommentParser{
 		$this->fullDescriptionDone = false;
 
 		//split lines
-		$lines = explode("\n", $this->comment);
+		$lines = split("\n", $this->comment);
 
 		//check lines for description or tags
 		foreach ($lines as $line) {
@@ -130,8 +130,9 @@ class IPReflectionCommentParser{
 				$o = new stdClass();
 				$o->type = trim($tagArr[1]);
 				$o->name= str_replace('$', '', trim($tagArr[2]));
-				$o->comment = implode(" ",$tagArr);
-				$this->obj->parameters[$o->name] = $o;
+				//$o->comment = implode(" ",$tagArr);
+				$o->comment = implode(" ",array_slice($tagArr,3)); //PP 
+				$this->obj->parameters[$o->name] = $o;				
 				break;
 			case 'return':
 				$this->obj->return = trim($tagArr[1]); break;

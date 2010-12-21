@@ -3,9 +3,9 @@
 
 /**
  * @author Patrick Pollet
- * @version $Id: entete.php 288 2008-06-18 23:21:13Z ppollet $
+ * @version $Id: libquiz.php 33 2010-12-12 22:00:57Z ppollet $
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package c2ipf
+ * @package MoodleWS
  */
 
 /**

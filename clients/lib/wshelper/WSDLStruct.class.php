@@ -62,7 +62,6 @@ class WSDLStruct {
 	/** @var IPXMLSchema */
 	private $xmlSchema;
 
-
 	//namespaces used
 	const NS_WSDL = "http://schemas.xmlsoap.org/wsdl/";
 	const NS_SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
@@ -105,6 +104,23 @@ class WSDLStruct {
 		$this->services[$class->classname] = $class;
 		$this->services[$class->classname]->getMethods(false, false);
 	}
+
+
+    /**
+     * Set formatting output flag
+     * @param boolean $value
+     * @return void
+     */
+     public function setStrictErrorChecking ($value) {
+      $this->doc->strictErrorChecking=$value;
+
+     }
+
+
+     public function setFormatOutput ( $value) {
+        $this->doc->formatOutput=$value;
+     }
+
 	/**
 	 * @return string The WSDL document for this structure
 	 */
@@ -171,8 +187,8 @@ class WSDLStruct {
 
 		}
 
-        $this->doc->strictErrorChecking=false;
-        $this->doc->formatOutput=true;
+      //  $this->doc->strictErrorChecking=true;
+      //  $this->doc->formatOutput=false;
 
 		return $this->doc->saveXML();
 	}

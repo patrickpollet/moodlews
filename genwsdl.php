@@ -8,6 +8,11 @@
 
  set_time_limit(0);
 
+ // required Moodle 2.0
+ define('CLI_SCRIPT', true);
+
+ require_once ('../config.php');
+
 define ('LIB_PATH','clients/lib/');
 require_once(LIB_PATH.'wshelper/WSDLStruct.class.php');
 require_once(LIB_PATH.'wshelper/WSDLException.class.php');
@@ -24,15 +29,27 @@ require_once(LIB_PATH.'wshelper/IPReflectionProperty.class.php');
 require('mdl_soapserver.class.php');
 
 
-  $serviceNameSpace = $CFG->wwwroot.'/wspp/wsdl';
-  $serviceURL = $CFG->wwwroot.'/wspp/service_pp.php';
+//  $serviceNameSpace = $CFG->wwwroot.'/wspp/wsdl';
+//  $serviceURL = $CFG->wwwroot.'/wspp/service_pp.php';
 
-        $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_RPC, SOAP_ENCODED);
+$serviceNameSpace = 'CFGWWWROOT/wspp/wsdl2';
+$serviceURL = 'CFGWWWROOT/wspp/service_pp2.php';
+
+
+       $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_RPC, SOAP_ENCODED);
+
+      //    $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_DOCUMENT, SOAP_ENCODED);
         $wsdl->setService(new IPReflectionClass('mdl_soapserver'));
         $wsdl->_debug=true;
 
+        $wsdl->setStrictErrorChecking(true);
+        $wsdl->setFormatOutput(true);
+
         try {
             $gendoc = $wsdl->generateDocument();
+
+            $nb=file_put_contents('moodlewsdl3.xml',$gendoc);
+             echo "$nb bytes written\n";
             //print ($gendoc);
         } catch (WSDLException $exception) {
             print ($exception->msg);

@@ -60,6 +60,11 @@
 Pour être compatible avec wshelper il faut JUSTE un esapce entre @var xxxx dans les commentaires des classes !!!
 et emettre les tableaux comme type[]
 
+   Revision 0.2.12 PP 1/12/2010
+Génération des commentaires PHPDocs dans les classses proxy pour WSHelper
+
+   Revision 0.3 17/12/2010 generates helper classes in a directory named classes (created if needed) and adjust all includes
+
 
   CAUTION: STILL uses SoapClient to retrieve the WSDL to parse,
      so retricted to PHP5 with php_soap enabled for generation
@@ -191,7 +196,7 @@ $keywords = array (
     '__line__',
     '__function__',
     '__class__',
-    'abstract'
+    'abstract','public','private','protected'
 );
 
 // ensure legal class name (I don't think using . and whitespaces is allowed in terms of the SOAP standard, should check this out and may throw and exception instead...)
@@ -216,28 +221,10 @@ if (class_exists($service['class'])) {
 $operations = $client->__getFunctions();
 foreach ($operations as $operation) {
 
-    /*
-     This is broken, need to handle
-     GetAllByBGName_Response_t GetAllByBGName(string $Name)
-     list(int $pcode, string $city, string $area, string $adm_center) GetByBGName(string $Name)
 
-     finding the last '(' should be ok
-     */
-    //list($call, $params) = explode('(', $operation); // broken
 
-    //if($call == 'list') { // a list is returned
-    //}
-
-    /*$call = array();
-    preg_match('/^(list\(.*\)) (.*)\((.*)\)$/', $operation, $call);
-    if(sizeof($call) == 3) { // found list()
-
-    } else {
-      preg_match('/^(.*) (.*)\((.*)\)$/', $operation, $call);
-      if(sizeof($call) == 3) {
-
-      }
-    }*/
+   // print_r($operation);
+   // echo "\n";
 
     $matches = array ();
     if (preg_match('/^(\w[\w\d_]*) (\w[\w\d_]*)\(([\w\$\d,_ ]*)\)$/', $operation, $matches)) {
@@ -376,7 +363,19 @@ foreach ($types as $type) {
 //print_r($members);
 //print_r($array_types);
 //print_r($custom_types);
+
+
+ if (!is_dir("classes"))
+        mkdir("classes");
+
+
+
 // add types
+
+//creation the wshelper inclusion file
+$wshelperfile= fopen('config_wshelper.inc', 'w');
+fwrite ( $wshelperfile,PACKAGE."=array(){\n");
+
 foreach ($service['types'] as $type) {
     $code = "/**\n";
     if (isset ($type['doc']))
@@ -391,8 +390,8 @@ foreach ($service['types'] as $type) {
         //phpDoc type comment for wshelper
         if (isset ($array_types[$member['type']]))
             //$hint = "(" . $member['type'] . ") array of " . $array_types[$member['type']];
-            // rev 0.2.11 Otc. 2010 send the proper hint for wshelper with arrays
-            $hint=$array_types[$member['type']].'[]';
+            // rev 0.2.11 October 2010 send the proper hint for wshelper with arrays
+            $hint=array_type_to_array($member['type']);
         else
             $hint = $member['type'];
         // caution ONE space between var and hint for wshelper!
@@ -407,14 +406,17 @@ foreach ($service['types'] as $type) {
 
     $code .= "}\n\n";
 
-    print "Writing " . $type['class'] . ".php...";
-    $filename = $type['class'] . ".php";
+    print "Writing classes/" . $type['class'] . ".php...";
+    $filename = 'classes/'.$type['class'] . ".php";
     $fp = fopen($filename, 'w');
     fwrite($fp, "<?php\n" . $code . "?>\n");
     fclose($fp);
     print "ok\n";
-}
 
+    fwrite ($wshelperfile,"\t\"" . $type['class'] . "\"=>\"" . $type['class'] ."\",\n" );
+}
+fwrite ($wshelperfile,"\n}\n");
+fclose($wshelperfile);
 // add service
 
 // page level docblock
@@ -443,7 +445,6 @@ $code .= "\n";
 
 $service['class'] = $useNuSOAP ? ($service['class'] . '_NS') : ($service['class']);
 
-$testcode = "require_once ('" . $service['class'] . ".php');\n\n\$moodle=new " . $service['class'] . "();\n";
 
 //generate client client if needed
 if (!$server) {
@@ -453,6 +454,12 @@ if (!$server) {
     // class level docblock
     $code .= "/**\n";
     $code .= " * " . $service['class'] . " class\n";
+    $code .=<<<EOC
+ * the two attributes are made public for debugging purpose
+ * i.e. accessing \$client->client->__getLast* methods
+
+EOC;
+
     $code .= " * \n";
     $code .= parse_doc(" * ", $service['doc']);
     $code .= " * \n";
@@ -462,14 +469,25 @@ if (!$server) {
     $code .= " */\n";
 
     $code .= "class " . $service['class'] . " {\n\n";
-    // these two attributes are made public for debugging purpose
-    // i.e. accessing $moodle->client->__getLast* methods
-    // should be private in prod version ...
+    $code .= " /** \n * @var SoapClient\n */\n";
     $code .= "  public \$client;\n\n";
     if ($useNuSOAP) {
+        $code .= " /** \n * @var \n */\n";
         $code .= "  public \$proxy;\n\n";
     }
     $code .= "  private \$uri = '" . $targetNamespace . "';\n\n";
+
+    $code .=<<<EOC
+  /**
+  * Constructor method
+  * @param string \$wsdl URL of the WSDL
+  * @param string \$uri
+  * @param string[] \$options  Soap Client options array (see PHP5 documentation)
+  * @return {$service['class']}
+  */
+
+EOC;
+
     $code .= "  public function " . $service['class'] . "(\$wsdl = \"" . $service['wsdl'] . "\", \$uri=null, \$options = array()) {\n";
     $code .= "    if(\$uri != null) {\n";
     $code .= "      \$this->uri = \$uri;\n";
@@ -492,10 +510,7 @@ if (!$server) {
         $signature = array (); // used for function signature
         $para = array (); // just variable names
         foreach ($function['params'] as $param) {
-            if (isset ($array_types[$param[0]]))
-                $code .= "   * @param ($param[0]) array of " . $array_types[$param[0]] . " " . $param[1] . "\n";
-            else
-                $code .= "   * @param " . $param[0] . " " . $param[1] . "\n";
+            $code .= "   * @param " . array_type_to_array($param[0]) . " " . $param[1] . "\n";
             // no typehints if not in generated classes (arrays ...)
             if (in_array($param[0], $primitive_types)) //never for primitive types (php5 !)
                 $signature[] = $param[1];
@@ -510,7 +525,7 @@ if (!$server) {
             }
             $para[] = $param[1];
         }
-        $code .= "   * @return " . $function['return'] . "\n";
+        $code .= "   * @return " . array_type_to_array($function['return']) . "\n";
         $code .= "   */\n";
         $code .= "  public function " . $function['name'] . "(" . implode(', ', $signature) . ") {\n";
         if ($useNuSOAP)
@@ -543,17 +558,21 @@ if (!$server) {
         else
             $code .= "   return \$res;\n";
         $code .= "  }\n\n";
-        $testcode .= gen_test_code($function, $function['name'] != 'login' && $function['name'] != 'logout');
-        gen_test_code_in_separate_file($function);
+
+        if ( $function['name'] != 'login' && $function['name'] != 'logout') {
+            //$testcode .= gen_test_code($function, $function['name'] != 'login' && $function['name'] != 'logout');
+            gen_test_code_in_separate_file($function);
+        }
     }
     $code .= "}\n\n";
 }
 
-print "Writing " . $service['class'] . ".php...";
-$fp = fopen($service['class'] . ".php", 'w');
+print "Writing classes/" . $service['class'] . ".php...";
+$fp = fopen('classes/'.$service['class'] . ".php", 'w');
 fwrite($fp, "<?php\n" . $code . "?>\n");
 fclose($fp);
 print "ok\n";
+/**  not needed test codes are in separate files
 if (!$server) {
 
     print "Writing test_" . $service['class'] . ".php...";
@@ -562,7 +581,7 @@ if (!$server) {
     fclose($fp);
     print "ok\n";
 }
-
+**/
 print ("Generated " . count($service['functions']) . " functions calls and " . count($service['types']) . " custom datatypes\n");
 
 function parse_doc($prefix, $doc) {
@@ -582,7 +601,17 @@ function parse_doc($prefix, $doc) {
 
 function gen_def_constructor($type) {
 
-    $code = "\t public function ${type['class']}() {\n";
+    $code=<<<EOC
+
+\t/**
+\t* default constructor for class ${type['class']}
+\t* @return ${type['class']}
+\t*/
+EOC;
+
+
+
+    $code .= "\t public function ${type['class']}() {\n";
 
     foreach ($type['members'] as $member) {
         $code .= "\t\t \$this->${member['member']}=" . get_default_value($member['type']) . ";\n";
@@ -593,7 +622,24 @@ function gen_def_constructor($type) {
 
 function gen_full_constructor($type) {
 
-    $code = "\t/* full constructor */\n";
+    $code=<<<EOC
+
+\t/**
+\t* default constructor for class ${type['class']}
+
+EOC;
+
+    foreach($type['members'] as $member) {
+        $code .="\t* @param ".array_type_to_array($member['type']).' $' . $member['member'] ."\n";
+    }
+
+    $code .=<<<EOC
+\t* @return ${type['class']}
+\t*/
+
+EOC;
+
+
     $code .= "\t public function ${type['class']}(";
     $cpt = 0;
     foreach ($type['members'] as $member) {
@@ -648,6 +694,8 @@ function gen_accessors($type) {
     $code = "\t/* get accessors */" . "\n";
 
     foreach ($type['members'] as $member) {
+
+        $code .= gen_get_phpdoc ($member['member'], $member['type']);
         $code .= "\tpublic function get" . ucfirst($member['member']) . "(){\n";
         $code .= "\t\t return \$this->" . $member['member'] . ";\n";
         $code .= "\t}\n\n";
@@ -656,6 +704,7 @@ function gen_accessors($type) {
     $code .= "\t/*set accessors */" . "\n";
 
     foreach ($type['members'] as $member) {
+        $code .= gen_set_phpdoc ($member['member'], $member['type']);
         $code .= "\tpublic function set" . ucfirst($member['member']) . "(\$${member['member']}){\n";
         $code .= "\t\t\$this->" . $member['member'] . "=\$${member['member']};\n";
         $code .= "\t}\n\n";
@@ -663,6 +712,45 @@ function gen_accessors($type) {
 
     return $code;
 }
+
+function  gen_get_phpdoc ($var , $type) {
+    $type=array_type_to_array($type);
+    $code =<<<EOC
+\n\t/**
+\t* @return $type
+\t*/
+
+EOC;
+    return $code;
+}
+
+function  gen_set_phpdoc ($var , $type) {
+    $type=array_type_to_array($type);
+    $code =<<<EOC
+\n\t/**
+\t* @param $type \$$var
+\t* @return void
+\t*/
+
+EOC;
+    return $code;
+}
+
+/**
+ * convert a array type back to type[]
+ * eg.  stringArray --> string[]
+ * used to generate  easier to read PHPDoc comments
+ */
+function array_type_to_array($type) {
+    global $array_types;
+
+     if (isset ($array_types[$type]))
+        return $array_types[$type].'[]';
+     else
+        return $type;
+}
+
+
 
 function get_set_calls($varname, $vartype) {
     global $service;
@@ -696,14 +784,11 @@ function gen_test_code($function, $withLogin = true) {
     global $primitive_types, $array_types;
     $code = "/**test code for " . ($function['doc'] ? $function['doc'] : $function['name']) . "\n";
     foreach ($function['params'] as $param)
-        if (isset ($array_types[$param[0]]))
-            $code .= "* @param ($param[0]) array of " . $array_types[$param[0]] . " " . $param[1] . "\n";
-        else
-            $code .= "* @param " . $param[0] . " " . $param[1] . "\n";
-    $code .= "* @return " . $function['return'] . "\n";
+             $code .= "* @param " . array_type_to_array($param[0]) . " " . $param[1] . "\n";
+    $code .= "* @return  " . array_type_to_array($function['return']). "\n";
     $code .= "*/\n";
     if ($withLogin)
-        $code .= "\n\$lr=\$moodle->login(LOGIN,PASSWORD);\n";
+        $code .= "\n\$lr=\$client->login(LOGIN,PASSWORD);\n";
     $params = array ();
     $retours = "";
     foreach ($function['params'] as $num => $param) {
@@ -726,20 +811,20 @@ function gen_test_code($function, $withLogin = true) {
         }
     }
     if (in_array($function['return'], $primitive_types)) {
-        $code .= "\$res=\$moodle->" . $function['name'] . "(" . implode(',', $params) . ");\n";
+        $code .= "\$res=\$client->" . $function['name'] . "(" . implode(',', $params) . ");\n";
         $code .= "print(\$res);";
 
     } else {
         //type cast is required to have acces to get Fonctions, otherwise the result is StdClass
         // does not work in php5 cast is only allowed for few types
         //$code .="\$res=(".$function['return'].")(\$moodle->".$function['name']."(".implode(',',$params)."));\n";
-        $code .= "\$res=\$moodle->" . $function['name'] . "(" . implode(',', $params) . ");\n";
+        $code .= "\$res=\$client->" . $function['name'] . "(" . implode(',', $params) . ");\n";
         $code .= "print_r(\$res);";
         $retours = get_get_calls("\$res", $function['return']);
     }
     $code .= $retours;
     if ($withLogin)
-        $code .= "\n\$moodle->logout(\$lr->getClient(),\$lr->getSessionKey());";
+        $code .= "\n\$client->logout(\$lr->getClient(),\$lr->getSessionKey());";
     $code .= "\n\n";
     return $code;
 }
@@ -749,7 +834,7 @@ function gen_test_code_in_separate_file($function) {
     if (!is_dir("tests"))
         mkdir("tests");
 
-    $testcode = "require_once ('../" . $service['class'] . ".php');\n\n\$moodle=new " . $service['class'] . "();\n";
+    $testcode = "require_once ('../classes/" . $service['class'] . ".php');\n\n\$client=new " . $service['class'] . "();\n";
     $testcode .= "require_once ('../auth.php');\n";
     if ($function['name'] != 'login' && $function['name'] != 'logout')
         $testcode .= gen_test_code($function, true);
@@ -765,7 +850,7 @@ function gen_test_code_in_separate_file($function) {
 function add_utils_fonctions() {
 
     $code = '';
-    $code .= '  function castTo($className,$res){ ' . "\n";
+    $code .= '  private function castTo($className,$res){ ' . "\n";
     $code .= '     if (class_exists($className)) {  ' . "\n";
     $code .= '        $aux= new $className();       ' . "\n";
     $code .= '        foreach ($res as $key=>$value) ' . "\n";

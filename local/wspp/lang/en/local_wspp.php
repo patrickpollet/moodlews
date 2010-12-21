@@ -1,28 +1,29 @@
 <?PHP // $Id$
       // wspp.php -
-      // translation file for Ok Tech WebServices (wspp) version 1.6
+      // translation file for Ok Tech WebServices (wspp) version 1.7
+      // thanks to   "Stephen C. Scherer" <sscherer4@cox.net>
 
-$string['webservices'] = 'OK Tech Webservices (aka wspp)';
+$string['webservices'] = 'OK Tech Webservices ( aka wspp)';
 
-$string['ws_disable']='Désactiver le Web Service';
-$string['config_ws_disable']='Refuser toutes les demandes de connexion';
-$string['ws_logoperations']='Loger les demandes';
-$string['config_ws_logoperations']='Insérer une entrée dans le fichier log de Moodle à chaque opération';
-$string['ws_logdetailedoperations']='Loger le détail des demandes';
-$string['config_ws_logdetailedoperations']='Insérer une entrée dans le log de Moodle à chaque sous-opération ; par exemple' .
-        ' en cas d\'inscription massive, chaque inscription sera loguée';
-$string['ws_logerrors']='Loger les erreurs';
-$string['config_ws_logerrors']='Insérer une entrée dans le log de Moodle à chaque erreur';
+$string['ws_disable']='Disable Web Service';
+$string['config_ws_disable']='Reject all connection requests';
+$string['ws_logoperations']='Log operations in Moodle\'s log ';
+$string['config_ws_logoperations']='Configure logging operations';
+$string['ws_logdetailedoperations']='Log detailed operations';
+$string['config_ws_logdetailedoperations']='Configure logging of detailed operations ; for example' .
+        ' in case of a large number of registrations, each entry will be logged';
+$string['ws_logerrors']='Log errors';
+$string['config_ws_logerrors']='Insert an entry in the log for each error';
 
-$string['ws_sessiontimeout']='Durée de vie d\'une session';
-$string['config_ws_sessiontimeout']='Intervalle de temps en secondes au bout duquel une demande de connexion (opération login) expirera';
+$string['ws_sessiontimeout']='Duration of each session';
+$string['config_ws_sessiontimeout']='Time interval in seconds after which a connection request (transaction log) will expire';
 
-$string['ws_debug']='Activer le mode debug';
+$string['ws_debug']='Enable debug mode';
 $string['config_ws_debug']='Dump many intermediate values in moodledata/debug.out file';
 
-$string['ws_enforceipcheck']='Activer le contrôle des IP';
-$string['ws_config_enforceipcheck']='Avec cette option, seuls les clients enregistrés dans la table mdl_webservices_clients_allow seront autorisés à se connecter' .
-        '. Pour l\'instant vous devez l\'éditer avec phpmyadmin';
+$string['ws_enforceipcheck']='Enable monitoring of IP addresses';
+$string['ws_config_enforceipcheck']='With this option, only registered customers in the table mdl_webservices_clients_allow will be allowed to connect' .
+        '. For now you must edit it with phpmyadmin';
 
 
 $string['ws_accessdisabled']='web service access disabled on this site.';
@@ -39,152 +40,141 @@ $string['ws_invalidclient']='Invalid Client connection.';
 $string['ws_sqlstrftimedatetime']='%%d/%%m/%%Y %%H:%%i:%%s';
 
 $string['ws_nomatch']='no match found for {$a->critere} = {$a->valeur}';
-$string['ws_nothingfound']='aucun résultat.';
-$string['ws_emptyparameter']='ce paramètre {$a} ne peut être vide.';
+$string['ws_nothingfound']='no results.';
+$string['ws_emptyparameter']='the parameter {$a} cannot be empty.';
 
 
-$string['ws_userunknown']='utilisateur {$a} inconnu.';
-$string['ws_courseunknown']='cours {$a} inconnu.';
-$string['ws_categoryunknown']='categorie {$a} inconnue.';
-$string['ws_groupunknown']='groupe {$a} inconnu.';
-$string['ws_groupingunknown']='groupement {$a} inconnu.';
-$string['ws_cohortunknown']='cohorte {$a} inconnue.';
-$string['ws_roleunknown']='rôle {$a} inconnu.';
-$string['ws_sectionunknown']='section {$a} inconnue.';
-$string['ws_forumunknown']='forum {$a} inconnu.';
-$string['ws_databaseunknown']='base de données {$a} inconnue.';
-$string['ws_assignmentunknown']='devoir {$a} inconnu.';
-$string['ws_wikiunknown']='wiki {$a} inconnu.';
-$string['ws_wikipageunknown']='wiki {$a} inconnu.';
-$string['ws_labelunknown']='étiquette {$a} inconnue.';
-$string['ws_profileunknown']='champ de profil {$a} inconnu.';
+$string['ws_userunknown']='user {$a} unknown.';
+$string['ws_courseunknown']='course {$a} unknown.';
+$string['ws_categoryunknown']='category  {$a} unknown.';
+$string['ws_groupunknown']='group  {$a} unknown.';
+$string['ws_groupingunknown']='grouping {$a} unknown.';
+$string['ws_roleunknown']='role {$a} unknown.';
+$string['ws_sectionunknown']='section {$a} unknown.';
+$string['ws_forumunknown']='forum {$a} unknown.';
+$string['ws_databaseunknown']='database {$a} unknown.';
+$string['ws_assignmentunknown']='assignment {$a} unknown.';
+$string['ws_wikiunknown']='wiki {$a} unknown.';
+$string['ws_wikipageunknown']='wikipage {$a} unknown.';
+$string['ws_labelunknown']='label {$a} unknown.';
+$string['ws_profileunknown']='profile {$a} unknown.';
 
-$string['ws_assignmenttypeunknown']='type de devoir {$a} inconnu.';
-$string['ws_quizunknown']='QCM {$a} inconnu.';
+$string['ws_assignmenttypeunknown']='assignment type {$a} unknown.';
+$string['ws_quizunknown']='quiz {$a} unknown.';
 
-
-$string['ws_noseegrades']='pas autorisé à voir les notes de {$a}';
-$string['ws_nogradesfound']='pas de notes pour {$a->user} dans {$a->course}';
-$string['ws_operationnotallowed']='vous n\'avez pas les permissions de faire cela.';
-$string['ws_nocourseforuser']='aucun cours trouvé pour {$a}';
-$string['ws_coursewithoutidnumber']='le cours {$a} n\'a pas de idnumber  (signalez le à votre administrateur)';
-$string['ws_nocoursewithidnumberforuser']='aucun cours avec un numéro idnumber trouvé pour {$a} (signalez le à votre administrateur)';
-$string['ws_roleidnotfound']='ce rôle {$a} n\'existe pas.';
-$string['ws_nothingtodo']='rien à faire.';
-$string['ws_notsupportedgradebook']='le carnet de notes antérieur à Moodle 1.8 n\'est pas supporté.';
+$string['ws_noseegrades']='not authorized to see grades of {$a}';
+$string['ws_nogradesfound']='no grades for user {$a->user} in {$a->course}';
+$string['ws_operationnotallowed']='you don\'t have the permissions to do this.';
+$string['ws_nocourseforuser']='no courses found for {$a}';
+$string['ws_coursewithoutidnumber']='the course {$a} does not have idnumber (report to your administrator)';
+$string['ws_nocoursewithidnumberforuser']='no course with that idnumber exists for user {$a} (report to your administrator)';
+$string['ws_roleidnotfound']='role id {$a} not found.';
+$string['ws_nothingtodo']='nothing to do.';
+$string['ws_notsupportedgradebook']='the notebook prior to Moodle 1.8 is not supported.';
 
 
+$string['ws_missingvalue']='required value {$a} missing';
+$string['ws_useridnumberexists']='a user already exists with this idnumber {$a}';
+$string['ws_courseidnumberexists']='a course already exists with this idnumber {$a}';
+$string['ws_invalidaction']='invalid action {$a}';
+$string['ws_user_notenroled']='The user {$a->user} is not enrolled in the course {$a->course}.';
 
-$string['ws_missingvalue']='valeur requise {$a} manquante';
-$string['ws_useridnumberexists']='un utilisateur existe déja avec cet idnumber {$a}';
-$string['ws_courseidnumberexists']='un cours existe déja avec cet idnumber {$a}';
-$string['ws_invalidaction']='action invalide {$a}';
-$string['ws_user_notenroled']='L\'utilisateur {$a->user} n\'est pas inscrit au cours {$a->course}.';
+$string['nothingtodo']='nothing to do';
+$string['ws_notimplemented']='feature {$a} not yet implemented';
 
-$string['nothingtodo']='rien à faire';
-$string['ws_notimplemented']='fonctionnalité non encore implementée {$a}';
+$string['nocourses']='no courses';
+$string['nousers']='no users';
+$string['nocategories']='no categories';
+$string['noroles']='no roles';
+$string['noresources']='no resources';
 
-$string['nocourses']='pas de cours';
-$string['nousers']='pas d\'utilisateurs';
-$string['nocategories']='pas de catégories';
-$string['noroles']='pas de rôles';
-$string['noresources']='pas de ressources';
+$string['nosections']='no sections';
+$string['nogradesfor']='no grades for {$a}';
+$string['nogradesin']='no grades in {$a}';
+$string['nogroupsin']='no groups in {$a}';
+$string['nogroups']='no groups';
+$string['nogrouping']='no groupings';
+$string['nogroupingsin']='no groupings in {$a}';
+$string['nocohorts']='no cohorts';
 
-$string['nosections']='pas de sections';
-$string['nogradesfor']='pas de notes pour {$a}';
-$string['nogradesin']='pas de notes dans {$a}';
-$string['nogroupsin']='pas de groupes dans {$a}';
-$string['nogroups']='pas de groupes';
-$string['nogrouping']='pas de groupements';
-$string['nogroupingsin']='pas de groupements dans {$a}';
-$string['nocohorts']='pas de cohortes';
+$string['noteachers']='no teachers';
+$string['noevents']='no events';
+$string['nochanges']='no changes';
+$string['noactivities']='no activities';
+$string['nodatabases']='no databases';
+$string['noforums']='no forums';
+$string['nowikis']='no wikies';
+$string['noassignments']='no assignments';
+$string['nosubmissions']='no submissions to this assignment';
+$string['nowikipages']='no wiki pages';
+$string['nolabels']='no labels';
+$string['noquizzes']='no quizzes';
 
-$string['noteachers']='pas d\'enseignants';
-$string['noevents']='pas d\'évenements';
-$string['nochanges']='aucun changement';
-$string['noactivities']='pas d\'activités enregistrées';
-$string['nodatabases']='pas d\'activités base de données';
-$string['noforums']='pas d\'activités forum';
-$string['nowikis']='pas d\'activités wiki';
-$string['noassignments']='pas d\'activités devoirs';
-$string['nosubmissions']='pas de remises de ce devoir';
-$string['nowikipages']='pas de pages wiki';
-$string['nolabels']='pas d\'étiquettes';
-$string['noquizzes']='pas de quizs';
+$string['ws_groupalreadyaffected']='the group {$a->group} already is a member of course {$a->course}.';
+$string['ws_groupingalreadyaffected']='the grouping {$a->group} already is a member of course {$a->course}.';
 
-$string['ws_groupalreadyaffected']='le groupe {$a->group} appartient déja au cours {$a->course}.';
-$string['ws_groupingalreadyaffected']='le groupement {$a->group} appartient déja au cours {$a->course}.';
+$string['ws_errorcreatingcourse']='error creating course {$a}.';
+$string['ws_errordeletingcourse']='error deleting course {$a}.';
+$string['ws_errorupdatingcourse']='error updating course {$a}.';
 
-$string['ws_errorcreatingcourse']='erreur en créant le cours {$a}.';
-$string['ws_errordeletingcourse']='erreur en supprimant le cours {$a}.';
-$string['ws_errorupdatingcourse']='erreur en modifiant le cours {$a}.';
+$string['ws_errorcreatinguser']='error creating user {$a}.';
+$string['ws_errordeletinguser']='error deleting user {$a}.';
+$string['ws_errorupdatinguser']='error updating user {$a}.';
 
-$string['ws_errorcreatinguser']='erreur en créant l\'utilisateur {$a}.';
-$string['ws_errordeletinguser']='erreur en supprimant l\'utilisateur {$a}.';
-$string['ws_errorupdatinguser']='erreur en modifiant l\'utilisateur {$a}.';
+$string['ws_errorcreatinggroup']='error creating group {$a}.';
+$string['ws_errordeletinggroup']='error deleting group {$a}.';
+$string['ws_errorupdatinggroup']='error updating group {$a}.';
 
-$string['ws_errorcreatinggroup']='erreur en créant le groupe {$a}.';
-$string['ws_errordeletinggroup']='erreur en supprimant le groupe {$a}.';
-$string['ws_errorupdatinggroup']='erreur en modifiant le groupe {$a}.';
+$string['ws_errorcreatinggrouping']='error creating grouping {$a}.';
+$string['ws_errordeletinggrouping']='error deleting grouping {$a}.';
+$string['ws_errorupdatinggrouping']='error updating grouping {$a}.';
 
-$string['ws_errorcreatinggrouping']='erreur en créant le groupement {$a}.';
-$string['ws_errordeletinggrouping']='erreur en supprimant le groupement {$a}.';
-$string['ws_errorupdatinggrouping']='erreur en modifiant le groupement {$a}.';
+$string['ws_duplicategroupname']='duplicate group name {$a}.';
+$string['ws_duplicategroupingname']='duplicate grouping name {$a}.';
 
-$string['ws_duplicategroupname']='ce cours a déja un groupe nommé {$a}.';
-$string['ws_duplicategroupingname']='ce cours a déja un groupement nommé {$a}.';
-
-$string['ws_errorcreatingcategory']='erreur en créant la catégorie {$a}.';
-$string['ws_errorcreatingsection']='erreur en créant la section {$a}.';
-$string['ws_errorcreatinglabel']='erreur en créant l\'étiquette {$a}.';
-$string['ws_errorcreatingforum']='erreur en créant le forum {$a}.';
-$string['ws_errorcreatingassignment']='erreur en créant le devoir {$a}.';
-$string['ws_errorcreatingdatabase']='erreur en créant la base de données {$a}.';
-$string['ws_errorcreatingwiki']='erreur en créant le wiki {$a}.';
-$string['ws_errorcreatingwikientry']='erreur en créant la première entrée du wiki {$a}';
-$string['ws_errorcreatingpagewiki']='erreur en créant la page de wiki {$a}.';
-
-
-$string['ws_errorcreatingassignment']='erreur en créant le devoir {$a}.';
-$string['ws_errorupdatingassignment']='erreur en modifiant le devoir {$a}.';
-$string['ws_errordeletingassignment']='erreur en supprimant le devoir {$a}.';
-
-$string['ws_errorcreatingdatabase']='erreur en créant la base de donnée {$a}.';
-$string['ws_errorupdatingdatabase']='erreur en modifiant la base de donnée {$a}.';
-
-$string['ws_errorcreatingsection']='erreur en créant la section {$a}.';
-$string['ws_errorupdatingsection']='erreur en modifiant la section {$a}.';
+$string['ws_errorcreatingcategory']='error creating category {$a}.';
+$string['ws_errorcreatingsection']='error creating section {$a}.';
+$string['ws_errorcreatinglabel']='error creating label {$a}.';
+$string['ws_errorcreatingforum']='error creating forum {$a}.';
+$string['ws_errorcreatingassignment']='error creating assignment {$a}.';
+$string['ws_errorcreatingdatabase']='error creating database {$a}.';
+$string['ws_errorcreatingwiki']='error creating wiki {$a}.';
+$string['ws_errorcreatingwikientry']='error creating first wiki\'s entry {$a}';
+$string['ws_errorcreatingpagewiki']='error creating page wiki {$a}.';
 
 
-$string['ws_unvalidgroupmode']='type de groupe invalide {$a}';
+$string['ws_errorcreatingassignment']='error creating assignment {$a}.';
+$string['ws_errorupdatingassignment']='error updating assignment {$a}.';
+$string['ws_errordeletingassignment']='error deleting assignment {$a}.';
 
+$string['ws_errorcreatingdatabase']='error creating database {$a}.';
+$string['ws_errorupdatingdatabase']='error updating database {$a}.';
 
-$string['ws_wikiincorrecttype']='type de wiki invalide {$a}';
+$string['ws_errorcreatingsection']='error creating section {$a}.';
+$string['ws_errorupdatingsection']='error updating section {$a}.';
 
+$string['ws_unvalidgroupmode']='invalid group mode {$a}';
 
-
+$string['ws_wikiincorrecttype']='invalid wiki type {$a}';
 
 $string['ws_moduletypeunknown']='Module type {$a} not found!';
-$string['ws_modalreadyassigned']='le {$a}->type  {$a}->id est déja dans la section {$a}->section du cours {$a}->course.';
-$string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le {$a}->type  {$a}->id au cours {$a}->course.';
-$string['ws_erroraddingmoduletosection']='impossible d\'ajouter le {$a}->type  {$a}->id à la section {$a}->section du cours {$a}->course.';
+$string['ws_modalreadyassigned']='The {$a->type}  {$a->id} is already assigned to the section {$a->section} of course {$a->course}.';
+$string['ws_erroraddingmoduletocourse']='It is not possible to add {$a->type}  {$a->id} to course {$a->course}.';
+$string['ws_erroraddingmoduletosection']='It is not possible to add the {$a->type} {$a->id} in Section {$a->section} of the course {$a->course}.';
 
-$string['ws_errorupdatingmodule']='erreur en affectant le module {$a}->id au cours {$a}->course';
+$string['ws_errorupdatingmodule']='error affecting the module {$a->id} in {$a->course}';
 
+$string['ws_profileinvalidvaluemenu']='value {$a} is not permitted in the options';
+$string['ws_profileinvalidvaluecheckbox']='value has been 0 or 1';
 
-
-
-$string['ws_profileinvalidvaluemenu']='la valeur {$a} n\'est pas dans les options permises';
-$string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
-
-$string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
-$string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
+$string['ws_uselocalwsdl']='Use an auto generated wsdl';
+$string['config_ws_uselocalwsdl']='Fixes a problem reading the WSDL with some versions of PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
 
 
-$string['ws_quizexportunknownformat']='format d\'exportation {$a} inconnu';
+$string['ws_quizexportunknownformat']='Export format of {$a} is unknown';
 
-$string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été supprimé';
+$string['ws_erroralreadydeleteduser']='User id= {$a} has already been deleted';
 
-$string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja membre de {$a->course}';
-$string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas membre de {$a->course}';
+$string['ws_useralreadymember']='User  {$a->user} is already enroled to  {$a->course}';
+$string['ws_usernotmember']='User {$a->user} is not enroled to {$a->course}';
 ?>

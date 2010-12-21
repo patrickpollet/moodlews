@@ -62,7 +62,6 @@ $string['ws_profileunknown']='champ de profil {$a} inconnu.';
 $string['ws_assignmenttypeunknown']='type de devoir {$a} inconnu.';
 $string['ws_quizunknown']='QCM {$a} inconnu.';
 
-
 $string['ws_noseegrades']='pas autorisé à voir les notes de {$a}';
 $string['ws_nogradesfound']='pas de notes pour {$a->user} dans {$a->course}';
 $string['ws_operationnotallowed']='vous n\'avez pas les permissions de faire cela.';
@@ -72,7 +71,6 @@ $string['ws_nocoursewithidnumberforuser']='aucun cours avec un numéro idnumber 
 $string['ws_roleidnotfound']='ce rôle {$a} n\'existe pas.';
 $string['ws_nothingtodo']='rien à faire.';
 $string['ws_notsupportedgradebook']='le carnet de notes antérieur à Moodle 1.8 n\'est pas supporté.';
-
 
 
 $string['ws_missingvalue']='valeur requise {$a} manquante';
@@ -155,24 +153,16 @@ $string['ws_errorupdatingdatabase']='erreur en modifiant la base de donnée {$a}
 $string['ws_errorcreatingsection']='erreur en créant la section {$a}.';
 $string['ws_errorupdatingsection']='erreur en modifiant la section {$a}.';
 
-
 $string['ws_unvalidgroupmode']='type de groupe invalide {$a}';
-
 
 $string['ws_wikiincorrecttype']='type de wiki invalide {$a}';
 
-
-
-
 $string['ws_moduletypeunknown']='Module type {$a} not found!';
-$string['ws_modalreadyassigned']='le {$a}->type  {$a}->id est déja dans la section {$a}->section du cours {$a}->course.';
-$string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le {$a}->type  {$a}->id au cours {$a}->course.';
-$string['ws_erroraddingmoduletosection']='impossible d\'ajouter le {$a}->type  {$a}->id à la section {$a}->section du cours {$a}->course.';
+$string['ws_modalreadyassigned']='le {$a->type}  {$a->id} est déja dans la section {$a->section} du cours {$a->course}.';
+$string['ws_erroraddingmoduletocourse']='impossible d\'ajouter le {$a->type}  {$a->id} au cours {$a->course}.';
+$string['ws_erroraddingmoduletosection']='impossible d\'ajouter le {$a->type}  {$a->id} à la section {$a->section} du cours {$a->course}.';
 
-$string['ws_errorupdatingmodule']='erreur en affectant le module {$a}->id au cours {$a}->course';
-
-
-
+$string['ws_errorupdatingmodule']='erreur en affectant le module {$a->id} au cours {$a->course}';
 
 $string['ws_profileinvalidvaluemenu']='la valeur {$a} n\'est pas dans les options permises';
 $string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
@@ -185,6 +175,6 @@ $string['ws_quizexportunknownformat']='format d\'exportation {$a} inconnu';
 
 $string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été supprimé';
 
-$string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja membre de {$a->course}';
-$string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas membre de {$a->course}';
+$string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja inscrit à {$a->course}';
+$string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas inscrit à {$a->course}';
 ?>
