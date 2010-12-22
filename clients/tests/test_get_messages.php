@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_messages($lr->getClient(),$lr->getSessionKey(),'','');
+$res=$client->get_messages($lr->getClient(),$lr->getSessionKey(),'admin','username');
 print_r($res);
 print($res->getMessages());
 

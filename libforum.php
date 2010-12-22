@@ -10,9 +10,16 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 
     /**
      * recusrive fix for missing properties required by SOAP encoding of forumPostRecord
+     *
      */
     function ws_forumposts_fix_children ($post) {
+    	global $CFG;
         $post->error='';
+        if (!$CFG->wspp_using_moodle20) { 
+           	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
+           	$post->messageformat=$post->format;
+           	$post->messagetrust='';
+        }
         if (!isset ($post->children))
             $post->children=array();
         else   foreach ($post->children as $child)
@@ -22,6 +29,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 
 
 	function ws_recursive_get_posts($postid) {
+		global $CFG;
         $sort="created ASC";
 		$children = ws_get_records_select('forum_posts', "parent = " . $postid,null,$sort);
 
@@ -29,7 +37,11 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
         //must set these two property for correct SOAP encoding
         $post->children=array();
         $post->error='';
-
+        if (!$CFG->wspp_using_moodle20) { 
+           	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
+           	$post->messageformat=$post->format;
+           	$post->messagetrust='';
+        }
 		if(is_array($children)) {
 			foreach($children as $child) {
 				$post->children [] = ws_recursive_get_posts($child->id);
@@ -72,15 +84,20 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 
 
     function ws_forum_get_discussions ($cm,$limit) {
+    	global $CFG;
          if ($discussions= forum_get_discussions($cm, "d.timemodified DESC",true, -1, $limit)) {
-        //return the fisrt post of that discussion without any children
+        //return the first post of that discussion without any children
             foreach ($discussions as $id=>$discussion) {
                 $discussions[$id]->post=forum_get_post_full($id);
                 $discussions[$id]->post->children= array();
                 $discussions[$id]->post->error='';
+                if (!$CFG->wspp_using_moodle20) { 
+                	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
+                	$discussions[$id]->post->messageformat=$discussions[$id]->post->format;
+                	$discussions[$id]->post->messagetrust='';
+                }
             }
-       }
-       //$this->debug_output(print_r($discussions,true));
+       }     
        return $discussions;
     }
 
@@ -120,72 +137,8 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
 
 /**
 
-	if(isset($_GET['forum'])) {
-		$forums = get_records_select('forum', "id = " . optional_param('id'), 'id, type, intro');
-		$forum = $forums[$_POST['id']];
+	
 
-		$discussions = get_records_select('forum_discussions', "forum = " . $forum->id);
-
-		$discussions_array = array();
-		foreach ($discussions as $discussion) {
-			$original_post = get_record_select('forum_posts', "parent = 0 AND discussion = " . $discussion->id);
-			$discussions_array[] = recursive_get_posts($original_post);
-		}
-
-		$return_array = array();
-		$return_array["id"] = $_POST['id'];
-		$return_array["discussions"] = $discussions_array;
-		$return_array["type"] = $forum->type;
-		$return_array["intro"] = $forum->intro;
-
-		$json_output["forum"] = $return_array;
-	}
-
-
-
-
-	if(isset($_GET['newPost']))
-	{
-
-		if (!empty($USER->id)) {
-
-			if($_GET['discussion_id'] > 0){
-				$diss = $_GET['discussion_id'];
-			}else{
-				$full_diss = get_record_select('forum_discussions', "forum = ".optional_param('forum_id')." AND firstpost = " . optional_param('first_post_id'));
-				$diss = $full_diss->id;
-			}
-
-			$obj = (object) array(
-								  'subject' => optional_param('subject'),
-								  'name' => optional_param('subject'),
-								  'intro' => optional_param('message'),
-								  'message' => optional_param('message'),
-								  'course' => optional_param('course_id') ? optional_param('course_id') : 1,
-								  'forum' => optional_param('forum_id'),
-								  'discussion' => $diss,
-								  'reply' => optional_param('post_id'),
-								  'parent' => optional_param('post_id'),
-								  'user_id' => $USER->id,
-								  'MAX_FILE_SIZE' => 134217728,
-								  'subscribe' => 1,
-								  'format' => 0,
-								  'mailnow' => 0
-								  );
-
-			$message = ''; //chaine contenant des erreurs eventuelles (upload)
-			if($diss > 0)
-
-			attention changé n Moodle 2.0
-			function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=null)
-			function forum_add_new_post($post, $mform, &$message)
-			{
-				$id = forum_add_new_post($obj, $message);
-			}else{
-				$id = forum_add_discussion($obj, $message);
-			}
-
-		}
 
 	}
 

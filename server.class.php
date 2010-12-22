@@ -1249,7 +1249,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
         }
-        $resp = new stdClass();
+        $resp = new affectRecord();
         $resp->status = groups_remove_member($group->id, $user->id);
         return $resp;
     }
@@ -1291,6 +1291,7 @@ hiddensections,lang,theme,timecreated,timemodified";
               return $this->error(get_string('ws_moodle20only', 'local_wspp'));
 
         cohort_add_member($group->id,$user->id);
+        $resp= new affectRecord();
         $resp->status = 1;
         return $resp;
     }
@@ -1330,6 +1331,7 @@ hiddensections,lang,theme,timecreated,timemodified";
               return $this->error(get_string('ws_moodle20only', 'local_wspp'));
 
         cohort_remove_member($group->id,$user->id);
+        $resp= new affectRecord();
         $resp->status = 1;
         return $resp;
     }
@@ -1364,7 +1366,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         	// not anymore included by defualt in Moodle 2.0
         	require_once ($CFG->dirroot.'/group/lib.php');
         }
-        $resp = new stdClass();
+        $resp= new affectRecord();
         $resp->status = groups_assign_grouping($grouping->id, $group->id);
         return $resp;
 
@@ -1399,7 +1401,7 @@ hiddensections,lang,theme,timecreated,timemodified";
 	        // not anymore included by defualt in Moodle 2.0
 	        require_once ($CFG->dirroot.'/group/lib.php');
         }
-        $resp = new stdClass();
+          $resp= new affectRecord();
         $resp->status = groups_unassign_grouping($grouping->id, $group->id);
         return $resp;
     }
@@ -1446,7 +1448,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         //verify if the update operation is done
 
 
-        $resp = new stdClass();
+           $resp= new affectRecord();
         $resp->status = ws_update_record('groups', $group);
         return $resp;
     }
@@ -1492,7 +1494,7 @@ hiddensections,lang,theme,timecreated,timemodified";
         }
 
 
-        $resp = new stdClass();
+          $resp= new affectRecord();
         $resp->status =ws_update_record('groupings', $group);
         return $resp;
     }
@@ -2493,7 +2495,7 @@ EOSS;
                         try {
                             $id=cohort_add_cohort($group);
                             $ret = ws_get_record('cohort', 'id', $id);
-                        }catch(Exception $e) {
+                        }catch(Exception $ex) {
                             ws_error_log($ex);
                             $ret->error=get_string('ws_errorcreatingcohort','local_wspp',$group->name);
                         }
@@ -4238,12 +4240,17 @@ EOSS;
        $discussion->course=$course->id;
        $discussion->forum=$forumid;
        $discussion->name=$discussion->subject;
-       if (! $CFG->wspp_using_moodle20)
-            $discussion->intro=$discussion->message; // moodle 1.9 calls it intro ...
-       $discussion->messageformat=1; //cannot be null
-       $discussion->messagetrust=0 ; //moodel 2.0
+      
+       if (! $CFG->wspp_using_moodle20) { 
+	      $discussion->intro=$discussion->message; // moodle 1.9 calls it intro ..
+	      $discussion->format=1;
+       }else { 
+        
+	       $discussion->messageformat=1; //cannot be null
+	       $discussion->messagetrust=0 ; //moodel 2.0
+       }
        $discussion->mailnow=0 ;   //cannot be null
-        //      $this->debug_output(print_r($discussion,true));
+       $this->debug_output(print_r($discussion,true));
        if ($discussion->id=ws_forum_add_discussion($discussion,$reply)) {
 
           add_to_log($course->id, "forum", "add discussion",
@@ -4268,7 +4275,7 @@ EOSS;
      */
 
     public function forum_add_reply ($client,$sesskey,$parentid,$post) {
-         global $CFG;
+         global $CFG,$USER;
        require_once ("libforum.php");
        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -4305,8 +4312,12 @@ EOSS;
                  //fix missing or misnamed values in input data
        $post->discussion=$discussion->id;
        $post->parent=$parentid;
+       if ($CFG->wspp_using_moodle20) { 
        $post->messageformat=1; //cannot be null
        $post->messagetrust=0 ; //moodel 2.0
+       } else {
+       	 $post->format=1; //cannot be null
+       }
        $post->mailnow=0 ;   //cannot be null
 
        $reply='';
@@ -4379,7 +4390,7 @@ EOSS;
          }
          }
          */
-        if($messageid = message_post_message($me, $user, addslashes($message), $format, 'direct')) {
+        if($messageid = message_post_message($me, $user, addslashes($message), FORMAT_MOODLE, 'direct')) {
              add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
             $ret->setStatus(true);
         }

@@ -13,9 +13,9 @@ require_once ('../auth.php');
 
 $lr=$client->login(LOGIN,PASSWORD);
 $post= new forumPostDatum();
-$post->setSubject('');
-$post->setMessage('');
-$res=$client->forum_add_reply($lr->getClient(),$lr->getSessionKey(),0,$post);
+$post->setSubject('re: alors');
+$post->setMessage('on dirait bien');
+$res=$client->forum_add_reply($lr->getClient(),$lr->getSessionKey(),1052,$post);
 print_r($res);
 print($res->getForumPosts());
 
