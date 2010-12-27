@@ -1923,6 +1923,17 @@
   <message name="get_messagesResponse">
     <part name="get_messagesReturn" type="tns:messageRecordArray"/>
   </message>
+  <message name="get_messages_historyRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="useridto" type="xsd:string"/>
+    <part name="useridtofield" type="xsd:string"/>
+    <part name="useridfrom" type="xsd:string"/>
+    <part name="useridfromfield" type="xsd:string"/>
+  </message>
+  <message name="get_messages_historyResponse">
+    <part name="get_messages_historyReturn" type="tns:messageRecordArray"/>
+  </message>
   <message name="get_my_cohortsRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2700,6 +2711,10 @@
     <wsdl:operation name="get_messages">
       <wsdl:input message="tns:get_messagesRequest"/>
       <wsdl:output message="tns:get_messagesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_messages_history">
+      <wsdl:input message="tns:get_messages_historyRequest"/>
+      <wsdl:output message="tns:get_messages_historyResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_my_cohorts">
       <wsdl:input message="tns:get_my_cohortsRequest"/>
@@ -3730,6 +3745,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_messages">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_messages" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_messages_history">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_messages_history" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
