@@ -230,10 +230,10 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
 		try {
 			 $context = get_context_instance(CONTEXT_SYSTEM);
 
-    		if (has_capability('moodle/course:create' , $context, $uid,true)) { 
+    		if (has_capability('moodle/course:create' , $context, $uid,true)) {
 				//ws_error_log ("ok admin\n");
-				return $DB->get_records('course',array(),$sort);		
-    		}			
+				return $DB->get_records('course',array(),$sort);
+    		}
 			// does not return annymore all courses for a site admin ...
 			return enrol_get_users_courses($uid, $onlyactive = false, $extrafields, $sort);
 		} catch (Exception $e) {
@@ -313,7 +313,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 /*
  *return primary role of userid in course
  *@param course $course an existing course record
- *@param integer $userid :id of an existing user
+ *@param int $userid :id of an existing user
  *
  */
 function ws_get_primaryrole_incourse($course, $userid) {
@@ -570,7 +570,7 @@ function ws_checkcourserecord(& $course, $newcourse) {
 
 /**
  * perform all needed operations to insert an activity module into an existing course section
- * @param integer $modid
+ * @param int $modid
  * @param string  $modtype
  * @param section $section
  * @return string $errmsg

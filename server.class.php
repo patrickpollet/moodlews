@@ -364,7 +364,7 @@ $this->debug_output('internal ');
 	 * session record and any user ID that is assosciated with their particular
 	 * session.
 	 *
-	 * @param integer $client The client record ID.
+	 * @param int $client The client record ID.
 	 * @param string $sesskey The client session key.
 	 * @return boolean True if successfully logged out, false otherwise.
      * since this operation retunr s a simple type, no need to override it in protocol specific layer
@@ -784,7 +784,7 @@ $this->debug_output('internal ');
 	* @param string useridfield
 	* @param string courseid
 	* @param string courseidfield
-	* @return integer
+	* @return int
 	*          1 admin
 	*          2 coursecreator
 	*          3 editing teacher
@@ -888,7 +888,7 @@ hiddensections,lang,theme,timecreated,timemodified";
  * returns users having $idrole in course identified by $idcourse
  * @param string $idcourse unique identifierr of course
  * @param string $idfield  name of field used to finc course (idnumber, id, shortname), should be unique
- * @param integer $idrole  role searched for (0 = any role)
+ * @param int $idrole  role searched for (0 = any role)
  */
 
 	function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole = 0) {

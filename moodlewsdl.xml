@@ -27,18 +27,18 @@
 			<xsd:complexType name="userRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="auth" type="xsd:string" />
-					<xsd:element name="confirmed" type="xsd:integer" />
-					<xsd:element name="policyagreed" type="xsd:integer" />
-					<xsd:element name="deleted" type="xsd:integer" />
+					<xsd:element name="confirmed" type="xsd:int" />
+					<xsd:element name="policyagreed" type="xsd:int" />
+					<xsd:element name="deleted" type="xsd:int" />
 					<xsd:element name="username" type="xsd:string" />
 					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="firstname" type="xsd:string" />
 					<xsd:element name="lastname" type="xsd:string" />
 					<xsd:element name="email" type="xsd:string" />
 					<xsd:element name="icq" type="xsd:string" />
-					<xsd:element name="emailstop" type="xsd:integer" />
+					<xsd:element name="emailstop" type="xsd:int" />
 					<xsd:element name="skype" type="xsd:string" />
 					<xsd:element name="yahoo" type="xsd:string" />
 					<xsd:element name="aim" type="xsd:string" />
@@ -51,13 +51,13 @@
 					<xsd:element name="city" type="xsd:string" />
 					<xsd:element name="country" type="xsd:string" />
 					<xsd:element name="lang" type="xsd:string" />
-					<xsd:element name="timezone" type="xsd:integer" />
-					<xsd:element name="mnethostid" type="xsd:integer" />
+					<xsd:element name="timezone" type="xsd:int" />
+					<xsd:element name="mnethostid" type="xsd:int" />
 					<xsd:element name="lastip" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string"
 						nillable="true" />
-					<xsd:element name="role" type="xsd:integer" />
+					<xsd:element name="role" type="xsd:int" />
 					<xsd:element name="profile" type="tns:profileitemRecords" />
 				</xsd:all>
 			</xsd:complexType>
@@ -75,14 +75,14 @@
 			<xsd:complexType name="groupRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="picture" type="xsd:integer" />
-					<xsd:element name="hidepicture" type="xsd:integer" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="picture" type="xsd:int" />
+					<xsd:element name="hidepicture" type="xsd:int" />
+					<xsd:element name="timecreated" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 					<xsd:element name="enrolmentkey" type="xsd:string" />
 				</xsd:all>
 			</xsd:complexType>
@@ -100,13 +100,13 @@
 			<xsd:complexType name="groupingRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="configdata" type="xsd:string" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="timecreated" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -122,14 +122,14 @@
 				<xsd:complexType name="cohortRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="contextid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="contextid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="component" type="xsd:string" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="timecreated" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -148,12 +148,12 @@
 			<xsd:complexType name="sectionRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
-					<xsd:element name="section" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
+					<xsd:element name="section" type="xsd:int" />
 					<xsd:element name="sequence" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
-					<xsd:element name="visible" type="xsd:integer" />
+					<xsd:element name="visible" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -170,38 +170,38 @@
 			<xsd:complexType name="courseRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="category" type="xsd:integer" />
-					<xsd:element name="sortorder" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="category" type="xsd:int" />
+					<xsd:element name="sortorder" type="xsd:int" />
 					<xsd:element name="password" type="xsd:string" />
 					<xsd:element name="fullname" type="xsd:string" />
 					<xsd:element name="shortname" type="xsd:string" />
 					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="format" type="xsd:string" />
-					<xsd:element name="showgrades" type="xsd:integer" />
-					<xsd:element name="newsitems" type="xsd:integer" />
+					<xsd:element name="showgrades" type="xsd:int" />
+					<xsd:element name="newsitems" type="xsd:int" />
 					<xsd:element name="teacher" type="xsd:string" />
 					<xsd:element name="teachers" type="xsd:string" />
 					<xsd:element name="student" type="xsd:string" />
 					<xsd:element name="students" type="xsd:string" />
-					<xsd:element name="guest" type="xsd:integer" />
-					<xsd:element name="startdate" type="xsd:integer" />
-					<xsd:element name="enrolperiod" type="xsd:integer" />
-					<xsd:element name="numsections" type="xsd:integer" />
-					<xsd:element name="marker" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
-					<xsd:element name="hiddensections" type="xsd:integer" />
-					<xsd:element name="groupmode" type="xsd:integer" />
-					<xsd:element name="groupmodeforce" type="xsd:integer" />
+					<xsd:element name="guest" type="xsd:int" />
+					<xsd:element name="startdate" type="xsd:int" />
+					<xsd:element name="enrolperiod" type="xsd:int" />
+					<xsd:element name="numsections" type="xsd:int" />
+					<xsd:element name="marker" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
+					<xsd:element name="hiddensections" type="xsd:int" />
+					<xsd:element name="groupmode" type="xsd:int" />
+					<xsd:element name="groupmodeforce" type="xsd:int" />
 					<xsd:element name="lang" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="cost" type="xsd:string" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="metacourse" type="xsd:integer" />
-					<xsd:element name="myrole" type="xsd:integer" />
+					<xsd:element name="timecreated" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="metacourse" type="xsd:int" />
+					<xsd:element name="myrole" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -240,9 +240,9 @@
 					<xsd:element name="error" type="xsd:string" />
 					<xsd:element name="userid" type="xsd:string" />
 					<xsd:element name="course" type="xsd:string" />
-					<xsd:element name="timestart" type="xsd:integer" />
-					<xsd:element name="timeend" type="xsd:integer" />
-					<xsd:element name="timeaccess" type="xsd:integer" />
+					<xsd:element name="timestart" type="xsd:int" />
+					<xsd:element name="timeend" type="xsd:int" />
+					<xsd:element name="timeaccess" type="xsd:int" />
 					<xsd:element name="enrol" type="xsd:string" />
 				</xsd:all>
 			</xsd:complexType>
@@ -259,23 +259,23 @@
 			<xsd:complexType name="eventRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="format" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
-					<xsd:element name="groupid" type="xsd:integer" />
-					<xsd:element name="userid" type="xsd:integer" />
-					<xsd:element name="repeatid" type="xsd:integer" />
+					<xsd:element name="format" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
+					<xsd:element name="groupid" type="xsd:int" />
+					<xsd:element name="userid" type="xsd:int" />
+					<xsd:element name="repeatid" type="xsd:int" />
 					<xsd:element name="modulename" type="xsd:string" />
-					<xsd:element name="instance" type="xsd:integer" />
+					<xsd:element name="instance" type="xsd:int" />
 					<xsd:element name="eventtype" type="xsd:string" />
-					<xsd:element name="timestart" type="xsd:integer" />
-					<xsd:element name="timeduration" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
+					<xsd:element name="timestart" type="xsd:int" />
+					<xsd:element name="timeduration" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
 					<xsd:element name="uuid" type="xsd:string" />
-					<xsd:element name="sequence" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="sequence" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -292,18 +292,18 @@
 			<xsd:complexType name="changeRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
-					<xsd:element name="instance" type="xsd:integer" />
-					<xsd:element name="resid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
+					<xsd:element name="instance" type="xsd:int" />
+					<xsd:element name="resid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="date" type="xsd:string" />
-					<xsd:element name="timestamp" type="xsd:integer" />
+					<xsd:element name="timestamp" type="xsd:int" />
 					<xsd:element name="type" type="xsd:string" />
 					<xsd:element name="author" type="xsd:string" />
 					<xsd:element name="link" type="xsd:string" />
 					<xsd:element name="url" type="xsd:string" />
-					<xsd:element name="visible" type="xsd:integer" />
+					<xsd:element name="visible" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -319,11 +319,11 @@
 			<xsd:complexType name="roleRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="shortname" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="sortorder" type="xsd:integer" />
+					<xsd:element name="sortorder" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -339,16 +339,16 @@
 			<xsd:complexType name="categoryRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string"
 						nillable="true" />
-					<xsd:element name="parent" type="xsd:integer" />
-					<xsd:element name="sortorder" type="xsd:integer" />
-					<xsd:element name="coursecount" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="depth" type="xsd:integer" />
+					<xsd:element name="parent" type="xsd:int" />
+					<xsd:element name="sortorder" type="xsd:int" />
+					<xsd:element name="coursecount" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="depth" type="xsd:int" />
 					<xsd:element name="path" type="xsd:string" />
 				</xsd:all>
 			</xsd:complexType>
@@ -368,20 +368,20 @@
 			<xsd:complexType name="resourceRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="type" type="xsd:string" />
 					<xsd:element name="reference" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="alltext" type="xsd:string" />
 					<xsd:element name="popup" type="xsd:string" />
 					<xsd:element name="options" type="xsd:string" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="section" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
-					<xsd:element name="groupmode" type="xsd:integer" />
-					<xsd:element name="coursemodule" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="section" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
+					<xsd:element name="groupmode" type="xsd:int" />
+					<xsd:element name="coursemodule" type="xsd:int" />
 					<xsd:element name="url" type="xsd:string" />
 					<xsd:element name="timemodified_ut" type="xsd:string" />
 				</xsd:all>
@@ -400,13 +400,13 @@
 			<xsd:complexType name="activityRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="time" type="xsd:integer" />
-					<xsd:element name="userid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="time" type="xsd:int" />
+					<xsd:element name="userid" type="xsd:int" />
 					<xsd:element name="ip" type="xsd:string" />
-					<xsd:element name="course" type="xsd:integer" />
-					<xsd:element name="module" type="xsd:integer" />
-					<xsd:element name="cmid" type="xsd:integer" />
+					<xsd:element name="course" type="xsd:int" />
+					<xsd:element name="module" type="xsd:int" />
+					<xsd:element name="cmid" type="xsd:int" />
 					<xsd:element name="action" type="xsd:string" />
 					<xsd:element name="url" type="xsd:string" />
 					<xsd:element name="info" type="xsd:string" />
@@ -415,10 +415,10 @@
 					<xsd:element name="firstname" type="xsd:string" />
 					<xsd:element name="lastname" type="xsd:string" />
 					<xsd:element name="email" type="xsd:string" />
-					<xsd:element name="firstaccess" type="xsd:integer" />
-					<xsd:element name="lastaccess" type="xsd:integer" />
-					<xsd:element name="lastlogin" type="xsd:integer" />
-					<xsd:element name="currentlogin" type="xsd:integer" />
+					<xsd:element name="firstaccess" type="xsd:int" />
+					<xsd:element name="lastaccess" type="xsd:int" />
+					<xsd:element name="lastlogin" type="xsd:int" />
+					<xsd:element name="currentlogin" type="xsd:int" />
 					<xsd:element name="DLA" type="xsd:string" />
 					<xsd:element name="DFA" type="xsd:string" />
 					<xsd:element name="DLL" type="xsd:string" />
@@ -442,7 +442,7 @@
 					<xsd:element name="fileurl" type="xsd:string" />
 					<xsd:element name="filename" type="xsd:string" />
 					<xsd:element name="filepath" type="xsd:string" />
-					<xsd:element name="filesize" type="xsd:integer" />	
+					<xsd:element name="filesize" type="xsd:int" />	
 					<xsd:element name="filecontent" type="xsd:string" />				
 				</xsd:all>
 			</xsd:complexType>
@@ -484,22 +484,22 @@
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />		
 					<!-- database content of table mdl_assignment_submissions -->
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="assignment" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="assignment" type="xsd:int" />
 					<xsd:element name="assignmenttype" type="xsd:string" />
 					
-					<xsd:element name="userid" type="xsd:integer" />
-					<xsd:element name="timecreated" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="numfiles" type="xsd:integer" />
+					<xsd:element name="userid" type="xsd:int" />
+					<xsd:element name="timecreated" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="numfiles" type="xsd:int" />
 					<xsd:element name="data1" type="xsd:string" />
 					<xsd:element name="data2" type="xsd:string" />
-					<xsd:element name="grade" type="xsd:integer" />
+					<xsd:element name="grade" type="xsd:int" />
 					<xsd:element name="submissioncomment" type="xsd:string" />
-					<xsd:element name="format" type="xsd:integer" />
-					<xsd:element name="teacher" type="xsd:integer" />
-					<xsd:element name="timemarked" type="xsd:integer" />
-					<xsd:element name="mailed" type="xsd:integer" />
+					<xsd:element name="format" type="xsd:int" />
+					<xsd:element name="teacher" type="xsd:int" />
+					<xsd:element name="timemarked" type="xsd:int" />
+					<xsd:element name="mailed" type="xsd:int" />
 					<!--  extra fields -->
 					<xsd:element name="useridnumber" type="xsd:string" />
 					<xsd:element name="userusername" type="xsd:string" />
@@ -523,11 +523,11 @@
 			<xsd:complexType name="labelRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="content" type="xsd:string" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -543,24 +543,24 @@
 			<xsd:complexType name="forumRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="type" type="xsd:string" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="intro" type="xsd:string" />
-					<xsd:element name="assessed" type="xsd:integer" />
-					<xsd:element name="assesstimestart" type="xsd:integer" />
-					<xsd:element name="assesstimefinish" type="xsd:integer" />
-					<xsd:element name="scale" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="forcesubscribe" type="xsd:integer" />
-					<xsd:element name="trackingtype" type="xsd:integer" />
-					<xsd:element name="rsstype" type="xsd:integer" />
-					<xsd:element name="rssarticles" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="warnafter" type="xsd:integer" />
-					<xsd:element name="blockafter" type="xsd:integer" />
-					<xsd:element name="blockperiod" type="xsd:integer" />
+					<xsd:element name="assessed" type="xsd:int" />
+					<xsd:element name="assesstimestart" type="xsd:int" />
+					<xsd:element name="assesstimefinish" type="xsd:int" />
+					<xsd:element name="scale" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="forcesubscribe" type="xsd:int" />
+					<xsd:element name="trackingtype" type="xsd:int" />
+					<xsd:element name="rsstype" type="xsd:int" />
+					<xsd:element name="rssarticles" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="warnafter" type="xsd:int" />
+					<xsd:element name="blockafter" type="xsd:int" />
+					<xsd:element name="blockperiod" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -578,25 +578,25 @@
 			<xsd:complexType name="assignmentRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="format" type="xsd:integer" />
+					<xsd:element name="format" type="xsd:int" />
 					<xsd:element name="assignmenttype" type="xsd:string" />
-					<xsd:element name="resubmit" type="xsd:integer" />
-					<xsd:element name="preventlate" type="xsd:integer" />
-					<xsd:element name="emailteachers" type="xsd:integer" />
-					<xsd:element name="var1" type="xsd:integer" />
-					<xsd:element name="var2" type="xsd:integer" />
-					<xsd:element name="var3" type="xsd:integer" />
-					<xsd:element name="var4" type="xsd:integer" />
-					<xsd:element name="var5" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="timedue" type="xsd:integer" />
-					<xsd:element name="timeavailable" type="xsd:integer" />
-					<xsd:element name="grade" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="resubmit" type="xsd:int" />
+					<xsd:element name="preventlate" type="xsd:int" />
+					<xsd:element name="emailteachers" type="xsd:int" />
+					<xsd:element name="var1" type="xsd:int" />
+					<xsd:element name="var2" type="xsd:int" />
+					<xsd:element name="var3" type="xsd:int" />
+					<xsd:element name="var4" type="xsd:int" />
+					<xsd:element name="var5" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="timedue" type="xsd:int" />
+					<xsd:element name="timeavailable" type="xsd:int" />
+					<xsd:element name="grade" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -612,19 +612,19 @@
 			<xsd:complexType name="databaseRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="intro" type="xsd:string" />
-					<xsd:element name="comments" type="xsd:integer" />
-					<xsd:element name="timeavailablefrom" type="xsd:integer" />
-					<xsd:element name="timeavailableto" type="xsd:integer" />
-					<xsd:element name="timeviewfrom" type="xsd:integer" />
-					<xsd:element name="timeviewto" type="xsd:integer" />
-					<xsd:element name="requiredentries" type="xsd:integer" />
-					<xsd:element name="requiredentriestoview" type="xsd:integer" />
-					<xsd:element name="maxentries" type="xsd:integer" />
-					<xsd:element name="ressarticles" type="xsd:integer" />
+					<xsd:element name="comments" type="xsd:int" />
+					<xsd:element name="timeavailablefrom" type="xsd:int" />
+					<xsd:element name="timeavailableto" type="xsd:int" />
+					<xsd:element name="timeviewfrom" type="xsd:int" />
+					<xsd:element name="timeviewto" type="xsd:int" />
+					<xsd:element name="requiredentries" type="xsd:int" />
+					<xsd:element name="requiredentriestoview" type="xsd:int" />
+					<xsd:element name="maxentries" type="xsd:int" />
+					<xsd:element name="ressarticles" type="xsd:int" />
 					<xsd:element name="singletemplate" type="xsd:string" />
 					<xsd:element name="listtemplate" type="xsd:string" />
 					<xsd:element name="listtemplateheader" type="xsd:string" />
@@ -635,13 +635,13 @@
 					<xsd:element name="csstemplate" type="xsd:string" />
 					<xsd:element name="jstemplate" type="xsd:string" />
 					<xsd:element name="asearchtemplate" type="xsd:string" />
-					<xsd:element name="approval" type="xsd:integer" />
-					<xsd:element name="scale" type="xsd:integer" />
-					<xsd:element name="assessed" type="xsd:integer" />
-					<xsd:element name="defaultsort" type="xsd:integer" />
-					<xsd:element name="defaultsortdir" type="xsd:integer" />
-					<xsd:element name="editany" type="xsd:integer" />
-					<xsd:element name="notification" type="xsd:integer" />
+					<xsd:element name="approval" type="xsd:int" />
+					<xsd:element name="scale" type="xsd:int" />
+					<xsd:element name="assessed" type="xsd:int" />
+					<xsd:element name="defaultsort" type="xsd:int" />
+					<xsd:element name="defaultsortdir" type="xsd:int" />
+					<xsd:element name="editany" type="xsd:int" />
+					<xsd:element name="notification" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -657,22 +657,22 @@
 			<xsd:complexType name="wikiRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="wtype" type="xsd:string" />
-					<xsd:element name="ewikiacceptbinary" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="ewikiacceptbinary" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="pagename" type="xsd:string" />
-					<xsd:element name="ewikiprinttitle" type="xsd:integer" />
-					<xsd:element name="htmlmode" type="xsd:integer" />
-					<xsd:element name="disablecamelcase" type="xsd:integer" />
-					<xsd:element name="setpageflags" type="xsd:integer" />
-					<xsd:element name="strippages" type="xsd:integer" />
-					<xsd:element name="removepages" type="xsd:integer" />
-					<xsd:element name="revertchanges" type="xsd:integer" />
+					<xsd:element name="ewikiprinttitle" type="xsd:int" />
+					<xsd:element name="htmlmode" type="xsd:int" />
+					<xsd:element name="disablecamelcase" type="xsd:int" />
+					<xsd:element name="setpageflags" type="xsd:int" />
+					<xsd:element name="strippages" type="xsd:int" />
+					<xsd:element name="removepages" type="xsd:int" />
+					<xsd:element name="revertchanges" type="xsd:int" />
 					<xsd:element name="initialcontent" type="xsd:string" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 			<xsd:complexType name="wikiRecords">
@@ -687,20 +687,20 @@
 			<xsd:complexType name="pageWikiRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 
 					<xsd:element name="pagename" type="xsd:string" />
-					<xsd:element name="version" type="xsd:integer" />
-					<xsd:element name="flags" type="xsd:integer" />
+					<xsd:element name="version" type="xsd:int" />
+					<xsd:element name="flags" type="xsd:int" />
 					<xsd:element name="content" type="xsd:string" />
 					<xsd:element name="author" type="xsd:string" />
-					<xsd:element name="userid" type="xsd:integer" />
-					<xsd:element name="created" type="xsd:integer" />
-					<xsd:element name="lastmodified" type="xsd:integer" />
+					<xsd:element name="userid" type="xsd:int" />
+					<xsd:element name="created" type="xsd:int" />
+					<xsd:element name="lastmodified" type="xsd:int" />
 					<xsd:element name="refs" type="xsd:string" />
 					<xsd:element name="meta" type="xsd:string" />
-					<xsd:element name="hits" type="xsd:integer" />
-					<xsd:element name="wiki" type="xsd:integer" />
+					<xsd:element name="hits" type="xsd:int" />
+					<xsd:element name="wiki" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -716,16 +716,16 @@
 			<xsd:complexType name="quizRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="intro" type="xsd:string" />
-					<xsd:element name="timeopen" type="xsd:integer" />
-					<xsd:element name="timeclose" type="xsd:integer" />
-					<xsd:element name="shufflequestions" type="xsd:integer" />
-					<xsd:element name="shuffleanswers" type="xsd:integer" />					
+					<xsd:element name="timeopen" type="xsd:int" />
+					<xsd:element name="timeclose" type="xsd:int" />
+					<xsd:element name="shufflequestions" type="xsd:int" />
+					<xsd:element name="shuffleanswers" type="xsd:int" />					
 					<xsd:element name="questions" type="xsd:string" />
-					<xsd:element name="timelimit" type="xsd:integer" />
+					<xsd:element name="timelimit" type="xsd:int" />
 					<xsd:element name="data" type="xsd:string" />
 					
 				</xsd:all>
@@ -848,10 +848,10 @@
 			<xsd:complexType name="userDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="confirmed" type="xsd:integer" />
-					<xsd:element name="policyagreed" type="xsd:integer" />
-					<xsd:element name="deleted" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="confirmed" type="xsd:int" />
+					<xsd:element name="policyagreed" type="xsd:int" />
+					<xsd:element name="deleted" type="xsd:int" />
 					<xsd:element name="username" type="xsd:string" />
 					<xsd:element name="auth" type="xsd:string" />
 					<xsd:element name="password" type="xsd:string" />
@@ -860,7 +860,7 @@
 					<xsd:element name="firstname" type="xsd:string" />
 					<xsd:element name="lastname" type="xsd:string" />
 					<xsd:element name="email" type="xsd:string" />
-					<xsd:element name="emailstop" type="xsd:integer" />
+					<xsd:element name="emailstop" type="xsd:int" />
 					<xsd:element name="icq" type="xsd:string" />
 					<xsd:element name="skype" type="xsd:string" />
 					<xsd:element name="yahoo" type="xsd:string" />
@@ -874,11 +874,11 @@
 					<xsd:element name="city" type="xsd:string" />
 					<xsd:element name="country" type="xsd:string" />
 					<xsd:element name="lang" type="xsd:string" />
-					<xsd:element name="timezone" type="xsd:integer" />
+					<xsd:element name="timezone" type="xsd:int" />
 					<xsd:element name="lastip" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="mnethostid" type="xsd:integer" />
+					<xsd:element name="mnethostid" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -894,34 +894,34 @@
 			<xsd:complexType name="courseDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="category" type="xsd:integer" />
-					<xsd:element name="sortorder" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="category" type="xsd:int" />
+					<xsd:element name="sortorder" type="xsd:int" />
 					<xsd:element name="password" type="xsd:string" />
 					<xsd:element name="fullname" type="xsd:string" />
 					<xsd:element name="shortname" type="xsd:string" />
 					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="format" type="xsd:string" />
-					<xsd:element name="showgrades" type="xsd:integer" />
-					<xsd:element name="newsitems" type="xsd:integer" />
+					<xsd:element name="showgrades" type="xsd:int" />
+					<xsd:element name="newsitems" type="xsd:int" />
 					<xsd:element name="teacher" type="xsd:string" />
 					<xsd:element name="teachers" type="xsd:string" />
 					<xsd:element name="student" type="xsd:string" />
 					<xsd:element name="students" type="xsd:string" />
-					<xsd:element name="guest" type="xsd:integer" />
-					<xsd:element name="startdate" type="xsd:integer" />
-					<xsd:element name="enrolperiod" type="xsd:integer" />
-					<xsd:element name="marker" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
-					<xsd:element name="hiddensections" type="xsd:integer" />
-					<xsd:element name="groupmode" type="xsd:integer" />
-					<xsd:element name="groupmodeforce" type="xsd:integer" />
+					<xsd:element name="guest" type="xsd:int" />
+					<xsd:element name="startdate" type="xsd:int" />
+					<xsd:element name="enrolperiod" type="xsd:int" />
+					<xsd:element name="marker" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
+					<xsd:element name="hiddensections" type="xsd:int" />
+					<xsd:element name="groupmode" type="xsd:int" />
+					<xsd:element name="groupmodeforce" type="xsd:int" />
 					<xsd:element name="lang" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="cost" type="xsd:string" />
-					<xsd:element name="metacourse" type="xsd:integer" />
+					<xsd:element name="metacourse" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -938,8 +938,8 @@
 			<xsd:complexType name="labelDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="content" type="xsd:string" />
 
@@ -959,13 +959,13 @@
 			<xsd:complexType name="groupDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="enrolmentkey" type="xsd:string" />
-					<xsd:element name="picture" type="xsd:integer" />
-					<xsd:element name="hidepicture" type="xsd:integer" />
+					<xsd:element name="picture" type="xsd:int" />
+					<xsd:element name="hidepicture" type="xsd:int" />
 
 				</xsd:all>
 			</xsd:complexType>
@@ -983,8 +983,8 @@
 			<xsd:complexType name="cohortDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="categoryid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="categoryid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="component" type="xsd:string" />
@@ -1005,8 +1005,8 @@
 			<xsd:complexType name="groupingDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="courseid" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 
@@ -1025,13 +1025,13 @@
 			<xsd:complexType name="categoryDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="parent" type="xsd:integer" />
-					<xsd:element name="sortorder" type="xsd:integer" />
-					<xsd:element name="visible" type="xsd:integer" />
-					<xsd:element name="depth" type="xsd:integer" />
+					<xsd:element name="parent" type="xsd:int" />
+					<xsd:element name="sortorder" type="xsd:int" />
+					<xsd:element name="visible" type="xsd:int" />
+					<xsd:element name="depth" type="xsd:int" />
 					<xsd:element name="path" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 				</xsd:all>
@@ -1049,12 +1049,12 @@
 			<xsd:complexType name="sectionDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
-					<xsd:element name="section" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
+					<xsd:element name="section" type="xsd:int" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="sequence" type="xsd:string" />
-					<xsd:element name="visible" type="xsd:integer" />
+					<xsd:element name="visible" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1070,24 +1070,24 @@
 			<xsd:complexType name="forumDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="type" type="xsd:string" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="intro" type="xsd:string" />
-					<xsd:element name="assessed" type="xsd:integer" />
-					<xsd:element name="assesstimestart" type="xsd:integer" />
-					<xsd:element name="assesstimefinish" type="xsd:integer" />
-					<xsd:element name="scale" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="forcesubscribe" type="xsd:integer" />
-					<xsd:element name="trackingtype" type="xsd:integer" />
-					<xsd:element name="rsstype" type="xsd:integer" />
-					<xsd:element name="rssarticles" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
-					<xsd:element name="warnafter" type="xsd:integer" />
-					<xsd:element name="blockafter" type="xsd:integer" />
-					<xsd:element name="blockperiod" type="xsd:integer" />
+					<xsd:element name="assessed" type="xsd:int" />
+					<xsd:element name="assesstimestart" type="xsd:int" />
+					<xsd:element name="assesstimefinish" type="xsd:int" />
+					<xsd:element name="scale" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="forcesubscribe" type="xsd:int" />
+					<xsd:element name="trackingtype" type="xsd:int" />
+					<xsd:element name="rsstype" type="xsd:int" />
+					<xsd:element name="rssarticles" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
+					<xsd:element name="warnafter" type="xsd:int" />
+					<xsd:element name="blockafter" type="xsd:int" />
+					<xsd:element name="blockperiod" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1103,25 +1103,25 @@
 			<xsd:complexType name="assignmentDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
-					<xsd:element name="format" type="xsd:integer" />
+					<xsd:element name="format" type="xsd:int" />
 					<xsd:element name="assignmenttype" type="xsd:string" />
-					<xsd:element name="resubmit" type="xsd:integer" />
-					<xsd:element name="preventlate" type="xsd:integer" />
-					<xsd:element name="emailteachers" type="xsd:integer" />
-					<xsd:element name="var1" type="xsd:integer" />
-					<xsd:element name="var2" type="xsd:integer" />
-					<xsd:element name="var3" type="xsd:integer" />
-					<xsd:element name="var4" type="xsd:integer" />
-					<xsd:element name="var5" type="xsd:integer" />
-					<xsd:element name="maxbytes" type="xsd:integer" />
-					<xsd:element name="timedue" type="xsd:integer" />
-					<xsd:element name="timeavailable" type="xsd:integer" />
-					<xsd:element name="grade" type="xsd:integer" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="resubmit" type="xsd:int" />
+					<xsd:element name="preventlate" type="xsd:int" />
+					<xsd:element name="emailteachers" type="xsd:int" />
+					<xsd:element name="var1" type="xsd:int" />
+					<xsd:element name="var2" type="xsd:int" />
+					<xsd:element name="var3" type="xsd:int" />
+					<xsd:element name="var4" type="xsd:int" />
+					<xsd:element name="var5" type="xsd:int" />
+					<xsd:element name="maxbytes" type="xsd:int" />
+					<xsd:element name="timedue" type="xsd:int" />
+					<xsd:element name="timeavailable" type="xsd:int" />
+					<xsd:element name="grade" type="xsd:int" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1138,19 +1138,19 @@
 			<xsd:complexType name="databaseDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="intro" type="xsd:string" />
-					<xsd:element name="comments" type="xsd:integer" />
-					<xsd:element name="timeavailablefrom" type="xsd:integer" />
-					<xsd:element name="timeavailableto" type="xsd:integer" />
-					<xsd:element name="timeviewfrom" type="xsd:integer" />
-					<xsd:element name="timeviewto" type="xsd:integer" />
-					<xsd:element name="requiredentries" type="xsd:integer" />
-					<xsd:element name="requiredentriestoview" type="xsd:integer" />
-					<xsd:element name="maxentries" type="xsd:integer" />
-					<xsd:element name="ressarticles" type="xsd:integer" />
+					<xsd:element name="comments" type="xsd:int" />
+					<xsd:element name="timeavailablefrom" type="xsd:int" />
+					<xsd:element name="timeavailableto" type="xsd:int" />
+					<xsd:element name="timeviewfrom" type="xsd:int" />
+					<xsd:element name="timeviewto" type="xsd:int" />
+					<xsd:element name="requiredentries" type="xsd:int" />
+					<xsd:element name="requiredentriestoview" type="xsd:int" />
+					<xsd:element name="maxentries" type="xsd:int" />
+					<xsd:element name="ressarticles" type="xsd:int" />
 					<xsd:element name="singletemplate" type="xsd:string" />
 					<xsd:element name="listtemplate" type="xsd:string" />
 					<xsd:element name="listtemplateheader" type="xsd:string" />
@@ -1161,13 +1161,13 @@
 					<xsd:element name="csstemplate" type="xsd:string" />
 					<xsd:element name="jstemplate" type="xsd:string" />
 					<xsd:element name="asearchtemplate" type="xsd:string" />
-					<xsd:element name="approval" type="xsd:integer" />
-					<xsd:element name="scale" type="xsd:integer" />
-					<xsd:element name="assessed" type="xsd:integer" />
-					<xsd:element name="defaultsort" type="xsd:integer" />
-					<xsd:element name="defaultsortdir" type="xsd:integer" />
-					<xsd:element name="editany" type="xsd:integer" />
-					<xsd:element name="notification" type="xsd:integer" />
+					<xsd:element name="approval" type="xsd:int" />
+					<xsd:element name="scale" type="xsd:int" />
+					<xsd:element name="assessed" type="xsd:int" />
+					<xsd:element name="defaultsort" type="xsd:int" />
+					<xsd:element name="defaultsortdir" type="xsd:int" />
+					<xsd:element name="editany" type="xsd:int" />
+					<xsd:element name="notification" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1183,22 +1183,22 @@
 			<xsd:complexType name="wikiDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="summary" type="xsd:string" />
 					<xsd:element name="wtype" type="xsd:string" />
-					<xsd:element name="ewikiacceptbinary" type="xsd:integer" />
-					<xsd:element name="course" type="xsd:integer" />
+					<xsd:element name="ewikiacceptbinary" type="xsd:int" />
+					<xsd:element name="course" type="xsd:int" />
 					<xsd:element name="pagename" type="xsd:string" />
-					<xsd:element name="ewikiprinttitle" type="xsd:integer" />
-					<xsd:element name="htmlmode" type="xsd:integer" />
-					<xsd:element name="disablecamelcase" type="xsd:integer" />
-					<xsd:element name="setpageflags" type="xsd:integer" />
-					<xsd:element name="strippages" type="xsd:integer" />
-					<xsd:element name="removepages" type="xsd:integer" />
-					<xsd:element name="revertchanges" type="xsd:integer" />
+					<xsd:element name="ewikiprinttitle" type="xsd:int" />
+					<xsd:element name="htmlmode" type="xsd:int" />
+					<xsd:element name="disablecamelcase" type="xsd:int" />
+					<xsd:element name="setpageflags" type="xsd:int" />
+					<xsd:element name="strippages" type="xsd:int" />
+					<xsd:element name="removepages" type="xsd:int" />
+					<xsd:element name="revertchanges" type="xsd:int" />
 					<xsd:element name="initialcontent" type="xsd:string" />
-					<xsd:element name="timemodified" type="xsd:integer" />
+					<xsd:element name="timemodified" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1214,19 +1214,19 @@
 			<xsd:complexType name="pageWikiDatum">
 				<xsd:all>
 					<xsd:element name="action" type="xsd:string" />
-					<xsd:element name="id" type="xsd:integer" />
+					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="pagename" type="xsd:string" />
-					<xsd:element name="version" type="xsd:integer" />
-					<xsd:element name="flags" type="xsd:integer" />
+					<xsd:element name="version" type="xsd:int" />
+					<xsd:element name="flags" type="xsd:int" />
 					<xsd:element name="content" type="xsd:string" />
 					<xsd:element name="author" type="xsd:string" />
-					<xsd:element name="userid" type="xsd:integer" />
-					<xsd:element name="created" type="xsd:integer" />
-					<xsd:element name="lastmodified" type="xsd:integer" />
+					<xsd:element name="userid" type="xsd:int" />
+					<xsd:element name="created" type="xsd:int" />
+					<xsd:element name="lastmodified" type="xsd:int" />
 					<xsd:element name="refs" type="xsd:string" />
 					<xsd:element name="meta" type="xsd:string" />
-					<xsd:element name="hits" type="xsd:integer" />
-					<xsd:element name="wiki" type="xsd:integer" />
+					<xsd:element name="hits" type="xsd:int" />
+					<xsd:element name="wiki" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
@@ -1274,7 +1274,7 @@
 
 			<xsd:complexType name="loginReturn">
 				<xsd:all>
-					<xsd:element name="client" type="xsd:integer" />
+					<xsd:element name="client" type="xsd:int" />
 					<xsd:element name="sessionkey" type="xsd:string" />
 				</xsd:all>
 			</xsd:complexType>
@@ -1705,7 +1705,7 @@
 	</message>
 
 	<message name="logoutRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 	</message>
 
@@ -1714,7 +1714,7 @@
 	</message>
 
 	<message name="integerResponse">
-		<part name="return" type="xsd:integer" />
+		<part name="return" type="xsd:int" />
 	</message>
 
 	<message name="booleanResponse">
@@ -1733,13 +1733,13 @@
 
 	<message name="noinputRequest">
 		<documentation> PP No further input needed </documentation>
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 	</message>
 
 	<message name="oneValueRequest">
 		<documentation>PP one value to search for </documentation>
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="value" type="xsd:string" />
 	</message>
@@ -1747,7 +1747,7 @@
 	<message name="valueAndIdRequest">
 		<documentation>PP one value to search for in column id
 		</documentation>
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="value" type="xsd:string" />
 		<part name="id" type="xsd:string" />
@@ -1756,7 +1756,7 @@
 	<message name="twoValuesAndIdsRequest">
 		<documentation>PP two value to search for in column id
 		</documentation>
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="value1" type="xsd:string" />
 		<part name="id1" type="xsd:string" />
@@ -1766,19 +1766,19 @@
 	</message>
 
 	<message name="edit_usersRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="users" type="tns:editUsersInput" />
 	</message>
 
 	<message name="add_userRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="user" type="tns:userDatum" />
 	</message>
 
 	<message name="update_userRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="user" type="tns:userDatum" />
 		<part name="idfield" type="xsd:string" />
@@ -1789,7 +1789,7 @@
 	</message>
 
 	<message name="get_usersRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userids" type="tns:getUsersInput" />
 		<part name="idfield" type="xsd:string" />
@@ -1799,114 +1799,114 @@
 	</message>
 
 	<message name="edit_coursesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courses" type="tns:editCoursesInput" />
 	</message>
 
 	<message name="add_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="course" type="tns:courseDatum" />
 	</message>
 
 	<message name="update_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="course" type="tns:courseDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 
 	<message name="add_groupRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="group" type="tns:groupDatum" />
 	</message>
 
 	<message name="update_groupRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="group" type="tns:groupDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 	
 	<message name="add_cohortRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="cohort" type="tns:cohortDatum" />
 	</message>
 
 	<message name="update_cohortRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="cohort" type="tns:cohortDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 
 	<message name="add_groupingRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="grouping" type="tns:groupingDatum" />
 	</message>
 
 	<message name="update_groupingRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="grouping" type="tns:groupingDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 	
 	<message name="add_categoryRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="category" type="tns:categoryDatum" />
 	</message>
 	
 	<message name="add_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="section" type="tns:sectionDatum" />
 	</message>
 	
 	<message name="update_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="section" type="tns:sectionDatum" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 
 <message name="add_labelRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="label" type="tns:labelDatum" />
 	</message>
 
 <message name="add_forumRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="forum" type="tns:forumDatum" />
 	</message>
 	
 <message name="add_assignmentRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="assignment" type="tns:assignmentDatum" />
 	</message>	
 	
 	<message name="add_databaseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="database" type="tns:databaseDatum" />
 	</message>
 	
 	<message name="add_wikiRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="wiki" type="tns:wikiDatum" />
 	</message>
 	
 	<message name="add_pagewikiRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="page" type="tns:pageWikiDatum" />
 	</message>
@@ -1916,7 +1916,7 @@
 	</message>
 
 	<message name="get_coursesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseids" type="tns:getCoursesInput" />
 		<part name="idfield" type="xsd:string" />
@@ -1931,7 +1931,7 @@
 	</message>
 
 	<message name="get_instances_bytypeRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseids" type="tns:getCoursesInput" />
 		<part name="idfield" type="xsd:string" />
@@ -1941,7 +1941,7 @@
 
 
 	<message name="get_groups_bycourseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseid" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
@@ -1956,47 +1956,47 @@
 	</message>
 
 	<message name="get_group_membersRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="groupid" type="xsd:integer" />
+		<part name="groupid" type="xsd:int" />
 	</message>
 
 	<message name="get_grouping_membersRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="groupid" type="xsd:integer" />
+		<part name="groupid" type="xsd:int" />
 	</message>
 	
 	<message name="get_cohort_membersRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="groupid" type="xsd:integer" />
+		<part name="groupid" type="xsd:int" />
 	</message>
 
 
 	<message name="get_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseid" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
 	</message>
 
 	<message name="get_course_byRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="info" type="xsd:string" />
 	</message>
 
 	<message name="get_group_byRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="info" type="xsd:string" />
-		<part name="courseid" type="xsd:integer" />
+		<part name="courseid" type="xsd:int" />
 	</message>
 
 
 	<message name="get_userRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userid" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
@@ -2004,7 +2004,7 @@
 
 
 	<message name="get_gradesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userid" type="xsd:string" />
 		<part name="userfield" type="xsd:string" />
@@ -2020,7 +2020,7 @@
 
 
 	<message name="enrol_studentsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseid" type="xsd:string" />
 		<part name="courseidfield" type="xsd:string" />
@@ -2043,10 +2043,10 @@
 
 
 	<message name="get_eventsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="eventtype" type="xsd:integer" />
-		<part name="ownerid" type="xsd:integer" />
+		<part name="eventtype" type="xsd:int" />
+		<part name="ownerid" type="xsd:int" />
 	</message>
 
 	<message name="get_eventsResponse">
@@ -2054,11 +2054,11 @@
 	</message>
 
 	<message name="get_last_changesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="courseid" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
-		<part name="limit" type="xsd:integer" />
+		<part name="limit" type="xsd:int" />
 	</message>
 
 
@@ -2068,30 +2068,30 @@
 
 
 	<message name="get_my_coursesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="uid" type="xsd:integer" />
+		<part name="uid" type="xsd:int" />
 		<part name="sort" type="xsd:string" />
 	</message>
 
 	<message name="get_my_courses_byRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="uinfo" type="xsd:string" />
 		<part name="sort" type="xsd:string" />
 	</message>
 
 	<message name="get_my_groupRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="uid" type="xsd:integer" />
+		<part name="uid" type="xsd:int" />
 		<part name="idfield" type="xsd:string" />	
-		<part name="courseid" type="xsd:integer" />
+		<part name="courseid" type="xsd:int" />
 		<part name="courseidfield" type="xsd:string" />
 	</message>
 
 	<message name="get_my_groupsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="uid" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
@@ -2099,38 +2099,38 @@
 
 
 	<message name="get_courses_bycategoryRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="categoryid" type="xsd:integer" />
+		<part name="categoryid" type="xsd:int" />
 	</message>
 
 
 	<message name="get_user_byRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userinfo" type="xsd:string" />
 	</message>
 
 	<message name="get_users_bycourseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="idcourse" type="xsd:string" />
 		<part name="idfield" type="xsd:string" />
-		<part name="idrole" type="xsd:integer" />
+		<part name="idrole" type="xsd:int" />
 	</message>
 
 	<message name="has_role_incourseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="iduser" type="xsd:string" />
 		<part name="iduserfield" type="xsd:string" />
 		<part name="idcourse" type="xsd:string" />
 		<part name="idcoursefield" type="xsd:string" />
-		<part name="idrole" type="xsd:integer" />
+		<part name="idrole" type="xsd:int" />
 	</message>
 
 	<message name="get_primaryrole_incourseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="iduser" type="xsd:string" />
 		<part name="iduserfield" type="xsd:string" />
@@ -2139,13 +2139,13 @@
 	</message>
 
 	<message name="get_activitiesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="iduser" type="xsd:string" />
 		<part name="iduserfield" type="xsd:string" />
 		<part name="idcourse" type="xsd:string" />
 		<part name="idcoursefield" type="xsd:string" />
-		<part name="idlimit" type="xsd:integer" />
+		<part name="idlimit" type="xsd:int" />
 	</message>
 
 	<message name="get_sectionsResponse">
@@ -2160,12 +2160,12 @@
 	
 	<!--  added rev 1.6.2 -->
 	<message name="get_assignment_submissionsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="assignmentid" type="xsd:integer" />
+		<part name="assignmentid" type="xsd:int" />
 		<part name="userids" type="tns:getUsersInput" />
 		<part name="useridfield" type="xsd:string" />
-		<part name="timemodified" type="xsd:integer" />
+		<part name="timemodified" type="xsd:int" />
 	</message>
 	
 	<message name="get_assignment_submissionsResponse">
@@ -2175,7 +2175,7 @@
 	
 	<!--  added rev 1.6.4 -->
 	<message name="set_users_profile_valuesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userids" type="tns:getUsersInput" />
 		<part name="useridfield" type="xsd:string" />		
@@ -2183,7 +2183,7 @@
 	</message>
 	
 	<message name="set_user_profile_valuesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="userid" type="xsd:string" />
 		<part name="useridfield" type="xsd:string" />		
@@ -2195,7 +2195,7 @@
 	</message>
 	
 	<message name="get_users_byprofileRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="profilefieldname" type="xsd:string" />		
 		<part name="profilefieldvalue" type="xsd:string" />			
@@ -2203,9 +2203,9 @@
 	
 	<!-- rev 1.6.5 added upon request of tstc.edu  -->
 	<message name="get_quizRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="quizid" type="xsd:integer" />
+		<part name="quizid" type="xsd:int" />
 		<part name="quizformat" type="xsd:string" />
 	</message>
 	
@@ -2221,7 +2221,7 @@
 	</message>
 
 	<message name="get_genericRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="fieldname" type="xsd:string" />
 		<part name="fieldvalue" type="xsd:string" />
@@ -2232,7 +2232,7 @@
 
 	<!-- edit_labels -->
 	<message name="edit_labelsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="labels" type="tns:editLabelsInput" />
 	</message>
@@ -2244,7 +2244,7 @@
 
 	<!-- edit_groups -->
 	<message name="edit_groupsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="groups" type="tns:editGroupsInput" />
 	</message>
@@ -2256,7 +2256,7 @@
 
 	<!-- edit_groupings -->
 	<message name="edit_groupingsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="groupings" type="tns:editGroupingsInput" />
 	</message>
@@ -2268,7 +2268,7 @@
 	
 	<!-- edit_cohorts -->
 	<message name="edit_cohortsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="cohorts" type="tns:editCohortsInput" />
 	</message>
@@ -2281,7 +2281,7 @@
 
 	<!-- edit_assignments -->
 	<message name="edit_assignmentsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="assignments" type="tns:editAssignmentsInput" />
 	</message>
@@ -2293,7 +2293,7 @@
 
 	<!-- edit_databases -->
 	<message name="edit_databasesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="databases" type="tns:editDatabasesInput" />
 	</message>
@@ -2305,7 +2305,7 @@
 
 	<!-- edit_categories -->
 	<message name="edit_categoriesRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="categories" type="tns:editCategoriesInput" />
 	</message>
@@ -2319,7 +2319,7 @@
 
 	<!-- edit_sections -->
 	<message name="edit_sectionsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="sections" type="tns:editSectionsInput" />
 	</message>
@@ -2331,7 +2331,7 @@
 
 	<!-- edit_forums -->
 	<message name="edit_forumsRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="forums" type="tns:editForumsInput" />
 	</message>
@@ -2343,7 +2343,7 @@
 
 	<!-- edit_wikis -->
 	<message name="edit_wikisRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="wikis" type="tns:editWikisInput" />
 	</message>
@@ -2355,7 +2355,7 @@
 
 	<!-- edit_pagesWiki -->
 	<message name="edit_pagesWikiRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="pagesWiki" type="tns:editPagesWikiInput" />
 	</message>
@@ -2367,10 +2367,10 @@
 	<!-- affect_course_to_category -->
 
 	<message name="affect_course_to_categoryRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="courseid" type="xsd:integer" />
-		<part name="categoryid" type="xsd:integer" />
+		<part name="courseid" type="xsd:int" />
+		<part name="categoryid" type="xsd:int" />
 	</message>
 
 	<!-- /affect_course_to_category -->
@@ -2378,39 +2378,39 @@
 	<!-- affect_label_to_section -->
 
 	<message name="affect_label_to_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="labelid" type="xsd:integer" />
-		<part name="sectionid" type="xsd:integer" />
+		<part name="labelid" type="xsd:int" />
+		<part name="sectionid" type="xsd:int" />
 	</message>
 
 	<!-- /affect_label_to_section -->
 
 	<!-- affect_forum_to_section -->
 	<message name="affect_forum_to_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="forumid" type="xsd:integer" />
-		<part name="sectionid" type="xsd:integer" />
-		<part name="groupmode" type="xsd:integer" />
+		<part name="forumid" type="xsd:int" />
+		<part name="sectionid" type="xsd:int" />
+		<part name="groupmode" type="xsd:int" />
 	</message>
 	<!-- /affect_forum_to_section -->
 
 	<!-- affect_section_to_course -->
 	<message name="affect_section_to_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="sectionid" type="xsd:integer" />
-		<part name="courseid" type="xsd:integer" />
+		<part name="sectionid" type="xsd:int" />
+		<part name="courseid" type="xsd:int" />
 	</message>
 	<!-- /affect_section_to_course -->
 
 	<!-- affect_user_to_group -->
 	<message name="affect_user_to_groupRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="userid" type="xsd:integer" />
-		<part name="groupid" type="xsd:integer" />
+		<part name="userid" type="xsd:int" />
+		<part name="groupid" type="xsd:int" />
 	</message>
 
 	<message name="affect_user_to_groupResponse">
@@ -2420,10 +2420,10 @@
 
 	<!-- affect_group_to_grouping -->
 	<message name="affect_group_to_groupingRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="groupid" type="xsd:integer" />
-		<part name="groupingid" type="xsd:integer" />
+		<part name="groupid" type="xsd:int" />
+		<part name="groupingid" type="xsd:int" />
 	</message>
 
 	<message name="affect_group_to_groupingResponse">
@@ -2433,10 +2433,10 @@
 
 	<!-- affect_group_to_course -->
 	<message name="affect_group_to_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="groupid" type="xsd:integer" />
-		<part name="coursid" type="xsd:integer" />
+		<part name="groupid" type="xsd:int" />
+		<part name="coursid" type="xsd:int" />
 	</message>
 
 	<message name="affect_group_to_courseResponse">
@@ -2446,12 +2446,12 @@
 
 	<!-- affect_wiki_to_section -->
 	<message name="affect_wiki_to_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="wikiid" type="xsd:integer" />
-		<part name="sectionid" type="xsd:integer" />
-		<part name="groupmode" type="xsd:integer" />
-		<part name="visible" type="xsd:integer" />
+		<part name="wikiid" type="xsd:int" />
+		<part name="sectionid" type="xsd:int" />
+		<part name="groupmode" type="xsd:int" />
+		<part name="visible" type="xsd:int" />
 	</message>
 	<message name="affect_wiki_to_sectionResponse">
 		<part name="return" type="tns:affectRecord" />
@@ -2460,10 +2460,10 @@
 
 	<!-- affect_database_to_section -->
 	<message name="affect_database_to_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="databaseid" type="xsd:integer" />
-		<part name="sectionid" type="xsd:integer" />
+		<part name="databaseid" type="xsd:int" />
+		<part name="sectionid" type="xsd:int" />
 	</message>
 	<message name="affect_database_to_sectionResponse">
 		<part name="return" type="tns:affectRecord" />
@@ -2472,11 +2472,11 @@
 
 	<!-- affect_assignment_to_section -->
 	<message name="affect_assignment_to_sectionRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="assignmentid" type="xsd:integer" />
-		<part name="sectionid" type="xsd:integer" />
-		<part name="groupmode" type="xsd:integer" />
+		<part name="assignmentid" type="xsd:int" />
+		<part name="sectionid" type="xsd:int" />
+		<part name="groupmode" type="xsd:int" />
 	</message>
 	<message name="affect_assignment_to_sectionResponse">
 		<part name="return" type="tns:affectRecord" />
@@ -2485,29 +2485,29 @@
 
 	<!-- affect_user_to_course -->
 	<message name="affect_user_to_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="userid" type="xsd:integer" />
-		<part name="courseid" type="xsd:integer" />
+		<part name="userid" type="xsd:int" />
+		<part name="courseid" type="xsd:int" />
 		<part name="rolename" type="xsd:string" />
 	</message>
 	<!-- /affect_user_to_course -->
 
 	<!-- affect_pageWiki_to_wiki -->
 	<message name="affect_pageWiki_to_wikiRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="pageid" type="xsd:integer" />
-		<part name="wikiid" type="xsd:integer" />
+		<part name="pageid" type="xsd:int" />
+		<part name="wikiid" type="xsd:int" />
 	</message>
 	<!-- /affect_pageWiki_to_wiki -->
 
 	<!-- remove_user_from_course -->
 	<message name="remove_user_from_courseRequest">
-		<part name="client" type="xsd:integer" />
+		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
-		<part name="userid" type="xsd:integer" />
-		<part name="courseid" type="xsd:integer" />
+		<part name="userid" type="xsd:int" />
+		<part name="courseid" type="xsd:int" />
 		<part name="rolename" type="xsd:string" />
 	</message>
 	<!-- /remove_user_from_course -->
