@@ -2614,6 +2614,16 @@
 				
         </message>
 
+        <message name="get_messages_historyRequest">
+                <part name="client" type="xsd:int" />
+                <part name="sesskey" type="xsd:string" />
+                <part name="useridto" type="xsd:string" />
+                <part name="useridtofield" type="xsd:string" />
+				<part name="useridfrom" type="xsd:string" />
+                <part name="useridfromfield" type="xsd:string" />
+        </message>
+
+
         <message name="get_messagesResponse">
                 <part name="return" type="tns:getMessagesReturn" />
         </message>
@@ -3593,6 +3603,12 @@
 	        <operation name="get_messages">
                 <documentation>MoodleWS: Get  </documentation>
                 <input message="tns:get_messagesRequest" />
+                <output message="tns:get_messagesResponse" />
+        </operation>
+        
+       <operation name="get_messages_history">
+                <documentation>MoodleWS: Get  </documentation>
+                <input message="tns:get_messages_historyRequest" />
                 <output message="tns:get_messagesResponse" />
         </operation>
         
@@ -5408,6 +5424,17 @@
                 <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
                 </output>
         </operation>
+        
+          <operation name="get_messages_history">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_messages_history" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+        
 	
     	  <operation name="message_send">
                 <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#message_send" style="rpc" />

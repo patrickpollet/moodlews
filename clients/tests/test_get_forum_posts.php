@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_forum_posts($lr->getClient(),$lr->getSessionKey(),14,0);
+$res=$client->get_forum_posts($lr->getClient(),$lr->getSessionKey(),0,0);
 print_r($res);
 print($res->getForumPosts());
 

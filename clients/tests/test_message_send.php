@@ -13,7 +13,7 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->message_send($lr->getClient(),$lr->getSessionKey(),'admin','username','un message MDL 195');
+$res=$client->message_send($lr->getClient(),$lr->getSessionKey(),'','','');
 print_r($res);
 print($res->getError());
 print($res->getStatus());

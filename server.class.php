@@ -4240,12 +4240,12 @@ EOSS;
        $discussion->course=$course->id;
        $discussion->forum=$forumid;
        $discussion->name=$discussion->subject;
-      
-       if (! $CFG->wspp_using_moodle20) { 
+
+       if (! $CFG->wspp_using_moodle20) {
 	      $discussion->intro=$discussion->message; // moodle 1.9 calls it intro ..
 	      $discussion->format=1;
-       }else { 
-        
+       }else {
+
 	       $discussion->messageformat=1; //cannot be null
 	       $discussion->messagetrust=0 ; //moodel 2.0
        }
@@ -4312,7 +4312,7 @@ EOSS;
                  //fix missing or misnamed values in input data
        $post->discussion=$discussion->id;
        $post->parent=$parentid;
-       if ($CFG->wspp_using_moodle20) { 
+       if ($CFG->wspp_using_moodle20) {
        $post->messageformat=1; //cannot be null
        $post->messagetrust=0 ; //moodel 2.0
        } else {
@@ -4425,7 +4425,7 @@ EOSS;
             $useridfield='id';
         }
         if (!$user = ws_get_record("user",$useridfield, $userid)) {
-            return $this->error(get_string('ws_userunknown','local_wspp','id='.$userid));
+            return $this->error(get_string('ws_userunknown','local_wspp',$useridfield.'='.$userid));
         }
 
         if ($user->id !=$USER->id && !$this->has_capability('moodle/site:readallmessages', CONTEXT_SYSTEM, 0)) {
@@ -4440,6 +4440,47 @@ EOSS;
     }
 
 
+   /**  rev 1.8
+     * retrieve all unread user's messages
+     * @param int $client
+     * @param string $sesskey
+     * @param string $useridto
+     * @param string $useridtofield
+     * @param string $useridfrom
+     * @param string $useridfromfield
+     * @return messageRecord[]
+     */
+
+    public function get_messages_history ($client,$sesskey,$useridto,$useridtofield,$useridfrom,$useridfromfield) {
+        global $CFG,$USER;
+        if (empty($CFG->messaging))
+            return $this->error(get_string('ws_messaingdisabled', 'local_wspp'));
+
+        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (empty($useridto)) {  //it is me that send it
+            $useridto=$USER->id;
+            $useridtofield='id';
+        }
+        if (!$userto = ws_get_record("user",$useridtofield, $useridto)) {
+            return $this->error(get_string('ws_userunknown','local_wspp',$useridtofield.'='.$useridto));
+        }
+
+        if ($userto->id !=$USER->id && !$this->has_capability('moodle/site:readallmessages', CONTEXT_SYSTEM, 0)) {
+                return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+         if (!$userfrom = ws_get_record("user",$useridfromfield, $useridfrom)) {
+            return $this->error(get_string('ws_userunknown','local_wspp',$useridfromfield.'='.$useridfrom));
+        }
+      require_once ("{$CFG->dirroot}/message/lib.php");
+       if( $ret=message_get_history($userto, $userfrom) ) {
+        //fill some fields about the sender cf wsdl
+            $ret=filter_messages($client,$ret);
+        }
+        return $ret;
+    }
 
 
 

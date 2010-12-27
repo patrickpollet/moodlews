@@ -417,7 +417,7 @@ class MoodleWS {
  */
   public $client;
 
-  private $uri = 'http://localhost/moodle20/wspp/wsdl';
+  private $uri = 'http://prope.insa-lyon.fr/moodle.195/wspp/wsdl';
 
   /**
   * Constructor method
@@ -3784,6 +3784,34 @@ class MoodleWS {
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($userid, 'userid'),
             new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getMessagesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param string $useridto
+   * @param string $useridtofield
+   * @param string $useridfrom
+   * @param string $useridfromfield
+   * @return getMessagesReturn
+   */
+  public function get_messages_history($client, $sesskey, $useridto, $useridtofield, $useridfrom, $useridfromfield) {
+    $res= $this->client->__call('get_messages_history', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($useridto, 'useridto'),
+            new SoapParam($useridtofield, 'useridtofield'),
+            new SoapParam($useridfrom, 'useridfrom'),
+            new SoapParam($useridfromfield, 'useridfromfield')
       ),
       array(
             'uri' => $this->uri ,

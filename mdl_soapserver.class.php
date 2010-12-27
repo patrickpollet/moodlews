@@ -2334,6 +2334,24 @@ class mdl_soapserver extends server {
     }
 
 
+     /**  rev 1.8
+     * retrieve all unread user's messages
+     * @param int $client
+     * @param string $sesskey
+     * @param string $useridto
+     * @param string $useridtofield
+     * @param string $useridfrom
+     * @param string $useridfromfield
+     * @return messageRecord[]
+     */
+
+    public function get_messages_history ($client,$sesskey,$useridto,$useridtofield,$useridfrom,$useridfromfield) {
+            return $this->send($this->to_soap_array(parent :: get_messages_history ($client,$sesskey,
+               $useridto,$useridtofield,$useridfrom,$useridfromfield
+            ), 'messages', 'messageRecord', get_string('nomessages', 'local_wspp')));
+    }
+
+
 
 }
 ?>
