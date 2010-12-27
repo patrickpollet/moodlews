@@ -812,7 +812,7 @@
                         <xsd:element name="useridto" type="xsd:int"  />                         
                         <xsd:element name="subject" type="xsd:string" nillable="true"  />       
                         <xsd:element name="fullmessage" type="xsd:string" nillable="true"  />   
-                        <xsd:element name="fullmessageformat" type="xsd:int" nillable="true"  />
+                        <xsd:element name="fullmessageformat" type="xsd:int" />
                         <xsd:element name="fullmessagehtml" type="xsd:string" nillable="true"  />
                         <xsd:element name="smallmessage" type="xsd:string" nillable="true"  />   
                         <xsd:element name="notification" type="xsd:int"  />                      
