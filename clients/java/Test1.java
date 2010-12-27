@@ -2,10 +2,10 @@
 creating the WSDL 
  java -cp ./axis.jar:./commons-logging-1.0.4.jar:./commons-discovery-0.2.jar:./saaj.jar:./wsdl4j-1.5.1.jar:./jaxrpc.jar  org.apache.axis.wsdl.WSDL2Java http://cipcnet/moodle/wspp/wsdl_pp.php
 
- 
 JavaDOC :
 
-javadoc -private -d ~/public_html/moodlews/java/javadoc fr.insa_lyon.cipcnet.moodle.wspp.wsdl *.java 
+javadoc -d ~/public_html/moodlews/java/javadoc fr.insa_lyon.cipcnet.moodle.wspp.wsdl *.java 
+ 
 
  Compilation :  
  javac -cp ./axis.jar:./jaxrpc.jar:. Test1.java
@@ -16,11 +16,12 @@ javadoc -private -d ~/public_html/moodlews/java/javadoc fr.insa_lyon.cipcnet.moo
 */
 
 // adjust the import to your Moodle wsdl created by WSDL2Java !!!
-import fr.insa_lyon.cipcnet.moodle.wspp.wsdl.*;
+//import localhost.moodle20.wspp.wsdl.*;
+import fr.insa_lyon.prope.moodle_195.wspp.wsdl.*; 
 
 import org.apache.axis.AxisFault;
 // GRR WSDL2Java traduced xsd:integer to java.math.BigInteger class ...
-import java.math.BigInteger;
+//import java.math.BigInteger;
 
 public class Test1  {
 
@@ -33,11 +34,11 @@ public class Test1  {
 			MoodleWSPortType port=service.getMoodleWSPort();
 			
 			System.out.println ("login in");
-			LoginReturn lr=port.login ("XXXXX","ZZZZZ");
+			LoginReturn lr=port.login ("xxxxx","zzzzzz");
 			System.out.println ("LR.client:"+lr.getClient());
 			System.out.println ("LR.key:"+lr.getSessionkey());
 			
-			BigInteger myId=	port.get_my_id(lr.getClient(),
+			int myId=	port.get_my_id(lr.getClient(),
 						lr.getSessionkey());
 			System.out.println ("My Moodle id "+myId);
 			
@@ -46,7 +47,7 @@ public class Test1  {
 			UserRecord me=port.get_user_byid(
 					lr.getClient(),
 					lr.getSessionkey(),
-					myId.toString()   // strange, should be numeric ?
+					""+myId  // .toString()   // strange, should be numeric ?
 					).getUsers()[0];
 			
 			System.out.println (me.getError()+
@@ -75,14 +76,14 @@ public class Test1  {
 			
 			for (int i=0; i< cats.length;i++)
 				System.out.println (
-					cats[i].getError()+"\t"+  
+					// cats[i].getError()+"\t"+  <-- forgotten 
 					cats[i].getId()+"\t"+cats[i].getName()
 				
 				);
 
 			System.out.println ("get my courses");	
 			CourseRecord[] myc=port.get_my_courses(lr.getClient(),
-						lr.getSessionkey(),null,null).getCourses();
+						lr.getSessionkey(),0,null).getCourses();
 						
 			for (int i=0; i< myc.length;i++) 
 			
@@ -115,7 +116,7 @@ public class Test1  {
 						lr.getSessionkey(),
 						"2",   // courseid is string 
 						"id",
-						new BigInteger("15") // arghhh 
+						15 // arghhh 
 					).getChanges();	
 			
 			for (int i=0; i< crs.length;i++) 
@@ -132,7 +133,7 @@ public class Test1  {
 			GroupRecord[] grps=port.get_groups_byname(lr.getClient(),
 						lr.getSessionkey(),
 						"201",   // groupeid is string 
-						 new BigInteger("0") // all courses arghhh 
+						 0 // all courses arghhh 
 					).getGroups();	
 			
 			for (int i=0; i< grps.length;i++) 
@@ -195,8 +196,8 @@ public class Test1  {
 			System.out.println ("Get course #2 events ");
 			EventRecord[] evts=port.get_events(lr.getClient(),
 						lr.getSessionkey(),
-						new BigInteger("2"), //event type course
-						new BigInteger("2")  //ownerid
+						2, //new BigInteger("2"), //event type course
+						2 //new BigInteger("2")  //ownerid
 						).getEvents();
 			for (int i=0; i< evts.length;i++) 
 				System.out.println (
@@ -222,3 +223,4 @@ public class Test1  {
 	}
 
 }
+
