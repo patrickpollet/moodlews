@@ -756,7 +756,7 @@
 				<xsd:element name="usermodified" type="xsd:int"  />
 				<xsd:element name="timestart" type="xsd:int"  />
 				<xsd:element name="timeend" type="xsd:int"  />
-				<xsd:element name="post" type="tns:forumPostRecord" comment="content of the fisrt post of that discussion"/>
+				<xsd:element name="post" type="tns:forumPostRecord"/>
 		</xsd:all>
 		</xsd:complexType>
 		
