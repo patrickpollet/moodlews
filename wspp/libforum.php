@@ -15,7 +15,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
     function ws_forumposts_fix_children ($post) {
     	global $CFG;
         $post->error='';
-        if (!$CFG->wspp_using_moodle20) { 
+        if (!$CFG->wspp_using_moodle20) {
            	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
            	$post->messageformat=$post->format;
            	$post->messagetrust='';
@@ -37,7 +37,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
         //must set these two property for correct SOAP encoding
         $post->children=array();
         $post->error='';
-        if (!$CFG->wspp_using_moodle20) { 
+        if (!$CFG->wspp_using_moodle20) {
            	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
            	$post->messageformat=$post->format;
            	$post->messagetrust='';
@@ -91,13 +91,13 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
                 $discussions[$id]->post=forum_get_post_full($id);
                 $discussions[$id]->post->children= array();
                 $discussions[$id]->post->error='';
-                if (!$CFG->wspp_using_moodle20) { 
+                if (!$CFG->wspp_using_moodle20) {
                 	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
                 	$discussions[$id]->post->messageformat=$discussions[$id]->post->format;
                 	$discussions[$id]->post->messagetrust='';
                 }
             }
-       }     
+       }
        return $discussions;
     }
 
@@ -132,29 +132,4 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
        }
     }
 
-
-
-
-/**
-
-	
-
-
-	}
-
-	if(isset($_GET['searchForums']))
-	{
-		$search_results = array();
-		$ref = '';
-		if($posts = forum_search_posts(array(optional_param('key')), optional_param('course_id'), 0, 50, $ref))
-		{
-			foreach($posts as $post)
-			{
-				$search_results[] = get_object_vars($post);
-			}
-		}
-
-		$json_output['search_forums'] = $search_results;
-	}
-**/
 ?>
