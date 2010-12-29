@@ -1,0 +1,68 @@
+ 1.5 released to Moodle forum
+  1.5.1 :
+    - make isteacherinanycourse Moodle 1.6 compatible
+    - filtering events by type
+    - function login :CAUTION : authenticate_user_login  WILL  create the user if
+it does not exist AND the global authentication methods is not 'internal' (CAS, LDAP ...)
+so anyone could get in and retrieve some 'public' informations. So we first check for
+an existing account with internal auth method ! (a limitation that should be treated
+but how to authenticate by CAS in this service ????)
+ 1.5.4 :
+   - added an idfield and sort paramter to get_my_courses
+   - in get_my_courses, if user is the guest user, process it differently .
+   -
+ 1.5.6
+   - fixed has_role_in_course to run with Moodle< 1.7
+   - fixed  get_users_bycourse to run with Moodle < 1.7
+   - filter_changes did not worked with user admin en Moodle 1.6
+   - get_roles should not be called in Moodle <1.7
+1.5.7
+  - added a timestamp (integer) to returned changeRecord
+1.5.8
+  - fixed edit_users parameters passing and simplified code to update user
+  - fixed edit-courses parameters passing and simplified code to update course
+1.5.9
+  - edit_users, add the new field  user->mnethostid = $CFG->mnet_localhost_id for Moodle >= 1.8
+    see http://moodle.org/mod/forum/post.php?reply=376117
+
+1.5.10
+  - bug in get_my_courses when uinfo is Moodle id
+1.5.11
+  - previous empty default value for $sort in get_my_courses raises an SQL error. Changed to fullname
+1.5.13
+  - added get_resources operation
+  - first attempt to get_instances_bytype
+1.5.14
+  - bug in filter_course in Moodle 1.9 if looged user is admin (not teacher of some courses)
+  - added some basic info into global $USER for get_my_courses in Moodle 1.9
+1.5.15
+  - added get_sections operation
+1.5.16
+  - testing for moodle 1.9 in server constructor (attrib. $using19) and using it in validate_client to fill global USER
+     (required for get_my_courses API call)
+  -  fix a notice (DEBUG already defined)
+  - fix a notice error undefined in filter_section and filter_resource
+  - usage of global USER varaible (set in validate_client) instead of
+
+1.6
+  - Moodle 1.9.5 compatible 
+  - added operations by Lille team
+  - internationalization possible with an lang/xx_utf8_local/wspp.php file
+  - returns dates in both unix time stamp and localized strings 
+  - moodle < 1.7 not anymore supported
+  - change to get_grades to support new Moodle 1.9 gradebook
+  - better support of roles & capabilities (filtering functions moved to filterlib.php)
+  - removed all deprecated calls (isadmin(), isteacher() ....
+  - session timeout and global access set in $CFG
+  - usage of global $USER set properly in validate_client and used in capabilty checking
+  - admin settings screen for basic configuration (see file admin/wspp.php for instructions) 
+  - log all operations in Moodle's log as per some CFG entries
+  - removed all ob_* functions (managed globally at mdl_soapserver.class level)
+  - better internal error output within xml stream (see mdl_sopaserver.class send method) 
+  - get_my_courses and get_users_bycourse now return the "primary role of requested user" (1 admin, 2 creator, 3 teacher ...) 
+ - entity identifier field added in all operations (except get_my_courses that still use Moodle internal id, see
+ get_my_courses_byxxxx for other calls .
+ 
+ 
+  
+  
