@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="ws/db" VERSION="2007042300" COMMENT="XMLDB file for Moodle web services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="..../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="webservices_clients_allow" COMMENT="Stores an allow list of IPs from which clients can connect" NEXT="webservices_sessions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"   NEXT="client"/>
+        <FIELD NAME="client" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"   PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for webservices_clients_allow"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="webservices_sessions" COMMENT="Stores web services session data" PREVIOUS="webservices_clients_allow">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"   NEXT="sessionbegin"/>
+        <FIELD NAME="sessionbegin" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"   PREVIOUS="id" NEXT="sessionend"/>
+        <FIELD NAME="sessionend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"   PREVIOUS="sessionbegin" NEXT="sessionkey"/>
+        <FIELD NAME="sessionkey" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" 
+           PREVIOUS="sessionend" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"   PREVIOUS="sessionkey" NEXT="verified"/>
+        <FIELD NAME="verified" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" 
+                 PREVIOUS="userid" NEXT="ip"/>
+        <FIELD NAME="ip" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"
+                 PREVIOUS="verified" />
+
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for webservices_sessions"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

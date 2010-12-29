@@ -1,0 +1,38 @@
+v 1.5.5
+---------
+
+
+mdl_soapserver :
+
+- get_my_courses* accept and extra parameter sort , default = fullname
+
+
+- added get_my_courses_byusername(client, sesskey,username,sort)
+
+- added get_my_courses_byidnumber(client, sesskey,idnumber,sort)
+
+- if username or idnumber is empty, use the current user, otherwise 
+    current user MUST be admin to fetch that ...
+
+- added count_users_bycourse($client,$sesskey,$idcourse,$idfield='idnumber',$idrole=0)
+  
+
+server.class 
+  
+- changed get_my_courses to accept the 3 variants above in a single call
+  by adding a parameter idfield 
+
+- treated the special case of guest in get_my_courses  
+
+
+
+wsdll_pp 
+
+- added attribut role to userRecord . Useful in searching for teachers, & students...
+ will be filled ONLY if attribute courseid is sent to an operation returning users
+such as get_teachers, get_students ... 
+
+
+clients :
+
+   -added demo scripts & ZPTs for Zope/Plone 
