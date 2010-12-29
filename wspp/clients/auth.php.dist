@@ -1,5 +1,0 @@
-<?
-// change to fit your site 
-DEFINE ('LOGIN','XXXXX');
-DEFINE ('PASSWORD','ZZZZZ');
-?>
