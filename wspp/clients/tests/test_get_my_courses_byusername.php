@@ -13,7 +13,7 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_my_courses_byusername($lr->getClient(),$lr->getSessionKey(),'','');
+$res=$client->get_my_courses_byusername($lr->getClient(),$lr->getSessionKey(),'ppollet','');
 print_r($res);
 print($res->getCourses());
 

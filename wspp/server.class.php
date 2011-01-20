@@ -610,22 +610,29 @@ $this->debug_output('internal ');
 		}
 		//remove courses not available to current user
 		$courses = filter_courses($client, $courses);
+        $nbc=0; $nbr=0;
 		foreach ($courses as $course) {
+            $this->debug_output($course->id. " ".$nbc++);
 			if (!$resources = get_all_instances_in_course($type, $course, NULL, true)) {
-				//append an error record to the list
+				  $this->debug_output("pas de ".$type);
+                //append an error record to the list
 				$a = new StdClass();
 				$a->critere = 'type';
 				$a->valeur = $type;
 				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
+
 			}else {
+                  $this->debug_output($course->id. " NB ".count($resources));
 				$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
 				foreach ($resources as $resource) {
 					$resource->url = $ilink . $resource->coursemodule;
                     $resource->type=$type;
 					$ret[] = $resource;
+                      $this->debug_output($course->id. " ". $resource->id." ".$nbr++);
 				}
 			}
 		}
+        $this->debug_output("arrivé");
 		//remove ressources in course where current user is not enroled
 		return filter_resources($client, $ret);
 	}

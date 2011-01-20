@@ -848,19 +848,18 @@ function gen_test_code_in_separate_file($function) {
 }
 
 function add_utils_fonctions() {
+    $code=<<<EOC
+        private function castTo($className,$res){
+            if (class_exists($className)) {
+                $aux= new $className();
+                foreach ($res as $key=>$value)
+                    $aux->$key=$value;
+                return $aux;
+             } else
+                return $res;
+        }
 
-    $code = '';
-    $code .= '  private function castTo($className,$res){ ' . "\n";
-    $code .= '     if (class_exists($className)) {  ' . "\n";
-    $code .= '        $aux= new $className();       ' . "\n";
-    $code .= '        foreach ($res as $key=>$value) ' . "\n";
-    $code .= '             $aux->$key=$value;        ' . "\n";
-    $code .= '        return $aux;                   ' . "\n";
-    $code .= '     } else                            ' . "\n";
-    $code .= '        return $res;                   ' . "\n";
-    $code .= '  }                                   ' . "\n \n";
-
-    //print $code;
+EOC;
     return $code;
 }
 ?>

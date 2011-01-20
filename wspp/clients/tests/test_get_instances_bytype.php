@@ -14,7 +14,7 @@ require_once ('../auth.php');
 
 $lr=$client->login(LOGIN,PASSWORD);
 $courseids=array();
-$res=$client->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','');
+$res=$client->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','forum');
 print_r($res);
 print($res->getResources());
 
