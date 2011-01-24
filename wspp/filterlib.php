@@ -491,15 +491,15 @@ function filter_quiz($client, $quiz) {
 }
 
 function filter_message($client, $msg) {
-	
+
 	global $CFG;
-	 if (!$CFG->wspp_using_moodle20) { 
+	 if (!$CFG->wspp_using_moodle20) {
 	 	$msg->fullmessage=$msg->smallmessage=$msg->message;
 	 }
-	
+
     if ($tmpuser = ws_get_record("user", 'id', $msg->useridfrom)) {
         $msg->firstname = $tmpuser->firstname;
-        $msg->lastname = $tmpuser->firstname;
+        $msg->lastname = $tmpuser->lastname;
         $msg->email = $tmpuser->email;
         $msg->picture = $tmpuser->picture;
         $msg->imagealt = $tmpuser->imagealt;
