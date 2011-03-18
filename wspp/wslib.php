@@ -462,6 +462,11 @@ function ws_checkuserrecord(& $user, $newuser) {
         if (empty($user->lang))
                  $user->lang = $CFG->lang;
 
+        // rev 1.8 23/02/2011
+        if (empty($user->country))
+            $user->country= empty($CFG->country)? '':$CFG->country;
+        if (empty($user->city))
+            $user->city= empty($CFG->defaultcity)? '':$CFG->defaultcity; //Moodle 2.02 has this field
 
 	} else {
 		if (empty ($user->id))
@@ -611,4 +616,46 @@ function ws_add_mod_to_section($modid, $modtype, $section, $groupmode = 0, $visi
 	}
 	return "";
 }
+
+
+
+/**
+ * take care on renamed database fields from Moodle 1.9 to 2.0
+ * to be called on all input record ( type xxxdatum)
+ */
+
+function ws_fix_renamed_fields (&$inputRecord,$type) {
+    global $CFG;
+    if (!$CFG->wspp_using_moodle20) return;
+
+    switch ($type) {
+
+         case "assignment" :
+                $inputRecord->intro=$inputRecord->description;
+                if (isset($inputRecord->format)) {
+                    $inputRecord->introformat=$inputRecord->format;
+                    unset($inputRecord->format);
+                }
+            break;
+
+        case "label" :
+            $inputRecord->intro=$inputRecord->content;
+            unset($inputRecord->content);
+            break;
+
+        case "resource" :
+            $inputRecord->intro=$inputRecord->summary;
+            unset($inputRecord->summary);
+            break;
+
+         default :
+            break;
+
+    }
+
+
+}
+
+
+
 ?>

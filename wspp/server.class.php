@@ -521,8 +521,11 @@ $this->debug_output('internal ');
 				}
 			}
 		}
+       // $this->debug_output(print_r($courses,true));
 		//remove courses not available to current user
 		$courses = filter_courses($client, $courses);
+         $this->debug_output(print_r($courses,true));
+         try {
 		$ilink = "{$CFG->wwwroot}/mod/resource/view.php?id=";
 		foreach ($courses as $course) {
 			if ($resources = get_all_instances_in_course("resource", $course, NULL, true)) {
@@ -530,8 +533,13 @@ $this->debug_output('internal ');
 					$resource->url = $ilink . $resource->coursemodule;
 					$ret[] = $resource;
 				}
+             break;
 			}
+
 		}
+         } catch (Exception $ex) {
+            $ret[]= $this->non_fatal_error($ex->getMessage());
+         }
         //remove ressources in course where current user is not enroled
 		return filter_resources($client, $ret);
 	}
@@ -612,29 +620,35 @@ $this->debug_output('internal ');
 		$courses = filter_courses($client, $courses);
         $nbc=0; $nbr=0;
 		foreach ($courses as $course) {
-            $this->debug_output($course->id. " ".$nbc++);
-			if (!$resources = get_all_instances_in_course($type, $course, NULL, true)) {
-				  $this->debug_output("pas de ".$type);
+           // $this->debug_output($course->id. " ".$nbc++);
+
+
+
+
+            if (!$resources = get_all_instances_in_course($type, $course, NULL, true)) {
+                /************************************************************************************
+				$this->debug_output("pas de ".$type);
                 //append an error record to the list
 				$a = new StdClass();
 				$a->critere = 'type';
 				$a->valeur = $type;
 				$ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
+                **************************************************************************************/
 
 			}else {
-                  $this->debug_output($course->id. " NB ".count($resources));
+                //  $this->debug_output($course->id. " NB ".count($resources));
 				$ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
 				foreach ($resources as $resource) {
 					$resource->url = $ilink . $resource->coursemodule;
                     $resource->type=$type;
 					$ret[] = $resource;
-                      $this->debug_output($course->id. " ". $resource->id." ".$nbr++);
+                    //  $this->debug_output($course->id. " ". $resource->id." ".$nbr++);
 				}
 			}
 		}
         $this->debug_output("arrivé");
-		//remove ressources in course where current user is not enroled
-		return filter_resources($client, $ret);
+		//remove instances in course where current user is not enroled
+		return filter_instances($client, $ret,$type);
 	}
 
 
@@ -1803,10 +1817,6 @@ EOSS;
 		if (!$assignment = ws_get_record("assignment", "id", $assignmentid)) {
 			return $this->error(get_string('ws_assignmentunknown','local_wspp','id='.$assignmentid));
 		}
-		/// Check for correct permissions.
-		if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
-			return $this->error(get_string('ws_operationnotallowed','local_wspp'));
-		}
 
 		//set up all required variables any error is fatal
 
@@ -1822,7 +1832,6 @@ EOSS;
 
 		$ret=array();
 
-		//champs a envoyer à la PF
 		$fields='u.id, u.username,u.idnumber, u.email';
 		$roleid=5; //students
 
@@ -1844,6 +1853,18 @@ EOSS;
 			else
 				$moodleUserIds=groups_get_grouping_members($cm->groupingid,$fields);
 		}
+
+
+        /// Check for correct permissions.
+        if ((count($moodleUserIds)==1) && !empty($moodleUserIds[$USER->id])) {
+            // OK for an user to see its OWN submission
+            // added 17/03/2011 upon request of mooclipse@meschareth.net
+        }
+        else if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
+            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+
          //$this->debug_output(print_r($moodleUserIds,true));
         require_once($CFG->libdir.'/filelib.php');
 		require_once("$CFG->dirroot/mod/assignment/lib.php");
@@ -2001,6 +2022,7 @@ EOSS;
 		//$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
 		if (!empty ($users)) {
 			foreach ($users->users as $user) {
+
 				$ruser = new stdClass();
 				//$this->debug_output('traitement de ' . print_r($user, true));
 				switch (trim(strtolower($user->action))) {
@@ -2238,6 +2260,7 @@ EOSS;
         $rets = array ();
         if (!empty ($groupings)) {
             foreach ($groupings->groupings as $grouping) {
+                ws_fix_renamed_fields($grouping,'grouping');
                 $ret = new stdClass;
                 $ret->error="";
                 switch (trim(strtolower($grouping->action))) {
@@ -2362,6 +2385,7 @@ EOSS;
         $rets = array ();
         if (!empty ($groups)) {
             foreach ($groups->groups as $group) {
+                ws_fix_renamed_fields($group,'group');
                 $ret = new stdClass;
                 $ret->error="";
                 switch (trim(strtolower($group->action))) {
@@ -2474,6 +2498,7 @@ EOSS;
         //$this->debug_output(print_r($groups,true));
         if (!empty ($groups)) {
             foreach ($groups->cohorts as $group) {
+                ws_fix_renamed_fields($group,'cohort');
                 $ret = new stdClass;
                 $ret->error="";
                 switch (trim(strtolower($group->action))) {
@@ -2595,6 +2620,7 @@ EOSS;
 	    $rets = array ();
 	    if (!empty ($categories)) {
 		    foreach ($categories->categories as $category) {
+                ws_fix_renamed_fields($category,'category');
 			    $this->debug_output("ac".print_r($category,true));
 			    $ret=new StdClass();
 			    switch (trim(strtolower($category->action))) {
@@ -2714,6 +2740,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($labels)) {
 			foreach ($labels->labels as $label) {
+                ws_fix_renamed_fields($label,'label');
 				switch (trim(strtolower($label->action))) {
 					case 'add' :
 						/// Adding a new label.
@@ -2779,6 +2806,7 @@ EOSS;
 
 		if (!empty ($sections)) {
 			foreach ($sections->sections as $section) {
+                ws_fix_renamed_fields($section,'section');
 
 				switch (trim(strtolower($section->action))) {
 					case 'add' :
@@ -2868,6 +2896,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($forums)) {
 			foreach ($forums->forums as $forum) {
+                ws_fix_renamed_fields($forum,'forum');
 				switch (trim(strtolower($forum->action))) {
 					case 'add' :
 						/// Adding a new forum.
@@ -2937,6 +2966,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($assignments)) {
 			foreach ($assignments->assignments as $assignment) {
+                ws_fix_renamed_fields($assignment,'assignment');
 				switch (trim(strtolower($assignment->action))) {
 					case 'add' :
 						//creation of the new assignment
@@ -3009,6 +3039,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($databases)) {
 			foreach ($databases->databases as $database) {
+                ws_fix_renamed_fields($database,'data');
 				switch (trim(strtolower($database->action))) {
 					case 'add' :
 						//add a new database
@@ -3076,6 +3107,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($wikis)) {
 			foreach ($wikis->wikis as $wiki) {
+                ws_fix_renamed_fields($wiki,'wiki');
 				switch (trim(strtolower($wiki->action))) {
 					case 'add' :
 						$this->debug_output('EDIT_WIKIS:     Trying to add a new wiki.');
@@ -3162,7 +3194,7 @@ EOSS;
 		$rets = array ();
 		if (!empty ($pagesWiki)) {
 			foreach ($pagesWiki->pagesWiki as $page) {
-
+                ws_fix_renamed_fields($page,'wiki_page');
 				switch (trim(strtolower($page->action))) {
 					case 'add' :
 
@@ -3849,7 +3881,7 @@ EOSS;
 		}
 		$ret = array ();
 		if ($quizzes = ws_get_records("quiz", $fieldname, $fieldvalue, "name")) {
-			$ret = filter_resources($client, $quizzes);
+			$ret = filter_quizzes($client, $quizzes);
 		}
 		return $ret;
 	}

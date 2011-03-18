@@ -6,6 +6,8 @@
 /**
  * utilities function to filter off resuts not available to current WS user
  * or to add extra fields required in the wsdl
+ * or to match WSDLfields names with actual DB names (eg changes from 1.9 to 2.0)
+ *
  * @package Web Services
  * @version $Id$
  * @author Patrick Pollet <patrick.pollet@insa-lyon.fr> v 1.6
@@ -17,6 +19,7 @@
  * so we check for error before calling get_context_instance in all filter_* operation
 */
 function filter_forum($client, $forum) {
+     global $CFG;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($forum->error))
         return $forum;
@@ -40,6 +43,7 @@ function filter_forums($client, $forums) {
 }
 
 function filter_wiki($client, $wiki) {
+     global $CFG;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($wiki->error))
         return $wiki;
@@ -63,6 +67,7 @@ function filter_wikis($client, $wikis) {
 }
 
 function filter_pagewiki($client, $pagewiki) {
+     global $CFG;
     //todo return only those where user is teacher
     //$uid = $this->get_session_user($client);
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
@@ -96,6 +101,7 @@ function filter_pagesWiki($client, $pagesWiki) {
 }
 
 function filter_assignment($client, $assignment) {
+    global $CFG;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($assignment->error))
         return $assignment;
@@ -104,6 +110,11 @@ function filter_assignment($client, $assignment) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/assignment:view', $context))
         return false;
+     //fields renamed in Moodle 2.0
+     if ($CFG->wspp_using_moodle20) {
+        $assignment->description=$assignment->intro;
+        $assignment->format=$assignment->introformat;
+     }
     return $assignment;
 }
 
@@ -119,6 +130,7 @@ function filter_assignments($client, $assignments) {
 }
 
 function filter_database($client, $database) {
+     global $CFG;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($database->error))
         return $database;
@@ -142,7 +154,7 @@ function filter_databases($client, $databases) {
 }
 
 function filter_label($client, $label) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($label->error))
         return $label;
@@ -150,6 +162,10 @@ function filter_label($client, $label) {
     if (!ws_is_enrolled($label->course, $USER->id)) {
         return $label;
     }
+     //name has changed in Moodle 2.0
+    if ($CFG->wspp_using_moodle20) {
+        $label->content=$label->intro;
+     }
     return $label;
 }
 
@@ -208,7 +224,7 @@ function filter_users($client, $users, $role) {
 }
 
 function filter_course($client, $course) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($course->error))
         return $course;
@@ -236,7 +252,7 @@ function filter_courses($client, $courses) {
 }
 
 function filter_category($client, $category) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($category->error))
         return $category;
@@ -262,7 +278,7 @@ function filter_categories($client, $categories) {
 }
 
 function filter_group($client, $group) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($group->error))
         return $group;
@@ -287,7 +303,7 @@ function filter_groups($client, $groups) {
 }
 
 function filter_grouping($client, $group) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($group->error))
         return $group;
@@ -312,7 +328,7 @@ function filter_groupings($client, $groups) {
 }
 
 function filter_cohort($client, $group) {
-    global $USER;
+    global $CFG,$USER;
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($group->error))
         return $group;
@@ -333,10 +349,17 @@ function filter_cohorts($client, $groups) {
 }
 
 function filter_resource($client, $resource) {
-    global $USER;
+    global $CFG,$USER;
     if (!empty ($resource->error))
         return $resource;
     $resource->timemodified_ut = userdate($resource->timemodified);
+
+
+    //name has changed in Moodle 2.0
+    if ($CFG->wspp_using_moodle20) {
+        $resource->summary=$resource->intro;
+    }
+
     //return false if resource->visible is false AND $client not "teacher"
     $context = get_context_instance(CONTEXT_COURSE, $resource->course);
     //if (has_capability('moodle/course:update', $context))
@@ -358,8 +381,48 @@ function filter_resources($client, $resources) {
     return $res;
 }
 
+
+function filter_instance($client, $resource,$type) {
+    global $CFG,$USER;
+    if (!empty ($resource->error))
+        return $resource;
+    $resource->timemodified_ut = userdate($resource->timemodified);
+
+
+    //name may has changed in Moodle 2.0
+    if ($CFG->wspp_using_moodle20) {
+        //$resource->summary=$resource->intro;
+    }
+
+    //return false if resource->visible is false AND $client not "teacher"
+    $context = get_context_instance(CONTEXT_COURSE, $resource->course);
+    //if (has_capability('moodle/course:update', $context))
+    // 1.6.3  there is a special capability for hiddensection
+    if (has_capability('moodle/course:viewhiddenactivities', $context))
+        return $resource;
+    if (!ws_is_enrolled($resource->course, $USER->id))
+        return false;
+    return $resource->visible ? $resource : false;
+}
+
+
+
+
+function filter_instances($client, $resources,$type) {
+    $res = array ();
+    foreach ($resources as $resource) {
+        $resource = filter_instance($client, $resource,$type);
+        if ($resource)
+            $res[] = $resource;
+    }
+    return $res;
+}
+
+
+
+
 function filter_section($client, $section) {
-    global $USER;
+    global $CFG,$USER;
     if (!empty ($section->error))
         return $section;
     $context = get_context_instance(CONTEXT_COURSE, $section->course);
@@ -489,6 +552,18 @@ function filter_event($client, $eventype, $event) {
 function filter_quiz($client, $quiz) {
     return $quiz;
 }
+
+function filter_quizzes($client, $quizzes) {
+    $res = array ();
+    foreach ($quizzes as $quiz) {
+        $quiz = filter_quiz($client, $quiz);
+        if ($quiz)
+            $res[] = $quiz;
+    }
+    return $res;
+}
+
+
 
 function filter_message($client, $msg) {
 
