@@ -10,7 +10,7 @@ class categoryDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -22,19 +22,19 @@ class categoryDatum {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $parent;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sortorder;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $depth;
 	/** 
@@ -49,13 +49,13 @@ class categoryDatum {
 	/**
 	* default constructor for class categoryDatum
 	* @param string $action
-	* @param integer $id
+	* @param int $id
 	* @param string $name
 	* @param string $description
-	* @param integer $parent
-	* @param integer $sortorder
-	* @param integer $visible
-	* @param integer $depth
+	* @param int $parent
+	* @param int $sortorder
+	* @param int $visible
+	* @param int $depth
 	* @param string $path
 	* @param string $theme
 	* @return categoryDatum
@@ -83,7 +83,7 @@ class categoryDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -107,7 +107,7 @@ class categoryDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getParent(){
 		 return $this->parent;
@@ -115,7 +115,7 @@ class categoryDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSortorder(){
 		 return $this->sortorder;
@@ -123,7 +123,7 @@ class categoryDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -131,7 +131,7 @@ class categoryDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDepth(){
 		 return $this->depth;
@@ -165,7 +165,7 @@ class categoryDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -192,7 +192,7 @@ class categoryDatum {
 
 
 	/**
-	* @param integer $parent
+	* @param int $parent
 	* @return void
 	*/
 	public function setParent($parent){
@@ -201,7 +201,7 @@ class categoryDatum {
 
 
 	/**
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return void
 	*/
 	public function setSortorder($sortorder){
@@ -210,7 +210,7 @@ class categoryDatum {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -219,7 +219,7 @@ class categoryDatum {
 
 
 	/**
-	* @param integer $depth
+	* @param int $depth
 	* @return void
 	*/
 	public function setDepth($depth){

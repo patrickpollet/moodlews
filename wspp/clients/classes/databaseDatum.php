@@ -10,11 +10,11 @@ class databaseDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -26,39 +26,39 @@ class databaseDatum {
 	*/
 	public $intro;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $comments;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeavailablefrom;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeavailableto;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeviewfrom;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeviewto;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $requiredentries;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $requiredentriestoview;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $maxentries;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $ressarticles;
 	/** 
@@ -102,50 +102,50 @@ class databaseDatum {
 	*/
 	public $asearchtemplate;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $approval;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $scale;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $assessed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $defaultsort;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $defaultsortdir;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $editany;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $notification;
 
 	/**
 	* default constructor for class databaseDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $name
 	* @param string $intro
-	* @param integer $comments
-	* @param integer $timeavailablefrom
-	* @param integer $timeavailableto
-	* @param integer $timeviewfrom
-	* @param integer $timeviewto
-	* @param integer $requiredentries
-	* @param integer $requiredentriestoview
-	* @param integer $maxentries
-	* @param integer $ressarticles
+	* @param int $comments
+	* @param int $timeavailablefrom
+	* @param int $timeavailableto
+	* @param int $timeviewfrom
+	* @param int $timeviewto
+	* @param int $requiredentries
+	* @param int $requiredentriestoview
+	* @param int $maxentries
+	* @param int $ressarticles
 	* @param string $singletemplate
 	* @param string $listtemplate
 	* @param string $listtemplateheader
@@ -156,13 +156,13 @@ class databaseDatum {
 	* @param string $csstemplate
 	* @param string $jstemplate
 	* @param string $asearchtemplate
-	* @param integer $approval
-	* @param integer $scale
-	* @param integer $assessed
-	* @param integer $defaultsort
-	* @param integer $defaultsortdir
-	* @param integer $editany
-	* @param integer $notification
+	* @param int $approval
+	* @param int $scale
+	* @param int $assessed
+	* @param int $defaultsort
+	* @param int $defaultsortdir
+	* @param int $editany
+	* @param int $notification
 	* @return databaseDatum
 	*/
 	 public function databaseDatum($action='',$id=0,$course=0,$name='',$intro='',$comments=0,$timeavailablefrom=0,$timeavailableto=0,$timeviewfrom=0,$timeviewto=0,$requiredentries=0,$requiredentriestoview=0,$maxentries=0,$ressarticles=0,$singletemplate='',$listtemplate='',$listtemplateheader='',$listtemplatefooter='',$addtemplatee='',$rsstemplate='',$rsstitletemplate='',$csstemplate='',$jstemplate='',$asearchtemplate='',$approval=0,$scale=0,$assessed=0,$defaultsort=0,$defaultsortdir=0,$editany=0,$notification=0){
@@ -209,7 +209,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -217,7 +217,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -241,7 +241,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getComments(){
 		 return $this->comments;
@@ -249,7 +249,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeavailablefrom(){
 		 return $this->timeavailablefrom;
@@ -257,7 +257,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeavailableto(){
 		 return $this->timeavailableto;
@@ -265,7 +265,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeviewfrom(){
 		 return $this->timeviewfrom;
@@ -273,7 +273,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeviewto(){
 		 return $this->timeviewto;
@@ -281,7 +281,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRequiredentries(){
 		 return $this->requiredentries;
@@ -289,7 +289,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRequiredentriestoview(){
 		 return $this->requiredentriestoview;
@@ -297,7 +297,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMaxentries(){
 		 return $this->maxentries;
@@ -305,7 +305,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRessarticles(){
 		 return $this->ressarticles;
@@ -393,7 +393,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getApproval(){
 		 return $this->approval;
@@ -401,7 +401,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getScale(){
 		 return $this->scale;
@@ -409,7 +409,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getAssessed(){
 		 return $this->assessed;
@@ -417,7 +417,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDefaultsort(){
 		 return $this->defaultsort;
@@ -425,7 +425,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDefaultsortdir(){
 		 return $this->defaultsortdir;
@@ -433,7 +433,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEditany(){
 		 return $this->editany;
@@ -441,7 +441,7 @@ class databaseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getNotification(){
 		 return $this->notification;
@@ -459,7 +459,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -468,7 +468,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -495,7 +495,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $comments
+	* @param int $comments
 	* @return void
 	*/
 	public function setComments($comments){
@@ -504,7 +504,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $timeavailablefrom
+	* @param int $timeavailablefrom
 	* @return void
 	*/
 	public function setTimeavailablefrom($timeavailablefrom){
@@ -513,7 +513,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $timeavailableto
+	* @param int $timeavailableto
 	* @return void
 	*/
 	public function setTimeavailableto($timeavailableto){
@@ -522,7 +522,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $timeviewfrom
+	* @param int $timeviewfrom
 	* @return void
 	*/
 	public function setTimeviewfrom($timeviewfrom){
@@ -531,7 +531,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $timeviewto
+	* @param int $timeviewto
 	* @return void
 	*/
 	public function setTimeviewto($timeviewto){
@@ -540,7 +540,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $requiredentries
+	* @param int $requiredentries
 	* @return void
 	*/
 	public function setRequiredentries($requiredentries){
@@ -549,7 +549,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $requiredentriestoview
+	* @param int $requiredentriestoview
 	* @return void
 	*/
 	public function setRequiredentriestoview($requiredentriestoview){
@@ -558,7 +558,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $maxentries
+	* @param int $maxentries
 	* @return void
 	*/
 	public function setMaxentries($maxentries){
@@ -567,7 +567,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $ressarticles
+	* @param int $ressarticles
 	* @return void
 	*/
 	public function setRessarticles($ressarticles){
@@ -666,7 +666,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $approval
+	* @param int $approval
 	* @return void
 	*/
 	public function setApproval($approval){
@@ -675,7 +675,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $scale
+	* @param int $scale
 	* @return void
 	*/
 	public function setScale($scale){
@@ -684,7 +684,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $assessed
+	* @param int $assessed
 	* @return void
 	*/
 	public function setAssessed($assessed){
@@ -693,7 +693,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $defaultsort
+	* @param int $defaultsort
 	* @return void
 	*/
 	public function setDefaultsort($defaultsort){
@@ -702,7 +702,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $defaultsortdir
+	* @param int $defaultsortdir
 	* @return void
 	*/
 	public function setDefaultsortdir($defaultsortdir){
@@ -711,7 +711,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $editany
+	* @param int $editany
 	* @return void
 	*/
 	public function setEditany($editany){
@@ -720,7 +720,7 @@ class databaseDatum {
 
 
 	/**
-	* @param integer $notification
+	* @param int $notification
 	* @return void
 	*/
 	public function setNotification($notification){

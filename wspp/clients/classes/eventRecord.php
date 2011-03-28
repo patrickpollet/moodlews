@@ -10,7 +10,7 @@ class eventRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -22,23 +22,23 @@ class eventRecord {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $format;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $userid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $repeatid;
 	/** 
@@ -46,7 +46,7 @@ class eventRecord {
 	*/
 	public $modulename;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $instance;
 	/** 
@@ -54,15 +54,15 @@ class eventRecord {
 	*/
 	public $eventtype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timestart;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeduration;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
@@ -70,34 +70,34 @@ class eventRecord {
 	*/
 	public $uuid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sequence;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class eventRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $name
 	* @param string $description
-	* @param integer $format
-	* @param integer $courseid
-	* @param integer $groupid
-	* @param integer $userid
-	* @param integer $repeatid
+	* @param int $format
+	* @param int $courseid
+	* @param int $groupid
+	* @param int $userid
+	* @param int $repeatid
 	* @param string $modulename
-	* @param integer $instance
+	* @param int $instance
 	* @param string $eventtype
-	* @param integer $timestart
-	* @param integer $timeduration
-	* @param integer $visible
+	* @param int $timestart
+	* @param int $timeduration
+	* @param int $visible
 	* @param string $uuid
-	* @param integer $sequence
-	* @param integer $timemodified
+	* @param int $sequence
+	* @param int $timemodified
 	* @return eventRecord
 	*/
 	 public function eventRecord($error='',$id=0,$name='',$description='',$format=0,$courseid=0,$groupid=0,$userid=0,$repeatid=0,$modulename='',$instance=0,$eventtype='',$timestart=0,$timeduration=0,$visible=0,$uuid='',$sequence=0,$timemodified=0){
@@ -131,7 +131,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -155,7 +155,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFormat(){
 		 return $this->format;
@@ -163,7 +163,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -171,7 +171,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupid(){
 		 return $this->groupid;
@@ -179,7 +179,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getUserid(){
 		 return $this->userid;
@@ -187,7 +187,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRepeatid(){
 		 return $this->repeatid;
@@ -203,7 +203,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getInstance(){
 		 return $this->instance;
@@ -219,7 +219,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimestart(){
 		 return $this->timestart;
@@ -227,7 +227,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeduration(){
 		 return $this->timeduration;
@@ -235,7 +235,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -251,7 +251,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSequence(){
 		 return $this->sequence;
@@ -259,7 +259,7 @@ class eventRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -277,7 +277,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -304,7 +304,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $format
+	* @param int $format
 	* @return void
 	*/
 	public function setFormat($format){
@@ -313,7 +313,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
@@ -322,7 +322,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $groupid
+	* @param int $groupid
 	* @return void
 	*/
 	public function setGroupid($groupid){
@@ -331,7 +331,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $userid
+	* @param int $userid
 	* @return void
 	*/
 	public function setUserid($userid){
@@ -340,7 +340,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $repeatid
+	* @param int $repeatid
 	* @return void
 	*/
 	public function setRepeatid($repeatid){
@@ -358,7 +358,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $instance
+	* @param int $instance
 	* @return void
 	*/
 	public function setInstance($instance){
@@ -376,7 +376,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $timestart
+	* @param int $timestart
 	* @return void
 	*/
 	public function setTimestart($timestart){
@@ -385,7 +385,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $timeduration
+	* @param int $timeduration
 	* @return void
 	*/
 	public function setTimeduration($timeduration){
@@ -394,7 +394,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -412,7 +412,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $sequence
+	* @param int $sequence
 	* @return void
 	*/
 	public function setSequence($sequence){
@@ -421,7 +421,7 @@ class eventRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

@@ -4,7 +4,7 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: add an assignment
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param assignmentDatum $assignment
 * @return  editAssignmentsOutput

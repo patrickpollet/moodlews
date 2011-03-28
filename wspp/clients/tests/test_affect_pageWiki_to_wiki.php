@@ -4,10 +4,10 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Affect a page of wiki to a wiki
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $pageid
-* @param integer $wikiid
+* @param int $pageid
+* @param int $wikiid
 * @return  affectRecord
 */
 

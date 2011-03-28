@@ -18,7 +18,7 @@ class fileRecord {
 	*/
 	public $filepath;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $filesize;
 	/** 
@@ -31,7 +31,7 @@ class fileRecord {
 	* @param string $fileurl
 	* @param string $filename
 	* @param string $filepath
-	* @param integer $filesize
+	* @param int $filesize
 	* @param string $filecontent
 	* @return fileRecord
 	*/
@@ -69,7 +69,7 @@ class fileRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFilesize(){
 		 return $this->filesize;
@@ -113,7 +113,7 @@ class fileRecord {
 
 
 	/**
-	* @param integer $filesize
+	* @param int $filesize
 	* @return void
 	*/
 	public function setFilesize($filesize){

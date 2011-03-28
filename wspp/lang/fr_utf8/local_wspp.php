@@ -109,6 +109,8 @@ $string['nosubmissions']='pas de remises de ce devoir';
 $string['nowikipages']='pas de pages wiki';
 $string['nolabels']='pas d\'étiquettes';
 $string['noquizzes']='pas de quizs';
+$string['nomessages']='pas de messages';
+$string['nocontacts']='pas de contacts';
 
 $string['ws_groupalreadyaffected']='le groupe $a->group appartient déja au cours $a->course.';
 $string['ws_groupingalreadyaffected']='le groupement $a->group appartient déja au cours $a->course.';
@@ -178,8 +180,8 @@ $string['ws_profileinvalidvaluecheckbox']='la valeur doit ête 0 ou 1';
 $string['ws_uselocalwsdl']='Utiliser un wsdl auto généré';
 $string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec certaines versions de PHP 5 (http://bugs.php.net/bug.php?id=48216) ';
 
- 
-$string['ws_quizexportunknownformat']='format d\'exportation $a inconnu';	
+
+$string['ws_quizexportunknownformat']='format d\'exportation $a inconnu';
 
 $string['ws_erroralreadydeleteduser']='L\'utilisateur id= $a a déja été supprimé';
 ?>

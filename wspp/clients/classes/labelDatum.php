@@ -10,11 +10,11 @@ class labelDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -29,8 +29,8 @@ class labelDatum {
 	/**
 	* default constructor for class labelDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $name
 	* @param string $content
 	* @return labelDatum
@@ -53,7 +53,7 @@ class labelDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -61,7 +61,7 @@ class labelDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -95,7 +95,7 @@ class labelDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -104,7 +104,7 @@ class labelDatum {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){

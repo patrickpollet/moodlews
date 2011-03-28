@@ -10,11 +10,11 @@ class groupDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
@@ -30,24 +30,24 @@ class groupDatum {
 	*/
 	public $enrolmentkey;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $picture;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $hidepicture;
 
 	/**
 	* default constructor for class groupDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $courseid
+	* @param int $id
+	* @param int $courseid
 	* @param string $name
 	* @param string $description
 	* @param string $enrolmentkey
-	* @param integer $picture
-	* @param integer $hidepicture
+	* @param int $picture
+	* @param int $hidepicture
 	* @return groupDatum
 	*/
 	 public function groupDatum($action='',$id=0,$courseid=0,$name='',$description='',$enrolmentkey='',$picture=0,$hidepicture=0){
@@ -71,7 +71,7 @@ class groupDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -79,7 +79,7 @@ class groupDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -111,7 +111,7 @@ class groupDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getPicture(){
 		 return $this->picture;
@@ -119,7 +119,7 @@ class groupDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHidepicture(){
 		 return $this->hidepicture;
@@ -137,7 +137,7 @@ class groupDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -146,7 +146,7 @@ class groupDatum {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
@@ -182,7 +182,7 @@ class groupDatum {
 
 
 	/**
-	* @param integer $picture
+	* @param int $picture
 	* @return void
 	*/
 	public function setPicture($picture){
@@ -191,7 +191,7 @@ class groupDatum {
 
 
 	/**
-	* @param integer $hidepicture
+	* @param int $hidepicture
 	* @return void
 	*/
 	public function setHidepicture($hidepicture){

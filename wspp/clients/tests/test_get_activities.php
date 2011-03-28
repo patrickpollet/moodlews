@@ -5,13 +5,13 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get user most recent activities in
 				a Moodle course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $iduser
 * @param string $iduserfield
 * @param string $idcourse
 * @param string $idcoursefield
-* @param integer $idlimit
+* @param int $idlimit
 * @return  getActivitiesReturn
 */
 

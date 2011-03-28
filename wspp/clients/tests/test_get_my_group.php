@@ -4,11 +4,11 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get user group in course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $uid
+* @param int $uid
 * @param string $idfield
-* @param integer $courseid
+* @param int $courseid
 * @param string $courseidfield
 * @return  getGroupsReturn
 */

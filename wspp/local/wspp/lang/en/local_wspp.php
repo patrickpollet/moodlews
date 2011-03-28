@@ -109,6 +109,8 @@ $string['nosubmissions']='no submissions to this assignment';
 $string['nowikipages']='no wiki pages';
 $string['nolabels']='no labels';
 $string['noquizzes']='no quizzes';
+$string['nomessages']='no messages';
+$string['nocontacts']='no contacts';
 
 $string['ws_groupalreadyaffected']='the group {$a->group} already is a member of course {$a->course}.';
 $string['ws_groupingalreadyaffected']='the grouping {$a->group} already is a member of course {$a->course}.';

@@ -849,14 +849,14 @@ function gen_test_code_in_separate_file($function) {
 
 function add_utils_fonctions() {
     $code=<<<EOC
-        private function castTo($className,$res){
-            if (class_exists($className)) {
-                $aux= new $className();
-                foreach ($res as $key=>$value)
-                    $aux->$key=$value;
-                return $aux;
+        private function castTo(\$className,\$res){
+            if (class_exists(\$className)) {
+                \$aux= new \$className();
+                foreach (\$res as \$key=>\$value)
+                    \$aux->\$key=\$value;
+                return \$aux;
              } else
-                return $res;
+                return \$res;
         }
 
 EOC;

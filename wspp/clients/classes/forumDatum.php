@@ -10,11 +10,11 @@ class forumDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -30,79 +30,79 @@ class forumDatum {
 	*/
 	public $intro;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $assessed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $assesstimestart;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $assesstimefinish;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $scale;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $maxbytes;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $forcesubscribe;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $trackingtype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $rsstype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $rssarticles;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $warnafter;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $blockafter;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $blockperiod;
 
 	/**
 	* default constructor for class forumDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $type
 	* @param string $name
 	* @param string $intro
-	* @param integer $assessed
-	* @param integer $assesstimestart
-	* @param integer $assesstimefinish
-	* @param integer $scale
-	* @param integer $maxbytes
-	* @param integer $forcesubscribe
-	* @param integer $trackingtype
-	* @param integer $rsstype
-	* @param integer $rssarticles
-	* @param integer $timemodified
-	* @param integer $warnafter
-	* @param integer $blockafter
-	* @param integer $blockperiod
+	* @param int $assessed
+	* @param int $assesstimestart
+	* @param int $assesstimefinish
+	* @param int $scale
+	* @param int $maxbytes
+	* @param int $forcesubscribe
+	* @param int $trackingtype
+	* @param int $rsstype
+	* @param int $rssarticles
+	* @param int $timemodified
+	* @param int $warnafter
+	* @param int $blockafter
+	* @param int $blockperiod
 	* @return forumDatum
 	*/
 	 public function forumDatum($action='',$id=0,$course=0,$type='',$name='',$intro='',$assessed=0,$assesstimestart=0,$assesstimefinish=0,$scale=0,$maxbytes=0,$forcesubscribe=0,$trackingtype=0,$rsstype=0,$rssarticles=0,$timemodified=0,$warnafter=0,$blockafter=0,$blockperiod=0){
@@ -137,7 +137,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -145,7 +145,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -177,7 +177,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getAssessed(){
 		 return $this->assessed;
@@ -185,7 +185,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getAssesstimestart(){
 		 return $this->assesstimestart;
@@ -193,7 +193,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getAssesstimefinish(){
 		 return $this->assesstimefinish;
@@ -201,7 +201,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getScale(){
 		 return $this->scale;
@@ -209,7 +209,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMaxbytes(){
 		 return $this->maxbytes;
@@ -217,7 +217,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getForcesubscribe(){
 		 return $this->forcesubscribe;
@@ -225,7 +225,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTrackingtype(){
 		 return $this->trackingtype;
@@ -233,7 +233,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRsstype(){
 		 return $this->rsstype;
@@ -241,7 +241,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRssarticles(){
 		 return $this->rssarticles;
@@ -249,7 +249,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -257,7 +257,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getWarnafter(){
 		 return $this->warnafter;
@@ -265,7 +265,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getBlockafter(){
 		 return $this->blockafter;
@@ -273,7 +273,7 @@ class forumDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getBlockperiod(){
 		 return $this->blockperiod;
@@ -291,7 +291,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -300,7 +300,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -336,7 +336,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $assessed
+	* @param int $assessed
 	* @return void
 	*/
 	public function setAssessed($assessed){
@@ -345,7 +345,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $assesstimestart
+	* @param int $assesstimestart
 	* @return void
 	*/
 	public function setAssesstimestart($assesstimestart){
@@ -354,7 +354,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $assesstimefinish
+	* @param int $assesstimefinish
 	* @return void
 	*/
 	public function setAssesstimefinish($assesstimefinish){
@@ -363,7 +363,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $scale
+	* @param int $scale
 	* @return void
 	*/
 	public function setScale($scale){
@@ -372,7 +372,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $maxbytes
+	* @param int $maxbytes
 	* @return void
 	*/
 	public function setMaxbytes($maxbytes){
@@ -381,7 +381,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $forcesubscribe
+	* @param int $forcesubscribe
 	* @return void
 	*/
 	public function setForcesubscribe($forcesubscribe){
@@ -390,7 +390,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $trackingtype
+	* @param int $trackingtype
 	* @return void
 	*/
 	public function setTrackingtype($trackingtype){
@@ -399,7 +399,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $rsstype
+	* @param int $rsstype
 	* @return void
 	*/
 	public function setRsstype($rsstype){
@@ -408,7 +408,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $rssarticles
+	* @param int $rssarticles
 	* @return void
 	*/
 	public function setRssarticles($rssarticles){
@@ -417,7 +417,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
@@ -426,7 +426,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $warnafter
+	* @param int $warnafter
 	* @return void
 	*/
 	public function setWarnafter($warnafter){
@@ -435,7 +435,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $blockafter
+	* @param int $blockafter
 	* @return void
 	*/
 	public function setBlockafter($blockafter){
@@ -444,7 +444,7 @@ class forumDatum {
 
 
 	/**
-	* @param integer $blockperiod
+	* @param int $blockperiod
 	* @return void
 	*/
 	public function setBlockperiod($blockperiod){

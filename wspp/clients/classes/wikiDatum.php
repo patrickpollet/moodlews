@@ -10,7 +10,7 @@ class wikiDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -26,11 +26,11 @@ class wikiDatum {
 	*/
 	public $wtype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $ewikiacceptbinary;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -38,31 +38,31 @@ class wikiDatum {
 	*/
 	public $pagename;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $ewikiprinttitle;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $htmlmode;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $disablecamelcase;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $setpageflags;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $strippages;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $removepages;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $revertchanges;
 	/** 
@@ -70,29 +70,29 @@ class wikiDatum {
 	*/
 	public $initialcontent;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class wikiDatum
 	* @param string $action
-	* @param integer $id
+	* @param int $id
 	* @param string $name
 	* @param string $summary
 	* @param string $wtype
-	* @param integer $ewikiacceptbinary
-	* @param integer $course
+	* @param int $ewikiacceptbinary
+	* @param int $course
 	* @param string $pagename
-	* @param integer $ewikiprinttitle
-	* @param integer $htmlmode
-	* @param integer $disablecamelcase
-	* @param integer $setpageflags
-	* @param integer $strippages
-	* @param integer $removepages
-	* @param integer $revertchanges
+	* @param int $ewikiprinttitle
+	* @param int $htmlmode
+	* @param int $disablecamelcase
+	* @param int $setpageflags
+	* @param int $strippages
+	* @param int $removepages
+	* @param int $revertchanges
 	* @param string $initialcontent
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return wikiDatum
 	*/
 	 public function wikiDatum($action='',$id=0,$name='',$summary='',$wtype='',$ewikiacceptbinary=0,$course=0,$pagename='',$ewikiprinttitle=0,$htmlmode=0,$disablecamelcase=0,$setpageflags=0,$strippages=0,$removepages=0,$revertchanges=0,$initialcontent='',$timemodified=0){
@@ -125,7 +125,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -157,7 +157,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEwikiacceptbinary(){
 		 return $this->ewikiacceptbinary;
@@ -165,7 +165,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -181,7 +181,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEwikiprinttitle(){
 		 return $this->ewikiprinttitle;
@@ -189,7 +189,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHtmlmode(){
 		 return $this->htmlmode;
@@ -197,7 +197,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDisablecamelcase(){
 		 return $this->disablecamelcase;
@@ -205,7 +205,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSetpageflags(){
 		 return $this->setpageflags;
@@ -213,7 +213,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getStrippages(){
 		 return $this->strippages;
@@ -221,7 +221,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRemovepages(){
 		 return $this->removepages;
@@ -229,7 +229,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRevertchanges(){
 		 return $this->revertchanges;
@@ -245,7 +245,7 @@ class wikiDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -263,7 +263,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -299,7 +299,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $ewikiacceptbinary
+	* @param int $ewikiacceptbinary
 	* @return void
 	*/
 	public function setEwikiacceptbinary($ewikiacceptbinary){
@@ -308,7 +308,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -326,7 +326,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $ewikiprinttitle
+	* @param int $ewikiprinttitle
 	* @return void
 	*/
 	public function setEwikiprinttitle($ewikiprinttitle){
@@ -335,7 +335,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $htmlmode
+	* @param int $htmlmode
 	* @return void
 	*/
 	public function setHtmlmode($htmlmode){
@@ -344,7 +344,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $disablecamelcase
+	* @param int $disablecamelcase
 	* @return void
 	*/
 	public function setDisablecamelcase($disablecamelcase){
@@ -353,7 +353,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $setpageflags
+	* @param int $setpageflags
 	* @return void
 	*/
 	public function setSetpageflags($setpageflags){
@@ -362,7 +362,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $strippages
+	* @param int $strippages
 	* @return void
 	*/
 	public function setStrippages($strippages){
@@ -371,7 +371,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $removepages
+	* @param int $removepages
 	* @return void
 	*/
 	public function setRemovepages($removepages){
@@ -380,7 +380,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $revertchanges
+	* @param int $revertchanges
 	* @return void
 	*/
 	public function setRevertchanges($revertchanges){
@@ -398,7 +398,7 @@ class wikiDatum {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

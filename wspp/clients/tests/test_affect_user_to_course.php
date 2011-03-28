@@ -4,10 +4,10 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Affect user to the course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $userid
-* @param integer $courseid
+* @param int $userid
+* @param int $courseid
 * @param string $rolename
 * @return  affectRecord
 */

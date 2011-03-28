@@ -10,7 +10,7 @@ class categoryRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -22,27 +22,27 @@ class categoryRecord {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $parent;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sortorder;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $coursecount;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $depth;
 	/** 
@@ -53,15 +53,15 @@ class categoryRecord {
 	/**
 	* default constructor for class categoryRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $name
 	* @param string $description
-	* @param integer $parent
-	* @param integer $sortorder
-	* @param integer $coursecount
-	* @param integer $visible
-	* @param integer $timemodified
-	* @param integer $depth
+	* @param int $parent
+	* @param int $sortorder
+	* @param int $coursecount
+	* @param int $visible
+	* @param int $timemodified
+	* @param int $depth
 	* @param string $path
 	* @return categoryRecord
 	*/
@@ -89,7 +89,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -113,7 +113,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getParent(){
 		 return $this->parent;
@@ -121,7 +121,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSortorder(){
 		 return $this->sortorder;
@@ -129,7 +129,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCoursecount(){
 		 return $this->coursecount;
@@ -137,7 +137,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -145,7 +145,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -153,7 +153,7 @@ class categoryRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDepth(){
 		 return $this->depth;
@@ -179,7 +179,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -206,7 +206,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $parent
+	* @param int $parent
 	* @return void
 	*/
 	public function setParent($parent){
@@ -215,7 +215,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return void
 	*/
 	public function setSortorder($sortorder){
@@ -224,7 +224,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $coursecount
+	* @param int $coursecount
 	* @return void
 	*/
 	public function setCoursecount($coursecount){
@@ -233,7 +233,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -242,7 +242,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
@@ -251,7 +251,7 @@ class categoryRecord {
 
 
 	/**
-	* @param integer $depth
+	* @param int $depth
 	* @return void
 	*/
 	public function setDepth($depth){

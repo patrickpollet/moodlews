@@ -10,11 +10,11 @@ class groupRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
@@ -26,19 +26,19 @@ class groupRecord {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $picture;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $hidepicture;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
@@ -49,14 +49,14 @@ class groupRecord {
 	/**
 	* default constructor for class groupRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $courseid
+	* @param int $id
+	* @param int $courseid
 	* @param string $name
 	* @param string $description
-	* @param integer $picture
-	* @param integer $hidepicture
-	* @param integer $timecreated
-	* @param integer $timemodified
+	* @param int $picture
+	* @param int $hidepicture
+	* @param int $timecreated
+	* @param int $timemodified
 	* @param string $enrolmentkey
 	* @return groupRecord
 	*/
@@ -83,7 +83,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -91,7 +91,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -115,7 +115,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getPicture(){
 		 return $this->picture;
@@ -123,7 +123,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHidepicture(){
 		 return $this->hidepicture;
@@ -131,7 +131,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimecreated(){
 		 return $this->timecreated;
@@ -139,7 +139,7 @@ class groupRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -165,7 +165,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -174,7 +174,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
@@ -201,7 +201,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $picture
+	* @param int $picture
 	* @return void
 	*/
 	public function setPicture($picture){
@@ -210,7 +210,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $hidepicture
+	* @param int $hidepicture
 	* @return void
 	*/
 	public function setHidepicture($hidepicture){
@@ -219,7 +219,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $timecreated
+	* @param int $timecreated
 	* @return void
 	*/
 	public function setTimecreated($timecreated){
@@ -228,7 +228,7 @@ class groupRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

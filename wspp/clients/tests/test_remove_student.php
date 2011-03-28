@@ -4,7 +4,7 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: remove a student in the course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $value1
 * @param string $id1

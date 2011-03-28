@@ -10,11 +10,11 @@ class cohortRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $contextid;
 	/** 
@@ -34,25 +34,25 @@ class cohortRecord {
 	*/
 	public $component;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class cohortRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $contextid
+	* @param int $id
+	* @param int $contextid
 	* @param string $name
 	* @param string $description
 	* @param string $idnumber
 	* @param string $component
-	* @param integer $timecreated
-	* @param integer $timemodified
+	* @param int $timecreated
+	* @param int $timemodified
 	* @return cohortRecord
 	*/
 	 public function cohortRecord($error='',$id=0,$contextid=0,$name='',$description='',$idnumber='',$component='',$timecreated=0,$timemodified=0){
@@ -77,7 +77,7 @@ class cohortRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -85,7 +85,7 @@ class cohortRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getContextid(){
 		 return $this->contextid;
@@ -125,7 +125,7 @@ class cohortRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimecreated(){
 		 return $this->timecreated;
@@ -133,7 +133,7 @@ class cohortRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -151,7 +151,7 @@ class cohortRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -160,7 +160,7 @@ class cohortRecord {
 
 
 	/**
-	* @param integer $contextid
+	* @param int $contextid
 	* @return void
 	*/
 	public function setContextid($contextid){
@@ -205,7 +205,7 @@ class cohortRecord {
 
 
 	/**
-	* @param integer $timecreated
+	* @param int $timecreated
 	* @return void
 	*/
 	public function setTimecreated($timecreated){
@@ -214,7 +214,7 @@ class cohortRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

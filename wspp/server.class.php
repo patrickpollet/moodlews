@@ -260,7 +260,7 @@ class server {
 	 *               client.
 	 */
 	function login($username, $password) {
-		global $CFG;
+		global $CFG,$USER;
 
 		if (!empty ($CFG->ws_disable))
 			return $this->error(get_string('ws_accessdisabled', 'local_wspp'));
@@ -347,6 +347,9 @@ $this->debug_output('internal ');
 					add_to_log(SITEID, 'webservice', 'webservice pp', '', __FUNCTION__);
 			} else
 				return $this->error(get_string('ws_errorregistersession','local_wspp'));
+            // rev 1.8.2  important when connecting via smartphones ...
+            $USER=$user;
+            update_user_login_times();
 
 		}
 		/// Return standard data to be converted into the appropriate data format
@@ -355,6 +358,8 @@ $this->debug_output('internal ');
 			'client' => $sess->id,
 			'sessionkey' => $sess->sessionkey
 		);
+
+
 		$this->debug_output(print_r($ret, true));
 		return $ret;
 	}
@@ -1809,109 +1814,121 @@ EOSS;
 	 * added rev 1.6.2
 	 */
 	function get_assignment_submissions ($client,$sesskey,$assignmentid,$userids=array(),$useridfield='idnumber',$timemodified=0,$zipfiles=1) {
-		global $CFG, $USER;
-		if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-			return $this->error(get_string('ws_invalidclient', 'local_wspp'));
-		}
-		//get the assignment record
-		if (!$assignment = ws_get_record("assignment", "id", $assignmentid)) {
-			return $this->error(get_string('ws_assignmentunknown','local_wspp','id='.$assignmentid));
-		}
+    	global $CFG, $USER;
+    	if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+        	return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+    	}
+    	//get the assignment record
+    	if (!$assignment = ws_get_record("assignment", "id", $assignmentid)) {
+        	return $this->error(get_string('ws_assignmentunknown','local_wspp','id='.$assignmentid));
+    	}
 
-		//set up all required variables any error is fatal
+    	//set up all required variables any error is fatal
 
-		if (!$course = ws_get_record("course", "id", $assignment->course))
-			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
+    	if (!$course = ws_get_record("course", "id", $assignment->course))
+        	return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
-		if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id))
-			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
+    	if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id))
+        	return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
-		if( !$context = get_context_instance(CONTEXT_COURSE, $assignment->course))
-			return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
-
-
-		$ret=array();
-
-		$fields='u.id, u.username,u.idnumber, u.email';
-		$roleid=5; //students
-
-		$moodleUserIds=array();
-		if (!empty($userids)) {
-			foreach ($userids as $userid) {
-                //$this->debug_output($userid.' '.$useridfield);
-                //caution :  alias u is not set in ws_get_record, so add it !!!
-				if ($user=ws_get_record('user u',$useridfield,$userid,'','','','',$fields)) {
-					$moodleUserIds[$user->id]=$user;
-                   // $this->debug_output(print_r($user,true));
-                }
-			}
-
-		}else {
-			/// Get all existing participants in this context.
-			if ($cm->groupingid==0 || !$cm->groupmembersonly)
-				$moodleUserIds = get_role_users($roleid, $context, false,$fields);
-			else
-				$moodleUserIds=groups_get_grouping_members($cm->groupingid,$fields);
-		}
+    	if( !$context = get_context_instance(CONTEXT_COURSE, $assignment->course))
+        	return $this->error(get_string('ws_databaseinconsistent','local_wspp'));
 
 
-        /// Check for correct permissions.
-        if ((count($moodleUserIds)==1) && !empty($moodleUserIds[$USER->id])) {
-            // OK for an user to see its OWN submission
-            // added 17/03/2011 upon request of mooclipse@meschareth.net
-        }
-        else if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
-            return $this->error(get_string('ws_operationnotallowed','local_wspp'));
-        }
+    	$ret=array();
+
+    	$fields='u.id, u.username,u.idnumber, u.email';
+    	$roleid=5; //students
+
+    	$moodleUserIds=array();
+    	if (!empty($userids)) {
+        	foreach ($userids as $userid) {
+            	//$this->debug_output($userid.' '.$useridfield);
+            	//caution :  alias u is not set in ws_get_record, so add it !!!
+            	if ($user=ws_get_record('user u',$useridfield,$userid,'','','','',$fields)) {
+                	$moodleUserIds[$user->id]=$user;
+                	// $this->debug_output(print_r($user,true));
+            	}
+        	}
+
+    	}else {
+        	/// Get all existing participants in this context.
+        	if ($cm->groupingid==0 || !$cm->groupmembersonly)
+            	$moodleUserIds = get_role_users($roleid, $context, false,$fields);
+        	else
+            	$moodleUserIds=groups_get_grouping_members($cm->groupingid,$fields);
+    	}
 
 
-         //$this->debug_output(print_r($moodleUserIds,true));
-        require_once($CFG->libdir.'/filelib.php');
-		require_once("$CFG->dirroot/mod/assignment/lib.php");
-		require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
-		$assignmentclass = "assignment_$assignment->assignmenttype";
-		$assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+    	/// Check for correct permissions.
+    	if ((count($moodleUserIds)==1) && !empty($moodleUserIds[$USER->id])) {
+        	// OK for an user to see its OWN submission
+        	// added 17/03/2011 upon request of mooclipse@meschareth.net
+    	}
+    	else if (!$this->has_capability('mod/assignment:grade', CONTEXT_COURSE, $assignment->course)) {
+        	return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+    	}
 
-		foreach($moodleUserIds as $studentid=>$student) {
-			//  Get the submission for this student
-			$submission = $assignmentinstance->get_submission($studentid);
-			if($submission && $submission->timemodified > $timemodified) {
-				$submission->useridnumber=$student->idnumber;
-                $submission->userusername=$student->username;
-                $submission->useremail=$student->email;
-                //if upload of uploadsingle, submissions are in files
-                //if online, submission is in data1
-                $submission->assignmenttype=$assignment->assignmenttype;
-                $submission->files=array();
-				//collect file(s)
-                if ($basedir = $assignmentinstance->file_area_name($studentid)) {
-                    $basedir=$CFG->dataroot.'/'.$basedir;
-                   if ($files = get_directory_list($basedir,'',true,false,true)) {
-                   $numfiles=0;
-                  foreach ($files as $key => $value) {
-                         $file=new fileRecord();
-                         $file->setFilename($value);
-                         $file->setFilePath($basedir);
-                         $file->setFileurl(get_file_url("$basedir/$value", array('forcedownload'=>1)));
-                         if ($binary = file_get_contents("$basedir/$value")) {
-                             $file->setFilecontent(base64_encode( $binary ));
-                             $file->setFilesize(strlen($binary));
-                             $numfiles++;
-                        }else {
-                             $file->setFilecontent('');
-                             $file->setFilesize(0);
-                         }
-                         $submission->files[]=$file;
-                     }
-                     //for some reasons this field is 0 in table mdl_assignment_submissions
-                     $submission->numfiles=$numfiles;
-                   }
-                }
-				$ret[]=$submission;
-			}
+
+    	//$this->debug_output(print_r($moodleUserIds,true));
+    	require_once($CFG->libdir.'/filelib.php');
+    	require_once("$CFG->dirroot/mod/assignment/lib.php");
+    	require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
+    	$assignmentclass = "assignment_".$assignment->assignmenttype;
+    	$assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+
+        if ($CFG->wspp_using_moodle20) {
+              $fs = get_file_storage();
+
         }
 
-		return $ret;
+    	foreach($moodleUserIds as $studentid=>$student) {
+        	//  Get the submission for this student
+        	$submission = $assignmentinstance->get_submission($studentid);
+        	if($submission && $submission->timemodified > $timemodified) {
+            	$submission->useridnumber=$student->idnumber;
+            	$submission->userusername=$student->username;
+            	$submission->useremail=$student->email;
+            	//if upload of uploadsingle, submissions are in files
+            	//if online, submission is in data1
+            	$submission->assignmenttype=$assignment->assignmenttype;
+            	$submission->files=array();
+                $numfiles=0;
+            	//collect file(s)
+
+            	if ($CFG->wspp_using_moodle20) {
+
+
+            	} else {
+
+                	if ($basedir = $assignmentinstance->file_area_name($studentid)) {
+                    	$basedir=$CFG->dataroot.'/'.$basedir;
+                    	if ($files = get_directory_list($basedir,'',true,false,true)) {
+                        	foreach ($files as $key => $value) {
+                            	$file=new fileRecord();
+                            	$file->setFilename($value);
+                            	$file->setFilePath($basedir);
+                            	$file->setFileurl(get_file_url("$basedir/$value", array('forcedownload'=>1)));
+                            	if ($binary = file_get_contents("$basedir/$value")) {
+                                	$file->setFilecontent(base64_encode( $binary ));
+                                	$file->setFilesize(strlen($binary));
+                                	$numfiles++;
+                            	}else {
+                                	$file->setFilecontent('');
+                                	$file->setFilesize(0);
+                            	}
+                            	$submission->files[]=$file;
+                        	}
+                    	}
+                    	//for some reasons this field is 0 in table mdl_assignment_submissions
+                    	$submission->numfiles=$numfiles;
+                	}
+            	}
+            	$ret[]=$submission;
+        	}
+    	}
+
+    	return $ret;
 
 	}
 
@@ -4519,6 +4536,68 @@ EOSS;
             $ret=filter_messages($client,$ret);
         }
         return $ret;
+    }
+
+
+     /**  rev 1.8.2
+     * retrieve all contacts of user identified by userid
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @return contactRecord[]
+     */
+
+    public function get_message_contacts ($client,$sesskey,$userid,$useridfield) {
+
+
+        global $CFG,$USER;
+        if (empty($CFG->messaging))
+            return $this->error(get_string('ws_messaingdisabled', 'local_wspp'));
+
+        if (!$this->validate_client($client, $sesskey,__FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        if (empty($userid)) {  //it is me that send it
+            $userid=$USER->id;
+            $useridfield='id';
+        }
+
+        if (!$user = ws_get_record("user",$useridfield, $userid)) {
+            return $this->error(get_string('ws_userunknown','local_wspp',$useridfield.'='.$userid));
+        }
+
+        if ($user->id !=$USER->id && !$this->has_capability('moodle/site:readallmessages', CONTEXT_SYSTEM, 0)) {
+                return $this->error(get_string('ws_operationnotallowed','local_wspp'));
+        }
+
+
+    // get all in our contactlist who are not blocked in our contact list
+    // and count messages we have waiting from each of them
+    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
+                          u.imagealt, u.lastaccess, count(m.id) as messagecount
+                   FROM {$CFG->prefix}message_contacts mc
+                   JOIN {$CFG->prefix}user u
+                      ON u.id = mc.contactid
+                   LEFT OUTER JOIN {$CFG->prefix}message m
+                      ON m.useridfrom = mc.contactid
+                      AND m.useridto = {$user->id}
+                   WHERE mc.userid = {$user->id}
+                         AND mc.blocked = 0
+                   GROUP BY u.id, u.firstname, u.lastname, u.picture,
+                            u.imagealt, u.lastaccess
+                   ORDER BY u.firstname ASC";
+         $this->debug_output($contactsql);
+        $ret=ws_get_records_sql($contactsql);
+
+
+
+
+
+        $this->debug_output(print_r($ret,true));
+         // step 1 generate the return array and pass it acros filtering process
+        //$ret= array();
+        return filter_contacts($client,$ret);
     }
 
 

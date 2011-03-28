@@ -5,12 +5,12 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: get files submitted
 				in a Moodle assignment
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $assignmentid
+* @param int $assignmentid
 * @param string[] $userids
 * @param string $useridfield
-* @param integer $timemodified
+* @param int $timemodified
 * @return  getAssignmentSubmissionsReturn
 */
 

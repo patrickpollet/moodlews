@@ -10,7 +10,7 @@ class resourceRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -18,7 +18,7 @@ class resourceRecord {
 	*/
 	public $name;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -46,23 +46,23 @@ class resourceRecord {
 	*/
 	public $options;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $section;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupmode;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $coursemodule;
 	/** 
@@ -77,20 +77,20 @@ class resourceRecord {
 	/**
 	* default constructor for class resourceRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $name
-	* @param integer $course
+	* @param int $course
 	* @param string $type
 	* @param string $reference
 	* @param string $summary
 	* @param string $alltext
 	* @param string $popup
 	* @param string $options
-	* @param integer $timemodified
-	* @param integer $section
-	* @param integer $visible
-	* @param integer $groupmode
-	* @param integer $coursemodule
+	* @param int $timemodified
+	* @param int $section
+	* @param int $visible
+	* @param int $groupmode
+	* @param int $coursemodule
 	* @param string $url
 	* @param string $timemodified_ut
 	* @return resourceRecord
@@ -125,7 +125,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -141,7 +141,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -197,7 +197,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -205,7 +205,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSection(){
 		 return $this->section;
@@ -213,7 +213,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -221,7 +221,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupmode(){
 		 return $this->groupmode;
@@ -229,7 +229,7 @@ class resourceRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCoursemodule(){
 		 return $this->coursemodule;
@@ -263,7 +263,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -281,7 +281,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -344,7 +344,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
@@ -353,7 +353,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $section
+	* @param int $section
 	* @return void
 	*/
 	public function setSection($section){
@@ -362,7 +362,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -371,7 +371,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $groupmode
+	* @param int $groupmode
 	* @return void
 	*/
 	public function setGroupmode($groupmode){
@@ -380,7 +380,7 @@ class resourceRecord {
 
 
 	/**
-	* @param integer $coursemodule
+	* @param int $coursemodule
 	* @return void
 	*/
 	public function setCoursemodule($coursemodule){

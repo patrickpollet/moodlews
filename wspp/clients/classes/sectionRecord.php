@@ -10,15 +10,15 @@ class sectionRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $section;
 	/** 
@@ -30,19 +30,19 @@ class sectionRecord {
 	*/
 	public $summary;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 
 	/**
 	* default constructor for class sectionRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $course
-	* @param integer $section
+	* @param int $id
+	* @param int $course
+	* @param int $section
 	* @param string $sequence
 	* @param string $summary
-	* @param integer $visible
+	* @param int $visible
 	* @return sectionRecord
 	*/
 	 public function sectionRecord($error='',$id=0,$course=0,$section=0,$sequence='',$summary='',$visible=0){
@@ -65,7 +65,7 @@ class sectionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -73,7 +73,7 @@ class sectionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -81,7 +81,7 @@ class sectionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSection(){
 		 return $this->section;
@@ -105,7 +105,7 @@ class sectionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -123,7 +123,7 @@ class sectionRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -132,7 +132,7 @@ class sectionRecord {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -141,7 +141,7 @@ class sectionRecord {
 
 
 	/**
-	* @param integer $section
+	* @param int $section
 	* @return void
 	*/
 	public function setSection($section){
@@ -168,7 +168,7 @@ class sectionRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){

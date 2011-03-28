@@ -10,11 +10,11 @@ class labelRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -26,18 +26,18 @@ class labelRecord {
 	*/
 	public $content;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class labelRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $name
 	* @param string $content
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return labelRecord
 	*/
 	 public function labelRecord($error='',$id=0,$course=0,$name='',$content='',$timemodified=0){
@@ -59,7 +59,7 @@ class labelRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -67,7 +67,7 @@ class labelRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -91,7 +91,7 @@ class labelRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -109,7 +109,7 @@ class labelRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -118,7 +118,7 @@ class labelRecord {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -145,7 +145,7 @@ class labelRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

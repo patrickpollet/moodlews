@@ -10,7 +10,7 @@ class roleRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -26,18 +26,18 @@ class roleRecord {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sortorder;
 
 	/**
 	* default constructor for class roleRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $name
 	* @param string $shortname
 	* @param string $description
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return roleRecord
 	*/
 	 public function roleRecord($error='',$id=0,$name='',$shortname='',$description='',$sortorder=0){
@@ -59,7 +59,7 @@ class roleRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -91,7 +91,7 @@ class roleRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSortorder(){
 		 return $this->sortorder;
@@ -109,7 +109,7 @@ class roleRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -145,7 +145,7 @@ class roleRecord {
 
 
 	/**
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return void
 	*/
 	public function setSortorder($sortorder){

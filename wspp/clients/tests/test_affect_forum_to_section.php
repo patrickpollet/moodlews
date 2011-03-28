@@ -4,11 +4,11 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Affect Forum to Section
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $forumid
-* @param integer $sectionid
-* @param integer $groupmode
+* @param int $forumid
+* @param int $sectionid
+* @param int $groupmode
 * @return  affectRecord
 */
 

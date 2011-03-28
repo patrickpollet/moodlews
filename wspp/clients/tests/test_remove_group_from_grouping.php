@@ -4,10 +4,10 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: unAffect a group to grouping
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $groupid
-* @param integer $groupingid
+* @param int $groupid
+* @param int $groupingid
 * @return  affectRecord
 */
 

@@ -4,7 +4,7 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get one role defined in Moodle
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $value
 * @return  getRolesReturn

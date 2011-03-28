@@ -10,15 +10,15 @@ class courseDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $category;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sortorder;
 	/** 
@@ -46,11 +46,11 @@ class courseDatum {
 	*/
 	public $format;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $showgrades;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $newsitems;
 	/** 
@@ -70,39 +70,39 @@ class courseDatum {
 	*/
 	public $students;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $guest;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $startdate;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $enrolperiod;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $marker;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $maxbytes;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $hiddensections;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupmode;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupmodeforce;
 	/** 
@@ -118,41 +118,41 @@ class courseDatum {
 	*/
 	public $cost;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $metacourse;
 
 	/**
 	* default constructor for class courseDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $category
-	* @param integer $sortorder
+	* @param int $id
+	* @param int $category
+	* @param int $sortorder
 	* @param string $password
 	* @param string $fullname
 	* @param string $shortname
 	* @param string $idnumber
 	* @param string $summary
 	* @param string $format
-	* @param integer $showgrades
-	* @param integer $newsitems
+	* @param int $showgrades
+	* @param int $newsitems
 	* @param string $teacher
 	* @param string $teachers
 	* @param string $student
 	* @param string $students
-	* @param integer $guest
-	* @param integer $startdate
-	* @param integer $enrolperiod
-	* @param integer $marker
-	* @param integer $maxbytes
-	* @param integer $visible
-	* @param integer $hiddensections
-	* @param integer $groupmode
-	* @param integer $groupmodeforce
+	* @param int $guest
+	* @param int $startdate
+	* @param int $enrolperiod
+	* @param int $marker
+	* @param int $maxbytes
+	* @param int $visible
+	* @param int $hiddensections
+	* @param int $groupmode
+	* @param int $groupmodeforce
 	* @param string $lang
 	* @param string $theme
 	* @param string $cost
-	* @param integer $metacourse
+	* @param int $metacourse
 	* @return courseDatum
 	*/
 	 public function courseDatum($action='',$id=0,$category=0,$sortorder=0,$password='',$fullname='',$shortname='',$idnumber='',$summary='',$format='',$showgrades=0,$newsitems=0,$teacher='',$teachers='',$student='',$students='',$guest=0,$startdate=0,$enrolperiod=0,$marker=0,$maxbytes=0,$visible=0,$hiddensections=0,$groupmode=0,$groupmodeforce=0,$lang='',$theme='',$cost='',$metacourse=0){
@@ -197,7 +197,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -205,7 +205,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCategory(){
 		 return $this->category;
@@ -213,7 +213,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSortorder(){
 		 return $this->sortorder;
@@ -269,7 +269,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getShowgrades(){
 		 return $this->showgrades;
@@ -277,7 +277,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getNewsitems(){
 		 return $this->newsitems;
@@ -317,7 +317,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGuest(){
 		 return $this->guest;
@@ -325,7 +325,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getStartdate(){
 		 return $this->startdate;
@@ -333,7 +333,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEnrolperiod(){
 		 return $this->enrolperiod;
@@ -341,7 +341,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMarker(){
 		 return $this->marker;
@@ -349,7 +349,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMaxbytes(){
 		 return $this->maxbytes;
@@ -357,7 +357,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -365,7 +365,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHiddensections(){
 		 return $this->hiddensections;
@@ -373,7 +373,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupmode(){
 		 return $this->groupmode;
@@ -381,7 +381,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupmodeforce(){
 		 return $this->groupmodeforce;
@@ -413,7 +413,7 @@ class courseDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMetacourse(){
 		 return $this->metacourse;
@@ -431,7 +431,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -440,7 +440,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $category
+	* @param int $category
 	* @return void
 	*/
 	public function setCategory($category){
@@ -449,7 +449,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return void
 	*/
 	public function setSortorder($sortorder){
@@ -512,7 +512,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $showgrades
+	* @param int $showgrades
 	* @return void
 	*/
 	public function setShowgrades($showgrades){
@@ -521,7 +521,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $newsitems
+	* @param int $newsitems
 	* @return void
 	*/
 	public function setNewsitems($newsitems){
@@ -566,7 +566,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $guest
+	* @param int $guest
 	* @return void
 	*/
 	public function setGuest($guest){
@@ -575,7 +575,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $startdate
+	* @param int $startdate
 	* @return void
 	*/
 	public function setStartdate($startdate){
@@ -584,7 +584,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $enrolperiod
+	* @param int $enrolperiod
 	* @return void
 	*/
 	public function setEnrolperiod($enrolperiod){
@@ -593,7 +593,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $marker
+	* @param int $marker
 	* @return void
 	*/
 	public function setMarker($marker){
@@ -602,7 +602,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $maxbytes
+	* @param int $maxbytes
 	* @return void
 	*/
 	public function setMaxbytes($maxbytes){
@@ -611,7 +611,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -620,7 +620,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $hiddensections
+	* @param int $hiddensections
 	* @return void
 	*/
 	public function setHiddensections($hiddensections){
@@ -629,7 +629,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $groupmode
+	* @param int $groupmode
 	* @return void
 	*/
 	public function setGroupmode($groupmode){
@@ -638,7 +638,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $groupmodeforce
+	* @param int $groupmodeforce
 	* @return void
 	*/
 	public function setGroupmodeforce($groupmodeforce){
@@ -674,7 +674,7 @@ class courseDatum {
 
 
 	/**
-	* @param integer $metacourse
+	* @param int $metacourse
 	* @return void
 	*/
 	public function setMetacourse($metacourse){

@@ -10,11 +10,11 @@ class quizRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -26,19 +26,19 @@ class quizRecord {
 	*/
 	public $intro;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeopen;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeclose;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $shufflequestions;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $shuffleanswers;
 	/** 
@@ -46,7 +46,7 @@ class quizRecord {
 	*/
 	public $questions;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timelimit;
 	/** 
@@ -57,16 +57,16 @@ class quizRecord {
 	/**
 	* default constructor for class quizRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $name
 	* @param string $intro
-	* @param integer $timeopen
-	* @param integer $timeclose
-	* @param integer $shufflequestions
-	* @param integer $shuffleanswers
+	* @param int $timeopen
+	* @param int $timeclose
+	* @param int $shufflequestions
+	* @param int $shuffleanswers
 	* @param string $questions
-	* @param integer $timelimit
+	* @param int $timelimit
 	* @param string $data
 	* @return quizRecord
 	*/
@@ -95,7 +95,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -103,7 +103,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -127,7 +127,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeopen(){
 		 return $this->timeopen;
@@ -135,7 +135,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeclose(){
 		 return $this->timeclose;
@@ -143,7 +143,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getShufflequestions(){
 		 return $this->shufflequestions;
@@ -151,7 +151,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getShuffleanswers(){
 		 return $this->shuffleanswers;
@@ -167,7 +167,7 @@ class quizRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimelimit(){
 		 return $this->timelimit;
@@ -193,7 +193,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -202,7 +202,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -229,7 +229,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $timeopen
+	* @param int $timeopen
 	* @return void
 	*/
 	public function setTimeopen($timeopen){
@@ -238,7 +238,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $timeclose
+	* @param int $timeclose
 	* @return void
 	*/
 	public function setTimeclose($timeclose){
@@ -247,7 +247,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $shufflequestions
+	* @param int $shufflequestions
 	* @return void
 	*/
 	public function setShufflequestions($shufflequestions){
@@ -256,7 +256,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $shuffleanswers
+	* @param int $shuffleanswers
 	* @return void
 	*/
 	public function setShuffleanswers($shuffleanswers){
@@ -274,7 +274,7 @@ class quizRecord {
 
 
 	/**
-	* @param integer $timelimit
+	* @param int $timelimit
 	* @return void
 	*/
 	public function setTimelimit($timelimit){

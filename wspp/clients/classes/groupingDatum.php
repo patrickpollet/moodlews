@@ -10,11 +10,11 @@ class groupingDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
@@ -29,8 +29,8 @@ class groupingDatum {
 	/**
 	* default constructor for class groupingDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $courseid
+	* @param int $id
+	* @param int $courseid
 	* @param string $name
 	* @param string $description
 	* @return groupingDatum
@@ -53,7 +53,7 @@ class groupingDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -61,7 +61,7 @@ class groupingDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -95,7 +95,7 @@ class groupingDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -104,7 +104,7 @@ class groupingDatum {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){

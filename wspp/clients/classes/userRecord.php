@@ -10,7 +10,7 @@ class userRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -18,15 +18,15 @@ class userRecord {
 	*/
 	public $auth;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $confirmed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $policyagreed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $deleted;
 	/** 
@@ -54,7 +54,7 @@ class userRecord {
 	*/
 	public $icq;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $emailstop;
 	/** 
@@ -106,11 +106,11 @@ class userRecord {
 	*/
 	public $lang;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timezone;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $mnethostid;
 	/** 
@@ -126,7 +126,7 @@ class userRecord {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $role;
 	/** 
@@ -137,18 +137,18 @@ class userRecord {
 	/**
 	* default constructor for class userRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $auth
-	* @param integer $confirmed
-	* @param integer $policyagreed
-	* @param integer $deleted
+	* @param int $confirmed
+	* @param int $policyagreed
+	* @param int $deleted
 	* @param string $username
 	* @param string $idnumber
 	* @param string $firstname
 	* @param string $lastname
 	* @param string $email
 	* @param string $icq
-	* @param integer $emailstop
+	* @param int $emailstop
 	* @param string $skype
 	* @param string $yahoo
 	* @param string $aim
@@ -161,12 +161,12 @@ class userRecord {
 	* @param string $city
 	* @param string $country
 	* @param string $lang
-	* @param integer $timezone
-	* @param integer $mnethostid
+	* @param int $timezone
+	* @param int $mnethostid
 	* @param string $lastip
 	* @param string $theme
 	* @param string $description
-	* @param integer $role
+	* @param int $role
 	* @param profileitemRecord[] $profile
 	* @return userRecord
 	*/
@@ -215,7 +215,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -231,7 +231,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getConfirmed(){
 		 return $this->confirmed;
@@ -239,7 +239,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getPolicyagreed(){
 		 return $this->policyagreed;
@@ -247,7 +247,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDeleted(){
 		 return $this->deleted;
@@ -303,7 +303,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEmailstop(){
 		 return $this->emailstop;
@@ -407,7 +407,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimezone(){
 		 return $this->timezone;
@@ -415,7 +415,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMnethostid(){
 		 return $this->mnethostid;
@@ -447,7 +447,7 @@ class userRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getRole(){
 		 return $this->role;
@@ -473,7 +473,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -491,7 +491,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $confirmed
+	* @param int $confirmed
 	* @return void
 	*/
 	public function setConfirmed($confirmed){
@@ -500,7 +500,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $policyagreed
+	* @param int $policyagreed
 	* @return void
 	*/
 	public function setPolicyagreed($policyagreed){
@@ -509,7 +509,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $deleted
+	* @param int $deleted
 	* @return void
 	*/
 	public function setDeleted($deleted){
@@ -572,7 +572,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $emailstop
+	* @param int $emailstop
 	* @return void
 	*/
 	public function setEmailstop($emailstop){
@@ -689,7 +689,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $timezone
+	* @param int $timezone
 	* @return void
 	*/
 	public function setTimezone($timezone){
@@ -698,7 +698,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $mnethostid
+	* @param int $mnethostid
 	* @return void
 	*/
 	public function setMnethostid($mnethostid){
@@ -734,7 +734,7 @@ class userRecord {
 
 
 	/**
-	* @param integer $role
+	* @param int $role
 	* @return void
 	*/
 	public function setRole($role){

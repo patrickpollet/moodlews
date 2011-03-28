@@ -106,6 +106,8 @@ $string['noassignments']='no assignments';
 $string['nowikipages']='no wiki pages';
 $string['nolabels']='no labels';
 $string['noquizzes']='no quizzes';
+$string['nomessages']='pas de messages';
+$string['nocontacts']='pas de contacts';
 
 
 $string['ws_groupalreadyaffected']='the group $a->group already is a member of course $a->course.';

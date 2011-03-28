@@ -6,7 +6,7 @@
  */
 class loginReturn {
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $client;
 	/** 
@@ -16,7 +16,7 @@ class loginReturn {
 
 	/**
 	* default constructor for class loginReturn
-	* @param integer $client
+	* @param int $client
 	* @param string $sessionkey
 	* @return loginReturn
 	*/
@@ -27,7 +27,7 @@ class loginReturn {
 	/* get accessors */
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getClient(){
 		 return $this->client;
@@ -44,7 +44,7 @@ class loginReturn {
 	/*set accessors */
 
 	/**
-	* @param integer $client
+	* @param int $client
 	* @return void
 	*/
 	public function setClient($client){

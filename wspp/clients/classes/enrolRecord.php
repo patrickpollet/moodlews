@@ -18,15 +18,15 @@ class enrolRecord {
 	*/
 	public $course;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timestart;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeend;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeaccess;
 	/** 
@@ -39,9 +39,9 @@ class enrolRecord {
 	* @param string $error
 	* @param string $userid
 	* @param string $course
-	* @param integer $timestart
-	* @param integer $timeend
-	* @param integer $timeaccess
+	* @param int $timestart
+	* @param int $timeend
+	* @param int $timeaccess
 	* @param string $enrol
 	* @return enrolRecord
 	*/
@@ -81,7 +81,7 @@ class enrolRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimestart(){
 		 return $this->timestart;
@@ -89,7 +89,7 @@ class enrolRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeend(){
 		 return $this->timeend;
@@ -97,7 +97,7 @@ class enrolRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeaccess(){
 		 return $this->timeaccess;
@@ -141,7 +141,7 @@ class enrolRecord {
 
 
 	/**
-	* @param integer $timestart
+	* @param int $timestart
 	* @return void
 	*/
 	public function setTimestart($timestart){
@@ -150,7 +150,7 @@ class enrolRecord {
 
 
 	/**
-	* @param integer $timeend
+	* @param int $timeend
 	* @return void
 	*/
 	public function setTimeend($timeend){
@@ -159,7 +159,7 @@ class enrolRecord {
 
 
 	/**
-	* @param integer $timeaccess
+	* @param int $timeaccess
 	* @return void
 	*/
 	public function setTimeaccess($timeaccess){

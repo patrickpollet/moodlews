@@ -632,6 +632,7 @@ function ws_fix_renamed_fields (&$inputRecord,$type) {
 
          case "assignment" :
                 $inputRecord->intro=$inputRecord->description;
+                 unset($inputRecord->description);
                 if (isset($inputRecord->format)) {
                     $inputRecord->introformat=$inputRecord->format;
                     unset($inputRecord->format);

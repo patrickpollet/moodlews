@@ -10,19 +10,19 @@ class changeRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $instance;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $resid;
 	/** 
@@ -34,7 +34,7 @@ class changeRecord {
 	*/
 	public $date;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timestamp;
 	/** 
@@ -54,25 +54,25 @@ class changeRecord {
 	*/
 	public $url;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 
 	/**
 	* default constructor for class changeRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $courseid
-	* @param integer $instance
-	* @param integer $resid
+	* @param int $id
+	* @param int $courseid
+	* @param int $instance
+	* @param int $resid
 	* @param string $name
 	* @param string $date
-	* @param integer $timestamp
+	* @param int $timestamp
 	* @param string $type
 	* @param string $author
 	* @param string $link
 	* @param string $url
-	* @param integer $visible
+	* @param int $visible
 	* @return changeRecord
 	*/
 	 public function changeRecord($error='',$id=0,$courseid=0,$instance=0,$resid=0,$name='',$date='',$timestamp=0,$type='',$author='',$link='',$url='',$visible=0){
@@ -101,7 +101,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -109,7 +109,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -117,7 +117,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getInstance(){
 		 return $this->instance;
@@ -125,7 +125,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getResid(){
 		 return $this->resid;
@@ -149,7 +149,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimestamp(){
 		 return $this->timestamp;
@@ -189,7 +189,7 @@ class changeRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -207,7 +207,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -216,7 +216,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
@@ -225,7 +225,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $instance
+	* @param int $instance
 	* @return void
 	*/
 	public function setInstance($instance){
@@ -234,7 +234,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $resid
+	* @param int $resid
 	* @return void
 	*/
 	public function setResid($resid){
@@ -261,7 +261,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $timestamp
+	* @param int $timestamp
 	* @return void
 	*/
 	public function setTimestamp($timestamp){
@@ -306,7 +306,7 @@ class changeRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){

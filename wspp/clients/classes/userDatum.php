@@ -10,19 +10,19 @@ class userDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $confirmed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $policyagreed;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $deleted;
 	/** 
@@ -58,7 +58,7 @@ class userDatum {
 	*/
 	public $email;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $emailstop;
 	/** 
@@ -114,7 +114,7 @@ class userDatum {
 	*/
 	public $lang;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timezone;
 	/** 
@@ -130,17 +130,17 @@ class userDatum {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $mnethostid;
 
 	/**
 	* default constructor for class userDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $confirmed
-	* @param integer $policyagreed
-	* @param integer $deleted
+	* @param int $id
+	* @param int $confirmed
+	* @param int $policyagreed
+	* @param int $deleted
 	* @param string $username
 	* @param string $auth
 	* @param string $password
@@ -149,7 +149,7 @@ class userDatum {
 	* @param string $firstname
 	* @param string $lastname
 	* @param string $email
-	* @param integer $emailstop
+	* @param int $emailstop
 	* @param string $icq
 	* @param string $skype
 	* @param string $yahoo
@@ -163,11 +163,11 @@ class userDatum {
 	* @param string $city
 	* @param string $country
 	* @param string $lang
-	* @param integer $timezone
+	* @param int $timezone
 	* @param string $lastip
 	* @param string $theme
 	* @param string $description
-	* @param integer $mnethostid
+	* @param int $mnethostid
 	* @return userDatum
 	*/
 	 public function userDatum($action='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$passwordmd5='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
@@ -215,7 +215,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -223,7 +223,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getConfirmed(){
 		 return $this->confirmed;
@@ -231,7 +231,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getPolicyagreed(){
 		 return $this->policyagreed;
@@ -239,7 +239,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getDeleted(){
 		 return $this->deleted;
@@ -311,7 +311,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEmailstop(){
 		 return $this->emailstop;
@@ -423,7 +423,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimezone(){
 		 return $this->timezone;
@@ -455,7 +455,7 @@ class userDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMnethostid(){
 		 return $this->mnethostid;
@@ -473,7 +473,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -482,7 +482,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $confirmed
+	* @param int $confirmed
 	* @return void
 	*/
 	public function setConfirmed($confirmed){
@@ -491,7 +491,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $policyagreed
+	* @param int $policyagreed
 	* @return void
 	*/
 	public function setPolicyagreed($policyagreed){
@@ -500,7 +500,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $deleted
+	* @param int $deleted
 	* @return void
 	*/
 	public function setDeleted($deleted){
@@ -581,7 +581,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $emailstop
+	* @param int $emailstop
 	* @return void
 	*/
 	public function setEmailstop($emailstop){
@@ -707,7 +707,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $timezone
+	* @param int $timezone
 	* @return void
 	*/
 	public function setTimezone($timezone){
@@ -743,7 +743,7 @@ class userDatum {
 
 
 	/**
-	* @param integer $mnethostid
+	* @param int $mnethostid
 	* @return void
 	*/
 	public function setMnethostid($mnethostid){

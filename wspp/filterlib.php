@@ -592,4 +592,44 @@ function filter_messages($client, $msgs) {
     return $res;
 
 }
+
+/**
+ * rev 1.8.3 a contact is a regular Moodle user plus tow informations
+ * about online status and messages count (see record classes/contactRecord)
+ * messagecount has been retrieved in the SQL
+ * online is computed here
+ */
+function filter_contact ($client, $user) {
+    global $CFG;
+   if (!empty ($user->error))
+        return $user;
+   // add whatever is needed for regular user
+   if (!$user=filter_user($client,$user))
+    return false;
+    // check status
+    $timetoshowusers = 300; //Seconds default
+    if (isset($CFG->block_online_users_timetosee)) {
+        $timetoshowusers = $CFG->block_online_users_timetosee * 60;
+    }
+    // time which a user is counting as being active since
+    $timefrom = time()-$timetoshowusers;
+    $user->online=$user->lastaccess >= $timefrom;
+    return $user;
+
+}
+
+
+function filter_contacts($client, $msgs) {
+    $res = array ();
+    foreach ($msgs as $msg) {
+        $msg = filter_contact($client, $msg);
+        if ($msg)
+            $res[] = $msg;
+    }
+    return $res;
+
+}
+
+
+
 ?>

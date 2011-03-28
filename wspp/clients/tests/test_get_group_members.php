@@ -5,9 +5,9 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get users members of a group in
 				course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $groupid
+* @param int $groupid
 * @return  getUsersReturn
 */
 

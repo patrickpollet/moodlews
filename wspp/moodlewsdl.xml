@@ -61,13 +61,61 @@
 					<xsd:element name="profile" type="tns:profileitemRecords" />
 				</xsd:all>
 			</xsd:complexType>
-
-
-			<xsd:complexType name="userRecords">
+			
+					<xsd:complexType name="userRecords">
 				<xsd:complexContent>
 					<xsd:restriction base="SOAP-ENC:Array">
 						<xsd:attribute ref="SOAP-ENC:arrayType"
 							wsdl:arrayType="tns:userRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			
+			    <xsd:complexType name="contactRecord">
+        <xsd:all>
+          <xsd:element name="address" type="xsd:string"/>
+          <xsd:element name="aim" type="xsd:string"/>
+          <xsd:element name="auth" type="xsd:string"/>
+          <xsd:element name="city" type="xsd:string"/>
+          <xsd:element name="confirmed" type="xsd:int"/>
+          <xsd:element name="country" type="xsd:string"/>
+          <xsd:element name="deleted" type="xsd:int"/>
+          <xsd:element name="department" type="xsd:string"/>
+          <xsd:element name="description" type="xsd:string"/>
+          <xsd:element name="email" type="xsd:string"/>
+          <xsd:element name="emailstop" type="xsd:int"/>
+          <xsd:element name="error" type="xsd:string"/>
+          <xsd:element name="firstname" type="xsd:string"/>
+          <xsd:element name="icq" type="xsd:string"/>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="idnumber" type="xsd:string"/>
+          <xsd:element name="institution" type="xsd:string"/>
+          <xsd:element name="lang" type="xsd:string"/>
+          <xsd:element name="lastip" type="xsd:string"/>
+          <xsd:element name="lastname" type="xsd:string"/>
+          <xsd:element name="messagecount" type="xsd:int"/>
+          <xsd:element name="mnethostid" type="xsd:int"/>
+          <xsd:element name="msn" type="xsd:string"/>
+          <xsd:element name="online" type="xsd:int"/>
+          <xsd:element name="phone1" type="xsd:string"/>
+          <xsd:element name="phone2" type="xsd:string"/>
+          <xsd:element name="policyagreed" type="xsd:int"/>
+          <xsd:element name="profile" type="tns:profileitemRecords"/>
+          <xsd:element name="role" type="xsd:int"/>
+          <xsd:element name="skype" type="xsd:string"/>
+          <xsd:element name="theme" type="xsd:string"/>
+          <xsd:element name="timezone" type="xsd:int"/>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="yahoo" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+			
+
+			<xsd:complexType name="contactRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:contactRecord[]" />
 					</xsd:restriction>
 				</xsd:complexContent>
 			</xsd:complexType>
@@ -1689,7 +1737,11 @@
                 </xsd:all>
         </xsd:complexType>
 	
-
+         <xsd:complexType name="getMessageContactsReturn">
+                <xsd:all>
+                        <xsd:element name="contacts" type="tns:contactRecords" />
+                </xsd:all>
+        </xsd:complexType>
 
 		</xsd:schema>
 	</types>
@@ -2570,7 +2622,7 @@
 	</message>
 	
 	
-		<message name="get_forum_postsRequest">
+	<message name="get_forum_postsRequest">
 		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
         <part name="discussionid" type="xsd:int" />
@@ -2597,6 +2649,7 @@
         <part name="post" type="tns:forumPostDatum" />
 
 	</message>
+	
 	
 
 	<!-- get_groupings -->
@@ -2635,6 +2688,19 @@
         <part name="userid" type="xsd:string" />
          <part name="useridfield" type="xsd:string" />
         <part name="message" type="xsd:string" />
+	</message>
+	
+	
+	<message name="get_message_contactsRequest">
+		<part name="client" type="xsd:int" />
+		<part name="sesskey" type="xsd:string" />
+        <part name="userid" type="xsd:string" />
+        <part name="useridfield" type="xsd:string" />
+
+	</message>
+
+	<message name="get_message_contactsResponse">
+		<part name="return" type="tns:getMessageContactsReturn" />
 	</message>
 	
 
@@ -3617,6 +3683,12 @@
                 <documentation>MoodleWS: Get  </documentation>
                 <input message="tns:message_sendRequest" />
                 <output message="tns:affectResponse" />
+        </operation>
+        
+        <operation name="get_message_contacts">
+                <documentation>MoodleWS: Get user's contacts in Moodle messaging </documentation>
+                <input message="tns:get_message_contactsRequest" />
+                <output message="tns:get_message_contactsResponse" />
         </operation>
 	
 	
@@ -5438,6 +5510,16 @@
 	
     	  <operation name="message_send">
                 <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#message_send" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+        
+         <operation name="get_message_contacts">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_message_contacts" style="rpc" />
                 <input>
                 <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
                 </input>

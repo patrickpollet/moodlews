@@ -4,10 +4,10 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get Course Information
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $info
-* @param integer $courseid
+* @param int $courseid
 * @return  getCohortsReturn
 */
 

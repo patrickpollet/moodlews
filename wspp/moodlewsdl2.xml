@@ -1017,6 +1017,51 @@
           <xsd:element name="visible" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
+      <xsd:complexType name="contactRecordArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:contactRecord[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="contactRecord">
+        <xsd:all>
+          <xsd:element name="address" type="xsd:string"/>
+          <xsd:element name="aim" type="xsd:string"/>
+          <xsd:element name="auth" type="xsd:string"/>
+          <xsd:element name="city" type="xsd:string"/>
+          <xsd:element name="confirmed" type="xsd:int"/>
+          <xsd:element name="country" type="xsd:string"/>
+          <xsd:element name="deleted" type="xsd:int"/>
+          <xsd:element name="department" type="xsd:string"/>
+          <xsd:element name="description" type="xsd:string"/>
+          <xsd:element name="email" type="xsd:string"/>
+          <xsd:element name="emailstop" type="xsd:int"/>
+          <xsd:element name="error" type="xsd:string"/>
+          <xsd:element name="firstname" type="xsd:string"/>
+          <xsd:element name="icq" type="xsd:string"/>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="idnumber" type="xsd:string"/>
+          <xsd:element name="institution" type="xsd:string"/>
+          <xsd:element name="lang" type="xsd:string"/>
+          <xsd:element name="lastip" type="xsd:string"/>
+          <xsd:element name="lastname" type="xsd:string"/>
+          <xsd:element name="messagecount" type="xsd:int"/>
+          <xsd:element name="mnethostid" type="xsd:int"/>
+          <xsd:element name="msn" type="xsd:string"/>
+          <xsd:element name="online" type="xsd:int"/>
+          <xsd:element name="phone1" type="xsd:string"/>
+          <xsd:element name="phone2" type="xsd:string"/>
+          <xsd:element name="policyagreed" type="xsd:int"/>
+          <xsd:element name="profile" type="tns:profileitemRecordArray"/>
+          <xsd:element name="role" type="xsd:int"/>
+          <xsd:element name="skype" type="xsd:string"/>
+          <xsd:element name="theme" type="xsd:string"/>
+          <xsd:element name="timezone" type="xsd:int"/>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="yahoo" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
       <xsd:complexType name="messageRecordArray">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -1914,6 +1959,15 @@
   <message name="get_last_changesResponse">
     <part name="get_last_changesReturn" type="tns:changeRecordArray"/>
   </message>
+  <message name="get_message_contactsRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="userid" type="xsd:string"/>
+    <part name="useridfield" type="xsd:string"/>
+  </message>
+  <message name="get_message_contactsResponse">
+    <part name="get_message_contactsReturn" type="tns:contactRecordArray"/>
+  </message>
   <message name="get_messagesRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2707,6 +2761,10 @@
     <wsdl:operation name="get_last_changes">
       <wsdl:input message="tns:get_last_changesRequest"/>
       <wsdl:output message="tns:get_last_changesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_message_contacts">
+      <wsdl:input message="tns:get_message_contactsRequest"/>
+      <wsdl:output message="tns:get_message_contactsResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_messages">
       <wsdl:input message="tns:get_messagesRequest"/>
@@ -3736,6 +3794,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_last_changes">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_last_changes" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_message_contacts">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_message_contacts" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>

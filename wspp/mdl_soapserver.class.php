@@ -2320,6 +2320,20 @@ class mdl_soapserver extends server {
     }
 
          /**  rev 1.8
+     * retrieve all contacts of user identified by userid
+     * @param int $client
+     * @param string $sesskey
+     * @param string $userid
+     * @param string $useridfield
+     * @return contactRecord[]
+     */
+
+    public function get_message_contacts ($client,$sesskey,$userid,$useridfield) {
+              return $this->send($this->to_soap_array(parent :: get_message_contacts ($client,$sesskey,$userid,$useridfield
+            ), 'contacts', 'contactRecord', get_string('nocontacts', 'local_wspp')));
+    }
+
+           /**  rev 1.8
      * retrieve all unread user's messages
      * @param int $client
      * @param string $sesskey

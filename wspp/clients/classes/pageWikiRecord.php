@@ -10,7 +10,7 @@ class pageWikiRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
@@ -18,11 +18,11 @@ class pageWikiRecord {
 	*/
 	public $pagename;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $version;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $flags;
 	/** 
@@ -34,15 +34,15 @@ class pageWikiRecord {
 	*/
 	public $author;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $userid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $created;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $lastmodified;
 	/** 
@@ -54,30 +54,30 @@ class pageWikiRecord {
 	*/
 	public $meta;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $hits;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $wiki;
 
 	/**
 	* default constructor for class pageWikiRecord
 	* @param string $error
-	* @param integer $id
+	* @param int $id
 	* @param string $pagename
-	* @param integer $version
-	* @param integer $flags
+	* @param int $version
+	* @param int $flags
 	* @param string $content
 	* @param string $author
-	* @param integer $userid
-	* @param integer $created
-	* @param integer $lastmodified
+	* @param int $userid
+	* @param int $created
+	* @param int $lastmodified
 	* @param string $refs
 	* @param string $meta
-	* @param integer $hits
-	* @param integer $wiki
+	* @param int $hits
+	* @param int $wiki
 	* @return pageWikiRecord
 	*/
 	 public function pageWikiRecord($error='',$id=0,$pagename='',$version=0,$flags=0,$content='',$author='',$userid=0,$created=0,$lastmodified=0,$refs='',$meta='',$hits=0,$wiki=0){
@@ -107,7 +107,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -123,7 +123,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVersion(){
 		 return $this->version;
@@ -131,7 +131,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFlags(){
 		 return $this->flags;
@@ -155,7 +155,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getUserid(){
 		 return $this->userid;
@@ -163,7 +163,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCreated(){
 		 return $this->created;
@@ -171,7 +171,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getLastmodified(){
 		 return $this->lastmodified;
@@ -195,7 +195,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHits(){
 		 return $this->hits;
@@ -203,7 +203,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getWiki(){
 		 return $this->wiki;
@@ -221,7 +221,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -239,7 +239,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $version
+	* @param int $version
 	* @return void
 	*/
 	public function setVersion($version){
@@ -248,7 +248,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $flags
+	* @param int $flags
 	* @return void
 	*/
 	public function setFlags($flags){
@@ -275,7 +275,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $userid
+	* @param int $userid
 	* @return void
 	*/
 	public function setUserid($userid){
@@ -284,7 +284,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $created
+	* @param int $created
 	* @return void
 	*/
 	public function setCreated($created){
@@ -293,7 +293,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $lastmodified
+	* @param int $lastmodified
 	* @return void
 	*/
 	public function setLastmodified($lastmodified){
@@ -320,7 +320,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $hits
+	* @param int $hits
 	* @return void
 	*/
 	public function setHits($hits){
@@ -329,7 +329,7 @@ class pageWikiRecord {
 
 
 	/**
-	* @param integer $wiki
+	* @param int $wiki
 	* @return void
 	*/
 	public function setWiki($wiki){

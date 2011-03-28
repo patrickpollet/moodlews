@@ -10,11 +10,11 @@ class assignmentSubmissionRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $assignment;
 	/** 
@@ -22,19 +22,19 @@ class assignmentSubmissionRecord {
 	*/
 	public $assignmenttype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $userid;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $numfiles;
 	/** 
@@ -46,7 +46,7 @@ class assignmentSubmissionRecord {
 	*/
 	public $data2;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $grade;
 	/** 
@@ -54,19 +54,19 @@ class assignmentSubmissionRecord {
 	*/
 	public $submissioncomment;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $format;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $teacher;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemarked;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $mailed;
 	/** 
@@ -89,21 +89,21 @@ class assignmentSubmissionRecord {
 	/**
 	* default constructor for class assignmentSubmissionRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $assignment
+	* @param int $id
+	* @param int $assignment
 	* @param string $assignmenttype
-	* @param integer $userid
-	* @param integer $timecreated
-	* @param integer $timemodified
-	* @param integer $numfiles
+	* @param int $userid
+	* @param int $timecreated
+	* @param int $timemodified
+	* @param int $numfiles
 	* @param string $data1
 	* @param string $data2
-	* @param integer $grade
+	* @param int $grade
 	* @param string $submissioncomment
-	* @param integer $format
-	* @param integer $teacher
-	* @param integer $timemarked
-	* @param integer $mailed
+	* @param int $format
+	* @param int $teacher
+	* @param int $timemarked
+	* @param int $mailed
 	* @param string $useridnumber
 	* @param string $userusername
 	* @param string $useremail
@@ -143,7 +143,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -151,7 +151,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getAssignment(){
 		 return $this->assignment;
@@ -167,7 +167,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getUserid(){
 		 return $this->userid;
@@ -175,7 +175,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimecreated(){
 		 return $this->timecreated;
@@ -183,7 +183,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -191,7 +191,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getNumfiles(){
 		 return $this->numfiles;
@@ -215,7 +215,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGrade(){
 		 return $this->grade;
@@ -231,7 +231,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFormat(){
 		 return $this->format;
@@ -239,7 +239,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTeacher(){
 		 return $this->teacher;
@@ -247,7 +247,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemarked(){
 		 return $this->timemarked;
@@ -255,7 +255,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMailed(){
 		 return $this->mailed;
@@ -305,7 +305,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -314,7 +314,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $assignment
+	* @param int $assignment
 	* @return void
 	*/
 	public function setAssignment($assignment){
@@ -332,7 +332,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $userid
+	* @param int $userid
 	* @return void
 	*/
 	public function setUserid($userid){
@@ -341,7 +341,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $timecreated
+	* @param int $timecreated
 	* @return void
 	*/
 	public function setTimecreated($timecreated){
@@ -350,7 +350,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
@@ -359,7 +359,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $numfiles
+	* @param int $numfiles
 	* @return void
 	*/
 	public function setNumfiles($numfiles){
@@ -386,7 +386,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $grade
+	* @param int $grade
 	* @return void
 	*/
 	public function setGrade($grade){
@@ -404,7 +404,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $format
+	* @param int $format
 	* @return void
 	*/
 	public function setFormat($format){
@@ -413,7 +413,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $teacher
+	* @param int $teacher
 	* @return void
 	*/
 	public function setTeacher($teacher){
@@ -422,7 +422,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $timemarked
+	* @param int $timemarked
 	* @return void
 	*/
 	public function setTimemarked($timemarked){
@@ -431,7 +431,7 @@ class assignmentSubmissionRecord {
 
 
 	/**
-	* @param integer $mailed
+	* @param int $mailed
 	* @return void
 	*/
 	public function setMailed($mailed){

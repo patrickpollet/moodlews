@@ -10,11 +10,11 @@ class assignmentDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
@@ -26,7 +26,7 @@ class assignmentDatum {
 	*/
 	public $description;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $format;
 	/** 
@@ -34,80 +34,80 @@ class assignmentDatum {
 	*/
 	public $assignmenttype;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $resubmit;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $preventlate;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $emailteachers;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $var1;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $var2;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $var3;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $var4;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $var5;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $maxbytes;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timedue;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timeavailable;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $grade;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class assignmentDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $course
+	* @param int $id
+	* @param int $course
 	* @param string $name
 	* @param string $description
-	* @param integer $format
+	* @param int $format
 	* @param string $assignmenttype
-	* @param integer $resubmit
-	* @param integer $preventlate
-	* @param integer $emailteachers
-	* @param integer $var1
-	* @param integer $var2
-	* @param integer $var3
-	* @param integer $var4
-	* @param integer $var5
-	* @param integer $maxbytes
-	* @param integer $timedue
-	* @param integer $timeavailable
-	* @param integer $grade
-	* @param integer $timemodified
+	* @param int $resubmit
+	* @param int $preventlate
+	* @param int $emailteachers
+	* @param int $var1
+	* @param int $var2
+	* @param int $var3
+	* @param int $var4
+	* @param int $var5
+	* @param int $maxbytes
+	* @param int $timedue
+	* @param int $timeavailable
+	* @param int $grade
+	* @param int $timemodified
 	* @return assignmentDatum
 	*/
 	 public function assignmentDatum($action='',$id=0,$course=0,$name='',$description='',$format=0,$assignmenttype='',$resubmit=0,$preventlate=0,$emailteachers=0,$var1=0,$var2=0,$var3=0,$var4=0,$var5=0,$maxbytes=0,$timedue=0,$timeavailable=0,$grade=0,$timemodified=0){
@@ -143,7 +143,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -151,7 +151,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -175,7 +175,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFormat(){
 		 return $this->format;
@@ -191,7 +191,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getResubmit(){
 		 return $this->resubmit;
@@ -199,7 +199,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getPreventlate(){
 		 return $this->preventlate;
@@ -207,7 +207,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEmailteachers(){
 		 return $this->emailteachers;
@@ -215,7 +215,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVar1(){
 		 return $this->var1;
@@ -223,7 +223,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVar2(){
 		 return $this->var2;
@@ -231,7 +231,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVar3(){
 		 return $this->var3;
@@ -239,7 +239,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVar4(){
 		 return $this->var4;
@@ -247,7 +247,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVar5(){
 		 return $this->var5;
@@ -255,7 +255,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMaxbytes(){
 		 return $this->maxbytes;
@@ -263,7 +263,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimedue(){
 		 return $this->timedue;
@@ -271,7 +271,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimeavailable(){
 		 return $this->timeavailable;
@@ -279,7 +279,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGrade(){
 		 return $this->grade;
@@ -287,7 +287,7 @@ class assignmentDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -305,7 +305,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -314,7 +314,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -341,7 +341,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $format
+	* @param int $format
 	* @return void
 	*/
 	public function setFormat($format){
@@ -359,7 +359,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $resubmit
+	* @param int $resubmit
 	* @return void
 	*/
 	public function setResubmit($resubmit){
@@ -368,7 +368,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $preventlate
+	* @param int $preventlate
 	* @return void
 	*/
 	public function setPreventlate($preventlate){
@@ -377,7 +377,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $emailteachers
+	* @param int $emailteachers
 	* @return void
 	*/
 	public function setEmailteachers($emailteachers){
@@ -386,7 +386,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $var1
+	* @param int $var1
 	* @return void
 	*/
 	public function setVar1($var1){
@@ -395,7 +395,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $var2
+	* @param int $var2
 	* @return void
 	*/
 	public function setVar2($var2){
@@ -404,7 +404,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $var3
+	* @param int $var3
 	* @return void
 	*/
 	public function setVar3($var3){
@@ -413,7 +413,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $var4
+	* @param int $var4
 	* @return void
 	*/
 	public function setVar4($var4){
@@ -422,7 +422,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $var5
+	* @param int $var5
 	* @return void
 	*/
 	public function setVar5($var5){
@@ -431,7 +431,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $maxbytes
+	* @param int $maxbytes
 	* @return void
 	*/
 	public function setMaxbytes($maxbytes){
@@ -440,7 +440,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $timedue
+	* @param int $timedue
 	* @return void
 	*/
 	public function setTimedue($timedue){
@@ -449,7 +449,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $timeavailable
+	* @param int $timeavailable
 	* @return void
 	*/
 	public function setTimeavailable($timeavailable){
@@ -458,7 +458,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $grade
+	* @param int $grade
 	* @return void
 	*/
 	public function setGrade($grade){
@@ -467,7 +467,7 @@ class assignmentDatum {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){

@@ -5,7 +5,7 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: Get Courses current user identified
 				by idnumber is member of
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $uinfo
 * @param string $sort

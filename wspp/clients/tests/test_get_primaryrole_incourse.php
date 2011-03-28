@@ -5,13 +5,13 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: returns user s primary role in a
 				given course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $iduser
 * @param string $iduserfield
 * @param string $idcourse
 * @param string $idcoursefield
-* @return  integer
+* @return  int
 */
 
 $lr=$client->login(LOGIN,PASSWORD);

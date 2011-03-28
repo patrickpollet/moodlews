@@ -10,11 +10,11 @@ class cohortDatum {
 	*/
 	public $action;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $categoryid;
 	/** 
@@ -37,8 +37,8 @@ class cohortDatum {
 	/**
 	* default constructor for class cohortDatum
 	* @param string $action
-	* @param integer $id
-	* @param integer $categoryid
+	* @param int $id
+	* @param int $categoryid
 	* @param string $name
 	* @param string $description
 	* @param string $component
@@ -65,7 +65,7 @@ class cohortDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -73,7 +73,7 @@ class cohortDatum {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCategoryid(){
 		 return $this->categoryid;
@@ -123,7 +123,7 @@ class cohortDatum {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -132,7 +132,7 @@ class cohortDatum {
 
 
 	/**
-	* @param integer $categoryid
+	* @param int $categoryid
 	* @return void
 	*/
 	public function setCategoryid($categoryid){

@@ -4,9 +4,9 @@ require_once ('../classes/MoodleWS.php');
 $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: export all data of a quiz
-* @param integer $client
+* @param int $client
 * @param string $sesskey
-* @param integer $quizid
+* @param int $quizid
 * @param string $quizformat
 * @return  quizRecord
 */

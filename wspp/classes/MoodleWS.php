@@ -1,7 +1,7 @@
 <?php
 /**
  * MoodleWS class file
- * 
+ *
  * @author    Patrick Pollet :<patrick.pollet@insa-lyon.fr>
  * @copyright (c) P.Pollet 2007 under GPL
  * @package   MoodleWS
@@ -9,6 +9,11 @@
 
 define('DEBUG',true);
 if (DEBUG) ini_set('soap.wsdl_cache_enabled', '0');  // no caching by php in debug mode
+
+/**
+ * contactRecord class
+ */
+require_once 'contactRecord.php';
 
 /**
  * affectRecord class

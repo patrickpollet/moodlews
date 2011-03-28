@@ -10,15 +10,15 @@ class activityRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $time;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $userid;
 	/** 
@@ -26,15 +26,15 @@ class activityRecord {
 	*/
 	public $ip;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $course;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $module;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $cmid;
 	/** 
@@ -70,19 +70,19 @@ class activityRecord {
 	*/
 	public $email;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $firstaccess;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $lastaccess;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $lastlogin;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $currentlogin;
 	/** 
@@ -105,13 +105,13 @@ class activityRecord {
 	/**
 	* default constructor for class activityRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $time
-	* @param integer $userid
+	* @param int $id
+	* @param int $time
+	* @param int $userid
 	* @param string $ip
-	* @param integer $course
-	* @param integer $module
-	* @param integer $cmid
+	* @param int $course
+	* @param int $module
+	* @param int $cmid
 	* @param string $action
 	* @param string $url
 	* @param string $info
@@ -120,10 +120,10 @@ class activityRecord {
 	* @param string $firstname
 	* @param string $lastname
 	* @param string $email
-	* @param integer $firstaccess
-	* @param integer $lastaccess
-	* @param integer $lastlogin
-	* @param integer $currentlogin
+	* @param int $firstaccess
+	* @param int $lastaccess
+	* @param int $lastlogin
+	* @param int $currentlogin
 	* @param string $DLA
 	* @param string $DFA
 	* @param string $DLL
@@ -167,7 +167,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -175,7 +175,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTime(){
 		 return $this->time;
@@ -183,7 +183,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getUserid(){
 		 return $this->userid;
@@ -199,7 +199,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourse(){
 		 return $this->course;
@@ -207,7 +207,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getModule(){
 		 return $this->module;
@@ -215,7 +215,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCmid(){
 		 return $this->cmid;
@@ -287,7 +287,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getFirstaccess(){
 		 return $this->firstaccess;
@@ -295,7 +295,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getLastaccess(){
 		 return $this->lastaccess;
@@ -303,7 +303,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getLastlogin(){
 		 return $this->lastlogin;
@@ -311,7 +311,7 @@ class activityRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCurrentlogin(){
 		 return $this->currentlogin;
@@ -361,7 +361,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -370,7 +370,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $time
+	* @param int $time
 	* @return void
 	*/
 	public function setTime($time){
@@ -379,7 +379,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $userid
+	* @param int $userid
 	* @return void
 	*/
 	public function setUserid($userid){
@@ -397,7 +397,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $course
+	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
@@ -406,7 +406,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $module
+	* @param int $module
 	* @return void
 	*/
 	public function setModule($module){
@@ -415,7 +415,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $cmid
+	* @param int $cmid
 	* @return void
 	*/
 	public function setCmid($cmid){
@@ -496,7 +496,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $firstaccess
+	* @param int $firstaccess
 	* @return void
 	*/
 	public function setFirstaccess($firstaccess){
@@ -505,7 +505,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $lastaccess
+	* @param int $lastaccess
 	* @return void
 	*/
 	public function setLastaccess($lastaccess){
@@ -514,7 +514,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $lastlogin
+	* @param int $lastlogin
 	* @return void
 	*/
 	public function setLastlogin($lastlogin){
@@ -523,7 +523,7 @@ class activityRecord {
 
 
 	/**
-	* @param integer $currentlogin
+	* @param int $currentlogin
 	* @return void
 	*/
 	public function setCurrentlogin($currentlogin){

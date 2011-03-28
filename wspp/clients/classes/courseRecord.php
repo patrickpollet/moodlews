@@ -10,15 +10,15 @@ class courseRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $category;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $sortorder;
 	/** 
@@ -46,11 +46,11 @@ class courseRecord {
 	*/
 	public $format;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $showgrades;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $newsitems;
 	/** 
@@ -70,43 +70,43 @@ class courseRecord {
 	*/
 	public $students;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $guest;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $startdate;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $enrolperiod;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $numsections;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $marker;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $maxbytes;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $visible;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $hiddensections;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupmode;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $groupmodeforce;
 	/** 
@@ -122,57 +122,57 @@ class courseRecord {
 	*/
 	public $cost;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $metacourse;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $myrole;
 
 	/**
 	* default constructor for class courseRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $category
-	* @param integer $sortorder
+	* @param int $id
+	* @param int $category
+	* @param int $sortorder
 	* @param string $password
 	* @param string $fullname
 	* @param string $shortname
 	* @param string $idnumber
 	* @param string $summary
 	* @param string $format
-	* @param integer $showgrades
-	* @param integer $newsitems
+	* @param int $showgrades
+	* @param int $newsitems
 	* @param string $teacher
 	* @param string $teachers
 	* @param string $student
 	* @param string $students
-	* @param integer $guest
-	* @param integer $startdate
-	* @param integer $enrolperiod
-	* @param integer $numsections
-	* @param integer $marker
-	* @param integer $maxbytes
-	* @param integer $visible
-	* @param integer $hiddensections
-	* @param integer $groupmode
-	* @param integer $groupmodeforce
+	* @param int $guest
+	* @param int $startdate
+	* @param int $enrolperiod
+	* @param int $numsections
+	* @param int $marker
+	* @param int $maxbytes
+	* @param int $visible
+	* @param int $hiddensections
+	* @param int $groupmode
+	* @param int $groupmodeforce
 	* @param string $lang
 	* @param string $theme
 	* @param string $cost
-	* @param integer $timecreated
-	* @param integer $timemodified
-	* @param integer $metacourse
-	* @param integer $myrole
+	* @param int $timecreated
+	* @param int $timemodified
+	* @param int $metacourse
+	* @param int $myrole
 	* @return courseRecord
 	*/
 	 public function courseRecord($error='',$id=0,$category=0,$sortorder=0,$password='',$fullname='',$shortname='',$idnumber='',$summary='',$format='',$showgrades=0,$newsitems=0,$teacher='',$teachers='',$student='',$students='',$guest=0,$startdate=0,$enrolperiod=0,$numsections=0,$marker=0,$maxbytes=0,$visible=0,$hiddensections=0,$groupmode=0,$groupmodeforce=0,$lang='',$theme='',$cost='',$timecreated=0,$timemodified=0,$metacourse=0,$myrole=0){
@@ -221,7 +221,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -229,7 +229,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCategory(){
 		 return $this->category;
@@ -237,7 +237,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getSortorder(){
 		 return $this->sortorder;
@@ -293,7 +293,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getShowgrades(){
 		 return $this->showgrades;
@@ -301,7 +301,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getNewsitems(){
 		 return $this->newsitems;
@@ -341,7 +341,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGuest(){
 		 return $this->guest;
@@ -349,7 +349,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getStartdate(){
 		 return $this->startdate;
@@ -357,7 +357,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getEnrolperiod(){
 		 return $this->enrolperiod;
@@ -365,7 +365,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getNumsections(){
 		 return $this->numsections;
@@ -373,7 +373,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMarker(){
 		 return $this->marker;
@@ -381,7 +381,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMaxbytes(){
 		 return $this->maxbytes;
@@ -389,7 +389,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getVisible(){
 		 return $this->visible;
@@ -397,7 +397,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getHiddensections(){
 		 return $this->hiddensections;
@@ -405,7 +405,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupmode(){
 		 return $this->groupmode;
@@ -413,7 +413,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getGroupmodeforce(){
 		 return $this->groupmodeforce;
@@ -445,7 +445,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimecreated(){
 		 return $this->timecreated;
@@ -453,7 +453,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -461,7 +461,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMetacourse(){
 		 return $this->metacourse;
@@ -469,7 +469,7 @@ class courseRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getMyrole(){
 		 return $this->myrole;
@@ -487,7 +487,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -496,7 +496,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $category
+	* @param int $category
 	* @return void
 	*/
 	public function setCategory($category){
@@ -505,7 +505,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $sortorder
+	* @param int $sortorder
 	* @return void
 	*/
 	public function setSortorder($sortorder){
@@ -568,7 +568,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $showgrades
+	* @param int $showgrades
 	* @return void
 	*/
 	public function setShowgrades($showgrades){
@@ -577,7 +577,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $newsitems
+	* @param int $newsitems
 	* @return void
 	*/
 	public function setNewsitems($newsitems){
@@ -622,7 +622,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $guest
+	* @param int $guest
 	* @return void
 	*/
 	public function setGuest($guest){
@@ -631,7 +631,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $startdate
+	* @param int $startdate
 	* @return void
 	*/
 	public function setStartdate($startdate){
@@ -640,7 +640,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $enrolperiod
+	* @param int $enrolperiod
 	* @return void
 	*/
 	public function setEnrolperiod($enrolperiod){
@@ -649,7 +649,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $numsections
+	* @param int $numsections
 	* @return void
 	*/
 	public function setNumsections($numsections){
@@ -658,7 +658,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $marker
+	* @param int $marker
 	* @return void
 	*/
 	public function setMarker($marker){
@@ -667,7 +667,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $maxbytes
+	* @param int $maxbytes
 	* @return void
 	*/
 	public function setMaxbytes($maxbytes){
@@ -676,7 +676,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $visible
+	* @param int $visible
 	* @return void
 	*/
 	public function setVisible($visible){
@@ -685,7 +685,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $hiddensections
+	* @param int $hiddensections
 	* @return void
 	*/
 	public function setHiddensections($hiddensections){
@@ -694,7 +694,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $groupmode
+	* @param int $groupmode
 	* @return void
 	*/
 	public function setGroupmode($groupmode){
@@ -703,7 +703,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $groupmodeforce
+	* @param int $groupmodeforce
 	* @return void
 	*/
 	public function setGroupmodeforce($groupmodeforce){
@@ -739,7 +739,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $timecreated
+	* @param int $timecreated
 	* @return void
 	*/
 	public function setTimecreated($timecreated){
@@ -748,7 +748,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
@@ -757,7 +757,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $metacourse
+	* @param int $metacourse
 	* @return void
 	*/
 	public function setMetacourse($metacourse){
@@ -766,7 +766,7 @@ class courseRecord {
 
 
 	/**
-	* @param integer $myrole
+	* @param int $myrole
 	* @return void
 	*/
 	public function setMyrole($myrole){

@@ -19,6 +19,10 @@ require_once 'affectRecord.php';
  */
 require_once 'userRecord.php';
 /**
+ * contactRecord class
+ */
+require_once 'contactRecord.php';
+/**
  * groupRecord class
  */
 require_once 'groupRecord.php';
@@ -398,6 +402,10 @@ require_once 'getForumPostsReturn.php';
  * getMessagesReturn class
  */
 require_once 'getMessagesReturn.php';
+/**
+ * getMessageContactsReturn class
+ */
+require_once 'getMessageContactsReturn.php';
 
 /**
  * MoodleWS class
@@ -433,16 +441,15 @@ class MoodleWS {
     $this->client = new SoapClient($wsdl, $options);
   }
 
-  private function castTo($className,$res){ 
-     if (class_exists($className)) {  
-        $aux= new $className();       
-        foreach ($res as $key=>$value) 
-             $aux->$key=$value;        
-        return $aux;                   
-     } else                            
-        return $res;                   
-  }                                   
- 
+        private function castTo($className,$res){
+            if (class_exists($className)) {
+                $aux= new $className();
+                foreach ($res as $key=>$value)
+                    $aux->$key=$value;
+                return $aux;
+             } else
+                return $res;
+        }
   /**
    * MoodleWS Client Login 
    *
@@ -466,7 +473,7 @@ class MoodleWS {
   /**
    * MoodleWS: Client Logout 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @return boolean
    */
@@ -486,7 +493,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Users Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editUsersInput $users
    * @return editUsersOutput
@@ -508,7 +515,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Users Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string[] $userids
    * @param string $idfield
@@ -532,7 +539,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Courses Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editCoursesInput $courses
    * @return editCoursesOutput
@@ -554,7 +561,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Courses Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string[] $courseids
    * @param string $idfield
@@ -578,7 +585,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Courses Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @return getCoursesReturn
@@ -600,7 +607,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get resources in courses 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string[] $courseids
    * @param string $idfield
@@ -624,7 +631,7 @@ class MoodleWS {
   /**
    * MoodleWS: get current version 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @return string
    */
@@ -644,7 +651,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course sections 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string[] $courseids
    * @param string $idfield
@@ -668,7 +675,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get resources in courses 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string[] $courseids
    * @param string $idfield
@@ -694,7 +701,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get User Grades in some courses 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userid
    * @param string $userfield
@@ -722,7 +729,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get User Grades in all courses 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -746,7 +753,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get all Users Grades in one course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -770,7 +777,7 @@ class MoodleWS {
   /**
    * MoodleWS: Enrol students in a course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -798,7 +805,7 @@ class MoodleWS {
   /**
    * MoodleWS: UnEnrol students in a course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -828,11 +835,11 @@ class MoodleWS {
 				course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $idfield
-   * @param integer $limit
+   * @param int $limit
    * @return getLastChangesReturn
    */
   public function get_last_changes($client, $sesskey, $courseid, $idfield, $limit) {
@@ -854,10 +861,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Moodle s events 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $eventtype
-   * @param integer $ownerid
+   * @param int $eventtype
+   * @param int $ownerid
    * @return getEventsReturn
    */
   public function get_events($client, $sesskey, $eventtype, $ownerid) {
@@ -878,7 +885,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $idfield
@@ -902,7 +909,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
    * @return getCoursesReturn
@@ -924,7 +931,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
    * @return getCoursesReturn
@@ -946,7 +953,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get one User Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userid
    * @param string $idfield
@@ -970,7 +977,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All roles defined in Moodle 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @return getRolesReturn
    */
@@ -990,7 +997,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get one role defined in Moodle 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @return getRolesReturn
@@ -1012,7 +1019,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get one role defined in Moodle 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @return getRolesReturn
@@ -1034,7 +1041,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Moodle course categories 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @return getCategoriesReturn
    */
@@ -1054,7 +1061,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get one category defined in Moodle 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @return getCategoriesReturn
@@ -1076,7 +1083,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get one category defined in Moodle 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @return getCategoriesReturn
@@ -1100,9 +1107,9 @@ class MoodleWS {
 				is 
    * member of 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $uid
+   * @param int $uid
    * @param string $sort
    * @return getCoursesReturn
    */
@@ -1126,7 +1133,7 @@ class MoodleWS {
 				by 
    * username is member of 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $uinfo
    * @param string $sort
@@ -1152,7 +1159,7 @@ class MoodleWS {
 				by 
    * idnumber is member of 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $uinfo
    * @param string $sort
@@ -1178,7 +1185,7 @@ class MoodleWS {
 				login 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userinfo
    * @return getUsersReturn
@@ -1202,7 +1209,7 @@ class MoodleWS {
 				number 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userinfo
    * @return getUsersReturn
@@ -1224,7 +1231,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get user info from Moodle user id 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userinfo
    * @return getUsersReturn
@@ -1247,11 +1254,11 @@ class MoodleWS {
    * MoodleWS: Get users having a role in a course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $idcourse
    * @param string $idfield
-   * @param integer $idrole
+   * @param int $idrole
    * @return getUsersReturn
    */
   public function get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole) {
@@ -1275,12 +1282,12 @@ class MoodleWS {
 				course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $idcourse
    * @param string $idfield
-   * @param integer $idrole
-   * @return integer
+   * @param int $idrole
+   * @return int
    */
   public function count_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole) {
     $res= $this->client->__call('count_users_bycourse', array(
@@ -1301,9 +1308,9 @@ class MoodleWS {
   /**
    * MoodleWS: Get Courses belonging to category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $categoryid
+   * @param int $categoryid
    * @return getCoursesReturn
    */
   public function get_courses_bycategory($client, $sesskey, $categoryid) {
@@ -1323,7 +1330,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course groups 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $idfield
@@ -1347,10 +1354,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getGroupsReturn
    */
   public function get_group_byid($client, $sesskey, $info, $courseid) {
@@ -1371,10 +1378,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getGroupsReturn
    */
   public function get_groups_byname($client, $sesskey, $info, $courseid) {
@@ -1395,10 +1402,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getGroupingsReturn
    */
   public function get_grouping_byid($client, $sesskey, $info, $courseid) {
@@ -1419,10 +1426,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getGroupingsReturn
    */
   public function get_groupings_byname($client, $sesskey, $info, $courseid) {
@@ -1443,10 +1450,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getCohortsReturn
    */
   public function get_cohort_byid($client, $sesskey, $info, $courseid) {
@@ -1467,10 +1474,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getCohortsReturn
    */
   public function get_cohort_byidnumber($client, $sesskey, $info, $courseid) {
@@ -1491,10 +1498,10 @@ class MoodleWS {
   /**
    * MoodleWS: Get Course Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $info
-   * @param integer $courseid
+   * @param int $courseid
    * @return getCohortsReturn
    */
   public function get_cohorts_byname($client, $sesskey, $info, $courseid) {
@@ -1517,9 +1524,9 @@ class MoodleWS {
 				course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
+   * @param int $groupid
    * @return getUsersReturn
    */
   public function get_group_members($client, $sesskey, $groupid) {
@@ -1541,9 +1548,9 @@ class MoodleWS {
 				course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
+   * @param int $groupid
    * @return getUsersReturn
    */
   public function get_grouping_members($client, $sesskey, $groupid) {
@@ -1565,9 +1572,9 @@ class MoodleWS {
 				Moodle 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
+   * @param int $groupid
    * @return getUsersReturn
    */
   public function get_cohort_members($client, $sesskey, $groupid) {
@@ -1589,9 +1596,9 @@ class MoodleWS {
 				(helper) 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @return integer
+   * @return int
    */
   public function get_my_id($client, $sesskey) {
     $res= $this->client->__call('get_my_id', array(
@@ -1609,11 +1616,11 @@ class MoodleWS {
   /**
    * MoodleWS: Get user group in course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $uid
+   * @param int $uid
    * @param string $idfield
-   * @param integer $courseid
+   * @param int $courseid
    * @param string $courseidfield
    * @return getGroupsReturn
    */
@@ -1637,7 +1644,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get user groups in all Moodle site 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $uid
    * @param string $idfield
@@ -1661,7 +1668,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get user groups in all Moodle site 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $uid
    * @param string $idfield
@@ -1685,7 +1692,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get course teachers 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -1709,7 +1716,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get course students 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -1735,13 +1742,13 @@ class MoodleWS {
 				given 
    * course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $iduser
    * @param string $iduserfield
    * @param string $idcourse
    * @param string $idcoursefield
-   * @param integer $idrole
+   * @param int $idrole
    * @return boolean
    */
   public function has_role_incourse($client, $sesskey, $iduser, $iduserfield, $idcourse, $idcoursefield, $idrole) {
@@ -1767,13 +1774,13 @@ class MoodleWS {
 				given 
    * course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $iduser
    * @param string $iduserfield
    * @param string $idcourse
    * @param string $idcoursefield
-   * @return integer
+   * @return int
    */
   public function get_primaryrole_incourse($client, $sesskey, $iduser, $iduserfield, $idcourse, $idcoursefield) {
     $res= $this->client->__call('get_primaryrole_incourse', array(
@@ -1797,13 +1804,13 @@ class MoodleWS {
 				a 
    * Moodle course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $iduser
    * @param string $iduserfield
    * @param string $idcourse
    * @param string $idcoursefield
-   * @param integer $idlimit
+   * @param int $idlimit
    * @return getActivitiesReturn
    */
   public function get_activities($client, $sesskey, $iduser, $iduserfield, $idcourse, $idcoursefield, $idlimit) {
@@ -1829,13 +1836,13 @@ class MoodleWS {
 				in 
    * a Moodle course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
    * @param string $value2
    * @param string $id2
-   * @return integer
+   * @return int
    */
   public function count_activities($client, $sesskey, $value1, $id1, $value2, $id2) {
     $res= $this->client->__call('count_activities', array(
@@ -1859,12 +1866,12 @@ class MoodleWS {
 				in a Moodle 
    * assignment 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $assignmentid
+   * @param int $assignmentid
    * @param string[] $userids
    * @param string $useridfield
-   * @param integer $timemodified
+   * @param int $timemodified
    * @return getAssignmentSubmissionsReturn
    */
   public function get_assignment_submissions($client, $sesskey, $assignmentid, $userids, $useridfield, $timemodified) {
@@ -1887,7 +1894,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param userDatum $user
    * @return editUsersOutput
@@ -1909,7 +1916,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param courseDatum $course
    * @return editCoursesOutput
@@ -1931,7 +1938,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param groupDatum $group
    * @return editGroupsOutput
@@ -1953,7 +1960,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param groupingDatum $grouping
    * @return editGroupingsOutput
@@ -1975,7 +1982,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param cohortDatum $cohort
    * @return editCohortsOutput
@@ -1997,7 +2004,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param sectionDatum $section
    * @return editSectionsOutput
@@ -2019,7 +2026,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a label 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param labelDatum $label
    * @return editLabelsOutput
@@ -2041,7 +2048,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a forum 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param forumDatum $forum
    * @return editForumsOutput
@@ -2063,7 +2070,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param databaseDatum $database
    * @return editDatabasesOutput
@@ -2085,7 +2092,7 @@ class MoodleWS {
   /**
    * MoodleWS: add an assignment 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param assignmentDatum $assignment
    * @return editAssignmentsOutput
@@ -2107,7 +2114,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param wikiDatum $wiki
    * @return editWikisOutput
@@ -2129,7 +2136,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param pageWikiDatum $page
    * @return editPagesWikiOutput
@@ -2151,7 +2158,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -2175,7 +2182,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param categoryDatum $category
    * @return editCategoriesOutput
@@ -2197,7 +2204,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -2221,7 +2228,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -2245,7 +2252,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -2269,7 +2276,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value
    * @param string $id
@@ -2293,7 +2300,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param userDatum $user
    * @param string $idfield
@@ -2317,7 +2324,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param courseDatum $course
    * @param string $idfield
@@ -2341,7 +2348,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a course section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param sectionDatum $section
    * @param string $idfield
@@ -2365,7 +2372,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param groupDatum $group
    * @param string $idfield
@@ -2389,7 +2396,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param groupingDatum $grouping
    * @param string $idfield
@@ -2413,7 +2420,7 @@ class MoodleWS {
   /**
    * MoodleWS: add on course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param cohortDatum $cohort
    * @param string $idfield
@@ -2437,7 +2444,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Label Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editLabelsInput $labels
    * @return editLabelsOutput
@@ -2459,7 +2466,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Groups Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editGroupsInput $groups
    * @return editGroupsOutput
@@ -2481,7 +2488,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Assignment Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editAssignmentsInput $assignments
    * @return editAssignmentsOutput
@@ -2503,7 +2510,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit databases Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editDatabasesInput $databases
    * @return editDatabasesOutput
@@ -2525,7 +2532,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Categories Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editCategoriesInput $categories
    * @return editCategoriesOutput
@@ -2547,7 +2554,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit section Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editSectionsInput $sections
    * @return editSectionsOutput
@@ -2569,7 +2576,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Forum Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editForumsInput $forums
    * @return editForumsOutput
@@ -2591,7 +2598,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Wikis Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editWikisInput $wikis
    * @return editWikisOutput
@@ -2613,7 +2620,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Page of Wiki Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editPagesWikiInput $pagesWiki
    * @return editPagesWikiOutput
@@ -2635,10 +2642,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect Course To Category 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $courseid
-   * @param integer $categoryid
+   * @param int $courseid
+   * @param int $categoryid
    * @return affectRecord
    */
   public function affect_course_to_category($client, $sesskey, $courseid, $categoryid) {
@@ -2659,10 +2666,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect Label to Section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $labelid
-   * @param integer $sectionid
+   * @param int $labelid
+   * @param int $sectionid
    * @return affectRecord
    */
   public function affect_label_to_section($client, $sesskey, $labelid, $sectionid) {
@@ -2683,11 +2690,11 @@ class MoodleWS {
   /**
    * MoodleWS: Affect Forum to Section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $forumid
-   * @param integer $sectionid
-   * @param integer $groupmode
+   * @param int $forumid
+   * @param int $sectionid
+   * @param int $groupmode
    * @return affectRecord
    */
   public function affect_forum_to_section($client, $sesskey, $forumid, $sectionid, $groupmode) {
@@ -2709,10 +2716,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect Section To Course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $sectionid
-   * @param integer $courseid
+   * @param int $sectionid
+   * @param int $courseid
    * @return affectRecord
    */
   public function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
@@ -2733,10 +2740,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a user to group 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $groupid
+   * @param int $userid
+   * @param int $groupid
    * @return affectRecord
    */
   public function affect_user_to_group($client, $sesskey, $userid, $groupid) {
@@ -2757,10 +2764,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a user to group 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $groupid
+   * @param int $userid
+   * @param int $groupid
    * @return affectRecord
    */
   public function affect_user_to_cohort($client, $sesskey, $userid, $groupid) {
@@ -2781,10 +2788,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a group to course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
-   * @param integer $coursid
+   * @param int $groupid
+   * @param int $coursid
    * @return affectRecord
    */
   public function affect_group_to_course($client, $sesskey, $groupid, $coursid) {
@@ -2805,12 +2812,12 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a wiki to section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $wikiid
-   * @param integer $sectionid
-   * @param integer $groupmode
-   * @param integer $visible
+   * @param int $wikiid
+   * @param int $sectionid
+   * @param int $groupmode
+   * @param int $visible
    * @return affectRecord
    */
   public function affect_wiki_to_section($client, $sesskey, $wikiid, $sectionid, $groupmode, $visible) {
@@ -2833,10 +2840,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a database to section 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $databaseid
-   * @param integer $sectionid
+   * @param int $databaseid
+   * @param int $sectionid
    * @return affectRecord
    */
   public function affect_database_to_section($client, $sesskey, $databaseid, $sectionid) {
@@ -2857,11 +2864,11 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a section to assignment 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $assignmentid
-   * @param integer $sectionid
-   * @param integer $groupmode
+   * @param int $assignmentid
+   * @param int $sectionid
+   * @param int $groupmode
    * @return affectRecord
    */
   public function affect_assignment_to_section($client, $sesskey, $assignmentid, $sectionid, $groupmode) {
@@ -2883,10 +2890,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect user to the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $courseid
+   * @param int $userid
+   * @param int $courseid
    * @param string $rolename
    * @return affectRecord
    */
@@ -2909,10 +2916,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a page of wiki to a wiki 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $pageid
-   * @param integer $wikiid
+   * @param int $pageid
+   * @param int $wikiid
    * @return affectRecord
    */
   public function affect_pageWiki_to_wiki($client, $sesskey, $pageid, $wikiid) {
@@ -2935,10 +2942,10 @@ class MoodleWS {
 				user 
    * in the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $courseid
+   * @param int $userid
+   * @param int $courseid
    * @param string $rolename
    * @return affectRecord
    */
@@ -2961,7 +2968,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Groups 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -2985,7 +2992,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Forums 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3009,7 +3016,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Labels 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3033,7 +3040,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All wikis 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3057,7 +3064,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Pages Wikis 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3081,7 +3088,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Assignments 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3105,7 +3112,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All Databases 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3129,7 +3136,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All quizzes 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3153,7 +3160,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All groupings 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3177,7 +3184,7 @@ class MoodleWS {
   /**
    * MoodleWS: Get All cohorts 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $fieldname
    * @param string $fieldvalue
@@ -3201,10 +3208,10 @@ class MoodleWS {
   /**
    * MoodleWS: unAffect a user to group 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $groupid
+   * @param int $userid
+   * @param int $groupid
    * @return affectRecord
    */
   public function remove_user_from_group($client, $sesskey, $userid, $groupid) {
@@ -3225,10 +3232,10 @@ class MoodleWS {
   /**
    * MoodleWS: unAffect a user to group 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $userid
-   * @param integer $groupid
+   * @param int $userid
+   * @param int $groupid
    * @return affectRecord
    */
   public function remove_user_from_cohort($client, $sesskey, $userid, $groupid) {
@@ -3249,7 +3256,7 @@ class MoodleWS {
   /**
    * MoodleWS: Edit Groups Information 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param editGroupingsInput $groupings
    * @return editGroupingsOutput
@@ -3271,10 +3278,10 @@ class MoodleWS {
   /**
    * MoodleWS: unAffect a group to grouping 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
-   * @param integer $groupingid
+   * @param int $groupid
+   * @param int $groupingid
    * @return affectRecord
    */
   public function remove_group_from_grouping($client, $sesskey, $groupid, $groupingid) {
@@ -3295,10 +3302,10 @@ class MoodleWS {
   /**
    * MoodleWS: Affect a group to grouping 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $groupid
-   * @param integer $groupingid
+   * @param int $groupid
+   * @param int $groupingid
    * @return affectRecord
    */
   public function affect_group_to_grouping($client, $sesskey, $groupid, $groupingid) {
@@ -3319,7 +3326,7 @@ class MoodleWS {
   /**
    * MoodleWS: set one user profile values 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $userid
    * @param string $useridfield
@@ -3346,7 +3353,7 @@ class MoodleWS {
    * MoodleWS: get users having some value in a profile 
    * field 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $profilefieldname
    * @param string $profilefieldvalue
@@ -3370,9 +3377,9 @@ class MoodleWS {
   /**
    * MoodleWS: export all data of a quiz 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
-   * @param integer $quizid
+   * @param int $quizid
    * @param string $quizformat
    * @return quizRecord
    */
@@ -3394,7 +3401,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a teacher in the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3422,7 +3429,7 @@ class MoodleWS {
   /**
    * MoodleWS: remove a teacher in the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3451,7 +3458,7 @@ class MoodleWS {
    * MoodleWS: add a non editing teacher in the course 
    * 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3480,7 +3487,7 @@ class MoodleWS {
    * MoodleWS: remove  a non edting teacher in the 
    * course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3508,7 +3515,7 @@ class MoodleWS {
   /**
    * MoodleWS: add a student in the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3536,7 +3543,7 @@ class MoodleWS {
   /**
    * MoodleWS: remove a student in the course 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $value1
    * @param string $id1
@@ -3564,7 +3571,7 @@ class MoodleWS {
   /**
    * MoodleWS: Enrol students in a cohort 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -3592,7 +3599,7 @@ class MoodleWS {
   /**
    * MoodleWS: Unenrol students in a cohort 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -3620,7 +3627,7 @@ class MoodleWS {
   /**
    * MoodleWS: Enrol students in a cohort 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -3648,7 +3655,7 @@ class MoodleWS {
   /**
    * MoodleWS: Unenrol students in a cohort 
    *
-   * @param integer $client
+   * @param int $client
    * @param string $sesskey
    * @param string $courseid
    * @param string $courseidfield
@@ -3845,6 +3852,31 @@ class MoodleWS {
            )
       );
   return $this->castTo ('affectRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Get user's contacts in Moodle messaging 
+   * 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param string $userid
+   * @param string $useridfield
+   * @return getMessageContactsReturn
+   */
+  public function get_message_contacts($client, $sesskey, $userid, $useridfield) {
+    $res= $this->client->__call('get_message_contacts', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($userid, 'userid'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getMessageContactsReturn',$res);
   }
 
 }

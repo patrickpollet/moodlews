@@ -5,13 +5,13 @@ $client=new MoodleWS();
 require_once ('../auth.php');
 /**test code for MoodleWS: check if user has a given role in a
 				given course
-* @param integer $client
+* @param int $client
 * @param string $sesskey
 * @param string $iduser
 * @param string $iduserfield
 * @param string $idcourse
 * @param string $idcoursefield
-* @param integer $idrole
+* @param int $idrole
 * @return  boolean
 */
 

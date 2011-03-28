@@ -10,11 +10,11 @@ class groupingRecord {
 	*/
 	public $error;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $id;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $courseid;
 	/** 
@@ -30,24 +30,24 @@ class groupingRecord {
 	*/
 	public $configdata;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var integer
+	* @var int
 	*/
 	public $timemodified;
 
 	/**
 	* default constructor for class groupingRecord
 	* @param string $error
-	* @param integer $id
-	* @param integer $courseid
+	* @param int $id
+	* @param int $courseid
 	* @param string $name
 	* @param string $description
 	* @param string $configdata
-	* @param integer $timecreated
-	* @param integer $timemodified
+	* @param int $timecreated
+	* @param int $timemodified
 	* @return groupingRecord
 	*/
 	 public function groupingRecord($error='',$id=0,$courseid=0,$name='',$description='',$configdata='',$timecreated=0,$timemodified=0){
@@ -71,7 +71,7 @@ class groupingRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getId(){
 		 return $this->id;
@@ -79,7 +79,7 @@ class groupingRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getCourseid(){
 		 return $this->courseid;
@@ -111,7 +111,7 @@ class groupingRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimecreated(){
 		 return $this->timecreated;
@@ -119,7 +119,7 @@ class groupingRecord {
 
 
 	/**
-	* @return integer
+	* @return int
 	*/
 	public function getTimemodified(){
 		 return $this->timemodified;
@@ -137,7 +137,7 @@ class groupingRecord {
 
 
 	/**
-	* @param integer $id
+	* @param int $id
 	* @return void
 	*/
 	public function setId($id){
@@ -146,7 +146,7 @@ class groupingRecord {
 
 
 	/**
-	* @param integer $courseid
+	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
@@ -182,7 +182,7 @@ class groupingRecord {
 
 
 	/**
-	* @param integer $timecreated
+	* @param int $timecreated
 	* @return void
 	*/
 	public function setTimecreated($timecreated){
@@ -191,7 +191,7 @@ class groupingRecord {
 
 
 	/**
-	* @param integer $timemodified
+	* @param int $timemodified
 	* @return void
 	*/
 	public function setTimemodified($timemodified){
