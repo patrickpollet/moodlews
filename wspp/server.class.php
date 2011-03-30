@@ -4574,8 +4574,9 @@ EOSS;
 
     // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
-    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
-                          u.imagealt, u.lastaccess, count(m.id) as messagecount
+    //$contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
+     //                     u.imagealt, u.lastaccess, count(m.id) as messagecount
+     $contactsql = "SELECT u.*, count(m.id) as messagecount
                    FROM {$CFG->prefix}message_contacts mc
                    JOIN {$CFG->prefix}user u
                       ON u.id = mc.contactid

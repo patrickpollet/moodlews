@@ -183,7 +183,7 @@ function filter_labels($client, $labels) {
 /**
 * these function mask attributes or remove records depending of logged-in user rights
 */
-function filter_user($client, $user, $role) {
+function filter_user($client, $user, $role=0) {
     global $CFG;
     /**   COMMENTED OUT TO ALOW UNDELETE ati OPERTAION
     if (!empty($user->deleted))
