@@ -2051,6 +2051,17 @@
   <message name="get_my_idResponse">
     <part name="get_my_idReturn" type="xsd:int"/>
   </message>
+  <message name="get_primaryrole_incourseRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="userid" type="xsd:string"/>
+    <part name="useridfield" type="xsd:string"/>
+    <part name="courseid" type="xsd:string"/>
+    <part name="courseidfield" type="xsd:string"/>
+  </message>
+  <message name="get_primaryrole_incourseResponse">
+    <part name="get_primaryrole_incourseReturn" type="xsd:int"/>
+  </message>
   <message name="get_quizRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2190,6 +2201,18 @@
   </message>
   <message name="get_users_byprofileResponse">
     <part name="get_users_byprofileReturn" type="tns:userRecordArray"/>
+  </message>
+  <message name="has_role_incourseRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="userid" type="xsd:string"/>
+    <part name="useridfield" type="xsd:string"/>
+    <part name="courseid" type="xsd:string"/>
+    <part name="courseidfield" type="xsd:string"/>
+    <part name="roleid" type="xsd:int"/>
+  </message>
+  <message name="has_role_incourseResponse">
+    <part name="has_role_incourseReturn" type="xsd:boolean"/>
   </message>
   <message name="loginRequest">
     <part name="username" type="xsd:string"/>
@@ -2802,6 +2825,10 @@
       <wsdl:input message="tns:get_my_idRequest"/>
       <wsdl:output message="tns:get_my_idResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="get_primaryrole_incourse">
+      <wsdl:input message="tns:get_primaryrole_incourseRequest"/>
+      <wsdl:output message="tns:get_primaryrole_incourseResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="get_quiz">
       <wsdl:input message="tns:get_quizRequest"/>
       <wsdl:output message="tns:get_quizResponse"/>
@@ -2865,6 +2892,10 @@
     <wsdl:operation name="get_users_byprofile">
       <wsdl:input message="tns:get_users_byprofileRequest"/>
       <wsdl:output message="tns:get_users_byprofileResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="has_role_incourse">
+      <wsdl:input message="tns:has_role_incourseRequest"/>
+      <wsdl:output message="tns:has_role_incourseResponse"/>
     </wsdl:operation>
     <wsdl:operation name="login">
       <wsdl:input message="tns:loginRequest"/>
@@ -3891,6 +3922,15 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="get_primaryrole_incourse">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_primaryrole_incourse" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="get_quiz">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_quiz" style="rpc"/>
       <wsdl:input>
@@ -4028,6 +4068,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_users_byprofile">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_users_byprofile" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="has_role_incourse">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=has_role_incourse" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
