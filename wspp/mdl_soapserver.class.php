@@ -66,8 +66,7 @@ class mdl_soapserver extends server {
      * code borrowed from Moodle's webservice '
      * changed to protected for WsHelper utility that must skip it...
      * BACK to public otherwise not called !!!
-     * we get  <br />
-<b>Fatal error</b>:  Call to protected method mdl_soapserver::exception_handler() from context '' in <b>Unknown</b> on line <b>0</b><br />
+     * we get  AFatal error  Call to protected method mdl_soapserver::exception_handler() from context '' in <b>Unknown</b> on line <b>0</b><br />
      * @return void
      */
     function  exception_handler($ex) {
@@ -81,7 +80,7 @@ class mdl_soapserver extends server {
         exit(1);
     }
 
-      /**
+     /**
      * Send the error information to the WS client
      * formatted as XML document.
      * @param exception $ex
@@ -325,7 +324,7 @@ class mdl_soapserver extends server {
             $aux = new editUsersInput();
             $aux->setUsers($users);
         } else $aux=$users;
-        //$this->debug_output('Attempting to update user IDS MDL_S: ' . print_r($nusers, true));
+        //$this->debug_output('Attempting to update user IDS MDL_S: ' . print_r($aux, true));
         return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $aux), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
@@ -469,27 +468,29 @@ class mdl_soapserver extends server {
     }
 
     /**
-         * Find and return student grades for specified courses  (moodle 1.9)
-         *
-         * @uses $CFG
-         * @param int $client The client session ID.
-         * @param string $sesskey The client session key.
-         * @param string $userid The Student ID of the student.
-         * @param string $useridfield the field used to identity student
-         * @param string[] $courseids Array of course id number
-         * @param string $courseidfield field used to identity the courses
-         * @return gradeRecord[] student grades
-         *
-    */
+     * Find and return student grades for specified courses  (moodle 1.9)
+     * NOTE Courses MUST have an id_number
+     * @uses $CFG
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @param string $userid The Student ID of the student.
+     * @param string $useridfield the field used to identity student
+     * @param string[] $courseids Array of course ids , if empty all grades
+     * @param string $courseidfield field used to identity the courses
+     * @return gradeRecord[] student grades
+     *
+     */
     public function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = "idnumber") {
         return $this->send($this->to_soap_array(parent :: get_grades($client, $sesskey, $userid, $useridfield, $courseids, $courseidfield), 'grades', 'gradeRecord', get_string('nogradesfor', 'local_wspp', $userid)));
 
     }
 
-    /**
+     /**
      * Find and return student grades for currently enrolled courses  (moodle 1.9)
      *
      * @uses $CFG
+     * @use get_grades by first creating an array of courses Moodle's ids
+     * Courses MUST have a non empty ID number for this call to succeed
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
      * @param string $userid The Student ID of the student.
@@ -650,25 +651,35 @@ class mdl_soapserver extends server {
     * @param string $sesskey The client session key.
     * @param string $courseid the course identifier
     * @param string $idfield  the course identifier field, defaut = idnumber
-    * @return groupingRecord[]  Array of groupRecord
+    * @return groupingRecord[]
     */
     public function get_groupings_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber') {
         return $this->send($this->to_soap_array(parent :: get_groupings_bycourse($client, $sesskey, $courseid, $idfield), 'groupings', 'groupingRecord', get_string('nogroupingsin', 'local_wspp', $courseid)));
     }
 
     /**
-    *  internal, not published (yet) in wsdl.
-    *  return an array of groups
-    *  @see get_group_byid, get_groups_byname
+    * internal, not published (yet) in wsdl.
+    * @see get_group_byid, get_groups_byname
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param string[] $groups an array of group identifiers
+    * @param string $idfield  the group's Moodle identifier
+    * @param int course the id of the course to serach (0 = any course)
+    * @return groupRecord[]
     */
     protected function get_groups($client, $sesskey, $groups, $idfield, $courseid = 0) {
         return $this->send($this->to_soap_array(parent :: get_groups($client, $sesskey, $groups, $idfield, $courseid), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
     }
 
     /**
-    *  internal, not published (yet) in wsdl.
-    *  return an array of groups
-    *  @see get_group_byid, get_groups_byname
+    * internal, not published (yet) in wsdl.
+    * @see get_grouping_byid, get_groupings_byname
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param string[] $groups an array of grouping identifiers
+    * @param string $idfield  the grouping's Moodle identifier
+    * @param int course the id of the course to serach (0 = any course)
+    * @return groupingRecord[]
     */
     protected function get_groupings($client, $sesskey, $groups, $idfield, $courseid = 0) {
         return $this->send($this->to_soap_array(parent :: get_groupings($client, $sesskey, $groups, $idfield, $courseid), 'groupings', 'groupingRecord', get_string('nogroupings', 'local_wspp')));
@@ -693,7 +704,7 @@ class mdl_soapserver extends server {
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $groupname  the group's Moodle name
-    * @param int $courseid
+    * @param int $courseid  optional
     * @return groupRecord[]  Array of groupRecord
     *
     */
@@ -732,11 +743,16 @@ class mdl_soapserver extends server {
         ), 'name', $courseid);
     }
 
-       /**
-    *  internal, not published (yet) in wsdl.
-    *  return an array of groups
-    *  @see get_cohort_byid, get_cohort_byname
+    /**
+    * internal, not published (yet) in wsdl.
+    * @see get_cohort_byid, get_cohorts_byname, get_cohort_byidnumber
+    * @param int $client The client session ID.
+    * @param string $sesskey The client session key.
+    * @param string[] $groups an array of cohort identifiers
+    * @param string $idfield  the cohort's Moodle identifier
+    * @return groupRecord[]  Array of groupRecord
     */
+
     protected function get_cohorts($client, $sesskey, $groups, $idfield) {
         global $CFG;
          if (!$CFG->wspp_using_moodle20)
@@ -842,7 +858,7 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap_array(parent :: get_my_groups($client, $sesskey, $uid, $idfield), 'groups', 'groupRecord', get_string('nogroups', 'local_wspp')));
     }
 
-       /**
+    /**
     * return cohorts to which user $uid belongs to
     * if $uid is empty, use current logged in user.
     * otherwise, current logged in user must be admin to fetch data
@@ -915,9 +931,7 @@ class mdl_soapserver extends server {
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $info  Moodle's  course id
-    * @return courseRecord[] Return data (array of course  record) to be converted into a specific
-    *               data format for sending to the client.
-    *
+    * @return courseRecord[]
     */
     public function get_course_byid($client, $sesskey, $info) {
         return $this->get_courses($client, $sesskey, array (
@@ -930,9 +944,7 @@ class mdl_soapserver extends server {
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $info  Moodle's  course idnumber
-    * @return courseRecord[] Return data (array of course  record) to be converted into a specific
-    *               data format for sending to the client.
-    *
+    * @return courseRecord[]
     */
 
     public function get_course_byidnumber($client, $sesskey, $info) {
@@ -951,9 +963,7 @@ class mdl_soapserver extends server {
     * @param string $sesskey The client session key.
     * @param string $info  Moodle's  course id to search
     * @param string $idfield  filed used to find the course
-    * @return courseRecord[] Return data (array of course  record) to be converted into a specific
-    *               data format for sending to the client.
-    *
+    * @return courseRecord[]
     */
     public function get_course($client, $sesskey, $info, $idfield) {
         return $this->get_courses($client, $sesskey, array (
@@ -1066,7 +1076,7 @@ class mdl_soapserver extends server {
     }
 
     /**
-    * return categories roleRecord identified by
+    * return categories  identified by
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $catid
@@ -1138,6 +1148,7 @@ class mdl_soapserver extends server {
     }
 
     /**
+     * return all logged actions of user in one course or any course
      * @param int $client
      * @param string $sesskey
      * @param string $userid
@@ -1769,7 +1780,7 @@ class mdl_soapserver extends server {
         return $this->send($this->to_soap_array(parent :: get_users_byprofile($client, $sesskey, $profilefieldname, $profilefieldvalue), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
     }
 
-    /**
+        /**
      * rev 1.6.5 added upon request on tstc.edu
      * @param int $client
      * @param string $sesskey
