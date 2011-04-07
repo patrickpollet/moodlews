@@ -2120,15 +2120,25 @@ EOSS;
 						$ruser->error=get_string('ws_erroralreadydeleteduser','local_wspp',$user->id);
 					else
 						if (!delete_user($user)) {
-						$ruser->error=get_string('ws_errordeletinguser','local_wspp',$user->idnumber);
+						$ruser->error=get_string('ws_errordeletinguser','local_wspp',$user->id);
 					}
 					break;
+
+                  case 'get' : // just testing code
+                    //$this->debug_output('Attempting to get user ID: '.$user->id);
+                    if (! $theuser = ws_get_record('user', 'id', $user->id)) {
+                        $ruser->error = get_string('ws_userunknown','local_wspp',"id=".$user->id );
+                    } else
+                        $ruser = $theuser;  //just return it
+
+                  break;
                   default :
                         $ruser->error=get_string('ws_invalidaction','local_wspp',$user->action);
 			}
 			$rusers[] = $ruser;
 		}
 	}
+    //$this->debug_output('Final return of edit_users: ' . print_r($rusers, true));
 	return filter_users($client,$rusers,0);
 }
 

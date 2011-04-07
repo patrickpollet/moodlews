@@ -319,7 +319,14 @@ class mdl_soapserver extends server {
      * @return userRecord[] An array of user objects.
      */
     public function edit_users($client, $sesskey, $users) {
-        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $users), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
+        global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editUsersInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editUsersInput();
+            $aux->setUsers($users);
+        } else $aux=$users;
+        //$this->debug_output('Attempting to update user IDS MDL_S: ' . print_r($nusers, true));
+        return $this->send($this->to_soap_array(parent :: edit_users($client, $sesskey, $aux), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -350,7 +357,13 @@ class mdl_soapserver extends server {
      * @return courseRecord[] An array of course records.
      */
     public function edit_courses($client, $sesskey, $courses) {
-        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $courses), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editCoursesInput();
+            $aux->setCourses($courses);
+        } else $aux=$courses;
+        return $this->send($this->to_soap_array(parent :: edit_courses($client, $sesskey, $aux), 'courses', 'courseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1305,7 +1318,13 @@ class mdl_soapserver extends server {
       * @return groupingRecord[]
       */
     function edit_groupings($client, $sesskey, $groupings) {
-        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $groupings), 'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editGroupingsInput();
+            $aux->setGroupings($groupings);
+        } else $aux=$groupings;
+        return $this->send($this->to_soap_array(parent :: edit_groupings($client, $sesskey, $aux), 'groupings', 'groupingRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1781,7 +1800,13 @@ class mdl_soapserver extends server {
       * @return labelRecord[]
       */
     function edit_labels($client, $sesskey, $labels) {
-        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $labels), 'labels', 'labelRecord', get_string('nothingtodo', 'local_wspp')));
+          // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editLabelsInput();
+            $aux->setLabels($labels);
+        } else $aux=$labels;
+
+        return $this->send($this->to_soap_array(parent :: edit_labels($client, $sesskey, $aux), 'labels', 'labelRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1791,7 +1816,13 @@ class mdl_soapserver extends server {
       * @return groupRecord[]
       */
     function edit_groups($client, $sesskey, $groups) {
-        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $groups), 'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editGroupsInput();
+            $aux->setGroups($groups);
+        } else $aux=$groups;
+        return $this->send($this->to_soap_array(parent :: edit_groups($client, $sesskey, $aux), 'groups', 'groupRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1802,7 +1833,13 @@ class mdl_soapserver extends server {
       * @return assignmentRecord[]
       */
     function edit_assignments($client, $sesskey, $assignments) {
-        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $assignments), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'local_wspp')));
+         global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editAssignmentsInput();
+            $aux->setAssignments($assignments);
+        } else $aux=$assignments;
+        return $this->send($this->to_soap_array(parent :: edit_assignments($client, $sesskey, $aux), 'assignments', 'assignmentRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1812,7 +1849,13 @@ class mdl_soapserver extends server {
       * @return databaseRecord[]
       */
     function edit_databases($client, $sesskey, $databases) {
-        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $databases), 'databases', 'databaseRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editDatabasesInput();
+            $aux->setDatabases($databases);
+        } else $aux=$databases;
+        return $this->send($this->to_soap_array(parent :: edit_databases($client, $sesskey, $aux), 'databases', 'databaseRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1822,7 +1865,13 @@ class mdl_soapserver extends server {
       * @return categoryRecord[]
       */
     function edit_categories($client, $sesskey, $categories) {
-        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $categories), 'categories', 'categoryRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editCategoriesInput();
+            $aux->setCategories($categories);
+        } else $aux=$categories;
+        return $this->send($this->to_soap_array(parent :: edit_categories($client, $sesskey, $aux), 'categories', 'categoryRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1833,7 +1882,13 @@ class mdl_soapserver extends server {
       * @return sectionRecord[]
       */
     function edit_sections($client, $sesskey, $sections) {
-        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $sections), 'sections', 'sectionRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editSectionsInput();
+            $aux->setSections($sections);
+        } else $aux=$sections;
+        return $this->send($this->to_soap_array(parent :: edit_sections($client, $sesskey, $aux), 'sections', 'sectionRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -1844,7 +1899,13 @@ class mdl_soapserver extends server {
       * @return forumRecord[]
       */
     function edit_forums($client, $sesskey, $forums) {
-        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $forums), 'forums', 'forumRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editForumsInput();
+            $aux->setForums($forums);
+        } else $aux=$forums;
+        return $this->send($this->to_soap_array(parent :: edit_forums($client, $sesskey, $aux), 'forums', 'forumRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1854,7 +1915,13 @@ class mdl_soapserver extends server {
       * @return wikiRecord[]
       */
     function edit_wikis($client, $sesskey, $wikis) {
-        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $wikis), 'wikis', 'wikiRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editWikisInput();
+            $aux->setWikis($wikis);
+        } else $aux=$wikis;
+        return $this->send($this->to_soap_array(parent :: edit_wikis($client, $sesskey, $aux), 'wikis', 'wikiRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
     /**
@@ -1864,7 +1931,14 @@ class mdl_soapserver extends server {
       * @return pageWikiRecord[]
       */
     function edit_pagesWiki($client, $sesskey, $pagesWiki) {
-        return $this->send($this->to_soap_array(parent :: edit_pagesWiki($client, $sesskey, $pagesWiki), 'pagesWiki', 'pageWikiRecord', get_string('nothingtodo', 'local_wspp')));
+          global $CFG;
+        // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
+        if (!empty($CFG->wsdl_simplified)) {
+            $aux = new editPagesWikiInput();
+            $aux->setPagesWiki($pagesWiki);
+        } else $aux=$pagesWiki;
+
+        return $this->send($this->to_soap_array(parent :: edit_pagesWiki($client, $sesskey, $aux), 'pagesWiki', 'pageWikiRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -2405,6 +2479,17 @@ class mdl_soapserver extends server {
             return $this->send($this->to_soap_array(parent :: get_messages_history ($client,$sesskey,
                $useridto,$useridtofield,$useridfrom,$useridfromfield
             ), 'messages', 'messageRecord', get_string('nomessages', 'local_wspp')));
+    }
+
+        /**
+     * update submission (online and one file), add if doesn't exist ¡¡ only for moodle 2.x !!
+     * @param int $client
+     * @param string $sesskey
+     * @param string[] $newSubmission
+     * @return boolean True TODO return the submission object
+     */
+    public function update_submission ($client, $sesskey, $newSubmission) {
+        return parent :: update_submission ($client, $sesskey, $newSubmission);
     }
 
 
