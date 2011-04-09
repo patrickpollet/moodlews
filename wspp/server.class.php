@@ -500,6 +500,12 @@ class server {
      */
     function get_resources($client, $sesskey, $courseids, $idfield = 'idnumber') {
         global $CFG, $USER;
+
+         if ($CFG->wspp_using_moodle20) {
+            return $this->error(get_string('ws_notimplemented', 'local_wspp', __FUNCTION__ . " for Moodle 2.0"));
+
+         }
+
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
@@ -532,7 +538,7 @@ class server {
                         $resource->url = $ilink . $resource->coursemodule;
                         $ret[] = $resource;
                     }
-                    break;
+                   // break;  WHY ???
                 }
 
             }
@@ -540,7 +546,8 @@ class server {
             $ret[] = $this->non_fatal_error($ex->getMessage());
         }
         //remove ressources in course where current user is not enroled
-        return filter_resources($client, $ret);
+       return filter_resources($client, $ret);
+      // return $ret;
     }
 
     /**
