@@ -3879,6 +3879,29 @@ class MoodleWS {
   return $this->castTo ('getMessageContactsReturn',$res);
   }
 
+  /**
+   * MoodleWS: Get a resource file by it instance id 
+   * 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param int $resourceid
+   * @return fileRecord
+   */
+  public function get_resourcefile_byid($client, $sesskey, $resourceid) {
+    $res= $this->client->__call('get_resourcefile_byid', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($resourceid, 'resourceid')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('fileRecord',$res);
+  }
+
 }
 
 ?>

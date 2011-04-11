@@ -2264,6 +2264,16 @@
 	<message name="get_quizResponse">
 		<part name="return" type="tns:quizRecord" />
 	</message>
+	
+  <!--  rev 1.8.2  -->
+  <message name="get_resourcefile_byidRequest">                                           
+     <part name="client" type="xsd:int"/>                                                  
+     <part name="sesskey" type="xsd:string"/>                                              
+     <part name="resourceid" type="xsd:int"/>                                              
+   </message>                                                                              
+   <message name="get_resourcefile_byidResponse">                                          
+     <part name="get_resourcefile_byidReturn" type="tns:fileRecord"/>                      
+   </message>   
 
 	<!-- MESSAGES FROM LILLE -->
 
@@ -3666,7 +3676,7 @@
 	</operation>
 	
 	
-	        <operation name="get_messages">
+	  <operation name="get_messages">
                 <documentation>MoodleWS: Get  </documentation>
                 <input message="tns:get_messagesRequest" />
                 <output message="tns:get_messagesResponse" />
@@ -3690,6 +3700,14 @@
                 <input message="tns:get_message_contactsRequest" />
                 <output message="tns:get_message_contactsResponse" />
         </operation>
+        
+        
+        
+     <operation name="get_resourcefile_byid">                                         
+     <documentation>MoodleWS: Get a resource file by it instance id </documentation>
+     <input message="tns:get_resourcefile_byidRequest"/>                            
+      <output message="tns:get_resourcefile_byidResponse"/>                          
+     </operation>  
 	
 	
 	</portType>
@@ -5527,6 +5545,17 @@
                 <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
                 </output>
         </operation>
+        
+        <operation name="get_resourcefile_byid">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_resourcefile_byid" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+        
 
 	</binding>
 	<service name="MoodleWS">

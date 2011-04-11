@@ -12,7 +12,7 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_students($lr->getClient(),$lr->getSessionKey(),'116','id');
+$res=$client->get_students($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 print($res->getUsers());
 
