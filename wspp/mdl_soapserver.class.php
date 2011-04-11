@@ -2492,16 +2492,22 @@ class mdl_soapserver extends server {
             ), 'messages', 'messageRecord', get_string('nomessages', 'local_wspp')));
     }
 
-        /**
-     * update submission (online and one file), add if doesn't exist ¡¡ only for moodle 2.x !!
+
+
+   /**  rev 1.8.3
+     * retrieve a file resource by it's id
      * @param int $client
      * @param string $sesskey
-     * @param string[] $newSubmission
-     * @return boolean True TODO return the submission object
+     * @param int $resourceid
+     * @return fileRecord
      */
-    public function update_submission ($client, $sesskey, $newSubmission) {
-        return parent :: update_submission ($client, $sesskey, $newSubmission);
+
+    public function get_resourcefile_byid ($client,$sesskey,$resourceid) {
+            return $this->send($this->to_soap(parent :: get_resourcefile_byid ($client,$sesskey,$resourceid),
+            'fileRecord'));
     }
+
+
 
 
 

@@ -2071,6 +2071,14 @@
   <message name="get_quizResponse">
     <part name="get_quizReturn" type="tns:quizRecord"/>
   </message>
+  <message name="get_resourcefile_byidRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="resourceid" type="xsd:int"/>
+  </message>
+  <message name="get_resourcefile_byidResponse">
+    <part name="get_resourcefile_byidReturn" type="tns:fileRecord"/>
+  </message>
   <message name="get_resourcesRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2832,6 +2840,10 @@
     <wsdl:operation name="get_quiz">
       <wsdl:input message="tns:get_quizRequest"/>
       <wsdl:output message="tns:get_quizResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_resourcefile_byid">
+      <wsdl:input message="tns:get_resourcefile_byidRequest"/>
+      <wsdl:output message="tns:get_resourcefile_byidResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_resources">
       <wsdl:input message="tns:get_resourcesRequest"/>
@@ -3933,6 +3945,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_quiz">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_quiz" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_resourcefile_byid">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_resourcefile_byid" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>

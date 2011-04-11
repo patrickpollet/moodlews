@@ -639,12 +639,11 @@ class server {
         $nbr = 0;
         foreach ($courses as $course) {
             // $this->debug_output($course->id. " ".$nbc++);
-
+            //faster  and no unexpected die in get_fast_mod_info ...
             if ($resources = ws_get_all_instances_in_courses($type, array($course->id=>1), NULL, true)) {
-               //  $this->debug_output($course->id. " NB ".count($resources));
                 $ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
                 foreach ($resources as $resource) {
-                    $resource->url = $ilink . $resource->coursemodule;
+                   $resource->url = $ilink . $resource->coursemodule;
                     $resource->type = $type;
                     $ret[] = $resource;
                     //  $this->debug_output($course->id. " ". $resource->id." ".$nbr++);
@@ -4737,6 +4736,57 @@ EOSS;
         //$ret= array();
         return filter_contacts($client, $ret);
     }
+
+
+      /**  rev 1.8.3
+     * retrieve a file resource by it's id
+     * @param int $client
+     * @param string $sesskey
+     * @param int $resourceid
+     * @return fileRecord
+     */
+
+    public function get_resourcefile_byid ($client,$sesskey,$resourceid) {
+         global $CFG, $USER;
+
+         if ($CFG->wspp_using_moodle20) {
+            return $this->error(get_string('ws_notimplemented', 'local_wspp', __FUNCTION__ . " for Moodle 2.0"));
+         }
+
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+
+        if (!$resource = ws_get_record('resource', 'id',$resourceid)){
+                   return $this->error(get_string('ws_resourceunknown', 'local_wspp', 'id=' . $resourceid));
+        }
+
+        //check permissions
+         if(! $resource=filter_resource($client,$resource)){
+            return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
+        }
+        require_once($CFG->dirroot . '/mod/resource/lib.php');
+        if ($resource->type !=='file' || resource_is_url($resource->reference)) {
+             return $this->error(get_string('ws_resourceinvalid', 'local_wspp', 'id=' . $resourceid));
+        }
+
+        $file= new FileRecord();
+        $fullpath=$CFG->dataroot.'/'.$resource->course.'/'.$resource->reference;
+        // rev 1.8.2 we do not know anymore the resource coursemodule so we use the alternate link
+         $ilink = "{$CFG->wwwroot}/mod/resource/view.php?r=". $resource->id;
+        if ($binary = file_get_contents($fullpath)) {
+             $file->setFilecontent(base64_encode($binary));
+             $file->setFilesize(strlen($binary));
+             $file->setFilename(basename($resource->reference));
+             $file->setFilePath(dirname($resource->reference));
+             $file->setFileurl($ilink);
+        } else
+           // $file->setFileUrl($fullpath);
+           return $this->error(get_string('ws_resourceinvalid', 'local_wspp', 'id=' . $resourceid));
+
+        return $file;
+    }
+
 
 }
 ?>
