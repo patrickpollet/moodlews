@@ -184,4 +184,9 @@ $string['config_ws_uselocalwsdl']='Résoud un problème de lecture du WSDL avec 
 $string['ws_quizexportunknownformat']='format d\'exportation $a inconnu';
 
 $string['ws_erroralreadydeleteduser']='L\'utilisateur id= $a a déja été supprimé';
+
+$string['ws_resourceunknown']= 'Ressource $a inconnue';
+$string['ws_resourceinvalid']= 'Ressource $a invalide';
+
+
 ?>

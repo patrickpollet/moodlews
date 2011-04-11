@@ -179,4 +179,7 @@ $string['ws_erroralreadydeleteduser']='L\'utilisateur id= {$a} a déja été sup
 
 $string['ws_useralreadymember']='L\'utilisateur  {$a->user} est déja inscrit à {$a->course}';
 $string['ws_usernotmember']='L\'utilisateur  {$a->user} n\'est pas inscrit à {$a->course}';
+
+$string['ws_resourceunknown']= 'Ressource {$a} inconnue';
+$string['ws_resourceinvalid']= 'Ressource {$a} invalide';
 ?>

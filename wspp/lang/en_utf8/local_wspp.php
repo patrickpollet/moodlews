@@ -161,4 +161,7 @@ $string['config_ws_uselocalwsdl']='Fixes a problem reading the WSDL with some ve
 
 
 $string['ws_quizexportunknownformat']='Export format of $a is unknown';
+
+$string['ws_resourceunknown']= 'Resource $a unknown';
+$string['ws_resourceinvalid']= 'Resource $a invalid';
 ?>

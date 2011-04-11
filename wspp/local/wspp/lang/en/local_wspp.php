@@ -179,4 +179,8 @@ $string['ws_erroralreadydeleteduser']='User id= {$a} has already been deleted';
 
 $string['ws_useralreadymember']='User  {$a->user} is already enroled to  {$a->course}';
 $string['ws_usernotmember']='User {$a->user} is not enroled to {$a->course}';
+
+$string['ws_resourceunknown']= 'Resource {$a} unknown';
+$string['ws_resourceinvalid']= 'Resource {$a} invalid';
+
 ?>
