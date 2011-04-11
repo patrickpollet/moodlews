@@ -658,5 +658,77 @@ function ws_fix_renamed_fields (&$inputRecord,$type) {
 }
 
 
+/**
+ * Returns an array of all the active instances of a particular module in given courses, sorted in the order they are defined
+ *
+ * THIS FUNCTION replace the function in lib/datalib.php by NOT calling get_fast_modinfo  that gives
+ * and endless loop if called in a loop for this WebService
+ *
+ * Returns an array of all the active instances of a particular
+ * module in given courses, sorted in the order they are defined
+ * in the course. Returns an empty array on any errors.
+ *
+ * The returned objects includle the columns cw.section, cm.visible,
+ * cm.groupmode and cm.groupingid, cm.groupmembersonly, and are indexed by cm.id.
+ *
+ * @param string $modulename The name of the module to get instances for
+ * @param array $courses an array of course objects.
+ * @return array of module instance objects, including some extra fields from the course_modules
+ *          and course_sections tables, or an empty array if an error occurred.
+ */
+function ws_get_all_instances_in_courses($modulename, $courses, $userid=NULL, $includeinvisible=false) {
+    global $CFG;
+
+    $outputarray = array();
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return $outputarray;
+    }
+
+    if (!$rawmods = ws_get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
+                                            cm.groupmode, cm.groupingid, cm.groupmembersonly
+                                       FROM {$CFG->prefix}course_modules cm,
+                                            {$CFG->prefix}course_sections cw,
+                                            {$CFG->prefix}modules md,
+                                            {$CFG->prefix}$modulename m
+                                      WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
+                                            cm.instance = m.id AND
+                                            cm.section = cw.id AND
+                                            md.name = '$modulename' AND
+                                            md.id = cm.module")) {
+        return $outputarray;
+    }
+    return $rawmods;
+/*****
+ * THIS CODE is commented out since it make the WS die if called with a large amount of courses
+    require_once($CFG->dirroot.'/course/lib.php');
+
+    foreach ($courses as $course) {
+        $modinfo = get_fast_modinfo($course, $userid);
+
+        if (empty($modinfo->instances[$modulename])) {
+            continue;
+        }
+
+        foreach ($modinfo->instances[$modulename] as $cm) {
+            if (!$includeinvisible and !$cm->uservisible) {
+                continue;
+            }
+            if (!isset($rawmods[$cm->id])) {
+                continue;
+            }
+            $instance = $rawmods[$cm->id];
+            if (!empty($cm->extra)) {
+                $instance->extra = urlencode($cm->extra); // bc compatibility
+            }
+            $outputarray[] = $instance;
+        }
+    }
+
+    return $outputarray;
+***/
+}
+
+
 
 ?>

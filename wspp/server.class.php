@@ -526,14 +526,14 @@ class server {
                 }
             }
         }
-        // $this->debug_output(print_r($courses,true));
+       $this->debug_output(print_r($courses,true));
         //remove courses not available to current user
         $courses = filter_courses($client, $courses);
         $this->debug_output(print_r($courses, true));
         try {
             $ilink = "{$CFG->wwwroot}/mod/resource/view.php?id=";
             foreach ($courses as $course) {
-                if ($resources = get_all_instances_in_course("resource", $course, NULL, true)) {
+                if ($resources = ws_get_all_instances_in_courses("resource",array($course->id=>1), NULL, true)) {
                     foreach ($resources as $resource) {
                         $resource->url = $ilink . $resource->coursemodule;
                         $ret[] = $resource;
@@ -640,18 +640,8 @@ class server {
         foreach ($courses as $course) {
             // $this->debug_output($course->id. " ".$nbc++);
 
-            if (!$resources = get_all_instances_in_course($type, $course, NULL, true)) {
-                /************************************************************************************
-                $this->debug_output("pas de ".$type);
-                //append an error record to the list
-                $a = new StdClass();
-                $a->critere = 'type';
-                $a->valeur = $type;
-                $ret[] = $this->non_fatal_error(get_string('ws_nomatch', 'local_wspp', $a));
-                **************************************************************************************/
-
-            } else {
-                //  $this->debug_output($course->id. " NB ".count($resources));
+            if ($resources = ws_get_all_instances_in_courses($type, array($course->id=>1), NULL, true)) {
+               //  $this->debug_output($course->id. " NB ".count($resources));
                 $ilink = "{$CFG->wwwroot}/mod/$type/view.php?id=";
                 foreach ($resources as $resource) {
                     $resource->url = $ilink . $resource->coursemodule;

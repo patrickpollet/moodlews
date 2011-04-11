@@ -13,8 +13,8 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$courseids=array(31,116);
-$res=$client->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'','forum');
+$courseids=array();
+$res=$client->get_instances_bytype($lr->getClient(),$lr->getSessionKey(),$courseids,'id','forum');
 print_r($res);
 print($res->getResources());
 
