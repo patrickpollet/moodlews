@@ -500,7 +500,7 @@ class mdl_soapserver extends server {
      */
     public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
 
-        return $this->send($this->to_soap_array(parent :: get_user_grades($client, $sesskey, $userid, $idfield), 'grades', 'gradeRecord', "no grades  found for user $userid"));
+        return $this->send($this->to_soap_array(parent :: get_user_grades($client, $sesskey, $userid, $idfield), 'grades', 'gradeRecord', get_string('nogradesfor', 'local_wspp', $userid)));
 
     }
 

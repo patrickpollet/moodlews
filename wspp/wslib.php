@@ -35,10 +35,12 @@ function ws_get_record($table, $field1, $value1, $field2 = '', $value2 = '', $fi
 
 	global $CFG, $DB;
 
+    if (empty($field1) || empty($value1)) return false; // rev 1.8.3 avoid unexpected results if some parameters are empty
+
 	if ($CFG->wspp_using_moodle20) {
 		try {
 			$params = array ();
-			if ($field1)
+			//if ($field1)
 				$params[$field1] = $value1;
 			if ($field2)
 				$params[$field2] = $value2;

@@ -63,7 +63,7 @@ $string['ws_quizunknown']='QCM $a inconnu.';
 
 
 $string['ws_noseegrades']='pas autorisé à voir les notes de $a';
-$string['ws_nogradesfound']='pas de notes pour $a->user dans $a->course';
+$string['ws_nogradesfound']='aucune note pour $a->user dans $a->course';
 $string['ws_operationnotallowed']='vous n\'avez pas les permissions de faire cela.';
 $string['ws_nocourseforuser']='aucun cours trouvé pour $a';
 $string['ws_coursewithoutidnumber']='le cours $a n\'a pas de idnumber  (signalez le à votre administrateur)';

@@ -669,19 +669,25 @@ class server {
     *
     */
     function get_grades($client, $sesskey, $userid, $useridfield = 'idnumber', $courseids, $courseidfield = 'idnumber') {
-        global $CFG;
+        global $CFG,$USER;
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
-        if (empty ($courseids))
-            return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
 
         if (!$this->using19)
             return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
+         if (empty ($courseids))
+            return server :: get_user_grades($client, $sesskey, $userid, $useridfield);
+
         require_once ($CFG->dirroot . '/grade/lib.php');
         require_once ($CFG->dirroot . '/grade/querylib.php');
+
+         if (empty($userid)) {  // rev 1.8.3 default to logged in user !
+            $userid=$USER->id;
+            $useridfield='id';
+        }
 
         if (!$user = ws_get_record('user', $useridfield, $userid)) {
             return $this->error(get_string('ws_userunknown', 'local_wspp', $userid));
@@ -692,17 +698,18 @@ class server {
             $rgrade = new stdClass;
             /// Get the student grades for each course requested.
             if ($course = ws_get_record('course', $courseidfield, $cid)) {
-                if ($this->has_capability('moodle/grade:viewall', CONTEXT_COURSE, $course->id)) {
+                // rev 1.8.3  the loggedin user can see his own grades
+                if ($USER->id == $user->id || $this->has_capability('moodle/grade:viewall', CONTEXT_COURSE, $course->id)) {
                     //  get the floating point final grade
                     if ($legrade = grade_get_course_grade($user->id, $course->id)) {
                         $rgrade = $legrade;
                         $rgrade->error = '';
-                        $rgrade->itemid = $cid;
+                        $rgrade->itemid = $course->idnumber?$course->idnumber:$course->shortname;
                     } else {
                         $a = new StdClass();
                         $a->user = fullname($user);
                         $a->course = $course->fullname;
-                        $rgrade->error = get_string('ws_nogrades', 'local_wspp', $a);
+                        $rgrade->error = get_string('ws_nogradesfound', 'local_wspp', $a);
                     }
                 } else {
                     $rgrade->error = get_string('ws_noseegrades', 'local_wspp', $course->fullname);
@@ -730,12 +737,17 @@ class server {
     *
     */
     public function get_user_grades($client, $sesskey, $userid, $idfield = "idnumber") {
-
+        global $CFG,$USER;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         if (!$this->using19)
             return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
+
+        if (empty($userid)) {  // rev 1.8.3 default to logged in user !
+            $userid=$USER->id;
+            $idfield='id';
+        }
 
         if (!$user = ws_get_record('user', $idfield, $userid)) {
             return $this->error(get_string('ws_userunknown', 'local_wspp', $idfield . '=' . $userid));
@@ -744,6 +756,7 @@ class server {
         if (!$courses = ws_get_my_courses($user->id, $sort = 'sortorder ASC', $fields = 'idnumber')) {
             return $this->error(get_string('ws_nocourseforuser', 'local_wspp', $userid));
         }
+       /**
         $courseids = array ();
         foreach ($courses as $c)
             if (!empty ($c->idnumber))
@@ -755,6 +768,8 @@ class server {
         // caution not $this->get_user_grades THAT WILL call mdl_sopaserver::get_grades
         // resulting in two calls of to_soaparray !!!!
         return server :: get_grades($client, $sesskey, $userid, $idfield, $courseids, 'idnumber');
+        **/
+        return server :: get_grades($client, $sesskey, $userid, $idfield, array_keys($courses), 'id');
     }
 
     /**
@@ -776,6 +791,10 @@ class server {
         if (!$this->using19)
             return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
+        if (empty($courseid))
+         return $this->error(get_string(' ws_missingvalue', 'local_wspp','courseid'));
+
+
         require_once ($CFG->dirroot . '/grade/lib.php');
         require_once ($CFG->dirroot . '/grade/querylib.php');
 
@@ -791,7 +810,7 @@ class server {
                     if ($legrade = grade_get_course_grade($user->id, $course->id)) {
                         $rgrade = $legrade;
                         $rgrade->error = '';
-                        $rgrade->itemid = $user->idnumber;
+                        $rgrade->itemid = $user->idnumber ? $user->idnumber :$user->id;
                         //  $this->debug_output("IDS=".print_r($legrade,true));
                         $return[] = $rgrade;
                     } else {
@@ -799,7 +818,7 @@ class server {
                         $a->user = fullname($user);
                         $a->course = $course->fullname;
                         $rgrade = new StdClass();
-                        $rgrade->error = get_string('ws_nogrades', 'local_wspp', $a);
+                        $rgrade->error = get_string('ws_nogradesfound', 'local_wspp', $a);
                         $return[] = $rgrade;
                     }
                 }
