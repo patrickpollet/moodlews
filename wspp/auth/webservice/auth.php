@@ -26,7 +26,7 @@
  */
 
 /**
- * this plugin should not be installed under Moodle 2.0 (it is already provided) 
+ * this plugin should not be installed under Moodle 2.0 (it is already provided)
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -71,8 +71,8 @@ class auth_plugin_webservice extends auth_plugin_base {
     function user_login_webservice($username, $password) {
         global $CFG, $DB;
         // special web service login
-        
-        
+
+
        // if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
        // if ($user = get_record('user','username', $username,'mnethostid',$CFG->mnet_localhost_id)) {
          if ($user = get_complete_user_data('username', $username)) {
@@ -113,7 +113,7 @@ class auth_plugin_webservice extends auth_plugin_base {
      * @return bool
      */
     function can_change_password() {
-        return false;
+        return true;
     }
 
     /**

@@ -368,6 +368,8 @@ function filter_resource($client, $resource) {
         return $resource;
     if (!ws_is_enrolled($resource->course, $USER->id))
         return false;
+    //TODO filter off if restricted to a grouping
+
     return $resource->visible ? $resource : false;
 }
 

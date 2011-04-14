@@ -2041,6 +2041,7 @@ EOSS;
                 //collect file(s)
 
                 if ($CFG->wspp_using_moodle20) {
+                    //TODO
 
                 } else {
 
@@ -4780,7 +4781,18 @@ EOSS;
                    return $this->error(get_string('ws_resourceunknown', 'local_wspp', 'id=' . $resourceid));
         }
 
+
+       // we need some course module info to be able to filter it
+       if (!$cm=get_coursemodule_from_instance('resource', $resource->id, $resource->course)){
+                   return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
+       }
+
         //check permissions
+        $resource->visible=$cm->visible;
+        $resource->groupingid =$cm->groupingid;
+        $resource->groupmembersonly=$cm->groupmembersonly;
+$this->debug_output(print_r($resource,true));
+
          if(! $resource=filter_resource($client,$resource)){
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
         }
