@@ -806,6 +806,7 @@ class server {
                 $students = array ();
                 $students = get_role_users(5, $context, true, '');
                 //$this->debug_output("GcG".print_r($students, true));
+                $nb=0;
                 foreach ($students as $user) {
                     if ($legrade = grade_get_course_grade($user->id, $course->id)) {
                         $rgrade = $legrade;
@@ -813,6 +814,10 @@ class server {
                         $rgrade->itemid = $user->idnumber ? $user->idnumber :$user->id;
                         //  $this->debug_output("IDS=".print_r($legrade,true));
                         $return[] = $rgrade;
+                        if ($nb==0) {
+                        	//$this->debug_output("legrade".print_r($legrade, true));
+                        	$nb=1;
+                        }
                     } else {
                         $a = new StdClass();
                         $a->user = fullname($user);
@@ -1984,7 +1989,7 @@ EOSS;
         $ret = array ();
 
         $fields = 'u.id, u.username,u.idnumber, u.email';
-        $roleid = 5; //students
+        $roleid = ws_get_student_roleid() ; //student not always 5 
 
         $moodleUserIds = array ();
         if (!empty ($userids)) {
@@ -4791,7 +4796,7 @@ EOSS;
         $resource->visible=$cm->visible;
         $resource->groupingid =$cm->groupingid;
         $resource->groupmembersonly=$cm->groupmembersonly;
-$this->debug_output(print_r($resource,true));
+//$this->debug_output(print_r($resource,true));
 
          if(! $resource=filter_resource($client,$resource)){
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
@@ -4816,6 +4821,84 @@ $this->debug_output(print_r($resource,true));
            return $this->error(get_string('ws_resourceinvalid', 'local_wspp', 'id=' . $resourceid));
 
         return $file;
+    }
+    
+    
+    /**
+	 * retrieve grades to an activity 
+	 * @param int $client
+	 * @param string $sesskey
+	 * @param int $activityid
+	 * @param string $activitytype
+	 * @param string[] $userids users for with grades are requested (empty = all)
+	 * @param string $useridfield name of the field used to identify users id, idnumber,username,email ...
+	 * @return gradeItemRecord[]
+	 */
+    public function get_module_grades($client,$sesskey,$activityid,$activitytype,$userids,$useridfield) {
+	    global $CFG,$USER;
+	    
+	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+	    }
+	    
+	    if (!$this->using19)
+		    return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
+	    
+	    if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
+		    $a=new StdClass();
+		    $a->type=$activitytype; $a->id=$activityid;
+		    return $this->error(get_string('ws_activityunknown', 'local_wspp',$a));
+	    }
+	    
+	    if (!$context = get_context_instance(CONTEXT_COURSE, $cm->course))
+		    return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
+	    
+	    $fields = 'u.id,u.idnumber';
+        $roleid = ws_get_student_roleid() ; //student not always 5 
+
+        $moodleUserIds = array ();
+        if (!empty ($userids)) {
+            foreach ($userids as $userid) {
+                //$this->debug_output($userid.' '.$useridfield);
+                //caution :  alias u is not set in ws_get_record, so add it !!!
+                if ($user = ws_get_record('user u', $useridfield, $userid, '', '', '', '', $fields)) {
+                    $moodleUserIds[$user->id] = $user;
+                    // $this->debug_output(print_r($user,true));
+                }
+            }
+
+        } else {
+            /// Get all existing participants in this context.
+            if ($cm->groupingid == 0 || !$cm->groupmembersonly)
+                $moodleUserIds = get_role_users($roleid, $context, false, $fields);
+            else
+                $moodleUserIds = groups_get_grouping_members($cm->groupingid, $fields);
+        }
+
+        /// Check for correct permissions.
+        if ((count($moodleUserIds) == 1) && !empty ($moodleUserIds[$USER->id])) {
+            // OK for an user to see its OWN grade
+        } else
+            if (! has_capability('moodle/grade:viewall', $context)) {
+                return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
+            }  
+	    //require_once ($CFG->dirroot . '/grade/lib.php');
+        //require_once ($CFG->dirroot . '/grade/querylib.php');
+        require_once ($CFG->libdir . '/gradelib.php');
+        
+         //   $this->debug_output(print_r($moodleUserIds,true));   
+	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$activityid,array_keys( $moodleUserIds));
+	     $this->debug_output("GI".print_r($grading_info,true));  
+	     
+	     $ret=array();
+	     foreach($grading_info->items[0]->grades as $userid=>$grade) {
+	     	$rgrade=$grade;
+	     	$rgrade->userid=$userid;
+	     	if (!empty($moodleUserIds[$userid]->idnumber))
+	     		$rgrade->useridnumber=$moodleUserIds[$userid]->idnumber;
+	     	$ret[]=$rgrade;	
+	     }
+	    return filter_grades($client,$ret); 
     }
 
 

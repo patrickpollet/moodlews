@@ -2508,7 +2508,59 @@ class mdl_soapserver extends server {
     }
 
 
+	/**
+	 * retrieve my grade to a quiz
+	 * @param int $client
+	 * @param string $sesskey
+	 * @param int $quizid
+	 * @return gradeItemRecord[]
+	 */
+	public function get_my_quiz_grade($client,$sesskey,$quizid) {
+		return $this->get_my_module_grade($client,$sesskey,$quizid,'quiz');	
+	}
+	
+	/**
+	 * retrieve my grade to a ass
+	 * @param int $client
+	 * @param string $sesskey
+	 * @param int $quizid
+	 * @return gradeItemRecord[]
+	 */
+	public function get_my_assignment_grade($client,$sesskey,$assignmentid) {
+			return $this->get_my_module_grade($client,$sesskey,$assignmentid,'assignment');	
+	}
+	
+	/**
+	 * retrieve my grade to an activity 
+	 * @param int $client
+	 * @param string $sesskey
+	 * @param int $activityid
+	 * @param string $activitytype
+	 * @return gradeItemRecord[]
+	 */
+	public function get_my_module_grade($client,$sesskey,$activityid,$activitytype) {
+		if (($id=$this->get_my_id($client,$sesskey))!=-1)
+			return $this->get_module_grades($client,$sesskey,$activityid,$activitytype,array($id),'id');
+		else return $this->error(get_string('ws_invalidclient', 'local_wspp'));	
+	}
 
+	/**
+	 * retrieve grades to an activity 
+	 * @param int $client
+	 * @param string $sesskey
+	 * @param int $activityid
+	 * @param string $activitytype
+	 * @param string[] $userids users for with grades are requested (empty = all)
+	 * @param string $useridfield name of the field used to identify users id, idnumber,username,email ...
+	 * @return gradeItemRecord[]
+	 */
+	public function get_module_grades($client,$sesskey,$activityid,$activitytype,$userids,$useridfield) {
+		return $this->send($this->to_soap_array(parent :: get_module_grades ($client,$sesskey,
+               $activityid,$activitytype,$userids,$useridfield
+            ), 'grades', 'gradeItemRecord', get_string('nogradesfor', 'local_wspp',$activityid)));
+			
+	}
+	
 
 
 }

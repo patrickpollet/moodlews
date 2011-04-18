@@ -366,8 +366,9 @@ function filter_resource($client, $resource) {
     // 1.6.3  there is a special capability for hiddensection
     if (has_capability('moodle/course:viewhiddenactivities', $context))
         return $resource;
-    if (!ws_is_enrolled($resource->course, $USER->id))
-        return false;
+
+if (!ws_is_enrolled($resource->course, $USER->id))
+       return false;
     //TODO filter off if restricted to a grouping
 
     return $resource->visible ? $resource : false;
@@ -481,6 +482,8 @@ function filter_grade($client, $grade) {
         return false;
     if (empty ($grade->feedback))
         $grade->feedback = "";
+    if ($grade->hidden || $grade->overridden) return false;    
+              
     return $grade;
 }
 function filter_grades($client, $grades) {

@@ -47,6 +47,10 @@ require_once 'courseRecord.php';
  */
 require_once 'gradeRecord.php';
 /**
+ * gradeItemRecord class
+ */
+require_once 'gradeItemRecord.php';
+/**
  * enrolRecord class
  */
 require_once 'enrolRecord.php';
@@ -218,6 +222,10 @@ require_once 'getCoursesReturn.php';
  * getGradesReturn class
  */
 require_once 'getGradesReturn.php';
+/**
+ * getModuleGradesReturn class
+ */
+require_once 'getModuleGradesReturn.php';
 /**
  * enrolStudentsReturn class
  */
@@ -3900,6 +3908,107 @@ class MoodleWS {
            )
       );
   return $this->castTo ('fileRecord',$res);
+  }
+
+  /**
+   * MoodleWS: Get my grade of a quiz identified by 
+   * instance id 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param int $id
+   * @return getModuleGradesReturn
+   */
+  public function get_my_quiz_grade($client, $sesskey, $id) {
+    $res= $this->client->__call('get_my_quiz_grade', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getModuleGradesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get my grade of an assignmentidentified 
+   * by instance id 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param int $id
+   * @return getModuleGradesReturn
+   */
+  public function get_my_assignment_grade($client, $sesskey, $id) {
+    $res= $this->client->__call('get_my_assignment_grade', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($id, 'id')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getModuleGradesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get my grade of an activity/module of 
+   * a certain type identified by instance id 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param int $id
+   * @param string $type
+   * @return getModuleGradesReturn
+   */
+  public function get_my_module_grade($client, $sesskey, $id, $type) {
+    $res= $this->client->__call('get_my_module_grade', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($id, 'id'),
+            new SoapParam($type, 'type')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getModuleGradesReturn',$res);
+  }
+
+  /**
+   * MoodleWS: Get grade(s) of an activity of a certain 
+   * type identified by instance id for a list of userids 
+   * 
+   *
+   * @param int $client
+   * @param string $sesskey
+   * @param int $id
+   * @param string $type
+   * @param string[] $userids
+   * @param string $useridfield
+   * @return getModuleGradesReturn
+   */
+  public function get_module_grades($client, $sesskey, $id, $type, $userids, $useridfield) {
+    $res= $this->client->__call('get_module_grades', array(
+            new SoapParam($client, 'client'),
+            new SoapParam($sesskey, 'sesskey'),
+            new SoapParam($id, 'id'),
+            new SoapParam($type, 'type'),
+            new SoapParam($userids, 'userids'),
+            new SoapParam($useridfield, 'useridfield')
+      ),
+      array(
+            'uri' => $this->uri ,
+            'soapaction' => ''
+           )
+      );
+  return $this->castTo ('getModuleGradesReturn',$res);
   }
 
 }

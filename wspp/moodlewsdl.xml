@@ -283,6 +283,31 @@
 			</xsd:complexType>
 
 
+ <xsd:complexType name="gradeItemRecord">
+        <xsd:all>
+          <xsd:element name="dategraded" type="xsd:int"/>
+          <xsd:element name="datesubmitted" type="xsd:int"/>
+          <xsd:element name="error" type="xsd:string"/>
+          <xsd:element name="feedback_format" type="xsd:int"/>
+          <xsd:element name="grade" type="xsd:float"/>
+          <xsd:element name="str_feedback" type="xsd:string"/>
+          <xsd:element name="str_grade" type="xsd:string"/>
+          <xsd:element name="str_long_grade" type="xsd:string"/>
+          <xsd:element name="userid" type="xsd:string"/>
+          <xsd:element name="useridnumber" type="xsd:string"/>
+          <xsd:element name="usermodified" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
+      
+ 			<xsd:complexType name="gradeItemRecords">
+				<xsd:complexContent>
+					<xsd:restriction base="SOAP-ENC:Array">
+						<xsd:attribute ref="SOAP-ENC:arrayType"
+							wsdl:arrayType="tns:gradeItemRecord[]" />
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>     
+
 			<xsd:complexType name="enrolRecord">
 				<xsd:all>
 					<xsd:element name="error" type="xsd:string" />
@@ -1394,6 +1419,12 @@
 					<xsd:element name="grades" type="tns:gradeRecords" />
 				</xsd:all>
 			</xsd:complexType>
+			
+			<xsd:complexType name="getModuleGradesReturn">
+				<xsd:all>
+					<xsd:element name="grades" type="tns:gradeItemRecords" />
+				</xsd:all>
+			</xsd:complexType>
 
 
 			<xsd:complexType name="enrolStudentsInput">
@@ -2270,7 +2301,8 @@
      <part name="client" type="xsd:int"/>                                                  
      <part name="sesskey" type="xsd:string"/>                                              
      <part name="resourceid" type="xsd:int"/>                                              
-   </message>                                                                              
+   </message>  
+                                                                               
    <message name="get_resourcefile_byidResponse">                                          
      <part name="get_resourcefile_byidReturn" type="tns:fileRecord"/>                      
    </message>   
@@ -2711,6 +2743,34 @@
 
 	<message name="get_message_contactsResponse">
 		<part name="return" type="tns:getMessageContactsReturn" />
+	</message>
+	
+	
+	<message name="get_module_gradesRequest">
+		<part name="client" type="xsd:int" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="id" type="xsd:int" />
+		<part name="type" type="xsd:string" />
+        <part name="userids" type="tns:getUsersInput" />
+        <part name="useridfield" type="xsd:string" />
+	</message>
+	
+	<message name="get_module_gradesResponse">
+		<part name="return" type="tns:getModuleGradesReturn" />
+	</message>
+	
+    <message name="get_my_gradeRequest">
+		<part name="client" type="xsd:int" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="id" type="xsd:int" />
+		
+	</message>
+	
+	<message name="get_my_gradeInRequest">
+		<part name="client" type="xsd:int" />
+		<part name="sesskey" type="xsd:string" />
+		<part name="id" type="xsd:int" />
+	    <part name="type" type="xsd:string" />
 	</message>
 	
 
@@ -3708,6 +3768,34 @@
      <input message="tns:get_resourcefile_byidRequest"/>                            
       <output message="tns:get_resourcefile_byidResponse"/>                          
      </operation>  
+     
+     
+      <operation name="get_my_quiz_grade">                                         
+     <documentation>MoodleWS: Get my grade of a quiz identified by instance id </documentation>
+     <input message="tns:get_my_gradeRequest"/>                            
+      <output message="tns:get_module_gradesResponse"/>                          
+     </operation> 
+     
+     
+     <operation name="get_my_assignment_grade">                                         
+     <documentation>MoodleWS: Get my grade of an assignmentidentified by instance id </documentation>
+     <input message="tns:get_my_gradeRequest"/>                            
+      <output message="tns:get_module_gradesResponse"/>                          
+     </operation> 
+     
+       <operation name="get_my_module_grade">                                         
+     <documentation>MoodleWS: Get my grade of an activity/module of a certain type identified by instance id </documentation>
+     <input message="tns:get_my_gradeInRequest"/>                            
+      <output message="tns:get_module_gradesResponse"/>                          
+     </operation> 
+     
+     
+          <operation name="get_module_grades">                                         
+     <documentation>MoodleWS: Get grade(s) of an activity of a certain type identified by instance id for a list of userids</documentation>
+     <input message="tns:get_module_gradesRequest"/>                            
+      <output message="tns:get_module_gradesResponse"/>                          
+     </operation> 
+     
 	
 	
 	</portType>
@@ -5555,6 +5643,47 @@
                 <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
                 </output>
         </operation>
+    
+           <operation name="get_my_quiz_grade">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_quiz_grade" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+        
+          <operation name="get_my_assignment_grade">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_assignment_grade" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+        
+        <operation name="get_my_module_grade">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_my_module_grade" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+    
+            <operation name="get_module_grades">
+                <soap:operation soapAction="CFGWWWROOT/wspp/wsdl#get_module_grades" style="rpc" />
+                <input>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </input>
+                <output>
+                <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+                </output>
+        </operation>
+    
         
 
 	</binding>

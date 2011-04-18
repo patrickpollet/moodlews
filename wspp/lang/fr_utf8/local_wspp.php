@@ -58,6 +58,8 @@ $string['ws_wikipageunknown']='wiki $a inconnu.';
 $string['ws_labelunknown']='étiquette $a inconnue.';
 $string['ws_profileunknown']='champ de profil $a inconnu.';
 
+$string['ws_activityunknown']='activité $a->type avec l\'id $a->id inconnue.';
+
 $string['ws_assignmenttypeunknown']='type de devoir $a inconnu.';
 $string['ws_quizunknown']='QCM $a inconnu.';
 

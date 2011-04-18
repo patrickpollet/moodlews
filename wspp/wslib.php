@@ -31,6 +31,17 @@ $CFG->wspp_using_moodle20 = file_exists($CFG->libdir . '/dml/moodle_database.php
 }
 
 
+/**
+ * rev 1.8.4
+ * in some instances, student role id may not be 5 ?
+ * see http://moodle.org/mod/forum/post.php?reply=760858
+ */
+function ws_get_student_roleid () {
+	$role=ws_get_record('roles','shortname','student');
+	return $role->id;
+}
+
+
 function ws_get_record($table, $field1, $value1, $field2 = '', $value2 = '', $field3 = '', $value3 = '', $fields = '*') {
 
 	global $CFG, $DB;

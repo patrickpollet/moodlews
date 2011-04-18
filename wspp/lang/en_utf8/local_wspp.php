@@ -59,6 +59,8 @@ $string['ws_wikipageunknown']='wikipage $a unknown.';
 $string['ws_labelunknown']='label $a unknown.';
 $string['ws_profileunknown']='profile $a unknown.';
 
+$string['ws_activityunknown']='activity $a->type with id $a->id unknown.';
+
 $string['ws_quizunknown']='quiz $a unknown.';
 
 $string['ws_noseegrades']='not authorized to see grades of $a';

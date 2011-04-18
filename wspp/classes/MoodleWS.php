@@ -16,6 +16,11 @@ if (DEBUG) ini_set('soap.wsdl_cache_enabled', '0');  // no caching by php in deb
 require_once 'contactRecord.php';
 
 /**
+ * gradeItemRecord class
+ */
+require_once 'gradeItemRecord.php';
+
+/**
  * affectRecord class
  */
 require_once 'affectRecord.php';

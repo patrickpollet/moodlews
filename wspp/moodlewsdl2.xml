@@ -1091,6 +1091,28 @@
           <xsd:element name="useridto" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
+      <xsd:complexType name="gradeItemRecordArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:gradeItemRecord[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="gradeItemRecord">
+        <xsd:all>
+          <xsd:element name="dategraded" type="xsd:int"/>
+          <xsd:element name="datesubmitted" type="xsd:int"/>
+          <xsd:element name="error" type="xsd:string"/>
+          <xsd:element name="feedback_format" type="xsd:int"/>
+          <xsd:element name="grade" type="xsd:float"/>
+          <xsd:element name="str_feedback" type="xsd:string"/>
+          <xsd:element name="str_grade" type="xsd:string"/>
+          <xsd:element name="str_long_grade" type="xsd:string"/>
+          <xsd:element name="userid" type="xsd:string"/>
+          <xsd:element name="useridnumber" type="xsd:string"/>
+          <xsd:element name="usermodified" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
       <xsd:complexType name="roleRecordArray">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -1988,6 +2010,25 @@
   <message name="get_messages_historyResponse">
     <part name="get_messages_historyReturn" type="tns:messageRecordArray"/>
   </message>
+  <message name="get_module_gradesRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="activityid" type="xsd:int"/>
+    <part name="activitytype" type="xsd:string"/>
+    <part name="userids" type="tns:stringArray"/>
+    <part name="useridfield" type="xsd:string"/>
+  </message>
+  <message name="get_module_gradesResponse">
+    <part name="get_module_gradesReturn" type="tns:gradeItemRecordArray"/>
+  </message>
+  <message name="get_my_assignment_gradeRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="quizid" type="xsd:int"/>
+  </message>
+  <message name="get_my_assignment_gradeResponse">
+    <part name="get_my_assignment_gradeReturn" type="tns:gradeItemRecordArray"/>
+  </message>
   <message name="get_my_cohortsRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2050,6 +2091,23 @@
   </message>
   <message name="get_my_idResponse">
     <part name="get_my_idReturn" type="xsd:int"/>
+  </message>
+  <message name="get_my_module_gradeRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="activityid" type="xsd:int"/>
+    <part name="activitytype" type="xsd:string"/>
+  </message>
+  <message name="get_my_module_gradeResponse">
+    <part name="get_my_module_gradeReturn" type="tns:gradeItemRecordArray"/>
+  </message>
+  <message name="get_my_quiz_gradeRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+    <part name="quizid" type="xsd:int"/>
+  </message>
+  <message name="get_my_quiz_gradeResponse">
+    <part name="get_my_quiz_gradeReturn" type="tns:gradeItemRecordArray"/>
   </message>
   <message name="get_primaryrole_incourseRequest">
     <part name="client" type="xsd:int"/>
@@ -2805,6 +2863,14 @@
       <wsdl:input message="tns:get_messages_historyRequest"/>
       <wsdl:output message="tns:get_messages_historyResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="get_module_grades">
+      <wsdl:input message="tns:get_module_gradesRequest"/>
+      <wsdl:output message="tns:get_module_gradesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_assignment_grade">
+      <wsdl:input message="tns:get_my_assignment_gradeRequest"/>
+      <wsdl:output message="tns:get_my_assignment_gradeResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="get_my_cohorts">
       <wsdl:input message="tns:get_my_cohortsRequest"/>
       <wsdl:output message="tns:get_my_cohortsResponse"/>
@@ -2832,6 +2898,14 @@
     <wsdl:operation name="get_my_id">
       <wsdl:input message="tns:get_my_idRequest"/>
       <wsdl:output message="tns:get_my_idResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_module_grade">
+      <wsdl:input message="tns:get_my_module_gradeRequest"/>
+      <wsdl:output message="tns:get_my_module_gradeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_quiz_grade">
+      <wsdl:input message="tns:get_my_quiz_gradeRequest"/>
+      <wsdl:output message="tns:get_my_quiz_gradeResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_primaryrole_incourse">
       <wsdl:input message="tns:get_primaryrole_incourseRequest"/>
@@ -3871,6 +3945,24 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="get_module_grades">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_module_grades" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_assignment_grade">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_my_assignment_grade" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="get_my_cohorts">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_my_cohorts" style="rpc"/>
       <wsdl:input>
@@ -3927,6 +4019,24 @@
     </wsdl:operation>
     <wsdl:operation name="get_my_id">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_my_id" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_module_grade">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_my_module_grade" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_my_quiz_grade">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_my_quiz_grade" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
