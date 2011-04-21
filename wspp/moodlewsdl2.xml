@@ -920,6 +920,13 @@
           <xsd:element name="fileurl" type="xsd:string"/>
         </xsd:all>
       </xsd:complexType>
+      <xsd:complexType name="booleanArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="xsd:boolean[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
       <xsd:complexType name="gradeRecordArray">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -965,6 +972,13 @@
           <xsd:element name="visible" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
+      <xsd:complexType name="floatArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="xsd:float[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
       <xsd:complexType name="resourceRecordArray">
         <xsd:complexContent>
           <xsd:restriction base="SOAP-ENC:Array">
@@ -992,6 +1006,13 @@
           <xsd:element name="url" type="xsd:string"/>
           <xsd:element name="visible" type="xsd:int"/>
         </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="intArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="xsd:int[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
       </xsd:complexType>
       <xsd:complexType name="changeRecordArray">
         <xsd:complexContent>
@@ -1735,6 +1756,10 @@
   <message name="get_assignment_submissionsResponse">
     <part name="get_assignment_submissionsReturn" type="tns:assignmentSubmissionRecordArray"/>
   </message>
+  <message name="get_boolean_arrayRequest"/>
+  <message name="get_boolean_arrayResponse">
+    <part name="get_boolean_arrayReturn" type="tns:booleanArray"/>
+  </message>
   <message name="get_categoriesRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -1862,6 +1887,12 @@
   <message name="get_eventsResponse">
     <part name="get_eventsReturn" type="tns:eventRecordArray"/>
   </message>
+  <message name="get_float_arrayRequest">
+    <part name="n" type="xsd:float"/>
+  </message>
+  <message name="get_float_arrayResponse">
+    <part name="get_float_arrayReturn" type="tns:floatArray"/>
+  </message>
   <message name="get_forum_discussionsRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -1971,6 +2002,12 @@
   <message name="get_instances_bytypeResponse">
     <part name="get_instances_bytypeReturn" type="tns:resourceRecordArray"/>
   </message>
+  <message name="get_int_arrayRequest">
+    <part name="n" type="xsd:int"/>
+  </message>
+  <message name="get_int_arrayResponse">
+    <part name="get_int_arrayReturn" type="tns:intArray"/>
+  </message>
   <message name="get_last_changesRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2024,7 +2061,7 @@
   <message name="get_my_assignment_gradeRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
-    <part name="quizid" type="xsd:int"/>
+    <part name="assignmentid" type="xsd:int"/>
   </message>
   <message name="get_my_assignment_gradeResponse">
     <part name="get_my_assignment_gradeReturn" type="tns:gradeItemRecordArray"/>
@@ -2179,6 +2216,10 @@
   </message>
   <message name="get_sectionsResponse">
     <part name="get_sectionsReturn" type="tns:sectionRecordArray"/>
+  </message>
+  <message name="get_string_arrayRequest"/>
+  <message name="get_string_arrayResponse">
+    <part name="get_string_arrayReturn" type="tns:stringArray"/>
   </message>
   <message name="get_studentsRequest">
     <part name="client" type="xsd:int"/>
@@ -2739,6 +2780,10 @@
       <wsdl:input message="tns:get_assignment_submissionsRequest"/>
       <wsdl:output message="tns:get_assignment_submissionsResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="get_boolean_array">
+      <wsdl:input message="tns:get_boolean_arrayRequest"/>
+      <wsdl:output message="tns:get_boolean_arrayResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="get_categories">
       <wsdl:input message="tns:get_categoriesRequest"/>
       <wsdl:output message="tns:get_categoriesResponse"/>
@@ -2799,6 +2844,10 @@
       <wsdl:input message="tns:get_eventsRequest"/>
       <wsdl:output message="tns:get_eventsResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="get_float_array">
+      <wsdl:input message="tns:get_float_arrayRequest"/>
+      <wsdl:output message="tns:get_float_arrayResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="get_forum_discussions">
       <wsdl:input message="tns:get_forum_discussionsRequest"/>
       <wsdl:output message="tns:get_forum_discussionsResponse"/>
@@ -2846,6 +2895,10 @@
     <wsdl:operation name="get_instances_bytype">
       <wsdl:input message="tns:get_instances_bytypeRequest"/>
       <wsdl:output message="tns:get_instances_bytypeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_int_array">
+      <wsdl:input message="tns:get_int_arrayRequest"/>
+      <wsdl:output message="tns:get_int_arrayResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_last_changes">
       <wsdl:input message="tns:get_last_changesRequest"/>
@@ -2938,6 +2991,10 @@
     <wsdl:operation name="get_sections">
       <wsdl:input message="tns:get_sectionsRequest"/>
       <wsdl:output message="tns:get_sectionsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_string_array">
+      <wsdl:input message="tns:get_string_arrayRequest"/>
+      <wsdl:output message="tns:get_string_arrayResponse"/>
     </wsdl:operation>
     <wsdl:operation name="get_students">
       <wsdl:input message="tns:get_studentsRequest"/>
@@ -3666,6 +3723,15 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="get_boolean_array">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_boolean_array" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="get_categories">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_categories" style="rpc"/>
       <wsdl:input>
@@ -3801,6 +3867,15 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="get_float_array">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_float_array" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="get_forum_discussions">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_forum_discussions" style="rpc"/>
       <wsdl:input>
@@ -3902,6 +3977,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_instances_bytype">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_instances_bytype" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_int_array">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_int_array" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
@@ -4109,6 +4193,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_sections">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_sections" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_string_array">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_string_array" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>

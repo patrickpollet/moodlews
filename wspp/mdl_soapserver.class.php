@@ -2516,22 +2516,22 @@ class mdl_soapserver extends server {
 	 * @return gradeItemRecord[]
 	 */
 	public function get_my_quiz_grade($client,$sesskey,$quizid) {
-		return $this->get_my_module_grade($client,$sesskey,$quizid,'quiz');	
+		return $this->get_my_module_grade($client,$sesskey,$quizid,'quiz');
 	}
-	
+
 	/**
 	 * retrieve my grade to a ass
 	 * @param int $client
 	 * @param string $sesskey
-	 * @param int $quizid
+	 * @param int $assignmentid
 	 * @return gradeItemRecord[]
 	 */
 	public function get_my_assignment_grade($client,$sesskey,$assignmentid) {
-			return $this->get_my_module_grade($client,$sesskey,$assignmentid,'assignment');	
+			return $this->get_my_module_grade($client,$sesskey,$assignmentid,'assignment');
 	}
-	
+
 	/**
-	 * retrieve my grade to an activity 
+	 * retrieve my grade to an activity
 	 * @param int $client
 	 * @param string $sesskey
 	 * @param int $activityid
@@ -2541,11 +2541,11 @@ class mdl_soapserver extends server {
 	public function get_my_module_grade($client,$sesskey,$activityid,$activitytype) {
 		if (($id=$this->get_my_id($client,$sesskey))!=-1)
 			return $this->get_module_grades($client,$sesskey,$activityid,$activitytype,array($id),'id');
-		else return $this->error(get_string('ws_invalidclient', 'local_wspp'));	
+		else return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	}
 
 	/**
-	 * retrieve grades to an activity 
+	 * retrieve grades to an activity
 	 * @param int $client
 	 * @param string $sesskey
 	 * @param int $activityid
@@ -2558,9 +2558,45 @@ class mdl_soapserver extends server {
 		return $this->send($this->to_soap_array(parent :: get_module_grades ($client,$sesskey,
                $activityid,$activitytype,$userids,$useridfield
             ), 'grades', 'gradeItemRecord', get_string('nogradesfor', 'local_wspp',$activityid)));
-			
+
 	}
-	
+
+
+ //testing code
+    /**
+     * @return string[]
+     */
+
+    public function get_string_array() {
+        return $this->send (array("oui","non","peut-être"));
+    }
+
+    /**
+     * @param int n
+     * @return int[]
+     */
+     public function get_int_array($n) {
+        return $this->send (array($n,$n*$n,$n*$n*$n));
+    }
+
+     /**
+     * @param float n
+     * @return float[]
+     */
+     public function get_float_array($n) {
+        return $this->send (array($n,$n*$n,$n*$n*$n));
+    }
+
+
+     /**
+     * @return boolean[]
+     */
+     public function get_boolean_array() {
+        return $this->send (array(true,false,true,false));
+    }
+
+
+
 
 
 }
