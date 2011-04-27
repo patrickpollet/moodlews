@@ -136,9 +136,11 @@ foreach ($nodes as $node) {
 // declare service
 $service = array (
     'class' => $dom->getElementsByTagNameNS('*', 'service')->item(0)->getAttribute('name'),
+    'address' => $dom->getElementsByTagNameNS('*', 'address')->item(0)->getAttribute('location'), 
     'wsdl' => $wsdl,
     'doc' => $doc['service'],
-    'functions' => array ()
+    'functions' => array (),
+    'namespace'=> $targetNameSpace
 );
 
 // PHP keywords - can not be used as constants, class names or function names!
@@ -491,7 +493,7 @@ EOC;
     $code .= "  public function " . $service['class'] . "(\$wsdl = \"" . $service['wsdl'] . "\", \$uri=null, \$options = array()) {\n";
     $code .= "    if(\$uri != null) {\n";
     $code .= "      \$this->uri = \$uri;\n";
-    $code .= "    };\n";
+    $code .= "    }\n";
     if ($useNuSOAP) {
         $code .= "     \$this->client = new soap_client(\$wsdl, true);\n";
         $code .= "     \$this->proxy=\$this->client->getProxy();\n";
@@ -571,17 +573,149 @@ print "Writing classes/" . $service['class'] . ".php...";
 $fp = fopen('classes/'.$service['class'] . ".php", 'w');
 fwrite($fp, "<?php\n" . $code . "?>\n");
 fclose($fp);
-print "ok\n";
-/**  not needed test codes are in separate files
-if (!$server) {
 
-    print "Writing test_" . $service['class'] . ".php...";
-    $fp = fopen("test_" . $service['class'] . ".php", 'w');
-    fwrite($fp, "<?php\n" . $testcode . "?>\n");
-    fclose($fp);
-    print "ok\n";
+
+
+//writing REST client code
+$code = "/**\n";
+$code .= " * " . $service['class'] . "rest class file\n";
+$code .= " * \n";
+$code .= " * @author    " . AUTHOR . "\n";
+$code .= " * @copyright " . COPYRIGHT . "\n";
+$code .= " * @package   " . PACKAGE . "\n";
+$code .= " */\n\n";
+$code .= "define('DEBUG',true);\n";
+
+// require types
+foreach ($service['types'] as $type) {
+	$code .= "/**\n";
+	$code .= " * " . $type['class'] . " class\n";
+	$code .= " */\n";
+	$code .= "require_once '" . $type['class'] . ".php';\n";
 }
-**/
+
+$code .= "\n";
+
+// to avoid confusion , generate the class name and filename with _NS appended
+// if using nusoap
+
+$service['class'] =$service['class'].'rest';
+
+
+//generate client client if needed
+if (!$server) {
+	// class level docblock
+	$code .= "/**\n";
+	$code .= " * " . $service['class'] . " class\n";
+	$code .=<<<EOC
+		* the two attributes are made public for debugging purpose
+		* i.e. accessing \$client->client->__getLast* methods
+		
+EOC;
+	
+	$code .= " * \n";
+	$code .= parse_doc(" * ", $service['doc']);
+	$code .= " * \n";
+	$code .= " * @author    " . AUTHOR . "\n";
+	$code .= " * @copyright " . COPYRIGHT . "\n";
+	$code .= " * @package   " . PACKAGE . "\n";
+	$code .= " */\n";
+	
+	$code .= "class " . $service['class'] . " {\n\n";
+	
+	$code .=<<<EOC
+	    private \$serviceurl='';
+		private \$formatout='php';
+	    private \$verbose=false;
+	    private \$postdata='';
+	
+		/**
+		 * Constructor method
+		 * @param string \$wsdl URL of the WSDL
+		 * @param string \$uri
+		 * @param string[] \$options  Soap Client options array (see PHP5 documentation)
+		 * @return {$service['class']}
+		 */
+		
+EOC;
+	
+	$code .= "  public function " . $service['class'] . "(\$serviceurl = \"" . $service['address'] . "\", \$options = array()) {\n";
+	$code .= "     \$this->serviceurl=\$serviceurl;\n";	
+	$code .= "  }\n\n";
+	
+	$code .= add_utils_fonctions('rest');
+	
+	foreach ($service['functions'] as $function) {
+		$code .= "  /**\n";
+		$code .= parse_doc("   * ", $function['doc']);
+		$code .= "   *\n";
+		
+		$signature = array (); // used for function signature
+		$para = array (); // just variable names
+		foreach ($function['params'] as $param) {
+			$code .= "   * @param " . array_type_to_array($param[0]) . " " . $param[1] . "\n";
+			// no typehints if not in generated classes (arrays ...)
+			if (in_array($param[0], $primitive_types)) //never for primitive types (php5 !)
+				$signature[] = $param[1];
+			else { //only if a classfile has been generated above
+				$typehint = false;
+				foreach ($service['types'] as $type) {
+					if ($type['class'] == $param[0]) {
+						$typehint = true;
+					}
+				}
+				$signature[] = ($typehint) ? implode(' ', $param) : $param[1];
+			}
+			$para[] = $param[1];
+		}
+		$code .= "   * @return " . array_type_to_array($function['return']) . "\n";
+		$code .= "   */\n";
+		$code .= "  public function " . $function['name'] . "(" . implode(', ', $signature) . ") {\n";
+		
+		$code .= "    \$res= \$this->__call('" . $function['method'] . "', array(";
+		$params = array ();
+		if (!in_array('', $signature)) { // no arguments!
+			foreach ($signature as $param) {
+				if (strpos($param, ' ')) { // slice
+					$param = array_pop(explode(' ', $param));
+				}
+				//$params[] = "      new SoapParam(" . $param . ", '" . substr($param, 1, strlen($param)) . "')";
+				$params[] = "      '" . substr($param, 1, strlen($param)) . "'=>" . $param ;
+			}
+			$code .= "\n      ";
+			$code .= implode(",\n      ", $params);
+			$code .= "\n      ));\n";
+		} else {
+			$code .= "));\n";
+		}
+		 //cast the returned StdClass to the REAL datatype axs per the WSDL
+        if (in_array($function['return'], $custom_types))
+            $code .= "  return \$this->castTo ('" . $function['return'] . "',\$res);\n";
+        else
+            $code .= "   return \$res;\n";
+		$code .= "  }\n\n";
+		
+		
+		if ( $function['name'] != 'login' && $function['name'] != 'logout') {
+            //$testcode .= gen_test_code($function, $function['name'] != 'login' && $function['name'] != 'logout');
+            gen_test_code_in_separate_file($function,'testsrest');
+        }
+	}
+	
+}
+$code .= "}\n\n";
+
+
+
+
+print "Writing REST Client classe/" . $service['class'] . ".php...";
+$fp2=fopen ('classes/'.$service['class'] . ".php", 'w');
+fwrite($fp2, "<?php\n" . $code . "?>\n");
+fclose($fp2);
+
+print "ok\n";
+
+
 print ("Generated " . count($service['functions']) . " functions calls and " . count($service['types']) . " custom datatypes\n");
 
 function parse_doc($prefix, $doc) {
@@ -829,10 +963,10 @@ function gen_test_code($function, $withLogin = true) {
     return $code;
 }
 
-function gen_test_code_in_separate_file($function) {
+function gen_test_code_in_separate_file($function,$dir='tests') {
     global $service;
-    if (!is_dir("tests"))
-        mkdir("tests");
+    if (!is_dir($dir))
+        mkdir($dir);
 
     $testcode = "require_once ('../classes/" . $service['class'] . ".php');\n\n\$client=new " . $service['class'] . "();\n";
     $testcode .= "require_once ('../auth.php');\n";
@@ -840,14 +974,14 @@ function gen_test_code_in_separate_file($function) {
         $testcode .= gen_test_code($function, true);
     else
         $testcode .= gen_test_code($function, false);
-    print "Writing tests/test_" . $function['name'] . ".php...";
-    $fp = fopen("tests/test_" . $function['name'] . ".php", 'w');
+    print "Writing $dir/test_" . $function['name'] . ".php...";
+    $fp = fopen("$dir/test_" . $function['name'] . ".php", 'w');
     fwrite($fp, "<?php\n" . $testcode . "?>\n");
     fclose($fp);
     print "ok\n";
 }
 
-function add_utils_fonctions() {
+function add_utils_fonctions($protocol='soap') {
     $code=<<<EOC
         private function castTo(\$className,\$res){
             if (class_exists(\$className)) {
@@ -860,6 +994,55 @@ function add_utils_fonctions() {
         }
 
 EOC;
+    if ($protocol ==='soap')
     return $code;
+    
+    $coderest=<<<EOR
+    
+  
+		
+	
+	/**
+	 * @param string $postdata
+	 */
+	function __call (\$methodname, \$params) {	
+		\$params['wsformatout']=\$this->formatout;
+		\$params['wsfunction']=\$methodname;
+		\$this->postdata = http_build_query(\$params);
+
+		//print_r(\$this);
+		\$ch = curl_init();
+		curl_setopt(\$ch, CURLOPT_URL, \$this->serviceurl);
+		curl_setopt(\$ch, CURLOPT_HEADER, false);
+		curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt(\$ch, CURLOPT_POST, true);
+		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata);
+		if (\$this->verbose) 
+			curl_setopt(\$ch, CURLOPT_VERBOSE, true);
+		\$data = curl_exec(\$ch);
+		curl_close(\$ch);
+		return \$this->deserialize(\$data);
+	}
+	
+	
+	function deserialize (\$data) {
+		switch (\$this->formatout) {
+			case 'xml':break;
+			case 'json':break;
+			case 'php':return(unserialize(\$data))break;
+			case 'dump':break;			
+		}
+		return \$data;	
+	}
+	
+	function getPostdata() {
+		return \$this->postdata;
+	}
+	
+	
+EOR;
+   return $code.$coderest;
+    
 }
 ?>

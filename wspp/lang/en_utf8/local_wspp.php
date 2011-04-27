@@ -82,6 +82,8 @@ $string['ws_user_notenroled']='The user $a->user is not enrolled in the course $
 
 $string['nothingtodo']='nothing to do';
 $string['ws_notimplemented']='feature $a not yet implemented';
+$string['ws_unknownoperation']='opération $a inconnue';
+$string['ws_unknownoutputformat']='format de sérialisation $a inconnu';
 
 $string['nocourses']='no courses';
 $string['nousers']='no users';

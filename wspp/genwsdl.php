@@ -39,7 +39,7 @@ $serviceURL = 'CFGWWWROOT/wspp/service_pp2.php';
        $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_RPC, SOAP_ENCODED);
 
       //    $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_DOCUMENT, SOAP_ENCODED);
-        $wsdl->setService(new IPReflectionClass('mdl_soapserver'));
+        $wsdl->setService(new IPReflectionClass('mdl_baseserver'));
         $wsdl->_debug=true;
 
         $wsdl->setStrictErrorChecking(true);
@@ -48,7 +48,7 @@ $serviceURL = 'CFGWWWROOT/wspp/service_pp2.php';
         try {
             $gendoc = $wsdl->generateDocument();
 
-            $nb=file_put_contents('moodlewsdl3.xml',$gendoc);
+            $nb=file_put_contents('moodlewsdl4.xml',$gendoc);
              echo "$nb bytes written\n";
             //print ($gendoc);
         } catch (WSDLException $exception) {

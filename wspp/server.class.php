@@ -45,10 +45,8 @@ class server {
      * Constructor method.
      *
      * @uses $CFG
-     * @param none
-     * @return none
      */
-    function server() {
+    function __construct() {
         global $CFG;
         $this->debug_output("Server init...");
         $this->debug_output('    Version: ' . $this->version);
@@ -123,8 +121,7 @@ class server {
 
     /**
      * Creates a new session key.
-     *
-     * @param none
+
      * @return string A 32 character session key.
      */
     private function add_session_key() {
@@ -219,7 +216,7 @@ class server {
      * @param string $output Debugging output.
      * @return void
      */
-    function debug_output($output) {
+    protected function debug_output($output) {
         global $CFG;
         if ($CFG->ws_debug) {
             $fp = fopen($CFG->dataroot . '/debug.out', 'a');
@@ -345,12 +342,17 @@ class server {
         }
         /// Return standard data to be converted into the appropriate data format
         /// for return to the client.
+        /**
         $ret = array (
             'client' => $sess->id,
             'sessionkey' => $sess->sessionkey
         );
+        ***/
+        $ret= new LoginReturn();
+        $ret->setClient($sess->id);
+        $ret->setSessionkey($sess->sessionkey);
 
-        $this->debug_output(print_r($ret, true));
+        $this->debug_output("lr".print_r($ret, true));
         return $ret;
     }
 
@@ -380,12 +382,20 @@ class server {
         return false;
     }
 
+    
+     /**
+     * Return WS version.
+     *
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @return int
+     */
     function get_version($client, $sesskey) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return -1; //invalid Moodle's ID
         }
-        return $this->version;
+        return (int) $this->version;  //cast to int required for proper json encoding
     }
 
     /**
@@ -728,7 +738,6 @@ class server {
     *
     * @uses $CFG
     * @use get_grades by first creating an array of courses Moodle's ids
-    * Courses MUST have a non empty ID number for this call to succeed
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
     * @param string $userid The Student ID of the student.
@@ -906,16 +915,18 @@ class server {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp') . " " . __FUNCTION__);
         }
-        $cuid = $USER->id;
-        if (!empty ($uinfo)) {
-            // find userid if not current user
-            if (!$user = ws_get_record('user', $idfield, $uinfo))
-                return $this->error(get_string('ws_userunknown', 'local_wspp', idfield . "=" . $uinfo));
-            $uid = $user->id;
-        } else
-            $uid = $cuid; //use current user and ignore $idfield
+       
+        if (empty ($uinfo)) {
+        	$uinfo=$USER->id;
+        	$idfield='id';
+        }
+       // find userid 
+          if (!$user = ws_get_record('user', $idfield, $uinfo))
+                return $this->error(get_string('ws_userunknown', 'local_wspp', $idfield . "=" . $uinfo));
+          $uid = $user->id;
+       
         //only admin user can request courses for others
-        if ($uid != $cuid) {
+        if ($uid != $USER->id) {
             if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
                 return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
             }
@@ -991,7 +1002,7 @@ class server {
      */
     function get_roles($client, $sesskey, $roleid = '', $idfield = '') {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
-            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+            return $this->error(get_string('ws_invalidclient', 'local_wspp').' '.$client.' '.$sesskey);
         }
         // Get a list of all the roles in the database, sorted by their short names.
         if ($res = ws_get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
@@ -1644,7 +1655,7 @@ class server {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return -1; //invalid Moodle's ID
         }
-        return $USER->id;
+        return (int) $USER->id; //cast to int required for proper json encoding
     }
 
     /**
@@ -2091,12 +2102,12 @@ EOSS;
      * @param string $sesskey The client session key.
      * @param string $rolename  shortname of role to affect
      * @param string $courseid The course ID number to enrol students in <- changed to category...
-     * @param  string $courseidfield field to use to identify course (idnumber,id, shortname)
+     * @param string $courseidfield field to use to identify course (idnumber,id, shortname)
      * @param string[] $userids An array of input user id values for enrolment.
      * @param string $idfield identifier used for users .
      * @return enrolRecord[]
      */
-    function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
+    protected function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
@@ -2633,7 +2644,9 @@ EOSS;
     }
 
     /**
-     * Edit cohorts records (add/update/delete).
+     * Edit cohorts records (add/update/delete)
+     * not exposed in the WSDL
+     * @see add_cohort, delete_cohort .
      * @uses $CFG
      * @param int $client The client session ID.
      * @param string $sesskey The client session key.
@@ -2641,7 +2654,7 @@ EOSS;
      * @return cohortRecord[]
      */
 
-    function edit_cohorts($client, $sesskey, $groups) {
+    protected function edit_cohorts($client, $sesskey, $groups) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));

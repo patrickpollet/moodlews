@@ -84,6 +84,9 @@ $string['ws_user_notenroled']='L\'utilisateur $a->user n\'est pas inscrit au cou
 
 $string['nothingtodo']='rien à faire';
 $string['ws_notimplemented']='fonctionnalité non encore implementée $a';
+$string['ws_unknownoperation']='opération $a inconnue';
+$string['ws_unknownoutputformat']='format de sérialisation $a inconnu';
+
 
 $string['nocourses']='pas de cours';
 $string['nousers']='pas d\'utilisateurs';

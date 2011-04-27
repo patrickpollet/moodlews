@@ -12,6 +12,7 @@
  * @extends reflectionClass
  * Modified by sylvain261 in order to add the alsoHerited param to getMethods and getProperties methods
  * Modified by sylvain261 in order to remove __constuct method in getMethods 
+ * Modified by PP alsoHerited is true by default
  */
 class IPReflectionClass extends reflectionClass {
 	/** @var string class name */
@@ -58,7 +59,7 @@ class IPReflectionClass extends reflectionClass {
 	 * @param boolean If the method should also return private functions
 	 * @return IPReflectionMethod[]
 	 */
-	public function getMethods($alsoProtected = true, $alsoPrivate = true, $alsoHerited = false){
+	public function getMethods($alsoProtected = true, $alsoPrivate = true, $alsoHerited = true){
 		$ar = parent::getMethods();
 		foreach($ar as $method){
 			if($method->name == '__construct')
