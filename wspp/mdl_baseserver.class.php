@@ -164,19 +164,6 @@ abstract class mdl_baseserver extends server {
      abstract protected function to_array($res, $keyName, $className, $emptyMsg);
    
 
-	private function arrayOfArray2ArrayOfObject($data) {
-		$ret=array();
-		foreach ($data as $index=>$record) {
-			if (is_array($record)) { 
-				$ret[$index]=(object)$record;
-				$this->debug_output ("aaaa " .$index);
-			}			
-			else
-			    $ret[$index]=$record;				
-		}	
-		return $ret;	
-	}
-
 
     /**
       * Validates a client's login request.
@@ -254,7 +241,6 @@ abstract class mdl_baseserver extends server {
      */
     public function edit_users($client, $sesskey, $users) {
         global $CFG;
-        $users=$this->arrayOfArray2ArrayOfObject($users);
         // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editUsersInput in any case
         if (!empty($CFG->wsdl_simplified)) {
             $aux = new editUsersInput();

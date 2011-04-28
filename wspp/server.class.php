@@ -2196,7 +2196,7 @@ EOSS;
         //$this->debug_output('Attempting to update user IDS: ' . print_r($users, true));
         if (!empty ($users)) {
             foreach ($users->users as $user) {
-
+                if (is_array($user)) $user=(object) $user; // required in NuSOAP or REST mode ...
                 $ruser = new stdClass();
                 //$this->debug_output('traitement de ' . print_r($user, true));
                 switch (trim(strtolower($user->action))) {
@@ -2322,6 +2322,7 @@ EOSS;
         // $this->debug_output("EDC".print_r($courses,true));
         if (!empty ($courses)) {
             foreach ($courses->courses as $course) {
+            	if (is_array($course)) $course=(object) $course; // required in NuSOAP or REST mode ...
                 $rcourse = new stdClass;
                 $rcourse->error = "";
                 // $this->debug_output("EDC".print_r($course,true));
@@ -2440,6 +2441,7 @@ EOSS;
         $rets = array ();
         if (!empty ($groupings)) {
             foreach ($groupings->groupings as $grouping) {
+            	if (is_array($grouping)) $grouping=(object) $grouping; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($grouping, 'grouping');
                 $ret = new stdClass;
                 $ret->error = "";
@@ -2557,6 +2559,7 @@ EOSS;
         $rets = array ();
         if (!empty ($groups)) {
             foreach ($groups->groups as $group) {
+            	if (is_array($group)) $group=(object) $group; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($group, 'group');
                 $ret = new stdClass;
                 $ret->error = "";
@@ -2668,6 +2671,7 @@ EOSS;
         //$this->debug_output(print_r($groups,true));
         if (!empty ($groups)) {
             foreach ($groups->cohorts as $group) {
+            	if (is_array($group)) $group=(object) $group; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($group, 'cohort');
                 $ret = new stdClass;
                 $ret->error = "";
@@ -2786,6 +2790,7 @@ EOSS;
         $rets = array ();
         if (!empty ($categories)) {
             foreach ($categories->categories as $category) {
+            	if (is_array($category)) $category=(object) $category; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($category, 'category');
                 $this->debug_output("ac" . print_r($category, true));
                 $ret = new StdClass();
@@ -2900,6 +2905,7 @@ EOSS;
         $rets = array ();
         if (!empty ($labels)) {
             foreach ($labels->labels as $label) {
+            	if (is_array($label)) $label=(object) $label; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($label, 'label');
                 switch (trim(strtolower($label->action))) {
                     case 'add' :
@@ -2963,6 +2969,7 @@ EOSS;
 
         if (!empty ($sections)) {
             foreach ($sections->sections as $section) {
+            	if (is_array($section)) $section=(object) $section; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($section, 'section');
 
                 switch (trim(strtolower($section->action))) {
@@ -3051,6 +3058,7 @@ EOSS;
         $rets = array ();
         if (!empty ($forums)) {
             foreach ($forums->forums as $forum) {
+            	if (is_array($forum)) $forum=(object) $forum; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($forum, 'forum');
                 switch (trim(strtolower($forum->action))) {
                     case 'add' :
@@ -3117,6 +3125,7 @@ EOSS;
         $rets = array ();
         if (!empty ($assignments)) {
             foreach ($assignments->assignments as $assignment) {
+            	if (is_array($assignment)) $assignment=(object) $assignment; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($assignment, 'assignment');
                 switch (trim(strtolower($assignment->action))) {
                     case 'add' :
@@ -3187,6 +3196,7 @@ EOSS;
         $rets = array ();
         if (!empty ($databases)) {
             foreach ($databases->databases as $database) {
+            	if (is_array($database)) $database=(object) $database; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($database, 'data');
                 switch (trim(strtolower($database->action))) {
                     case 'add' :
@@ -3252,6 +3262,7 @@ EOSS;
         $rets = array ();
         if (!empty ($wikis)) {
             foreach ($wikis->wikis as $wiki) {
+            	if (is_array($wiki)) $wiki=(object) $wiki; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($wiki, 'wiki');
                 switch (trim(strtolower($wiki->action))) {
                     case 'add' :
@@ -3340,6 +3351,7 @@ EOSS;
         $rets = array ();
         if (!empty ($pagesWiki)) {
             foreach ($pagesWiki->pagesWiki as $page) {
+            	if (is_array($page)) $page=(object) $page; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($page, 'wiki_page');
                 switch (trim(strtolower($page->action))) {
                     case 'add' :
