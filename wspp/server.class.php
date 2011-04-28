@@ -1006,7 +1006,7 @@ class server {
         }
         // Get a list of all the roles in the database, sorted by their short names.
         if ($res = ws_get_records('role', $idfield, $roleid, 'shortname, id', '*')) {
-            return $res;
+            return filter_roles($client,$res);
         } else {
             return $this->non_fatal_error(get_string('ws_nothingfound', 'local_wspp'));
         }

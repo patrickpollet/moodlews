@@ -260,7 +260,7 @@ abstract class mdl_baseserver extends server {
             $aux = new editUsersInput();
             $aux->setUsers($users);
         } else $aux=$users;
-        //$this->debug_output('Attempting to update user IDS MDL_S: ' . print_r($aux, true));
+        $this->debug_output('Attempting to update user IDS MDL_S: ' . print_r($aux, true));
         return $this->send($this->to_array(parent :: edit_users($client, $sesskey, $aux), 'users', 'userRecord', get_string('nothingtodo', 'local_wspp')));
     }
 
@@ -2504,7 +2504,7 @@ abstract class mdl_baseserver extends server {
 	 * @param string $useridfield name of the field used to identify users id, idnumber,username,email ...
 	 * @return gradeItemRecord[]
 	 */
-	public function get_module_grades($client,$sesskey,$activityid,$activitytype,$userids,$useridfield) {
+	public function get_module_grades($client,$sesskey,$activityid,$activitytype,$userids=array(),$useridfield='idnumber') {
 		return $this->send($this->to_array(parent :: get_module_grades ($client,$sesskey,
                $activityid,$activitytype,$userids,$useridfield
             ), 'grades', 'gradeItemRecord', get_string('nogradesfor', 'local_wspp',$activityid)));

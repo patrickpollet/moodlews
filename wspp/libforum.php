@@ -98,7 +98,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
                 }
             }
        }
-       return $discussions;
+       return array_values( $discussions);  // required for REST clients using json
     }
 
 

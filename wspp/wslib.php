@@ -37,7 +37,7 @@ $CFG->wspp_using_moodle20 = file_exists($CFG->libdir . '/dml/moodle_database.php
  * see http://moodle.org/mod/forum/post.php?reply=760858
  */
 function ws_get_student_roleid () {
-	$role=ws_get_record('roles','shortname','student');
+	$role=ws_get_record('role','shortname','student');
 	return $role->id;
 }
 

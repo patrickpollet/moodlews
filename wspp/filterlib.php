@@ -632,7 +632,12 @@ function filter_contacts($client, $msgs) {
             $res[] = $msg;
     }
     return $res;
+}
 
+function filter_roles($client, $roles) {
+	// nothing to filter but WE MUST convert the returned dictionnary
+	// to a standard array (needed for proper json encoding with REST clients)
+    return array_values($roles);
 }
 
 

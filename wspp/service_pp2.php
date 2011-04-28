@@ -19,6 +19,8 @@ require_once ('../config.php');
 $wsfunction = optional_param('wsfunction', '', PARAM_ALPHAEXT);  // letters+underscore
 $wsformatout =optional_param('wsformatout', '', PARAM_ALPHA);
 
+$CFG->wsdl_simplified = true;  // for both SOAP and REST
+
 if ($wsfunction && $wsformatout) {
 	// REST service 
 	//print_r($_REQUEST);
@@ -38,7 +40,7 @@ if ($wsfunction && $wsformatout) {
 	// SOAP service class
 
 	//$CFG->ws_uselocalwsdl=0;
-	$CFG->wsdl_simplified = true;
+
 	require ('mdl_soapserver.class.php');
 
 	// use Internet to fetch operations & types
