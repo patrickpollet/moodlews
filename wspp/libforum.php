@@ -18,7 +18,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
         if (!$CFG->wspp_using_moodle20) {
            	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
            	$post->messageformat=$post->format;
-           	$post->messagetrust='';
+           	$post->messagetrust=0; //rev 1.8.5 must be integer form REST/json
         }
         if (!isset ($post->children))
             $post->children=array();
@@ -40,7 +40,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
         if (!$CFG->wspp_using_moodle20) {
            	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
            	$post->messageformat=$post->format;
-           	$post->messagetrust='';
+           	$post->messagetrust=0; //rev 1.8.5 must be integer form REST/json
         }
 		if(is_array($children)) {
 			foreach($children as $child) {
@@ -94,7 +94,7 @@ require_once ("{$CFG->dirroot}/mod/forum/lib.php");
                 if (!$CFG->wspp_using_moodle20) {
                 	//added in Moodle 1.9 answer to be 'compatible' with Moodle 2.0 and WSDL declaration
                 	$discussions[$id]->post->messageformat=$discussions[$id]->post->format;
-                	$discussions[$id]->post->messagetrust='';
+                	$discussions[$id]->post->messagetrust=0; //rev 1.8.5 must be integer form REST/json
                 }
             }
        }
