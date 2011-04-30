@@ -628,6 +628,8 @@ EOC;
 		private \$formatout='php';
 	    private \$verbose=false;
 	    private \$postdata='';
+	    public \$requestResponse='';
+	    
 	
 		/**
 		 * Constructor method
@@ -641,6 +643,9 @@ EOC;
 	
 	$code .= "  public function " . $service['class'] . "(\$serviceurl = \"" . $service['address'] . "\", \$options = array()) {\n";
 	$code .= "     \$this->serviceurl=\$serviceurl;\n";	
+	$code .="      \$this->verbose=! empty(\$options['trace']);\n"; 
+    $code .=" 		if (!empty(\$options['formatout']))\n"; 
+    $code .="     			\$this->setFormatout(\$options['formatout']);\n"; 
 	$code .= "  }\n\n";
 	
 	$code .= add_utils_fonctions('rest');
@@ -999,7 +1004,17 @@ EOC;
     
     $coderest=<<<EOR
     
-  
+      private function castTo(\$className,\$res){
+        	if (\$this->formatout==='php') return \$res; 
+            if (class_exists(\$className)) {
+                \$aux= new \$className();
+                foreach (\$res as \$key=>\$value)
+                    \$aux->\$key=\$value;
+                return \$aux;
+             } else
+                return \$res;
+        }
+    
 		
 	
 	/**
@@ -1020,29 +1035,48 @@ EOC;
 		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata);
 		if (\$this->verbose) 
 			curl_setopt(\$ch, CURLOPT_VERBOSE, true);
-		\$data = curl_exec(\$ch);
+		\$this->requestResponse = curl_exec(\$ch);
+		//print_r("retour curl".\$data);
 		curl_close(\$ch);
-		return \$this->deserialize(\$data);
+		if (\$methodname==='login') return \$this->deserialize(\$this->requestResponse,'php');
+		else return \$this->deserialize(\$this->requestResponse);
+		
 	}
 	
 	
-	function deserialize (\$data) {
-		switch (\$this->formatout) {
+
+	function deserialize (\$data,\$formatout='') {
+		\$formatout=\$formatout?\$formatout:\$this->formatout;
+		switch (\$formatout) {
 			case 'xml':break;
 			case 'json':break;
-			case 'php':return(unserialize(\$data))break;
+			case 'php':\$data=unserialize(\$data); break;
 			case 'dump':break;			
 		}
 		return \$data;	
+	}
+	
+	function getFormatout() {
+		return \$this->formatout;
+	}
+	
+	function setFormatout(\$formatout='php') {
+		if (empty(\$formatout)) \$formatout='php';
+		\$this->formatout=\$formatout;
 	}
 	
 	function getPostdata() {
 		return \$this->postdata;
 	}
 	
+	function getRequestResponse() {
+		return \$this->requestResponse;
+	}
+	
+	
 	
 EOR;
-   return $code.$coderest;
+   return $coderest;
     
 }
 ?>
