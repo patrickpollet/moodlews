@@ -1,135 +1,135 @@
 <?php
 /**
- * 
+ *
  * @package	MoodleWS
  * @copyright	(c) P.Pollet 2007 under GPL
  */
 class userDatum {
-	/** 
+	/**
 	* @var string
 	*/
 	public $action;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $id;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $confirmed;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $policyagreed;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $deleted;
-	/** 
+	/**
 	* @var string
 	*/
 	public $username;
-	/** 
+	/**
 	* @var string
 	*/
 	public $auth;
-	/** 
+	/**
 	* @var string
 	*/
 	public $password;
-	/** 
+	/**
 	* @var string
 	*/
 	public $passwordmd5;
-	/** 
+	/**
 	* @var string
 	*/
 	public $idnumber;
-	/** 
+	/**
 	* @var string
 	*/
 	public $firstname;
-	/** 
+	/**
 	* @var string
 	*/
 	public $lastname;
-	/** 
+	/**
 	* @var string
 	*/
 	public $email;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $emailstop;
-	/** 
+	/**
 	* @var string
 	*/
 	public $icq;
-	/** 
+	/**
 	* @var string
 	*/
 	public $skype;
-	/** 
+	/**
 	* @var string
 	*/
 	public $yahoo;
-	/** 
+	/**
 	* @var string
 	*/
 	public $aim;
-	/** 
+	/**
 	* @var string
 	*/
 	public $msn;
-	/** 
+	/**
 	* @var string
 	*/
 	public $phone1;
-	/** 
+	/**
 	* @var string
 	*/
 	public $phone2;
-	/** 
+	/**
 	* @var string
 	*/
 	public $institution;
-	/** 
+	/**
 	* @var string
 	*/
 	public $department;
-	/** 
+	/**
 	* @var string
 	*/
 	public $address;
-	/** 
+	/**
 	* @var string
 	*/
 	public $city;
-	/** 
+	/**
 	* @var string
 	*/
 	public $country;
-	/** 
+	/**
 	* @var string
 	*/
 	public $lang;
-	/** 
-	* @var integer
+	/**
+	* @var string
 	*/
 	public $timezone;
-	/** 
+	/**
 	* @var string
 	*/
 	public $lastip;
-	/** 
+	/**
 	* @var string
 	*/
 	public $theme;
-	/** 
+	/**
 	* @var string
 	*/
 	public $description;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $mnethostid;

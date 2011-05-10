@@ -12,7 +12,7 @@ class mdl_restserver extends mdl_baseserver {
 	}
 
 	/**
-	 * Sends an fatal error response back to the client  and STOP the processing 
+	 * Sends an fatal error response back to the client  and STOP the processing
 	 *  @override server
 	 * @param string $msg The error message to return.
 	 * @return void
@@ -20,18 +20,18 @@ class mdl_restserver extends mdl_baseserver {
 	protected function error($msg) {
 		if ($this->singleshot)
 			server :: logout($_REQUEST['client'], $_REQUEST['sesskey']);
-		server :: error($msg); //log in error msg      
+		server :: error($msg); //log in error msg
 		throw new Exception("Wspp Rest Server :" . $msg);
 	}
 
 	protected function send_headers() {
 		switch ($this->formatout) {
 			case 'xml' :
-				header('Content-Type: application/xml');
+                 header('Content-Type: application/xml; charset=utf-8');
 				header('Content-Disposition: inline; filename="response.xml"');
 				break;
 			case 'dump' :
-				header('Content-Type: text/html');
+                 header('Content-Type: text/html; charset=utf-8');
 				header('Content-Disposition: inline; filename="response.txt"');
 				break;
 			default :
@@ -40,42 +40,50 @@ class mdl_restserver extends mdl_baseserver {
 		}
 		parent :: send_headers();
 	}
-	
-	
-	
+
+
+
 	 /**
      * Send the error information to the WS client
      * formatted as XML document.
      * to be overriden in descendant classes
      * @param exception $ex
      * @return void
-     * TODO a more restful return 
+     * TODO a more restful return
      */
-    protected function send_error($ex=null) {
-        if ($ex) {
-            $info = $ex->getMessage();
-            if (1 || debugging() and isset($ex->debuginfo)) {
-                $info .= ' - '.$ex->debuginfo;
-            }
-        } else {
-            $info = 'Unknown error';
+	protected function send_error($ex=null) {
+        $debuginfo='';
+    	if ($ex) {
+        	$info = $ex->getMessage();
+        	if (1 || debugging() and isset($ex->debuginfo)) {
+            	$debuginfo = $ex->debuginfo;
+        	}
+    	} else {
+        	$info = 'Unknown error';
+
+    	}
+    	$this->debug_output($info.' - '.$debuginfo);
+    	switch ($this->formatout) {
+        	case 'xml':
+            	$xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+            	$xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
+            	$xml .= '<MESSAGE>'.htmlentities($info, ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
+            	if (debugging() and isset($ex->debuginfo)) {
+                	$xml .= '<DEBUGINFO>'.htmlentities($debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+            	}
+            	$xml .= '</EXCEPTION>'."\n";
+                break;
+            case 'dump':
+                $xml=$info.' - '.$debuginfo;
+                break;
+            default :
+                $xml='';
+
         }
-        $this->debug_output($info);
-
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-<SOAP-ENV:Body><SOAP-ENV:Fault>
-<faultcode>MOODLE:error</faultcode>
-<faultstring>'.$info.'</faultstring>
-</SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>';
-
         $this->send_headers();
-        header('Content-Type: application/xml');
-        header('Content-Disposition: inline; filename="response.xml"');
-
         echo $xml;
-        die (); // needed
-    }
+        	die (); // needed
+    	}
 
 	/**
 	  * to be overriden in others protocol specific classes
@@ -93,9 +101,12 @@ class mdl_restserver extends mdl_baseserver {
 
 	/**
 	  * to be overriden in others protocol specific classes
+	  *
 	*/
 	protected function to_array($res, $keyName, $className, $emptyMsg) {
-		return $res;
+		 if (!$res || !is_array($res) || (count($res) == 0))
+                return array($this->error_record($className, $emptyMsg));
+         return $res;
 	}
 
 	/**
@@ -119,7 +130,7 @@ class mdl_restserver extends mdl_baseserver {
 				return '<pre>' . print_r($result, true) . '</pre>';
 				break;
 			case 'pojo' :
-				return $this -pojoize($result);
+				return $this ->pojoize($result);
 				break;
 			default :
 				return $this->error(get_string('ws_unknownoutputformat', 'local_wspp', $this->formatout));
@@ -128,6 +139,9 @@ class mdl_restserver extends mdl_baseserver {
 		return $result;
 	}
 
+	/**
+	 * TODO
+	 */
 	protected function pojoize($result) {
 		return $result;
 	}
@@ -169,7 +183,7 @@ class mdl_restserver extends mdl_baseserver {
 	}
 
 	/**
-	 * @param string $wsfunction  the called operation name 
+	 * @param string $wsfunction  the called operation name
 	 * @uses $_REQUEST
 	 */
 	private function trysingleshot($wsfunction) {
@@ -177,10 +191,10 @@ class mdl_restserver extends mdl_baseserver {
 			return;
 		if (!empty ($_REQUEST['wsusername']) && !empty ($_REQUEST['wspassword'])) {
 			$lr = server :: login($_REQUEST['wsusername'], $_REQUEST['wspassword']);
-			// if no exception sent 
+			// if no exception sent
 			unset ($_REQUEST['wsusername']);
-			unset ($_REQUEST['wspassword']); // do not log them !!!	
-			$this->debug_output("singleshot_login" . print_r($lr, true));
+			unset ($_REQUEST['wspassword']); // do not log them !!!
+			//$this->debug_output("singleshot_login" . print_r($lr, true));
 			$this->singleshot = true;
 			//does not work order of elements are changed ..
 			$_REQUEST['client'] = $lr->getClient();
@@ -190,7 +204,7 @@ class mdl_restserver extends mdl_baseserver {
 
 	/**
 	 * we must do some refection since there is no garantee that the expected parameters
-	 * will be in the proper order in the global $_REQUEST 
+	 * will be in the proper order in the global $_REQUEST
 	 */
 	public function handle($wsfunction) {
 		try {
@@ -212,23 +226,23 @@ class mdl_restserver extends mdl_baseserver {
 				$params[] = $_REQUEST[$pname];
 			else {
 				if ($expectedparameter->isDefaultValueAvailable())
-					$params[] = $expectedparameter->getDefaultValue(); // caution 
+					$params[] = $expectedparameter->getDefaultValue(); // caution
 				else
 					$this->error(get_string('ws_missingvalue', 'local_wspp', $pname));
 			}
 		}
-		$this->debug_output("rest_input=" . print_r($params, true));
+		//$this->debug_output("rest_input=" . print_r($params, true));
 		$res = call_user_func_array(array (
 			$this,
 			$wsfunction
 		), $params);
-		$this->debug_output("rest_output" . print_r($res, true));
+		//$this->debug_output("rest_output" . print_r($res, true));
 
 		if ($this->singleshot) {
 			$lr = server :: logout($_REQUEST['client'], $_REQUEST['sesskey']);
-			$this->debug_output("singleshot_logout" . print_r($lr, true));
+			//$this->debug_output("singleshot_logout" . print_r($lr, true));
 		}
-		$this->send_headers(); // in REST mode we send headers even in case of no errors  
+		$this->send_headers(); // in REST mode we send headers even in case of no errors
 		print $res;
 		die();
 	}

@@ -106,7 +106,7 @@ class contactRecord {
 	*/
 	public $lang;
 	/**
-	* @var integer
+	* @var string
 	*/
 	public $timezone;
 	/**

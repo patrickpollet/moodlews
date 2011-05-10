@@ -15,8 +15,8 @@
 /* rev history
  @see revisions.txt
 **/
-
-require_once ('../config.php');
+// important to have an absolute path for wshelper tools that will include that class 
+require_once ($CFG->dirroot.'/config.php');
 require_once ('wslib.php');
 require_once ('filterlib.php');
 /// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
@@ -80,6 +80,8 @@ class server {
         if (!isset ($CFG->ws_enforceipcheck))
             $CFG->ws_enforceipcheck = 0; // rev 1.6.1 off by default++++
         $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
+        // don't let admins mess with this in config.php
+        $CFG->oktech_called_fromM2WS=0; 
     }
 
     /**
@@ -145,6 +147,9 @@ class server {
         global $USER, $CFG;
 
         //return true;
+        
+        if (!empty($CFG->oktech_called_fromM2WS)) return true;
+        
 
         // rev 1.6.3 added extra securityu checks
         $client = clean_param($client, PARAM_INT);
@@ -171,7 +176,7 @@ class server {
         $USER->mnethostid = $CFG->mnet_localhost_id; //Moodle 1.95+ build sept 2009
         $USER->ip = getremoteaddr();
         unset ($USER->access); // important for get_my_courses !
-        $this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
+      //  $this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
 
         //$this->debug_output(print_r($CFG,true));
 
@@ -228,9 +233,9 @@ class server {
 
     /**
      * check that current ws user has the required capability
-     * @param string capability
-     * @param string type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
-     * @param  object moodle's id
+     * @param string $capability
+     * @param string $context_type on context CONTEXT_SYSTEM, CONTEXT_COURSE ....
+     * @param int $instance_id moodle's id
      * @param int $userid : user to check, default me
      */
     private function has_capability($capability, $context_type, $instance_id, $userid = NULL) {
@@ -295,10 +300,10 @@ class server {
             if ($auth->user_login_webservice($username, $password)) {
                 $user = $knownuser;
             }
+            $this->debug_output('return of a_u_l' . print_r($user, true));
         }
 
         if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
-
             return $this->error(get_string('ws_invaliduser', 'local_wspp'));
         }
 
@@ -348,6 +353,7 @@ class server {
             'sessionkey' => $sess->sessionkey
         );
         ***/
+
         $ret= new LoginReturn();
         $ret->setClient($sess->id);
         $ret->setSessionkey($sess->sessionkey);
@@ -382,7 +388,7 @@ class server {
         return false;
     }
 
-    
+
      /**
      * Return WS version.
      *
@@ -915,16 +921,16 @@ class server {
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp') . " " . __FUNCTION__);
         }
-       
+
         if (empty ($uinfo)) {
         	$uinfo=$USER->id;
         	$idfield='id';
         }
-       // find userid 
+       // find userid
           if (!$user = ws_get_record('user', $idfield, $uinfo))
                 return $this->error(get_string('ws_userunknown', 'local_wspp', $idfield . "=" . $uinfo));
           $uid = $user->id;
-       
+
         //only admin user can request courses for others
         if ($uid != $USER->id) {
             if (!$this->has_capability('moodle/user:loginas', CONTEXT_SYSTEM, 0)) {
@@ -979,7 +985,7 @@ class server {
         if (!empty ($roleid) && !ws_record_exists('role', 'id', $idrole))
             return $this->error(get_string('ws_roleunknown', 'local_wspp', $idrole));
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        if ($res = get_role_users($idrole, $context, true, '')) {
+        if ($res = get_role_users($idrole, $context, true, 'u.*')) {
             //rev 1.6 if $idrole is empty return primary role for each user
             if (empty ($idrole)) {
                 foreach ($res as $id => $value)
@@ -1039,10 +1045,11 @@ class server {
      * @param int $eventtype
      * @param string $ownerid
      * @param string $owneridfield
+     * @param int $datetimefrom  -1 all events  0 now () another timestamp =events starting after and egal to that one
      * @return eventRecord[]
      */
-    function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield = 'id') {
-        global $USER;
+    function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield = 'id',$datetimefrom=0) {
+        global $CFG,$USER;
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -1078,20 +1085,27 @@ class server {
                 $ownerid = $user->id;
                 break;
             default :
-                $idfield = '';
-                $ownerid = '';
+                $idfield = '1';
+                $ownerid = '1';
         }
+        if ($datetimefrom==0) {
+           $datetimefrom=time();
+        }
+        /**
         if ($res = ws_get_records('event', $idfield, $ownerid)) {
             foreach ($res as $r) {
                 $r = filter_event($client, $eventtype, $r);
                 if ($r)
                     $ret[] = $r;
             }
-        } else {
-            $ret[] = $this->non_fatal_error(get_string('ws_nothingfound', 'local_wspp'));
-        }
-
-        return $ret;
+        **/
+        $sql=<<<EOS
+            SELECT * from {$CFG->prefix}event where $idfield=$ownerid and timestart >=$datetimefrom order by timestart
+EOS;
+       //  print($sql); print_r($res);
+       if( $res=ws_get_records_sql($sql))
+        return filter_events($client,$eventtype,$res);
+       else return array();
     }
 
     /**
@@ -2000,7 +2014,7 @@ EOSS;
         $ret = array ();
 
         $fields = 'u.id, u.username,u.idnumber, u.email';
-        $roleid = ws_get_student_roleid() ; //student not always 5 
+        $roleid = ws_get_student_roleid() ; //student not always 5
 
         $moodleUserIds = array ();
         if (!empty ($userids)) {
@@ -2104,7 +2118,7 @@ EOSS;
      * @param string $courseid The course ID number to enrol students in <- changed to category...
      * @param string $courseidfield field to use to identify course (idnumber,id, shortname)
      * @param string[] $userids An array of input user id values for enrolment.
-     * @param string $idfield identifier used for users .
+     * @param string $useridfield identifier used for users .
      * @return enrolRecord[]
      */
     protected function affect_role_incourse($client, $sesskey, $rolename, $courseid, $courseidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
@@ -4778,10 +4792,10 @@ EOSS;
                            GROUP BY u.id, u.firstname, u.lastname, u.picture,
                                     u.imagealt, u.lastaccess
                            ORDER BY u.firstname ASC";
-        $this->debug_output($contactsql);
+        //$this->debug_output($contactsql);
         $ret = ws_get_records_sql($contactsql);
 
-        $this->debug_output(print_r($ret, true));
+        //$this->debug_output(print_r($ret, true));
         // step 1 generate the return array and pass it acros filtering process
         //$ret= array();
         return filter_contacts($client, $ret);
@@ -4847,10 +4861,10 @@ EOSS;
 
         return $file;
     }
-    
-    
+
+
     /**
-	 * retrieve grades to an activity 
+	 * retrieve grades to an activity
 	 * @param int $client
 	 * @param string $sesskey
 	 * @param int $activityid
@@ -4861,25 +4875,25 @@ EOSS;
 	 */
     public function get_module_grades($client,$sesskey,$activityid,$activitytype,$userids,$useridfield) {
 	    global $CFG,$USER;
-	    
+
 	    if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
 		    return $this->error(get_string('ws_invalidclient', 'local_wspp'));
 	    }
-	    
+
 	    if (!$this->using19)
 		    return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
-	    
+
 	    if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
 		    $a=new StdClass();
 		    $a->type=$activitytype; $a->id=$activityid;
 		    return $this->error(get_string('ws_activityunknown', 'local_wspp',$a));
 	    }
-	    
+
 	    if (!$context = get_context_instance(CONTEXT_COURSE, $cm->course))
 		    return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
-	    
+
 	    $fields = 'u.id,u.idnumber';
-        $roleid = ws_get_student_roleid() ; //student not always 5 
+        $roleid = ws_get_student_roleid() ; //student not always 5
 
         $moodleUserIds = array ();
         if (!empty ($userids)) {
@@ -4906,24 +4920,24 @@ EOSS;
         } else
             if (! has_capability('moodle/grade:viewall', $context)) {
                 return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
-            }  
+            }
 	    //require_once ($CFG->dirroot . '/grade/lib.php');
         //require_once ($CFG->dirroot . '/grade/querylib.php');
         require_once ($CFG->libdir . '/gradelib.php');
-        
-         //   $this->debug_output(print_r($moodleUserIds,true));   
+
+         //   $this->debug_output(print_r($moodleUserIds,true));
 	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$activityid,array_keys( $moodleUserIds));
-	     $this->debug_output("GI".print_r($grading_info,true));  
-	     
+	     $this->debug_output("GI".print_r($grading_info,true));
+
 	     $ret=array();
 	     foreach($grading_info->items[0]->grades as $userid=>$grade) {
 	     	$rgrade=$grade;
 	     	$rgrade->userid=$userid;
 	     	if (!empty($moodleUserIds[$userid]->idnumber))
 	     		$rgrade->useridnumber=$moodleUserIds[$userid]->idnumber;
-	     	$ret[]=$rgrade;	
+	     	$ret[]=$rgrade;
 	     }
-	    return filter_grades($client,$ret); 
+	    return filter_grades($client,$ret);
     }
 
 

@@ -39,7 +39,7 @@ $serviceURL = 'CFGWWWROOT/wspp/service_pp2.php';
        $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_RPC, SOAP_ENCODED);
 
       //    $wsdl = new WSDLStruct($serviceNameSpace, $serviceURL, SOAP_DOCUMENT, SOAP_ENCODED);
-        $wsdl->setService(new IPReflectionClass('mdl_baseserver'));
+        $wsdl->setService(new IPReflectionClass('mdl_soapserver'));
         $wsdl->_debug=true;
 
         $wsdl->setStrictErrorChecking(true);

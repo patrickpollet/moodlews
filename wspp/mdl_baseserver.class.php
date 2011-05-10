@@ -79,11 +79,11 @@ abstract class mdl_baseserver extends server {
      * @return void
      */
     protected abstract function send_error($ex=null) ;
- 
+
 
      /**
      * Internal implementation - sending of page headers.
-     * protocol classes should override it and add a content-type  
+     * protocol classes should override it and add a content-type
      * @return void
      */
     protected function send_headers() {
@@ -106,16 +106,16 @@ abstract class mdl_baseserver extends server {
             ob_end_clean();
             return $this->error($msg);
         }
-        ob_end_clean();  
+        ob_end_clean();
         return $this->serialize($result);
     }
-    
+
     protected function serialize ($result) {
     	return $result;
     }
 
     /**
-    * Sends an fatal error response back to the client and stop 
+    * Sends an fatal error response back to the client and stop
     *  @override server
     * @param string $msg The error message to return.
     * @return void
@@ -150,19 +150,19 @@ abstract class mdl_baseserver extends server {
        * to be overriden in others protocol specific classes
        */
       abstract protected function to_primitive($res);
-      
+
 
       /**
        * to be overriden in others protocol specific classes
        */
       abstract protected function to_single($res, $className);
-     
+
 
      /**
        * to be overriden in others protocol specific classes
      */
      abstract protected function to_array($res, $keyName, $className, $emptyMsg);
-   
+
 
 
     /**
@@ -585,7 +585,7 @@ abstract class mdl_baseserver extends server {
     * @param string $sesskey The client session key.
     * @param string[] $groups an array of group identifiers
     * @param string $idfield  the group's Moodle identifier
-    * @param int course the id of the course to serach (0 = any course)
+    * @param int $courseid the id of the course to serach (0 = any course)
     * @return groupRecord[]
     */
     protected function get_groups($client, $sesskey, $groups, $idfield, $courseid = 0) {
@@ -599,7 +599,7 @@ abstract class mdl_baseserver extends server {
     * @param string $sesskey The client session key.
     * @param string[] $groups an array of grouping identifiers
     * @param string $idfield  the grouping's Moodle identifier
-    * @param int course the id of the course to serach (0 = any course)
+    * @param int $courseid the id of the course to serach (0 = any course)
     * @return groupingRecord[]
     */
     protected function get_groupings($client, $sesskey, $groups, $idfield, $courseid = 0) {
@@ -700,12 +700,12 @@ abstract class mdl_baseserver extends server {
     * return one groupRecord  identified by Moodle's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param string $cohortIdNumber  the cohort's Moodle identifier
+    * @param string $cohortidnumber  the cohort's Moodle identifier
     * @return cohortRecord[]
     */
-    public function get_cohort_byidnumber($client, $sesskey, $groupid) {
+    public function get_cohort_byidnumber($client, $sesskey, $cohortidnumber) {
         return $this->get_cohorts($client, $sesskey, array (
-            $groupid
+            $cohortidnumber
         ), 'idnumber');
     }
 
@@ -713,12 +713,12 @@ abstract class mdl_baseserver extends server {
     * return one groupRecord  identified by Moodle's id
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
-    * @param string $cohortName
+    * @param string $cohortname
     * @return cohortRecord[]  Array of cohortRecord
     */
-    public function get_cohorts_byname($client, $sesskey, $groupid) {
+    public function get_cohorts_byname($client, $sesskey, $cohortname) {
         return $this->get_cohorts($client, $sesskey, array (
-            $groupid
+            $cohortname
         ), 'name');
     }
 
@@ -758,9 +758,9 @@ abstract class mdl_baseserver extends server {
     * @param string $idfield the filed used to identity the group
     * @return userRecord[]  Array of user Record
     */
-    public function get_cohort_members($client, $sesskey, $groupid, $groupidfield = 'id') {
+    public function get_cohort_members($client, $sesskey, $id, $idfield = 'id') {
 
-        return $this->send($this->to_array(parent :: get_cohort_members($client, $sesskey, $groupid, $groupidfield), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
+        return $this->send($this->to_array(parent :: get_cohort_members($client, $sesskey, $id, $idfield), 'users', 'userRecord', get_string('nousers', 'local_wspp')));
 
     }
 
@@ -898,7 +898,7 @@ abstract class mdl_baseserver extends server {
     * @param string $sesskey The client session key.
     * @param string $idcourse
     * @param string $idfield
-    * @param int $roleid
+    * @param int $idrole
     * @return userRecord[]
     */
     public function get_users_bycourse($client, $sesskey, $idcourse, $idfield = 'idnumber', $idrole = 0) {
@@ -916,8 +916,8 @@ abstract class mdl_baseserver extends server {
     * @param int $roleid
     * @return int
     */
-    public function count_users_bycourse($client, $sesskey, $idcourse, $idfield = 'idnumber', $idrole = 0) {
-        $res = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $idrole);
+    public function count_users_bycourse($client, $sesskey, $courseid, $idfield = 'idnumber', $roleid = 0) {
+        $res = parent :: get_users_bycourse($client, $sesskey, $courseid, $idfield, $roleid);
         $this->debug_output(print_r($res,true));
         return  $this->send($this->to_primitive(count($res)));
 
@@ -932,9 +932,9 @@ abstract class mdl_baseserver extends server {
     * @param string $idfield
     * @return userRecord[]
     */
-    public function get_teachers($client, $sesskey, $idcourse, $idfield = 'idnumber') {
+    public function get_teachers($client, $sesskey, $courseid, $idfield = 'idnumber') {
         $role = ws_get_record('role', 'shortname', 'editingteacher');
-        $te = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
+        $te = parent :: get_users_bycourse($client, $sesskey, $courseid, $idfield, $role->id);
         if (!empty ($te->error)) // cancel any errors if no teachers found
             $te = array ();
         $role = ws_get_record('role', 'shortname', 'teacher');
@@ -954,9 +954,9 @@ abstract class mdl_baseserver extends server {
     * @return userRecord[]
         */
 
-    public function get_students($client, $sesskey, $idcourse, $idfield = 'idnumber') {
+    public function get_students($client, $sesskey, $courseid, $idfield = 'idnumber') {
         $role = ws_get_record('role', 'shortname', 'student');
-        return $this->get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
+        return $this->get_users_bycourse($client, $sesskey, $courseid, $idfield, $role->id);
     }
 
     /**
@@ -1035,9 +1035,9 @@ abstract class mdl_baseserver extends server {
      * @param string $catid
      * @return courseRecord[]
      */
-    public function get_courses_bycategory($client, $sesskey, $categoryid) {
+    public function get_courses_bycategory($client, $sesskey, $catid) {
         return $this->get_courses($client, $sesskey, array (
-            $categoryid
+            $catid
         ), 'category');
     }
 
@@ -1047,17 +1047,18 @@ abstract class mdl_baseserver extends server {
      * @param int $eventtype
      * @param string $ownerid
      * @param string $owneridfield
+     * @param int $datetimefrom  -1 all events  0 now () another timestamp =events starting after and egal to that one
      * @return eventRecord[]
      */
-    public function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield = 'id') {
-        return $this->send($this->to_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield), 'events', 'eventRecord', get_string('noevents', 'local_wspp')));
+    public function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield = 'id',$datetimefrom=-1) {
+        return $this->send($this->to_array(parent :: get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield,$datetimefrom), 'events', 'eventRecord', get_string('noevents', 'local_wspp')));
     }
 
     /**
       * @param int $client
       * @param string $sesskey
       * @param string $courseid
-      * @param string $courseidfield
+      * @param string $idfield
       * @param int $limit
       * @return changeRecord[]
       */
@@ -1475,8 +1476,8 @@ abstract class mdl_baseserver extends server {
      * @param int $courseid
      * @return affectRecord
      */
-    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid) {
-        return $this->send($this->to_single(parent :: affect_grouping_to_course($client, $sesskey, $groupid, $courseid), "affectRecord"));
+    function affect_grouping_to_course($client, $sesskey, $groupingid, $courseid) {
+        return $this->send($this->to_single(parent :: affect_grouping_to_course($client, $sesskey, $groupingid, $courseid), "affectRecord"));
     }
 
     /**
@@ -1877,13 +1878,13 @@ abstract class mdl_baseserver extends server {
       * @param pageWikiDatum[] $pageswiki
       * @return pageWikiRecord[]
       */
-    function edit_pagesWiki($client, $sesskey, $pagesWiki) {
+    function edit_pagesWiki($client, $sesskey, $pageswiki) {
           global $CFG;
         // rev 1.8.2 important for the new WSDL (parent fonction expect an object of type editXXXXInput in any case
         if (!empty($CFG->wsdl_simplified)) {
             $aux = new editPagesWikiInput();
-            $aux->setPagesWiki($pagesWiki);
-        } else $aux=$pagesWiki;
+            $aux->setPagesWiki($pageswiki);
+        } else $aux=$pageswiki;
 
         return $this->send($this->to_array(parent :: edit_pagesWiki($client, $sesskey, $aux), 'pagesWiki', 'pageWikiRecord', get_string('nothingtodo', 'local_wspp')));
 
@@ -2278,13 +2279,13 @@ abstract class mdl_baseserver extends server {
     }
 
      /**
-     * add users to a cohort
+     * add users to a group
      * @param int $client
      * @param string $sesskey
      * @param string[] $userids
      * @param string $useridfield
-     * @param string $cohortid
-     * @param string $cohortidfield
+     * @param string $groupid
+     * @param string $groupidfield
      * @return enrolRecord[]
      */
     public function affect_users_to_group($client,$sesskey,$groupid,$groupidfield='id',$userids,$useridfield) {
@@ -2293,13 +2294,13 @@ abstract class mdl_baseserver extends server {
     }
 
     /**
-     * remove users from a cohort
+     * remove users from a group
      * @param int $client
      * @param string $sesskey
      * @param string[] $userids
      * @param string $useridfield
-     * @param string $cohortid
-     * @param string $cohortidfield
+     * @param string $groupid
+     * @param string $groupidfield
      * @return enrolRecord[]
      */
     public function remove_users_from_group($client,$sesskey,$groupid,$groupidfield='id',$userids,$useridfield) {
@@ -2355,7 +2356,7 @@ abstract class mdl_baseserver extends server {
      * add a reply to a post/discussion in a forum
      * @param int $client
      * @param string $sesskey
-     * @param int $parenttid
+     * @param int $parentid
      * @param forumPostDatum $post
      * @return forumPostRecord[]
      */
@@ -2499,6 +2500,7 @@ abstract class mdl_baseserver extends server {
 
 
  //testing code
+
     /**
      * @return string[]
      */
@@ -2530,7 +2532,6 @@ abstract class mdl_baseserver extends server {
      public function get_boolean_array() {
         return $this->send (array(true,false,true,false));
     }
-
 
 
 

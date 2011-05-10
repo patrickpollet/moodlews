@@ -527,7 +527,7 @@
           <xsd:element name="policyagreed" type="xsd:int"/>
           <xsd:element name="skype" type="xsd:string"/>
           <xsd:element name="theme" type="xsd:string"/>
-          <xsd:element name="timezone" type="xsd:int"/>
+          <xsd:element name="timezone" type="xsd:string"/>
           <xsd:element name="username" type="xsd:string"/>
           <xsd:element name="yahoo" type="xsd:string"/>
         </xsd:all>
@@ -570,7 +570,7 @@
           <xsd:element name="role" type="xsd:int"/>
           <xsd:element name="skype" type="xsd:string"/>
           <xsd:element name="theme" type="xsd:string"/>
-          <xsd:element name="timezone" type="xsd:int"/>
+          <xsd:element name="timezone" type="xsd:string"/>
           <xsd:element name="username" type="xsd:string"/>
           <xsd:element name="yahoo" type="xsd:string"/>
         </xsd:all>
@@ -1078,7 +1078,7 @@
           <xsd:element name="role" type="xsd:int"/>
           <xsd:element name="skype" type="xsd:string"/>
           <xsd:element name="theme" type="xsd:string"/>
-          <xsd:element name="timezone" type="xsd:int"/>
+          <xsd:element name="timezone" type="xsd:string"/>
           <xsd:element name="username" type="xsd:string"/>
           <xsd:element name="yahoo" type="xsd:string"/>
         </xsd:all>
@@ -1432,8 +1432,8 @@
     <part name="sesskey" type="xsd:string"/>
     <part name="userids" type="tns:stringArray"/>
     <part name="useridfield" type="xsd:string"/>
-    <part name="cohortid" type="xsd:string"/>
-    <part name="cohortidfield" type="xsd:string"/>
+    <part name="groupid" type="xsd:string"/>
+    <part name="groupidfield" type="xsd:string"/>
   </message>
   <message name="affect_users_to_groupResponse">
     <part name="affect_users_to_groupReturn" type="tns:enrolRecordArray"/>
@@ -1636,7 +1636,7 @@
   <message name="forum_add_replyRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
-    <part name="parenttid" type="xsd:int"/>
+    <part name="parentid" type="xsd:int"/>
     <part name="post" type="tns:forumPostDatum"/>
   </message>
   <message name="forum_add_replyResponse">
@@ -1796,7 +1796,7 @@
   <message name="get_cohort_byidnumberRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
-    <part name="cohortIdNumber" type="xsd:string"/>
+    <part name="cohortidnumber" type="xsd:string"/>
   </message>
   <message name="get_cohort_byidnumberResponse">
     <part name="get_cohort_byidnumberReturn" type="tns:cohortRecordArray"/>
@@ -1813,7 +1813,7 @@
   <message name="get_cohorts_bynameRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
-    <part name="cohortName" type="xsd:string"/>
+    <part name="cohortname" type="xsd:string"/>
   </message>
   <message name="get_cohorts_bynameResponse">
     <part name="get_cohorts_bynameReturn" type="tns:cohortRecordArray"/>
@@ -1883,6 +1883,7 @@
     <part name="eventtype" type="xsd:int"/>
     <part name="ownerid" type="xsd:string"/>
     <part name="owneridfield" type="xsd:string"/>
+    <part name="datetimefrom" type="xsd:int"/>
   </message>
   <message name="get_eventsResponse">
     <part name="get_eventsReturn" type="tns:eventRecordArray"/>
@@ -2012,7 +2013,7 @@
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
     <part name="courseid" type="xsd:string"/>
-    <part name="courseidfield" type="xsd:string"/>
+    <part name="idfield" type="xsd:string"/>
     <part name="limit" type="xsd:int"/>
   </message>
   <message name="get_last_changesResponse">
@@ -2295,7 +2296,7 @@
     <part name="sesskey" type="xsd:string"/>
     <part name="idcourse" type="xsd:string"/>
     <part name="idfield" type="xsd:string"/>
-    <part name="roleid" type="xsd:int"/>
+    <part name="idrole" type="xsd:int"/>
   </message>
   <message name="get_users_bycourseResponse">
     <part name="get_users_bycourseReturn" type="tns:userRecordArray"/>
@@ -2308,6 +2309,13 @@
   </message>
   <message name="get_users_byprofileResponse">
     <part name="get_users_byprofileReturn" type="tns:userRecordArray"/>
+  </message>
+  <message name="get_versionRequest">
+    <part name="client" type="xsd:int"/>
+    <part name="sesskey" type="xsd:string"/>
+  </message>
+  <message name="get_versionResponse">
+    <part name="get_versionReturn" type="xsd:int"/>
   </message>
   <message name="has_role_incourseRequest">
     <part name="client" type="xsd:int"/>
@@ -2431,8 +2439,8 @@
     <part name="sesskey" type="xsd:string"/>
     <part name="userids" type="tns:stringArray"/>
     <part name="useridfield" type="xsd:string"/>
-    <part name="cohortid" type="xsd:string"/>
-    <part name="cohortidfield" type="xsd:string"/>
+    <part name="groupid" type="xsd:string"/>
+    <part name="groupidfield" type="xsd:string"/>
   </message>
   <message name="remove_users_from_groupResponse">
     <part name="remove_users_from_groupReturn" type="tns:enrolRecordArray"/>
@@ -3035,6 +3043,10 @@
     <wsdl:operation name="get_users_byprofile">
       <wsdl:input message="tns:get_users_byprofileRequest"/>
       <wsdl:output message="tns:get_users_byprofileResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="get_version">
+      <wsdl:input message="tns:get_versionRequest"/>
+      <wsdl:output message="tns:get_versionResponse"/>
     </wsdl:operation>
     <wsdl:operation name="has_role_incourse">
       <wsdl:input message="tns:has_role_incourseRequest"/>
@@ -4292,6 +4304,15 @@
     </wsdl:operation>
     <wsdl:operation name="get_users_byprofile">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_users_byprofile" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="get_version">
+      <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=get_version" style="rpc"/>
       <wsdl:input>
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>

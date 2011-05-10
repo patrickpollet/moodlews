@@ -209,11 +209,11 @@ function filter_user($client, $user, $role=0) {
         $ret[] = $tmp;
     }
     $user->profile = $ret;
-
+	//$user->timezone=99; // quick fix until I change the WSDL from int to string
     return $user;
 }
 
-function filter_users($client, $users, $role) {
+function filter_users($client, $users, $role=0) {
     $res = array ();
     foreach ($users as $user) {
         $user = filter_user($client, $user, $role);
@@ -482,8 +482,8 @@ function filter_grade($client, $grade) {
         return false;
     if (empty ($grade->feedback))
         $grade->feedback = "";
-    if ($grade->hidden || $grade->overridden) return false;    
-              
+    if ($grade->hidden || $grade->overridden) return false;
+
     return $grade;
 }
 function filter_grades($client, $grades) {
@@ -553,6 +553,19 @@ function filter_event($client, $eventype, $event) {
             return $event;
     }
 }
+
+function filter_events($client, $eventtype,$ret) {
+    $res = array ();
+    foreach ($ret as $r) {
+        if ($r=filter_event($client,$eventtype,$r))
+            $res[] = $r;
+    }
+    return $res;
+
+}
+
+
+
 
 function filter_quiz($client, $quiz) {
     return $quiz;

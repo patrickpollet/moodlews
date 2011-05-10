@@ -51,7 +51,7 @@
 					<xsd:element name="city" type="xsd:string" />
 					<xsd:element name="country" type="xsd:string" />
 					<xsd:element name="lang" type="xsd:string" />
-					<xsd:element name="timezone" type="xsd:int" />
+					<xsd:element name="timezone" type="xsd:string" />
 					<xsd:element name="mnethostid" type="xsd:int" />
 					<xsd:element name="lastip" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
@@ -947,7 +947,7 @@
 					<xsd:element name="city" type="xsd:string" />
 					<xsd:element name="country" type="xsd:string" />
 					<xsd:element name="lang" type="xsd:string" />
-					<xsd:element name="timezone" type="xsd:int" />
+					<xsd:element name="timezone" type="xsd:string" />
 					<xsd:element name="lastip" type="xsd:string" />
 					<xsd:element name="theme" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
@@ -2129,7 +2129,9 @@
 		<part name="client" type="xsd:int" />
 		<part name="sesskey" type="xsd:string" />
 		<part name="eventtype" type="xsd:int" />
-		<part name="ownerid" type="xsd:int" />
+		 <part name="ownerid" type="xsd:string"/>
+         <part name="owneridfield" type="xsd:string"/>
+         <part name="datetimefrom" type="xsd:int"/>
 	</message>
 
 	<message name="get_eventsResponse">
