@@ -146,9 +146,11 @@ class server {
     private function validate_client($client = 0, $sesskey = '', $operation = '') {
         global $USER, $CFG;
 
-        //return true;
-        
-        if (!empty($CFG->oktech_called_fromM2WS)) return true;
+     
+        if (!empty($CFG->oktech_called_fromM2WS)) {
+         	 $this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
+         	return true;
+         }	
         
 
         // rev 1.6.3 added extra securityu checks
@@ -176,8 +178,8 @@ class server {
         $USER->mnethostid = $CFG->mnet_localhost_id; //Moodle 1.95+ build sept 2009
         $USER->ip = getremoteaddr();
         unset ($USER->access); // important for get_my_courses !
-      //  $this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
-
+     
+ 		$this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
         //$this->debug_output(print_r($CFG,true));
 
         //LOG INTO MOODLE'S LOG
@@ -4631,7 +4633,7 @@ EOSS;
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
         if (!$user = ws_get_record("user", $useridfield, $userid)) {
-            return $this->error(get_string('ws_userunknown', 'local_wspp', 'id=' . $userid));
+            return $this->error(get_string('ws_userunknown', 'local_wspp', $useridfield.' = ' . $userid));
         }
         if (!has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM)))
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
