@@ -15,7 +15,7 @@
 /* rev history
  @see revisions.txt
 **/
-// important to have an absolute path for wshelper tools that will include that class 
+// important to have an absolute path for wshelper tools that will include that class
 require_once ($CFG->dirroot.'/config.php');
 require_once ('wslib.php');
 require_once ('filterlib.php');
@@ -81,7 +81,7 @@ class server {
             $CFG->ws_enforceipcheck = 0; // rev 1.6.1 off by default++++
         $this->debug_output('    Session Timeout: ' . $this->sessiontimeout);
         // don't let admins mess with this in config.php
-        $CFG->oktech_called_fromM2WS=0; 
+        $CFG->oktech_called_fromM2WS=0;
     }
 
     /**
@@ -146,12 +146,12 @@ class server {
     private function validate_client($client = 0, $sesskey = '', $operation = '') {
         global $USER, $CFG;
 
-     
+
         if (!empty($CFG->oktech_called_fromM2WS)) {
          	 $this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
          	return true;
-         }	
-        
+         }
+
 
         // rev 1.6.3 added extra securityu checks
         $client = clean_param($client, PARAM_INT);
@@ -178,7 +178,8 @@ class server {
         $USER->mnethostid = $CFG->mnet_localhost_id; //Moodle 1.95+ build sept 2009
         $USER->ip = getremoteaddr();
         unset ($USER->access); // important for get_my_courses !
-     
+        $USER->lang=$CFG->lang;
+
  		$this->debug_output("validate_client OK $operation $client user=" . print_r($USER, true));
         //$this->debug_output(print_r($CFG,true));
 
@@ -4699,6 +4700,29 @@ EOSS;
         }
 
         if ($ret = ws_get_records('message', 'useridto', $user->id, 'timecreated DESC')) {
+
+            // rev. 16 mai 2011
+            if ($user->id==$USER->id) {  // reading its own messages
+                require_once ("{$CFG->dirroot}/message/lib.php");
+                foreach ($ret as $message) {
+                    if ($CFG->wspp_using_moodle20) {
+                        //mark the messages we're going to display as read
+                        message_mark_messages_read($message->useridto, $message->useridfrom);
+                    } else {
+                        /// Move the entry to the other table
+                        $message->timeread = time();
+                        $message = addslashes_object($message);
+                        $messageid = $message->id;
+                        unset($message->id);
+                        if (insert_record('message_read', $message)) {
+                            delete_records('message', 'id', $messageid);
+                        }
+
+                    }
+                }
+            }
+            // end rev 16 mai 2011
+
             //fill some fields about the sender cf wsdl
             $ret = filter_messages($client, $ret);
         }
