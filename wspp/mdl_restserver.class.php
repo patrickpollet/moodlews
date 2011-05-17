@@ -96,7 +96,7 @@ class mdl_restserver extends mdl_baseserver {
 	 * to be overriden in others protocol specific classes
 	 */
 	protected function to_single($res, $className) {
-        $this->debug_output("to_single ".print_r($res,true));
+       // $this->debug_output("to_single ".print_r($res,true));
 		return $res;
 	}
 

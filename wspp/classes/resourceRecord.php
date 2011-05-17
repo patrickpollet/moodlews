@@ -1,78 +1,86 @@
 <?php
 /**
- * 
+ *
  * @package	MoodleWS
  * @copyright	(c) P.Pollet 2007 under GPL
  */
 class resourceRecord {
-	/** 
+	/**
 	* @var string
 	*/
 	public $error;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $id;
-	/** 
+	/**
 	* @var string
 	*/
 	public $name;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $course;
-	/** 
+	/**
 	* @var string
 	*/
 	public $type;
-	/** 
+	/**
 	* @var string
 	*/
 	public $reference;
-	/** 
+	/**
 	* @var string
 	*/
 	public $summary;
-	/** 
+	/**
 	* @var string
 	*/
 	public $alltext;
-	/** 
+	/**
 	* @var string
 	*/
 	public $popup;
-	/** 
+	/**
 	* @var string
 	*/
 	public $options;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $timemodified;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $section;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $visible;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $groupmode;
-	/** 
+	/**
 	* @var integer
 	*/
 	public $coursemodule;
-	/** 
+	/**
 	* @var string
 	*/
 	public $url;
-	/** 
+	/**
 	* @var string
 	*/
 	public $timemodified_ut;
+    /**
+    * @var integer
+    */
+    public $groupingid;
+    /**
+    * @var integer
+    */
+    public $groupmembersonly;
 
 	/**
 	* default constructor for class resourceRecord
@@ -95,6 +103,8 @@ class resourceRecord {
 		 $this->coursemodule=0;
 		 $this->url='';
 		 $this->timemodified_ut='';
+         $this->groupingid=0;
+         $this->groupmembersonly=0;
 	}
 	/* get accessors */
 
@@ -232,6 +242,21 @@ class resourceRecord {
 	public function getTimemodified_ut(){
 		 return $this->timemodified_ut;
 	}
+
+
+    /**
+    * @return integer
+    */
+    public function getGroupingid(){
+         return $this->groupingid;
+    }
+
+    /**
+    * @return integer
+    */
+    public function getGroupmembersonly(){
+         return $this->groupmembersonly;
+    }
 
 	/*set accessors */
 
@@ -386,6 +411,23 @@ class resourceRecord {
 	public function setTimemodified_ut($timemodified_ut){
 		$this->timemodified_ut=$timemodified_ut;
 	}
+
+
+    /**
+    * @param integer $groupingid
+    * @return void
+    */
+    public function setGroupingid($groupingid){
+        $this->groupingid=$groupingid;
+    }
+
+    /**
+    * @param integer $groupmembersonly
+    * @return void
+    */
+    public function setGroupmembersonly($groupmembersonly){
+        $this->groupmembersonly=$groupmembersonly;
+    }
 
 }
 

@@ -992,6 +992,8 @@
           <xsd:element name="course" type="xsd:int"/>
           <xsd:element name="coursemodule" type="xsd:int"/>
           <xsd:element name="error" type="xsd:string"/>
+          <xsd:element name="groupingid" type="xsd:int"/>
+          <xsd:element name="groupmembersonly" type="xsd:int"/>
           <xsd:element name="groupmode" type="xsd:int"/>
           <xsd:element name="id" type="xsd:int"/>
           <xsd:element name="name" type="xsd:string"/>

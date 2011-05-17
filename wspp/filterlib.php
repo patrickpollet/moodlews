@@ -349,6 +349,8 @@ function filter_cohorts($client, $groups) {
 }
 
 function filter_resource($client, $resource) {
+
+ /**
     global $CFG,$USER;
     if (!empty ($resource->error))
         return $resource;
@@ -372,6 +374,9 @@ if (!ws_is_enrolled($resource->course, $USER->id))
     //TODO filter off if restricted to a grouping
 
     return $resource->visible ? $resource : false;
+  **/
+  return filter_instance ($client,$resource,'resource');
+
 }
 
 function filter_resources($client, $resources) {
@@ -394,18 +399,29 @@ function filter_instance($client, $resource,$type) {
 
     //name may has changed in Moodle 2.0
     if ($CFG->wspp_using_moodle20) {
-        //$resource->summary=$resource->intro;
+        $resource->summary=$resource->intro;
     }
 
     //return false if resource->visible is false AND $client not "teacher"
     $context = get_context_instance(CONTEXT_COURSE, $resource->course);
     //if (has_capability('moodle/course:update', $context))
     // 1.6.3  there is a special capability for hiddensection
-    if (has_capability('moodle/course:viewhiddenactivities', $context))
+     if (has_capability('moodle/course:viewhiddenactivities', $context))
         return $resource;
-    if (!ws_is_enrolled($resource->course, $USER->id))
+    if (!ws_is_enrolled($resource->course, $USER->id)) {
+        //ws_error_log ("KO 1");
         return false;
-    return $resource->visible ? $resource : false;
+    }
+   // filter off if restricted to a grouping
+   if ($resource->groupmembersonly) {
+          require_once ("{$CFG->libdir}/grouplib.php");
+          $groups=groups_get_user_groups($resource->course,$USER->id);
+          if (empty($groups[$resource->groupingid])) {
+           //  ws_error_log ("KO 2");
+             return false;
+          }
+   }
+   return $resource->visible ? $resource : false;
 }
 
 

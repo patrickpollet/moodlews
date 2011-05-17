@@ -457,6 +457,8 @@
 					<xsd:element name="coursemodule" type="xsd:int" />
 					<xsd:element name="url" type="xsd:string" />
 					<xsd:element name="timemodified_ut" type="xsd:string" />
+					<xsd:element name="groupingid" type="xsd:int" />
+					<xsd:element name="groupmembersonly" type="xsd:int" />
 				</xsd:all>
 			</xsd:complexType>
 
