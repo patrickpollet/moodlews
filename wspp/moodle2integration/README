@@ -1,0 +1,71 @@
+
+
+INSTALLATION :
+
+0) IMPORTANT : First make sure that the Moodle 2.0 official Web Service is up and running 
+on your Moodle server and that you succeded in some testing operations.
+
+1) copy the folder 'oktech' into the 'local' directory of your Moodle 2.0 installation
+
+2) as an admin user, visit the link 'Notifications' of 'Site adminstration' . You should
+see after few moments 'local_oktech ' Success . This has installed into Moodle 2.0 database
+and external service named oktech WS with all available functions installed. These functions
+will appear in Web Service's plugin administration screen prefixed with oktech_ such as 
+
+oktech_add_group	
+oktech_add_grouping	
+oktech_add_label	
+oktech_add_noneditingteacher	 add a non editing teacher role to userid identified by useridfield to courseid identified by courseidfield
+...
+
+Currently the documentation of Web Services functions is not available for admin users under Profile, Security Keys ; this
+is a limitation of Moodle 2.0, not of OK Tech ;-) So you must connect to Moodle as a regular user to consult it.
+
+
+USAGE :
+
+In addition to its historical way ( i.e : call login, fetch a LoginReturn object and sent it with the target function , then call to logout),
+that is of course still supported in SOAP/REST mode,  you may now call all OK Tech operations the Moodle 2.0 way, that is without calling first login. 
+
+For example in REST mode, with simple authentification you can use :
+
+ http://localhost/moodle20/webservice/rest/simpleserver.php?wsusername=xxx&wspassword=xxx&wsfunction=oktech_get_roles
+ 
+ or
+ 
+ http://localhost/moodle20/webservice/rest/simpleserver.php?wsusername=xxxx&wspassword=xxxx&wsfunction=oktech_get_users&userids[0]=ppollet&idfield=username
+ 
+ 
+ Note that these calls are exactly the same as those of OKTech in REST/singleshot mode, excpect that the function name must be prefixed by oktech_
+ 
+ And in 'token mode '
+
+http://localhost/moodle20/webservice/rest/server.php?wstoken=123456789abcdefgh&wsfunction=oktech_get_groups_byname&groupname=18
+
+
+Note that currently, if you already logged in to Moodle you MUST call these URLS using ANOTHER Web Browser (or another computer) . 
+Otherwise you will receive an error about extraneous parameters found in the http request. This Moodle 2.0 feature has been reported
+on Moodle's tracker.
+
+One solution is to use Linux wget command as follow :
+
+wget 'http://localhost/moodle20/webservice/rest/simpleserver.php?wsusername=xxxxx&wspassword=zzzzz&wsfunction=oktech_get_roles' -O getroles
+(Don't forget the simple quotes around the URL ! )
+
+Currently the OK Tech specific parameter wsformatout (that can be json, xml, php or dump) is not supported by Moodle 2.0 infrastructure. So 
+you will receive the results in official Moodle 2.0 XML and parse them the same way as the current Moodle 2.0 operations.
+Adding this parameter on the official Moodle 2.0 infrastructure has also been requested on Moodle's tracker.
+
+
+Finally, for some reasons, the XML result is passed to PHP htmlentities function, thus replacing all accentuated characters by HTML tags. This
+will bother some browsers. This has also been reported on the Moodle Tracker. 
+
+MISSING FEATURES :
+
+the OK Tech functions cannot yet be tested in Site Adminstration/plugins/Web Services / overview
+
+
+
+Enjoy
+
+PP 30/05/2011
