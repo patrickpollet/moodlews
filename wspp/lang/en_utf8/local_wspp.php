@@ -96,7 +96,8 @@ $string['nogradesfor']='no grades for $a';
 $string['nogradesin']='no grades in $a';
 $string['nogroupsin']='no groups in $a';
 $string['nogroups']='no groups';
-$string['nogrouping']='no groupings';
+$string['nogroupings']='no groupings';
+$string['nogroupingsin']='no groupings in $a';
 
 
 $string['noteachers']='no teachers';

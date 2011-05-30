@@ -97,7 +97,7 @@ $string['nogradesfor']='pas de notes pour {$a}';
 $string['nogradesin']='pas de notes dans {$a}';
 $string['nogroupsin']='pas de groupes dans {$a}';
 $string['nogroups']='pas de groupes';
-$string['nogrouping']='pas de groupements';
+$string['nogroupings']='pas de groupements';
 $string['nogroupingsin']='pas de groupements dans {$a}';
 $string['nocohorts']='pas de cohortes';
 

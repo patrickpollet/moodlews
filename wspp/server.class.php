@@ -1221,9 +1221,9 @@ EOS;
         global $CFG;
         $ret = array ();
         if ($courseid) {
-            $courseselect = 'AND g.courseid =' . $courseid;
+            $courseselect = 'AND courseid =' . $courseid;
         } else {
-            $courselect = '';
+            $courseselect = '';
         }
         // $this->debug_output("groupes=".print_r($groups,true));
 
@@ -1266,9 +1266,9 @@ EOS;
         global $CFG;
         $ret = array ();
         if ($courseid) {
-            $courseselect = 'AND g.courseid =' . $courseid;
+            $courseselect = 'AND courseid =' . $courseid;
         } else {
-            $courselect = '';
+            $courseselect = '';
         }
         //$this->debug_output("groupings=".print_r($groups,true));
         foreach ($groups as $group) {
@@ -1279,7 +1279,6 @@ EOS;
                 foreach ($g as $one) {
                     $ret[] = $one;
                 }
-
             } else {
                 $ret[] = $this->non_fatal_error(get_string('nogroupings', 'local_wspp')); // "Invalid group $idfield :$group ");
             }
