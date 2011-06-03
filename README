@@ -1,4 +1,6 @@
 copy the directory wspp at the top level of your moodle installation
 and read the wspp/INSTALL file.
 
+For (optional) integration to official Moodle 2.0 infrastructure, see moodle2integration/README
+
 Enjoy.
