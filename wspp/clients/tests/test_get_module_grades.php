@@ -1,24 +1,22 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get grade(s) of an activity of a certain type identified by instance id for a list of userids
+/**test code for get_module_grades
 * @param int $client
 * @param string $sesskey
-* @param int $id
-* @param string $type
+* @param int $activityid
+* @param string $activitytype
 * @param string[] $userids
 * @param string $useridfield
-* @return  getModuleGradesReturn
+* @return  gradeItemRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $userids=array();
-$res=$client->get_module_grades($lr->getClient(),$lr->getSessionKey(),17,'quiz',$userids,'');
+$res=$client->get_module_grades($lr->getClient(),$lr->getSessionKey(),0,'',$userids,'');
 print_r($res);
-print($res->getGrades());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

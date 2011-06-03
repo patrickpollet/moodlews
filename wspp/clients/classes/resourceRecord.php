@@ -8,7 +8,31 @@ class resourceRecord {
 	/** 
 	* @var string
 	*/
+	public $alltext;
+	/** 
+	* @var int
+	*/
+	public $course;
+	/** 
+	* @var int
+	*/
+	public $coursemodule;
+	/** 
+	* @var string
+	*/
 	public $error;
+	/** 
+	* @var int
+	*/
+	public $groupingid;
+	/** 
+	* @var int
+	*/
+	public $groupmembersonly;
+	/** 
+	* @var int
+	*/
+	public $groupmode;
 	/** 
 	* @var int
 	*/
@@ -18,25 +42,9 @@ class resourceRecord {
 	*/
 	public $name;
 	/** 
-	* @var int
-	*/
-	public $course;
-	/** 
 	* @var string
 	*/
-	public $type;
-	/** 
-	* @var string
-	*/
-	public $reference;
-	/** 
-	* @var string
-	*/
-	public $summary;
-	/** 
-	* @var string
-	*/
-	public $alltext;
+	public $options;
 	/** 
 	* @var string
 	*/
@@ -44,83 +52,135 @@ class resourceRecord {
 	/** 
 	* @var string
 	*/
-	public $options;
-	/** 
-	* @var int
-	*/
-	public $timemodified;
+	public $reference;
 	/** 
 	* @var int
 	*/
 	public $section;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $visible;
+	public $summary;
 	/** 
 	* @var int
 	*/
-	public $groupmode;
+	public $timemodified;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $coursemodule;
+	public $timemodified_ut;
+	/** 
+	* @var string
+	*/
+	public $type;
 	/** 
 	* @var string
 	*/
 	public $url;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $timemodified_ut;
+	public $visible;
 
 	/**
 	* default constructor for class resourceRecord
+	* @param string $alltext
+	* @param int $course
+	* @param int $coursemodule
 	* @param string $error
+	* @param int $groupingid
+	* @param int $groupmembersonly
+	* @param int $groupmode
 	* @param int $id
 	* @param string $name
-	* @param int $course
-	* @param string $type
-	* @param string $reference
-	* @param string $summary
-	* @param string $alltext
-	* @param string $popup
 	* @param string $options
-	* @param int $timemodified
+	* @param string $popup
+	* @param string $reference
 	* @param int $section
-	* @param int $visible
-	* @param int $groupmode
-	* @param int $coursemodule
-	* @param string $url
+	* @param string $summary
+	* @param int $timemodified
 	* @param string $timemodified_ut
+	* @param string $type
+	* @param string $url
+	* @param int $visible
 	* @return resourceRecord
 	*/
-	 public function resourceRecord($error='',$id=0,$name='',$course=0,$type='',$reference='',$summary='',$alltext='',$popup='',$options='',$timemodified=0,$section=0,$visible=0,$groupmode=0,$coursemodule=0,$url='',$timemodified_ut=''){
+	 public function resourceRecord($alltext='',$course=0,$coursemodule=0,$error='',$groupingid=0,$groupmembersonly=0,$groupmode=0,$id=0,$name='',$options='',$popup='',$reference='',$section=0,$summary='',$timemodified=0,$timemodified_ut='',$type='',$url='',$visible=0){
+		 $this->alltext=$alltext   ;
+		 $this->course=$course   ;
+		 $this->coursemodule=$coursemodule   ;
 		 $this->error=$error   ;
+		 $this->groupingid=$groupingid   ;
+		 $this->groupmembersonly=$groupmembersonly   ;
+		 $this->groupmode=$groupmode   ;
 		 $this->id=$id   ;
 		 $this->name=$name   ;
-		 $this->course=$course   ;
-		 $this->type=$type   ;
-		 $this->reference=$reference   ;
-		 $this->summary=$summary   ;
-		 $this->alltext=$alltext   ;
-		 $this->popup=$popup   ;
 		 $this->options=$options   ;
-		 $this->timemodified=$timemodified   ;
+		 $this->popup=$popup   ;
+		 $this->reference=$reference   ;
 		 $this->section=$section   ;
-		 $this->visible=$visible   ;
-		 $this->groupmode=$groupmode   ;
-		 $this->coursemodule=$coursemodule   ;
-		 $this->url=$url   ;
+		 $this->summary=$summary   ;
+		 $this->timemodified=$timemodified   ;
 		 $this->timemodified_ut=$timemodified_ut   ;
+		 $this->type=$type   ;
+		 $this->url=$url   ;
+		 $this->visible=$visible   ;
 	}
 	/* get accessors */
 
 	/**
 	* @return string
 	*/
+	public function getAlltext(){
+		 return $this->alltext;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCourse(){
+		 return $this->course;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCoursemodule(){
+		 return $this->coursemodule;
+	}
+
+
+	/**
+	* @return string
+	*/
 	public function getError(){
 		 return $this->error;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getGroupingid(){
+		 return $this->groupingid;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getGroupmembersonly(){
+		 return $this->groupmembersonly;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getGroupmode(){
+		 return $this->groupmode;
 	}
 
 
@@ -141,42 +201,10 @@ class resourceRecord {
 
 
 	/**
-	* @return int
-	*/
-	public function getCourse(){
-		 return $this->course;
-	}
-
-
-	/**
 	* @return string
 	*/
-	public function getType(){
-		 return $this->type;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getReference(){
-		 return $this->reference;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getSummary(){
-		 return $this->summary;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getAlltext(){
-		 return $this->alltext;
+	public function getOptions(){
+		 return $this->options;
 	}
 
 
@@ -191,16 +219,8 @@ class resourceRecord {
 	/**
 	* @return string
 	*/
-	public function getOptions(){
-		 return $this->options;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getTimemodified(){
-		 return $this->timemodified;
+	public function getReference(){
+		 return $this->reference;
 	}
 
 
@@ -213,26 +233,34 @@ class resourceRecord {
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getVisible(){
-		 return $this->visible;
+	public function getSummary(){
+		 return $this->summary;
 	}
 
 
 	/**
 	* @return int
 	*/
-	public function getGroupmode(){
-		 return $this->groupmode;
+	public function getTimemodified(){
+		 return $this->timemodified;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getCoursemodule(){
-		 return $this->coursemodule;
+	public function getTimemodified_ut(){
+		 return $this->timemodified_ut;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getType(){
+		 return $this->type;
 	}
 
 
@@ -245,13 +273,40 @@ class resourceRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getTimemodified_ut(){
-		 return $this->timemodified_ut;
+	public function getVisible(){
+		 return $this->visible;
 	}
 
 	/*set accessors */
+
+	/**
+	* @param string $alltext
+	* @return void
+	*/
+	public function setAlltext($alltext){
+		$this->alltext=$alltext;
+	}
+
+
+	/**
+	* @param int $course
+	* @return void
+	*/
+	public function setCourse($course){
+		$this->course=$course;
+	}
+
+
+	/**
+	* @param int $coursemodule
+	* @return void
+	*/
+	public function setCoursemodule($coursemodule){
+		$this->coursemodule=$coursemodule;
+	}
+
 
 	/**
 	* @param string $error
@@ -259,6 +314,33 @@ class resourceRecord {
 	*/
 	public function setError($error){
 		$this->error=$error;
+	}
+
+
+	/**
+	* @param int $groupingid
+	* @return void
+	*/
+	public function setGroupingid($groupingid){
+		$this->groupingid=$groupingid;
+	}
+
+
+	/**
+	* @param int $groupmembersonly
+	* @return void
+	*/
+	public function setGroupmembersonly($groupmembersonly){
+		$this->groupmembersonly=$groupmembersonly;
+	}
+
+
+	/**
+	* @param int $groupmode
+	* @return void
+	*/
+	public function setGroupmode($groupmode){
+		$this->groupmode=$groupmode;
 	}
 
 
@@ -281,47 +363,11 @@ class resourceRecord {
 
 
 	/**
-	* @param int $course
+	* @param string $options
 	* @return void
 	*/
-	public function setCourse($course){
-		$this->course=$course;
-	}
-
-
-	/**
-	* @param string $type
-	* @return void
-	*/
-	public function setType($type){
-		$this->type=$type;
-	}
-
-
-	/**
-	* @param string $reference
-	* @return void
-	*/
-	public function setReference($reference){
-		$this->reference=$reference;
-	}
-
-
-	/**
-	* @param string $summary
-	* @return void
-	*/
-	public function setSummary($summary){
-		$this->summary=$summary;
-	}
-
-
-	/**
-	* @param string $alltext
-	* @return void
-	*/
-	public function setAlltext($alltext){
-		$this->alltext=$alltext;
+	public function setOptions($options){
+		$this->options=$options;
 	}
 
 
@@ -335,20 +381,11 @@ class resourceRecord {
 
 
 	/**
-	* @param string $options
+	* @param string $reference
 	* @return void
 	*/
-	public function setOptions($options){
-		$this->options=$options;
-	}
-
-
-	/**
-	* @param int $timemodified
-	* @return void
-	*/
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
+	public function setReference($reference){
+		$this->reference=$reference;
 	}
 
 
@@ -362,29 +399,38 @@ class resourceRecord {
 
 
 	/**
-	* @param int $visible
+	* @param string $summary
 	* @return void
 	*/
-	public function setVisible($visible){
-		$this->visible=$visible;
+	public function setSummary($summary){
+		$this->summary=$summary;
 	}
 
 
 	/**
-	* @param int $groupmode
+	* @param int $timemodified
 	* @return void
 	*/
-	public function setGroupmode($groupmode){
-		$this->groupmode=$groupmode;
+	public function setTimemodified($timemodified){
+		$this->timemodified=$timemodified;
 	}
 
 
 	/**
-	* @param int $coursemodule
+	* @param string $timemodified_ut
 	* @return void
 	*/
-	public function setCoursemodule($coursemodule){
-		$this->coursemodule=$coursemodule;
+	public function setTimemodified_ut($timemodified_ut){
+		$this->timemodified_ut=$timemodified_ut;
+	}
+
+
+	/**
+	* @param string $type
+	* @return void
+	*/
+	public function setType($type){
+		$this->type=$type;
 	}
 
 
@@ -398,11 +444,11 @@ class resourceRecord {
 
 
 	/**
-	* @param string $timemodified_ut
+	* @param int $visible
 	* @return void
 	*/
-	public function setTimemodified_ut($timemodified_ut){
-		$this->timemodified_ut=$timemodified_ut;
+	public function setVisible($visible){
+		$this->visible=$visible;
 	}
 
 }

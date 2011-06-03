@@ -10,25 +10,13 @@ class userDatum {
 	*/
 	public $action;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $id;
-	/** 
-	* @var int
-	*/
-	public $confirmed;
-	/** 
-	* @var int
-	*/
-	public $policyagreed;
-	/** 
-	* @var int
-	*/
-	public $deleted;
+	public $address;
 	/** 
 	* @var string
 	*/
-	public $username;
+	public $aim;
 	/** 
 	* @var string
 	*/
@@ -36,23 +24,27 @@ class userDatum {
 	/** 
 	* @var string
 	*/
-	public $password;
+	public $city;
+	/** 
+	* @var int
+	*/
+	public $confirmed;
 	/** 
 	* @var string
 	*/
-	public $passwordmd5;
+	public $country;
+	/** 
+	* @var int
+	*/
+	public $deleted;
 	/** 
 	* @var string
 	*/
-	public $idnumber;
+	public $department;
 	/** 
 	* @var string
 	*/
-	public $firstname;
-	/** 
-	* @var string
-	*/
-	public $lastname;
+	public $description;
 	/** 
 	* @var string
 	*/
@@ -64,23 +56,51 @@ class userDatum {
 	/** 
 	* @var string
 	*/
+	public $firstname;
+	/** 
+	* @var string
+	*/
 	public $icq;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $skype;
+	public $id;
 	/** 
 	* @var string
 	*/
-	public $yahoo;
+	public $idnumber;
 	/** 
 	* @var string
 	*/
-	public $aim;
+	public $institution;
+	/** 
+	* @var string
+	*/
+	public $lang;
+	/** 
+	* @var string
+	*/
+	public $lastip;
+	/** 
+	* @var string
+	*/
+	public $lastname;
+	/** 
+	* @var int
+	*/
+	public $mnethostid;
 	/** 
 	* @var string
 	*/
 	public $msn;
+	/** 
+	* @var string
+	*/
+	public $password;
+	/** 
+	* @var string
+	*/
+	public $passwordmd5;
 	/** 
 	* @var string
 	*/
@@ -90,37 +110,13 @@ class userDatum {
 	*/
 	public $phone2;
 	/** 
-	* @var string
-	*/
-	public $institution;
-	/** 
-	* @var string
-	*/
-	public $department;
-	/** 
-	* @var string
-	*/
-	public $address;
-	/** 
-	* @var string
-	*/
-	public $city;
-	/** 
-	* @var string
-	*/
-	public $country;
-	/** 
-	* @var string
-	*/
-	public $lang;
-	/** 
 	* @var int
 	*/
-	public $timezone;
+	public $policyagreed;
 	/** 
 	* @var string
 	*/
-	public $lastip;
+	public $skype;
 	/** 
 	* @var string
 	*/
@@ -128,81 +124,85 @@ class userDatum {
 	/** 
 	* @var string
 	*/
-	public $description;
+	public $timezone;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $mnethostid;
+	public $username;
+	/** 
+	* @var string
+	*/
+	public $yahoo;
 
 	/**
 	* default constructor for class userDatum
 	* @param string $action
-	* @param int $id
-	* @param int $confirmed
-	* @param int $policyagreed
-	* @param int $deleted
-	* @param string $username
+	* @param string $address
+	* @param string $aim
 	* @param string $auth
-	* @param string $password
-	* @param string $passwordmd5
-	* @param string $idnumber
-	* @param string $firstname
-	* @param string $lastname
+	* @param string $city
+	* @param int $confirmed
+	* @param string $country
+	* @param int $deleted
+	* @param string $department
+	* @param string $description
 	* @param string $email
 	* @param int $emailstop
+	* @param string $firstname
 	* @param string $icq
-	* @param string $skype
-	* @param string $yahoo
-	* @param string $aim
+	* @param int $id
+	* @param string $idnumber
+	* @param string $institution
+	* @param string $lang
+	* @param string $lastip
+	* @param string $lastname
+	* @param int $mnethostid
 	* @param string $msn
+	* @param string $password
+	* @param string $passwordmd5
 	* @param string $phone1
 	* @param string $phone2
-	* @param string $institution
-	* @param string $department
-	* @param string $address
-	* @param string $city
-	* @param string $country
-	* @param string $lang
-	* @param int $timezone
-	* @param string $lastip
+	* @param int $policyagreed
+	* @param string $skype
 	* @param string $theme
-	* @param string $description
-	* @param int $mnethostid
+	* @param string $timezone
+	* @param string $username
+	* @param string $yahoo
 	* @return userDatum
 	*/
-	 public function userDatum($action='',$id=0,$confirmed=0,$policyagreed=0,$deleted=0,$username='',$auth='',$password='',$passwordmd5='',$idnumber='',$firstname='',$lastname='',$email='',$emailstop=0,$icq='',$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$lastip='',$theme='',$description='',$mnethostid=0){
+	 public function userDatum($action='',$address='',$aim='',$auth='',$city='',$confirmed=0,$country='',$deleted=0,$department='',$description='',$email='',$emailstop=0,$firstname='',$icq='',$id=0,$idnumber='',$institution='',$lang='',$lastip='',$lastname='',$mnethostid=0,$msn='',$password='',$passwordmd5='',$phone1='',$phone2='',$policyagreed=0,$skype='',$theme='',$timezone='',$username='',$yahoo=''){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
-		 $this->confirmed=$confirmed   ;
-		 $this->policyagreed=$policyagreed   ;
-		 $this->deleted=$deleted   ;
-		 $this->username=$username   ;
+		 $this->address=$address   ;
+		 $this->aim=$aim   ;
 		 $this->auth=$auth   ;
-		 $this->password=$password   ;
-		 $this->passwordmd5=$passwordmd5   ;
-		 $this->idnumber=$idnumber   ;
-		 $this->firstname=$firstname   ;
-		 $this->lastname=$lastname   ;
+		 $this->city=$city   ;
+		 $this->confirmed=$confirmed   ;
+		 $this->country=$country   ;
+		 $this->deleted=$deleted   ;
+		 $this->department=$department   ;
+		 $this->description=$description   ;
 		 $this->email=$email   ;
 		 $this->emailstop=$emailstop   ;
+		 $this->firstname=$firstname   ;
 		 $this->icq=$icq   ;
-		 $this->skype=$skype   ;
-		 $this->yahoo=$yahoo   ;
-		 $this->aim=$aim   ;
+		 $this->id=$id   ;
+		 $this->idnumber=$idnumber   ;
+		 $this->institution=$institution   ;
+		 $this->lang=$lang   ;
+		 $this->lastip=$lastip   ;
+		 $this->lastname=$lastname   ;
+		 $this->mnethostid=$mnethostid   ;
 		 $this->msn=$msn   ;
+		 $this->password=$password   ;
+		 $this->passwordmd5=$passwordmd5   ;
 		 $this->phone1=$phone1   ;
 		 $this->phone2=$phone2   ;
-		 $this->institution=$institution   ;
-		 $this->department=$department   ;
-		 $this->address=$address   ;
-		 $this->city=$city   ;
-		 $this->country=$country   ;
-		 $this->lang=$lang   ;
-		 $this->timezone=$timezone   ;
-		 $this->lastip=$lastip   ;
+		 $this->policyagreed=$policyagreed   ;
+		 $this->skype=$skype   ;
 		 $this->theme=$theme   ;
-		 $this->description=$description   ;
-		 $this->mnethostid=$mnethostid   ;
+		 $this->timezone=$timezone   ;
+		 $this->username=$username   ;
+		 $this->yahoo=$yahoo   ;
 	}
 	/* get accessors */
 
@@ -215,42 +215,18 @@ class userDatum {
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getConfirmed(){
-		 return $this->confirmed;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getPolicyagreed(){
-		 return $this->policyagreed;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getDeleted(){
-		 return $this->deleted;
+	public function getAddress(){
+		 return $this->address;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getUsername(){
-		 return $this->username;
+	public function getAim(){
+		 return $this->aim;
 	}
 
 
@@ -265,40 +241,48 @@ class userDatum {
 	/**
 	* @return string
 	*/
-	public function getPassword(){
-		 return $this->password;
+	public function getCity(){
+		 return $this->city;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getConfirmed(){
+		 return $this->confirmed;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getPasswordmd5(){
-		 return $this->passwordmd5;
+	public function getCountry(){
+		 return $this->country;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getDeleted(){
+		 return $this->deleted;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getIdnumber(){
-		 return $this->idnumber;
+	public function getDepartment(){
+		 return $this->department;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getFirstname(){
-		 return $this->firstname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLastname(){
-		 return $this->lastname;
+	public function getDescription(){
+		 return $this->description;
 	}
 
 
@@ -321,32 +305,72 @@ class userDatum {
 	/**
 	* @return string
 	*/
+	public function getFirstname(){
+		 return $this->firstname;
+	}
+
+
+	/**
+	* @return string
+	*/
 	public function getIcq(){
 		 return $this->icq;
 	}
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getSkype(){
-		 return $this->skype;
+	public function getId(){
+		 return $this->id;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getYahoo(){
-		 return $this->yahoo;
+	public function getIdnumber(){
+		 return $this->idnumber;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getAim(){
-		 return $this->aim;
+	public function getInstitution(){
+		 return $this->institution;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLang(){
+		 return $this->lang;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastip(){
+		 return $this->lastip;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastname(){
+		 return $this->lastname;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getMnethostid(){
+		 return $this->mnethostid;
 	}
 
 
@@ -355,6 +379,22 @@ class userDatum {
 	*/
 	public function getMsn(){
 		 return $this->msn;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getPassword(){
+		 return $this->password;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getPasswordmd5(){
+		 return $this->passwordmd5;
 	}
 
 
@@ -375,66 +415,18 @@ class userDatum {
 
 
 	/**
-	* @return string
-	*/
-	public function getInstitution(){
-		 return $this->institution;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getDepartment(){
-		 return $this->department;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getAddress(){
-		 return $this->address;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getCity(){
-		 return $this->city;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getCountry(){
-		 return $this->country;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLang(){
-		 return $this->lang;
-	}
-
-
-	/**
 	* @return int
 	*/
-	public function getTimezone(){
-		 return $this->timezone;
+	public function getPolicyagreed(){
+		 return $this->policyagreed;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getLastip(){
-		 return $this->lastip;
+	public function getSkype(){
+		 return $this->skype;
 	}
 
 
@@ -449,16 +441,24 @@ class userDatum {
 	/**
 	* @return string
 	*/
-	public function getDescription(){
-		 return $this->description;
+	public function getTimezone(){
+		 return $this->timezone;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getMnethostid(){
-		 return $this->mnethostid;
+	public function getUsername(){
+		 return $this->username;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getYahoo(){
+		 return $this->yahoo;
 	}
 
 	/*set accessors */
@@ -473,47 +473,20 @@ class userDatum {
 
 
 	/**
-	* @param int $id
+	* @param string $address
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
+	public function setAddress($address){
+		$this->address=$address;
 	}
 
 
 	/**
-	* @param int $confirmed
+	* @param string $aim
 	* @return void
 	*/
-	public function setConfirmed($confirmed){
-		$this->confirmed=$confirmed;
-	}
-
-
-	/**
-	* @param int $policyagreed
-	* @return void
-	*/
-	public function setPolicyagreed($policyagreed){
-		$this->policyagreed=$policyagreed;
-	}
-
-
-	/**
-	* @param int $deleted
-	* @return void
-	*/
-	public function setDeleted($deleted){
-		$this->deleted=$deleted;
-	}
-
-
-	/**
-	* @param string $username
-	* @return void
-	*/
-	public function setUsername($username){
-		$this->username=$username;
+	public function setAim($aim){
+		$this->aim=$aim;
 	}
 
 
@@ -527,47 +500,56 @@ class userDatum {
 
 
 	/**
-	* @param string $password
+	* @param string $city
 	* @return void
 	*/
-	public function setPassword($password){
-		$this->password=$password;
+	public function setCity($city){
+		$this->city=$city;
 	}
 
 
 	/**
-	* @param string $passwordmd5
+	* @param int $confirmed
 	* @return void
 	*/
-	public function setPasswordmd5($passwordmd5){
-		$this->passwordmd5=$passwordmd5;
+	public function setConfirmed($confirmed){
+		$this->confirmed=$confirmed;
 	}
 
 
 	/**
-	* @param string $idnumber
+	* @param string $country
 	* @return void
 	*/
-	public function setIdnumber($idnumber){
-		$this->idnumber=$idnumber;
+	public function setCountry($country){
+		$this->country=$country;
 	}
 
 
 	/**
-	* @param string $firstname
+	* @param int $deleted
 	* @return void
 	*/
-	public function setFirstname($firstname){
-		$this->firstname=$firstname;
+	public function setDeleted($deleted){
+		$this->deleted=$deleted;
 	}
 
 
 	/**
-	* @param string $lastname
+	* @param string $department
 	* @return void
 	*/
-	public function setLastname($lastname){
-		$this->lastname=$lastname;
+	public function setDepartment($department){
+		$this->department=$department;
+	}
+
+
+	/**
+	* @param string $description
+	* @return void
+	*/
+	public function setDescription($description){
+		$this->description=$description;
 	}
 
 
@@ -590,6 +572,15 @@ class userDatum {
 
 
 	/**
+	* @param string $firstname
+	* @return void
+	*/
+	public function setFirstname($firstname){
+		$this->firstname=$firstname;
+	}
+
+
+	/**
 	* @param string $icq
 	* @return void
 	*/
@@ -599,29 +590,65 @@ class userDatum {
 
 
 	/**
-	* @param string $skype
+	* @param int $id
 	* @return void
 	*/
-	public function setSkype($skype){
-		$this->skype=$skype;
+	public function setId($id){
+		$this->id=$id;
 	}
 
 
 	/**
-	* @param string $yahoo
+	* @param string $idnumber
 	* @return void
 	*/
-	public function setYahoo($yahoo){
-		$this->yahoo=$yahoo;
+	public function setIdnumber($idnumber){
+		$this->idnumber=$idnumber;
 	}
 
 
 	/**
-	* @param string $aim
+	* @param string $institution
 	* @return void
 	*/
-	public function setAim($aim){
-		$this->aim=$aim;
+	public function setInstitution($institution){
+		$this->institution=$institution;
+	}
+
+
+	/**
+	* @param string $lang
+	* @return void
+	*/
+	public function setLang($lang){
+		$this->lang=$lang;
+	}
+
+
+	/**
+	* @param string $lastip
+	* @return void
+	*/
+	public function setLastip($lastip){
+		$this->lastip=$lastip;
+	}
+
+
+	/**
+	* @param string $lastname
+	* @return void
+	*/
+	public function setLastname($lastname){
+		$this->lastname=$lastname;
+	}
+
+
+	/**
+	* @param int $mnethostid
+	* @return void
+	*/
+	public function setMnethostid($mnethostid){
+		$this->mnethostid=$mnethostid;
 	}
 
 
@@ -631,6 +658,24 @@ class userDatum {
 	*/
 	public function setMsn($msn){
 		$this->msn=$msn;
+	}
+
+
+	/**
+	* @param string $password
+	* @return void
+	*/
+	public function setPassword($password){
+		$this->password=$password;
+	}
+
+
+	/**
+	* @param string $passwordmd5
+	* @return void
+	*/
+	public function setPasswordmd5($passwordmd5){
+		$this->passwordmd5=$passwordmd5;
 	}
 
 
@@ -653,74 +698,20 @@ class userDatum {
 
 
 	/**
-	* @param string $institution
+	* @param int $policyagreed
 	* @return void
 	*/
-	public function setInstitution($institution){
-		$this->institution=$institution;
+	public function setPolicyagreed($policyagreed){
+		$this->policyagreed=$policyagreed;
 	}
 
 
 	/**
-	* @param string $department
+	* @param string $skype
 	* @return void
 	*/
-	public function setDepartment($department){
-		$this->department=$department;
-	}
-
-
-	/**
-	* @param string $address
-	* @return void
-	*/
-	public function setAddress($address){
-		$this->address=$address;
-	}
-
-
-	/**
-	* @param string $city
-	* @return void
-	*/
-	public function setCity($city){
-		$this->city=$city;
-	}
-
-
-	/**
-	* @param string $country
-	* @return void
-	*/
-	public function setCountry($country){
-		$this->country=$country;
-	}
-
-
-	/**
-	* @param string $lang
-	* @return void
-	*/
-	public function setLang($lang){
-		$this->lang=$lang;
-	}
-
-
-	/**
-	* @param int $timezone
-	* @return void
-	*/
-	public function setTimezone($timezone){
-		$this->timezone=$timezone;
-	}
-
-
-	/**
-	* @param string $lastip
-	* @return void
-	*/
-	public function setLastip($lastip){
-		$this->lastip=$lastip;
+	public function setSkype($skype){
+		$this->skype=$skype;
 	}
 
 
@@ -734,20 +725,29 @@ class userDatum {
 
 
 	/**
-	* @param string $description
+	* @param string $timezone
 	* @return void
 	*/
-	public function setDescription($description){
-		$this->description=$description;
+	public function setTimezone($timezone){
+		$this->timezone=$timezone;
 	}
 
 
 	/**
-	* @param int $mnethostid
+	* @param string $username
 	* @return void
 	*/
-	public function setMnethostid($mnethostid){
-		$this->mnethostid=$mnethostid;
+	public function setUsername($username){
+		$this->username=$username;
+	}
+
+
+	/**
+	* @param string $yahoo
+	* @return void
+	*/
+	public function setYahoo($yahoo){
+		$this->yahoo=$yahoo;
 	}
 
 }

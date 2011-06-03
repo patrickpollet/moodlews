@@ -1,24 +1,22 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get
+/**test code for forum_add_reply
 * @param int $client
 * @param string $sesskey
 * @param int $parentid
 * @param forumPostDatum $post
-* @return  getForumPostsReturn
+* @return  forumPostRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $post= new forumPostDatum();
-$post->setSubject('');
 $post->setMessage('');
+$post->setSubject('');
 $res=$client->forum_add_reply($lr->getClient(),$lr->getSessionKey(),0,$post);
 print_r($res);
-print($res->getForumPosts());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

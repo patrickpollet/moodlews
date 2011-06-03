@@ -350,12 +350,6 @@ class server {
         }
         /// Return standard data to be converted into the appropriate data format
         /// for return to the client.
-        /**
-        $ret = array (
-            'client' => $sess->id,
-            'sessionkey' => $sess->sessionkey
-        );
-        ***/
 
         $ret= new LoginReturn();
         $ret->setClient($sess->id);

@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit Page of Wiki Information
+/**test code for edit_pagesWiki
 * @param int $client
 * @param string $sesskey
-* @param editPagesWikiInput $pagesWiki
-* @return  editPagesWikiOutput
+* @param pageWikiDatum[] $pageswiki
+* @return  pageWikiRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$pagesWiki= new editPagesWikiInput();
-$pagesWiki->setPagesWiki(array());
-$res=$client->edit_pagesWiki($lr->getClient(),$lr->getSessionKey(),$pagesWiki);
+$pageswiki=array();
+$res=$client->edit_pagesWiki($lr->getClient(),$lr->getSessionKey(),$pageswiki);
 print_r($res);
-print($res->getPagesWiki());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

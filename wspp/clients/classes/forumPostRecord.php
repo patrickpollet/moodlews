@@ -8,23 +8,11 @@ class forumPostRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
+	public $attachment;
 	/** 
-	* @var int
+	* @var forumPostRecord[]
 	*/
-	public $id;
-	/** 
-	* @var int
-	*/
-	public $discussion;
-	/** 
-	* @var int
-	*/
-	public $parent;
-	/** 
-	* @var int
-	*/
-	public $userid;
+	public $children;
 	/** 
 	* @var int
 	*/
@@ -32,15 +20,39 @@ class forumPostRecord {
 	/** 
 	* @var int
 	*/
-	public $modified;
+	public $discussion;
+	/** 
+	* @var string
+	*/
+	public $email;
+	/** 
+	* @var string
+	*/
+	public $error;
+	/** 
+	* @var string
+	*/
+	public $firstname;
+	/** 
+	* @var int
+	*/
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $imagealt;
+	/** 
+	* @var string
+	*/
+	public $lastname;
 	/** 
 	* @var int
 	*/
 	public $mailed;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $subject;
+	public $mailnow;
 	/** 
 	* @var string
 	*/
@@ -54,29 +66,13 @@ class forumPostRecord {
 	*/
 	public $messagetrust;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $attachment;
+	public $modified;
 	/** 
 	* @var int
 	*/
-	public $totalscore;
-	/** 
-	* @var int
-	*/
-	public $mailnow;
-	/** 
-	* @var string
-	*/
-	public $firstname;
-	/** 
-	* @var string
-	*/
-	public $lastname;
-	/** 
-	* @var string
-	*/
-	public $email;
+	public $parent;
 	/** 
 	* @var string
 	*/
@@ -84,99 +80,79 @@ class forumPostRecord {
 	/** 
 	* @var string
 	*/
-	public $imagealt;
+	public $subject;
 	/** 
-	* @var forumPostRecord[]
+	* @var int
 	*/
-	public $children;
+	public $totalscore;
+	/** 
+	* @var int
+	*/
+	public $userid;
 
 	/**
 	* default constructor for class forumPostRecord
-	* @param string $error
-	* @param int $id
-	* @param int $discussion
-	* @param int $parent
-	* @param int $userid
+	* @param string $attachment
+	* @param forumPostRecord[] $children
 	* @param int $created
-	* @param int $modified
+	* @param int $discussion
+	* @param string $email
+	* @param string $error
+	* @param string $firstname
+	* @param int $id
+	* @param string $imagealt
+	* @param string $lastname
 	* @param int $mailed
-	* @param string $subject
+	* @param int $mailnow
 	* @param string $message
 	* @param int $messageformat
 	* @param int $messagetrust
-	* @param string $attachment
-	* @param int $totalscore
-	* @param int $mailnow
-	* @param string $firstname
-	* @param string $lastname
-	* @param string $email
+	* @param int $modified
+	* @param int $parent
 	* @param string $picture
-	* @param string $imagealt
-	* @param forumPostRecord[] $children
+	* @param string $subject
+	* @param int $totalscore
+	* @param int $userid
 	* @return forumPostRecord
 	*/
-	 public function forumPostRecord($error='',$id=0,$discussion=0,$parent=0,$userid=0,$created=0,$modified=0,$mailed=0,$subject='',$message='',$messageformat=0,$messagetrust=0,$attachment='',$totalscore=0,$mailnow=0,$firstname='',$lastname='',$email='',$picture='',$imagealt='',$children=array()){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->discussion=$discussion   ;
-		 $this->parent=$parent   ;
-		 $this->userid=$userid   ;
+	 public function forumPostRecord($attachment='',$children=array(),$created=0,$discussion=0,$email='',$error='',$firstname='',$id=0,$imagealt='',$lastname='',$mailed=0,$mailnow=0,$message='',$messageformat=0,$messagetrust=0,$modified=0,$parent=0,$picture='',$subject='',$totalscore=0,$userid=0){
+		 $this->attachment=$attachment   ;
+		 $this->children=$children   ;
 		 $this->created=$created   ;
-		 $this->modified=$modified   ;
+		 $this->discussion=$discussion   ;
+		 $this->email=$email   ;
+		 $this->error=$error   ;
+		 $this->firstname=$firstname   ;
+		 $this->id=$id   ;
+		 $this->imagealt=$imagealt   ;
+		 $this->lastname=$lastname   ;
 		 $this->mailed=$mailed   ;
-		 $this->subject=$subject   ;
+		 $this->mailnow=$mailnow   ;
 		 $this->message=$message   ;
 		 $this->messageformat=$messageformat   ;
 		 $this->messagetrust=$messagetrust   ;
-		 $this->attachment=$attachment   ;
-		 $this->totalscore=$totalscore   ;
-		 $this->mailnow=$mailnow   ;
-		 $this->firstname=$firstname   ;
-		 $this->lastname=$lastname   ;
-		 $this->email=$email   ;
+		 $this->modified=$modified   ;
+		 $this->parent=$parent   ;
 		 $this->picture=$picture   ;
-		 $this->imagealt=$imagealt   ;
-		 $this->children=$children   ;
+		 $this->subject=$subject   ;
+		 $this->totalscore=$totalscore   ;
+		 $this->userid=$userid   ;
 	}
 	/* get accessors */
 
 	/**
 	* @return string
 	*/
-	public function getError(){
-		 return $this->error;
+	public function getAttachment(){
+		 return $this->attachment;
 	}
 
 
 	/**
-	* @return int
+	* @return forumPostRecord[]
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getDiscussion(){
-		 return $this->discussion;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getParent(){
-		 return $this->parent;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getUserid(){
-		 return $this->userid;
+	public function getChildren(){
+		 return $this->children;
 	}
 
 
@@ -191,8 +167,56 @@ class forumPostRecord {
 	/**
 	* @return int
 	*/
-	public function getModified(){
-		 return $this->modified;
+	public function getDiscussion(){
+		 return $this->discussion;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getEmail(){
+		 return $this->email;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getError(){
+		 return $this->error;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getFirstname(){
+		 return $this->firstname;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getImagealt(){
+		 return $this->imagealt;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastname(){
+		 return $this->lastname;
 	}
 
 
@@ -205,10 +229,10 @@ class forumPostRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getSubject(){
-		 return $this->subject;
+	public function getMailnow(){
+		 return $this->mailnow;
 	}
 
 
@@ -237,50 +261,18 @@ class forumPostRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getAttachment(){
-		 return $this->attachment;
+	public function getModified(){
+		 return $this->modified;
 	}
 
 
 	/**
 	* @return int
 	*/
-	public function getTotalscore(){
-		 return $this->totalscore;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getMailnow(){
-		 return $this->mailnow;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getFirstname(){
-		 return $this->firstname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLastname(){
-		 return $this->lastname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getEmail(){
-		 return $this->email;
+	public function getParent(){
+		 return $this->parent;
 	}
 
 
@@ -295,62 +287,43 @@ class forumPostRecord {
 	/**
 	* @return string
 	*/
-	public function getImagealt(){
-		 return $this->imagealt;
+	public function getSubject(){
+		 return $this->subject;
 	}
 
 
 	/**
-	* @return forumPostRecord[]
+	* @return int
 	*/
-	public function getChildren(){
-		 return $this->children;
+	public function getTotalscore(){
+		 return $this->totalscore;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getUserid(){
+		 return $this->userid;
 	}
 
 	/*set accessors */
 
 	/**
-	* @param string $error
+	* @param string $attachment
 	* @return void
 	*/
-	public function setError($error){
-		$this->error=$error;
+	public function setAttachment($attachment){
+		$this->attachment=$attachment;
 	}
 
 
 	/**
-	* @param int $id
+	* @param forumPostRecord[] $children
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
-	* @param int $discussion
-	* @return void
-	*/
-	public function setDiscussion($discussion){
-		$this->discussion=$discussion;
-	}
-
-
-	/**
-	* @param int $parent
-	* @return void
-	*/
-	public function setParent($parent){
-		$this->parent=$parent;
-	}
-
-
-	/**
-	* @param int $userid
-	* @return void
-	*/
-	public function setUserid($userid){
-		$this->userid=$userid;
+	public function setChildren($children){
+		$this->children=$children;
 	}
 
 
@@ -364,11 +337,65 @@ class forumPostRecord {
 
 
 	/**
-	* @param int $modified
+	* @param int $discussion
 	* @return void
 	*/
-	public function setModified($modified){
-		$this->modified=$modified;
+	public function setDiscussion($discussion){
+		$this->discussion=$discussion;
+	}
+
+
+	/**
+	* @param string $email
+	* @return void
+	*/
+	public function setEmail($email){
+		$this->email=$email;
+	}
+
+
+	/**
+	* @param string $error
+	* @return void
+	*/
+	public function setError($error){
+		$this->error=$error;
+	}
+
+
+	/**
+	* @param string $firstname
+	* @return void
+	*/
+	public function setFirstname($firstname){
+		$this->firstname=$firstname;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $imagealt
+	* @return void
+	*/
+	public function setImagealt($imagealt){
+		$this->imagealt=$imagealt;
+	}
+
+
+	/**
+	* @param string $lastname
+	* @return void
+	*/
+	public function setLastname($lastname){
+		$this->lastname=$lastname;
 	}
 
 
@@ -382,11 +409,11 @@ class forumPostRecord {
 
 
 	/**
-	* @param string $subject
+	* @param int $mailnow
 	* @return void
 	*/
-	public function setSubject($subject){
-		$this->subject=$subject;
+	public function setMailnow($mailnow){
+		$this->mailnow=$mailnow;
 	}
 
 
@@ -418,56 +445,20 @@ class forumPostRecord {
 
 
 	/**
-	* @param string $attachment
+	* @param int $modified
 	* @return void
 	*/
-	public function setAttachment($attachment){
-		$this->attachment=$attachment;
+	public function setModified($modified){
+		$this->modified=$modified;
 	}
 
 
 	/**
-	* @param int $totalscore
+	* @param int $parent
 	* @return void
 	*/
-	public function setTotalscore($totalscore){
-		$this->totalscore=$totalscore;
-	}
-
-
-	/**
-	* @param int $mailnow
-	* @return void
-	*/
-	public function setMailnow($mailnow){
-		$this->mailnow=$mailnow;
-	}
-
-
-	/**
-	* @param string $firstname
-	* @return void
-	*/
-	public function setFirstname($firstname){
-		$this->firstname=$firstname;
-	}
-
-
-	/**
-	* @param string $lastname
-	* @return void
-	*/
-	public function setLastname($lastname){
-		$this->lastname=$lastname;
-	}
-
-
-	/**
-	* @param string $email
-	* @return void
-	*/
-	public function setEmail($email){
-		$this->email=$email;
+	public function setParent($parent){
+		$this->parent=$parent;
 	}
 
 
@@ -481,20 +472,29 @@ class forumPostRecord {
 
 
 	/**
-	* @param string $imagealt
+	* @param string $subject
 	* @return void
 	*/
-	public function setImagealt($imagealt){
-		$this->imagealt=$imagealt;
+	public function setSubject($subject){
+		$this->subject=$subject;
 	}
 
 
 	/**
-	* @param forumPostRecord[] $children
+	* @param int $totalscore
 	* @return void
 	*/
-	public function setChildren($children){
-		$this->children=$children;
+	public function setTotalscore($totalscore){
+		$this->totalscore=$totalscore;
+	}
+
+
+	/**
+	* @param int $userid
+	* @return void
+	*/
+	public function setUserid($userid){
+		$this->userid=$userid;
 	}
 
 }

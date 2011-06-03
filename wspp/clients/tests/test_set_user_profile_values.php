@@ -1,23 +1,21 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: set one user profile values
+/**test code for set_user_profile_values
 * @param int $client
 * @param string $sesskey
 * @param string $userid
 * @param string $useridfield
 * @param profileitemRecord[] $values
-* @return  setUserProfileValuesReturn
+* @return  profileitemRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $values=array();
 $res=$client->set_user_profile_values($lr->getClient(),$lr->getSessionKey(),'','',$values);
 print_r($res);
-print($res->getProfiles());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

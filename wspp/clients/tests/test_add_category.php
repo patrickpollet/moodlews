@@ -1,31 +1,29 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add a course category
+/**test code for add_category
 * @param int $client
 * @param string $sesskey
-* @param categoryDatum $category
-* @return  editCategoriesOutput
+* @param categoryDatum $datum
+* @return  categoryRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$category= new categoryDatum();
-$category->setAction('');
-$category->setId(0);
-$category->setName('');
-$category->setDescription('');
-$category->setParent(0);
-$category->setSortorder(0);
-$category->setVisible(0);
-$category->setDepth(0);
-$category->setPath('');
-$category->setTheme('');
-$res=$client->add_category($lr->getClient(),$lr->getSessionKey(),$category);
+$datum= new categoryDatum();
+$datum->setAction('');
+$datum->setDepth(0);
+$datum->setDescription('');
+$datum->setId(0);
+$datum->setName('');
+$datum->setParent(0);
+$datum->setPath('');
+$datum->setSortorder(0);
+$datum->setTheme('');
+$datum->setVisible(0);
+$res=$client->add_category($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getCategories());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

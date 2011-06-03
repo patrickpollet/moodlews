@@ -12,7 +12,7 @@ class gradeRecord {
 	/** 
 	* @var string
 	*/
-	public $itemid;
+	public $feedback;
 	/** 
 	* @var float
 	*/
@@ -20,27 +20,27 @@ class gradeRecord {
 	/** 
 	* @var string
 	*/
-	public $str_grade;
+	public $itemid;
 	/** 
 	* @var string
 	*/
-	public $feedback;
+	public $str_grade;
 
 	/**
 	* default constructor for class gradeRecord
 	* @param string $error
-	* @param string $itemid
-	* @param float $grade
-	* @param string $str_grade
 	* @param string $feedback
+	* @param float $grade
+	* @param string $itemid
+	* @param string $str_grade
 	* @return gradeRecord
 	*/
-	 public function gradeRecord($error='',$itemid='',$grade=0.0,$str_grade='',$feedback=''){
+	 public function gradeRecord($error='',$feedback='',$grade=0.0,$itemid='',$str_grade=''){
 		 $this->error=$error   ;
-		 $this->itemid=$itemid   ;
-		 $this->grade=$grade   ;
-		 $this->str_grade=$str_grade   ;
 		 $this->feedback=$feedback   ;
+		 $this->grade=$grade   ;
+		 $this->itemid=$itemid   ;
+		 $this->str_grade=$str_grade   ;
 	}
 	/* get accessors */
 
@@ -55,8 +55,8 @@ class gradeRecord {
 	/**
 	* @return string
 	*/
-	public function getItemid(){
-		 return $this->itemid;
+	public function getFeedback(){
+		 return $this->feedback;
 	}
 
 
@@ -71,16 +71,16 @@ class gradeRecord {
 	/**
 	* @return string
 	*/
-	public function getStr_grade(){
-		 return $this->str_grade;
+	public function getItemid(){
+		 return $this->itemid;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getFeedback(){
-		 return $this->feedback;
+	public function getStr_grade(){
+		 return $this->str_grade;
 	}
 
 	/*set accessors */
@@ -95,11 +95,11 @@ class gradeRecord {
 
 
 	/**
-	* @param string $itemid
+	* @param string $feedback
 	* @return void
 	*/
-	public function setItemid($itemid){
-		$this->itemid=$itemid;
+	public function setFeedback($feedback){
+		$this->feedback=$feedback;
 	}
 
 
@@ -113,20 +113,20 @@ class gradeRecord {
 
 
 	/**
+	* @param string $itemid
+	* @return void
+	*/
+	public function setItemid($itemid){
+		$this->itemid=$itemid;
+	}
+
+
+	/**
 	* @param string $str_grade
 	* @return void
 	*/
 	public function setStr_grade($str_grade){
 		$this->str_grade=$str_grade;
-	}
-
-
-	/**
-	* @param string $feedback
-	* @return void
-	*/
-	public function setFeedback($feedback){
-		$this->feedback=$feedback;
 	}
 
 }

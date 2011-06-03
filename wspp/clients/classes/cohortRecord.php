@@ -8,11 +8,7 @@ class cohortRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
-	/** 
-	* @var int
-	*/
-	public $id;
+	public $component;
 	/** 
 	* @var int
 	*/
@@ -20,11 +16,15 @@ class cohortRecord {
 	/** 
 	* @var string
 	*/
-	public $name;
+	public $description;
 	/** 
 	* @var string
 	*/
-	public $description;
+	public $error;
+	/** 
+	* @var int
+	*/
+	public $id;
 	/** 
 	* @var string
 	*/
@@ -32,7 +32,7 @@ class cohortRecord {
 	/** 
 	* @var string
 	*/
-	public $component;
+	public $name;
 	/** 
 	* @var int
 	*/
@@ -44,29 +44,53 @@ class cohortRecord {
 
 	/**
 	* default constructor for class cohortRecord
+	* @param string $component
+	* @param int $contextid
+	* @param string $description
 	* @param string $error
 	* @param int $id
-	* @param int $contextid
-	* @param string $name
-	* @param string $description
 	* @param string $idnumber
-	* @param string $component
+	* @param string $name
 	* @param int $timecreated
 	* @param int $timemodified
 	* @return cohortRecord
 	*/
-	 public function cohortRecord($error='',$id=0,$contextid=0,$name='',$description='',$idnumber='',$component='',$timecreated=0,$timemodified=0){
+	 public function cohortRecord($component='',$contextid=0,$description='',$error='',$id=0,$idnumber='',$name='',$timecreated=0,$timemodified=0){
+		 $this->component=$component   ;
+		 $this->contextid=$contextid   ;
+		 $this->description=$description   ;
 		 $this->error=$error   ;
 		 $this->id=$id   ;
-		 $this->contextid=$contextid   ;
-		 $this->name=$name   ;
-		 $this->description=$description   ;
 		 $this->idnumber=$idnumber   ;
-		 $this->component=$component   ;
+		 $this->name=$name   ;
 		 $this->timecreated=$timecreated   ;
 		 $this->timemodified=$timemodified   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return string
+	*/
+	public function getComponent(){
+		 return $this->component;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getContextid(){
+		 return $this->contextid;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getDescription(){
+		 return $this->description;
+	}
+
 
 	/**
 	* @return string
@@ -85,30 +109,6 @@ class cohortRecord {
 
 
 	/**
-	* @return int
-	*/
-	public function getContextid(){
-		 return $this->contextid;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getName(){
-		 return $this->name;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getDescription(){
-		 return $this->description;
-	}
-
-
-	/**
 	* @return string
 	*/
 	public function getIdnumber(){
@@ -119,8 +119,8 @@ class cohortRecord {
 	/**
 	* @return string
 	*/
-	public function getComponent(){
-		 return $this->component;
+	public function getName(){
+		 return $this->name;
 	}
 
 
@@ -142,6 +142,33 @@ class cohortRecord {
 	/*set accessors */
 
 	/**
+	* @param string $component
+	* @return void
+	*/
+	public function setComponent($component){
+		$this->component=$component;
+	}
+
+
+	/**
+	* @param int $contextid
+	* @return void
+	*/
+	public function setContextid($contextid){
+		$this->contextid=$contextid;
+	}
+
+
+	/**
+	* @param string $description
+	* @return void
+	*/
+	public function setDescription($description){
+		$this->description=$description;
+	}
+
+
+	/**
 	* @param string $error
 	* @return void
 	*/
@@ -160,33 +187,6 @@ class cohortRecord {
 
 
 	/**
-	* @param int $contextid
-	* @return void
-	*/
-	public function setContextid($contextid){
-		$this->contextid=$contextid;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
-	}
-
-
-	/**
-	* @param string $description
-	* @return void
-	*/
-	public function setDescription($description){
-		$this->description=$description;
-	}
-
-
-	/**
 	* @param string $idnumber
 	* @return void
 	*/
@@ -196,11 +196,11 @@ class cohortRecord {
 
 
 	/**
-	* @param string $component
+	* @param string $name
 	* @return void
 	*/
-	public function setComponent($component){
-		$this->component=$component;
+	public function setName($name){
+		$this->name=$name;
 	}
 
 

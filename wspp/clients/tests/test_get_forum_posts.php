@@ -1,21 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get
+/**test code for get_forum_posts
 * @param int $client
 * @param string $sesskey
 * @param int $discussionid
 * @param int $limit
-* @return  getForumPostsReturn
+* @return  forumPostRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_forum_posts($lr->getClient(),$lr->getSessionKey(),0,0);
 print_r($res);
-print($res->getForumPosts());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

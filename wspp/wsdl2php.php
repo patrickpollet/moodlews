@@ -65,7 +65,7 @@ et emettre les tableaux comme type[]
 Génération des commentaires PHPDocs dans les classses proxy pour WSHelper
 
    Revision 0.3 17/12/2010 generates helper classes in a directory named classes (created if needed) and adjust all includes
-   
+
    Revision 0.4 20/04/2011 also generates classes and stub for REST access
 
 
@@ -607,7 +607,7 @@ if (!$server) {
 	$code .=<<<EOC
 		* the two attributes are made public for debugging purpose
 		* i.e. accessing \$client->client->__getLast* methods
-		
+
 EOC;
 
 	$code .= " * \n";
@@ -626,8 +626,8 @@ EOC;
 	    private \$verbose=false;
 	    private \$postdata='';
 	    public \$requestResponse='';
-	    
-	
+
+
 		/**
 		 * Constructor method
 		 * @param string \$wsdl URL of the WSDL
@@ -635,7 +635,7 @@ EOC;
 		 * @param string[] \$options  Soap Client options array (see PHP5 documentation)
 		 * @return {$service['class']}
 		 */
-		
+
 EOC;
 
 	$code .= "  public function " . $service['class'] . "(\$serviceurl = \"" . $service['address'] . "\", \$options = array()) {\n";
@@ -990,9 +990,9 @@ EOC;
 		return $code;
 
 	$coderest =<<<EOR
-    
+
       private function castTo(\$className,\$res){
-        	if (\$this->formatout==='php') return \$res; 
+        	if (\$this->formatout==='php') return \$res;  //already done
             if (class_exists(\$className)) {
                 \$aux= new \$className();
                 foreach (\$res as \$key=>\$value)
@@ -1001,13 +1001,13 @@ EOC;
              } else
                 return \$res;
         }
-    
-		
-	
+
+
+
 	/**
 	 * @param string $postdata
 	 */
-	function __call (\$methodname, \$params) {	
+	function __call (\$methodname, \$params) {
 		\$params['wsformatout']=\$this->formatout;
 		\$params['wsfunction']=\$methodname;
 		\$this->postdata = http_build_query(\$params);
@@ -1019,18 +1019,20 @@ EOC;
 		curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt(\$ch, CURLOPT_POST, true);
-		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata);
-		if (\$this->verbose) 
+        // forcing the separator to '&' is capital with some php version that use otherwise &amp;
+        // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
+		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata,'','&');
+		if (\$this->verbose)
 			curl_setopt(\$ch, CURLOPT_VERBOSE, true);
 		\$this->requestResponse = curl_exec(\$ch);
-		//print_r("retour curl".\$data);
+		//print_r("retour curl".\$this->requestResponse);
 		curl_close(\$ch);
 		if (\$methodname==='login') return \$this->deserialize(\$this->requestResponse,'php');
 		else return \$this->deserialize(\$this->requestResponse);
-		
+
 	}
-	
-	
+
+
 
 	function deserialize (\$data,\$formatout='') {
 		\$formatout=\$formatout?\$formatout:\$this->formatout;
@@ -1038,30 +1040,30 @@ EOC;
 			case 'xml':break;
 			case 'json':break;
 			case 'php':\$data=unserialize(\$data); break;
-			case 'dump':break;			
+			case 'dump':break;
 		}
-		return \$data;	
+		return \$data;
 	}
-	
+
 	function getFormatout() {
 		return \$this->formatout;
 	}
-	
+
 	function setFormatout(\$formatout='php') {
 		if (empty(\$formatout)) \$formatout='php';
 		\$this->formatout=\$formatout;
 	}
-	
+
 	function getPostdata() {
 		return \$this->postdata;
 	}
-	
+
 	function getRequestResponse() {
 		return \$this->requestResponse;
 	}
-	
-	
-	
+
+
+
 EOR;
 	return $coderest;
 

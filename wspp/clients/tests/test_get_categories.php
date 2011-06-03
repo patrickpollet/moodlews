@@ -1,19 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get Moodle course categories
+/**test code for get_categories
 * @param int $client
 * @param string $sesskey
-* @return  getCategoriesReturn
+* @param string $catid
+* @param string $idfield
+* @return  categoryRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_categories($lr->getClient(),$lr->getSessionKey());
+$res=$client->get_categories($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
-print($res->getCategories());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

@@ -12,19 +12,7 @@ class cohortDatum {
 	/** 
 	* @var int
 	*/
-	public $id;
-	/** 
-	* @var int
-	*/
 	public $categoryid;
-	/** 
-	* @var string
-	*/
-	public $name;
-	/** 
-	* @var string
-	*/
-	public $description;
 	/** 
 	* @var string
 	*/
@@ -32,27 +20,39 @@ class cohortDatum {
 	/** 
 	* @var string
 	*/
+	public $description;
+	/** 
+	* @var int
+	*/
+	public $id;
+	/** 
+	* @var string
+	*/
 	public $idnumber;
+	/** 
+	* @var string
+	*/
+	public $name;
 
 	/**
 	* default constructor for class cohortDatum
 	* @param string $action
-	* @param int $id
 	* @param int $categoryid
-	* @param string $name
-	* @param string $description
 	* @param string $component
+	* @param string $description
+	* @param int $id
 	* @param string $idnumber
+	* @param string $name
 	* @return cohortDatum
 	*/
-	 public function cohortDatum($action='',$id=0,$categoryid=0,$name='',$description='',$component='',$idnumber=''){
+	 public function cohortDatum($action='',$categoryid=0,$component='',$description='',$id=0,$idnumber='',$name=''){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
 		 $this->categoryid=$categoryid   ;
-		 $this->name=$name   ;
-		 $this->description=$description   ;
 		 $this->component=$component   ;
+		 $this->description=$description   ;
+		 $this->id=$id   ;
 		 $this->idnumber=$idnumber   ;
+		 $this->name=$name   ;
 	}
 	/* get accessors */
 
@@ -67,32 +67,8 @@ class cohortDatum {
 	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getCategoryid(){
 		 return $this->categoryid;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getName(){
-		 return $this->name;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getDescription(){
-		 return $this->description;
 	}
 
 
@@ -107,8 +83,32 @@ class cohortDatum {
 	/**
 	* @return string
 	*/
+	public function getDescription(){
+		 return $this->description;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
 	public function getIdnumber(){
 		 return $this->idnumber;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getName(){
+		 return $this->name;
 	}
 
 	/*set accessors */
@@ -123,38 +123,11 @@ class cohortDatum {
 
 
 	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
 	* @param int $categoryid
 	* @return void
 	*/
 	public function setCategoryid($categoryid){
 		$this->categoryid=$categoryid;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
-	}
-
-
-	/**
-	* @param string $description
-	* @return void
-	*/
-	public function setDescription($description){
-		$this->description=$description;
 	}
 
 
@@ -168,11 +141,38 @@ class cohortDatum {
 
 
 	/**
+	* @param string $description
+	* @return void
+	*/
+	public function setDescription($description){
+		$this->description=$description;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
 	* @param string $idnumber
 	* @return void
 	*/
 	public function setIdnumber($idnumber){
 		$this->idnumber=$idnumber;
+	}
+
+
+	/**
+	* @param string $name
+	* @return void
+	*/
+	public function setName($name){
+		$this->name=$name;
 	}
 
 }

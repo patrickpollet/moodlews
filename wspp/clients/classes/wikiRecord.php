@@ -6,37 +6,21 @@
  */
 class wikiRecord {
 	/** 
+	* @var int
+	*/
+	public $course;
+	/** 
+	* @var int
+	*/
+	public $disablecamelcase;
+	/** 
 	* @var string
 	*/
 	public $error;
 	/** 
 	* @var int
 	*/
-	public $id;
-	/** 
-	* @var string
-	*/
-	public $name;
-	/** 
-	* @var string
-	*/
-	public $summary;
-	/** 
-	* @var string
-	*/
-	public $wtype;
-	/** 
-	* @var int
-	*/
 	public $ewikiacceptbinary;
-	/** 
-	* @var int
-	*/
-	public $course;
-	/** 
-	* @var string
-	*/
-	public $pagename;
 	/** 
 	* @var int
 	*/
@@ -48,15 +32,19 @@ class wikiRecord {
 	/** 
 	* @var int
 	*/
-	public $disablecamelcase;
+	public $id;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $setpageflags;
+	public $initialcontent;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $strippages;
+	public $name;
+	/** 
+	* @var string
+	*/
+	public $pagename;
 	/** 
 	* @var int
 	*/
@@ -66,55 +54,83 @@ class wikiRecord {
 	*/
 	public $revertchanges;
 	/** 
+	* @var int
+	*/
+	public $setpageflags;
+	/** 
+	* @var int
+	*/
+	public $strippages;
+	/** 
 	* @var string
 	*/
-	public $initialcontent;
+	public $summary;
 	/** 
 	* @var int
 	*/
 	public $timemodified;
+	/** 
+	* @var string
+	*/
+	public $wtype;
 
 	/**
 	* default constructor for class wikiRecord
-	* @param string $error
-	* @param int $id
-	* @param string $name
-	* @param string $summary
-	* @param string $wtype
-	* @param int $ewikiacceptbinary
 	* @param int $course
-	* @param string $pagename
+	* @param int $disablecamelcase
+	* @param string $error
+	* @param int $ewikiacceptbinary
 	* @param int $ewikiprinttitle
 	* @param int $htmlmode
-	* @param int $disablecamelcase
-	* @param int $setpageflags
-	* @param int $strippages
+	* @param int $id
+	* @param string $initialcontent
+	* @param string $name
+	* @param string $pagename
 	* @param int $removepages
 	* @param int $revertchanges
-	* @param string $initialcontent
+	* @param int $setpageflags
+	* @param int $strippages
+	* @param string $summary
 	* @param int $timemodified
+	* @param string $wtype
 	* @return wikiRecord
 	*/
-	 public function wikiRecord($error='',$id=0,$name='',$summary='',$wtype='',$ewikiacceptbinary=0,$course=0,$pagename='',$ewikiprinttitle=0,$htmlmode=0,$disablecamelcase=0,$setpageflags=0,$strippages=0,$removepages=0,$revertchanges=0,$initialcontent='',$timemodified=0){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->name=$name   ;
-		 $this->summary=$summary   ;
-		 $this->wtype=$wtype   ;
-		 $this->ewikiacceptbinary=$ewikiacceptbinary   ;
+	 public function wikiRecord($course=0,$disablecamelcase=0,$error='',$ewikiacceptbinary=0,$ewikiprinttitle=0,$htmlmode=0,$id=0,$initialcontent='',$name='',$pagename='',$removepages=0,$revertchanges=0,$setpageflags=0,$strippages=0,$summary='',$timemodified=0,$wtype=''){
 		 $this->course=$course   ;
-		 $this->pagename=$pagename   ;
+		 $this->disablecamelcase=$disablecamelcase   ;
+		 $this->error=$error   ;
+		 $this->ewikiacceptbinary=$ewikiacceptbinary   ;
 		 $this->ewikiprinttitle=$ewikiprinttitle   ;
 		 $this->htmlmode=$htmlmode   ;
-		 $this->disablecamelcase=$disablecamelcase   ;
-		 $this->setpageflags=$setpageflags   ;
-		 $this->strippages=$strippages   ;
+		 $this->id=$id   ;
+		 $this->initialcontent=$initialcontent   ;
+		 $this->name=$name   ;
+		 $this->pagename=$pagename   ;
 		 $this->removepages=$removepages   ;
 		 $this->revertchanges=$revertchanges   ;
-		 $this->initialcontent=$initialcontent   ;
+		 $this->setpageflags=$setpageflags   ;
+		 $this->strippages=$strippages   ;
+		 $this->summary=$summary   ;
 		 $this->timemodified=$timemodified   ;
+		 $this->wtype=$wtype   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return int
+	*/
+	public function getCourse(){
+		 return $this->course;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getDisablecamelcase(){
+		 return $this->disablecamelcase;
+	}
+
 
 	/**
 	* @return string
@@ -127,56 +143,8 @@ class wikiRecord {
 	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getName(){
-		 return $this->name;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getSummary(){
-		 return $this->summary;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getWtype(){
-		 return $this->wtype;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getEwikiacceptbinary(){
 		 return $this->ewikiacceptbinary;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getCourse(){
-		 return $this->course;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getPagename(){
-		 return $this->pagename;
 	}
 
 
@@ -199,24 +167,32 @@ class wikiRecord {
 	/**
 	* @return int
 	*/
-	public function getDisablecamelcase(){
-		 return $this->disablecamelcase;
+	public function getId(){
+		 return $this->id;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getSetpageflags(){
-		 return $this->setpageflags;
+	public function getInitialcontent(){
+		 return $this->initialcontent;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getStrippages(){
-		 return $this->strippages;
+	public function getName(){
+		 return $this->name;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getPagename(){
+		 return $this->pagename;
 	}
 
 
@@ -237,10 +213,26 @@ class wikiRecord {
 
 
 	/**
+	* @return int
+	*/
+	public function getSetpageflags(){
+		 return $this->setpageflags;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getStrippages(){
+		 return $this->strippages;
+	}
+
+
+	/**
 	* @return string
 	*/
-	public function getInitialcontent(){
-		 return $this->initialcontent;
+	public function getSummary(){
+		 return $this->summary;
 	}
 
 
@@ -251,61 +243,15 @@ class wikiRecord {
 		 return $this->timemodified;
 	}
 
+
+	/**
+	* @return string
+	*/
+	public function getWtype(){
+		 return $this->wtype;
+	}
+
 	/*set accessors */
-
-	/**
-	* @param string $error
-	* @return void
-	*/
-	public function setError($error){
-		$this->error=$error;
-	}
-
-
-	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
-	}
-
-
-	/**
-	* @param string $summary
-	* @return void
-	*/
-	public function setSummary($summary){
-		$this->summary=$summary;
-	}
-
-
-	/**
-	* @param string $wtype
-	* @return void
-	*/
-	public function setWtype($wtype){
-		$this->wtype=$wtype;
-	}
-
-
-	/**
-	* @param int $ewikiacceptbinary
-	* @return void
-	*/
-	public function setEwikiacceptbinary($ewikiacceptbinary){
-		$this->ewikiacceptbinary=$ewikiacceptbinary;
-	}
-
 
 	/**
 	* @param int $course
@@ -317,11 +263,29 @@ class wikiRecord {
 
 
 	/**
-	* @param string $pagename
+	* @param int $disablecamelcase
 	* @return void
 	*/
-	public function setPagename($pagename){
-		$this->pagename=$pagename;
+	public function setDisablecamelcase($disablecamelcase){
+		$this->disablecamelcase=$disablecamelcase;
+	}
+
+
+	/**
+	* @param string $error
+	* @return void
+	*/
+	public function setError($error){
+		$this->error=$error;
+	}
+
+
+	/**
+	* @param int $ewikiacceptbinary
+	* @return void
+	*/
+	public function setEwikiacceptbinary($ewikiacceptbinary){
+		$this->ewikiacceptbinary=$ewikiacceptbinary;
 	}
 
 
@@ -344,29 +308,38 @@ class wikiRecord {
 
 
 	/**
-	* @param int $disablecamelcase
+	* @param int $id
 	* @return void
 	*/
-	public function setDisablecamelcase($disablecamelcase){
-		$this->disablecamelcase=$disablecamelcase;
+	public function setId($id){
+		$this->id=$id;
 	}
 
 
 	/**
-	* @param int $setpageflags
+	* @param string $initialcontent
 	* @return void
 	*/
-	public function setSetpageflags($setpageflags){
-		$this->setpageflags=$setpageflags;
+	public function setInitialcontent($initialcontent){
+		$this->initialcontent=$initialcontent;
 	}
 
 
 	/**
-	* @param int $strippages
+	* @param string $name
 	* @return void
 	*/
-	public function setStrippages($strippages){
-		$this->strippages=$strippages;
+	public function setName($name){
+		$this->name=$name;
+	}
+
+
+	/**
+	* @param string $pagename
+	* @return void
+	*/
+	public function setPagename($pagename){
+		$this->pagename=$pagename;
 	}
 
 
@@ -389,11 +362,29 @@ class wikiRecord {
 
 
 	/**
-	* @param string $initialcontent
+	* @param int $setpageflags
 	* @return void
 	*/
-	public function setInitialcontent($initialcontent){
-		$this->initialcontent=$initialcontent;
+	public function setSetpageflags($setpageflags){
+		$this->setpageflags=$setpageflags;
+	}
+
+
+	/**
+	* @param int $strippages
+	* @return void
+	*/
+	public function setStrippages($strippages){
+		$this->strippages=$strippages;
+	}
+
+
+	/**
+	* @param string $summary
+	* @return void
+	*/
+	public function setSummary($summary){
+		$this->summary=$summary;
 	}
 
 
@@ -403,6 +394,15 @@ class wikiRecord {
 	*/
 	public function setTimemodified($timemodified){
 		$this->timemodified=$timemodified;
+	}
+
+
+	/**
+	* @param string $wtype
+	* @return void
+	*/
+	public function setWtype($wtype){
+		$this->wtype=$wtype;
 	}
 
 }

@@ -6,25 +6,17 @@
  */
 class forumDiscussionRecord {
 	/** 
-	* @var string
-	*/
-	public $error;
-	/** 
 	* @var int
 	*/
-	public $id;
+	public $assessed;
 	/** 
 	* @var int
 	*/
 	public $course;
 	/** 
-	* @var int
-	*/
-	public $forum;
-	/** 
 	* @var string
 	*/
-	public $name;
+	public $error;
 	/** 
 	* @var int
 	*/
@@ -32,7 +24,7 @@ class forumDiscussionRecord {
 	/** 
 	* @var int
 	*/
-	public $userid;
+	public $forum;
 	/** 
 	* @var int
 	*/
@@ -40,7 +32,19 @@ class forumDiscussionRecord {
 	/** 
 	* @var int
 	*/
-	public $assessed;
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $name;
+	/** 
+	* @var forumPostRecord
+	*/
+	public $post;
+	/** 
+	* @var int
+	*/
+	public $timeend;
 	/** 
 	* @var int
 	*/
@@ -48,69 +52,57 @@ class forumDiscussionRecord {
 	/** 
 	* @var int
 	*/
-	public $usermodified;
-	/** 
-	* @var int
-	*/
 	public $timestart;
 	/** 
 	* @var int
 	*/
-	public $timeend;
+	public $userid;
 	/** 
-	* @var forumPostRecord
+	* @var int
 	*/
-	public $post;
+	public $usermodified;
 
 	/**
 	* default constructor for class forumDiscussionRecord
-	* @param string $error
-	* @param int $id
-	* @param int $course
-	* @param int $forum
-	* @param string $name
-	* @param int $firstpost
-	* @param int $userid
-	* @param int $groupid
 	* @param int $assessed
-	* @param int $timemodified
-	* @param int $usermodified
-	* @param int $timestart
-	* @param int $timeend
+	* @param int $course
+	* @param string $error
+	* @param int $firstpost
+	* @param int $forum
+	* @param int $groupid
+	* @param int $id
+	* @param string $name
 	* @param forumPostRecord $post
+	* @param int $timeend
+	* @param int $timemodified
+	* @param int $timestart
+	* @param int $userid
+	* @param int $usermodified
 	* @return forumDiscussionRecord
 	*/
-	 public function forumDiscussionRecord($error='',$id=0,$course=0,$forum=0,$name='',$firstpost=0,$userid=0,$groupid=0,$assessed=0,$timemodified=0,$usermodified=0,$timestart=0,$timeend=0,$post=NULL){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->course=$course   ;
-		 $this->forum=$forum   ;
-		 $this->name=$name   ;
-		 $this->firstpost=$firstpost   ;
-		 $this->userid=$userid   ;
-		 $this->groupid=$groupid   ;
+	 public function forumDiscussionRecord($assessed=0,$course=0,$error='',$firstpost=0,$forum=0,$groupid=0,$id=0,$name='',$post=NULL,$timeend=0,$timemodified=0,$timestart=0,$userid=0,$usermodified=0){
 		 $this->assessed=$assessed   ;
-		 $this->timemodified=$timemodified   ;
-		 $this->usermodified=$usermodified   ;
-		 $this->timestart=$timestart   ;
-		 $this->timeend=$timeend   ;
+		 $this->course=$course   ;
+		 $this->error=$error   ;
+		 $this->firstpost=$firstpost   ;
+		 $this->forum=$forum   ;
+		 $this->groupid=$groupid   ;
+		 $this->id=$id   ;
+		 $this->name=$name   ;
 		 $this->post=$post   ;
+		 $this->timeend=$timeend   ;
+		 $this->timemodified=$timemodified   ;
+		 $this->timestart=$timestart   ;
+		 $this->userid=$userid   ;
+		 $this->usermodified=$usermodified   ;
 	}
 	/* get accessors */
 
 	/**
-	* @return string
-	*/
-	public function getError(){
-		 return $this->error;
-	}
-
-
-	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
+	public function getAssessed(){
+		 return $this->assessed;
 	}
 
 
@@ -123,18 +115,10 @@ class forumDiscussionRecord {
 
 
 	/**
-	* @return int
-	*/
-	public function getForum(){
-		 return $this->forum;
-	}
-
-
-	/**
 	* @return string
 	*/
-	public function getName(){
-		 return $this->name;
+	public function getError(){
+		 return $this->error;
 	}
 
 
@@ -149,8 +133,8 @@ class forumDiscussionRecord {
 	/**
 	* @return int
 	*/
-	public function getUserid(){
-		 return $this->userid;
+	public function getForum(){
+		 return $this->forum;
 	}
 
 
@@ -165,8 +149,32 @@ class forumDiscussionRecord {
 	/**
 	* @return int
 	*/
-	public function getAssessed(){
-		 return $this->assessed;
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getName(){
+		 return $this->name;
+	}
+
+
+	/**
+	* @return forumPostRecord
+	*/
+	public function getPost(){
+		 return $this->post;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getTimeend(){
+		 return $this->timeend;
 	}
 
 
@@ -181,14 +189,6 @@ class forumDiscussionRecord {
 	/**
 	* @return int
 	*/
-	public function getUsermodified(){
-		 return $this->usermodified;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getTimestart(){
 		 return $this->timestart;
 	}
@@ -197,35 +197,26 @@ class forumDiscussionRecord {
 	/**
 	* @return int
 	*/
-	public function getTimeend(){
-		 return $this->timeend;
+	public function getUserid(){
+		 return $this->userid;
 	}
 
 
 	/**
-	* @return forumPostRecord
+	* @return int
 	*/
-	public function getPost(){
-		 return $this->post;
+	public function getUsermodified(){
+		 return $this->usermodified;
 	}
 
 	/*set accessors */
 
 	/**
-	* @param string $error
+	* @param int $assessed
 	* @return void
 	*/
-	public function setError($error){
-		$this->error=$error;
-	}
-
-
-	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
+	public function setAssessed($assessed){
+		$this->assessed=$assessed;
 	}
 
 
@@ -239,20 +230,11 @@ class forumDiscussionRecord {
 
 
 	/**
-	* @param int $forum
+	* @param string $error
 	* @return void
 	*/
-	public function setForum($forum){
-		$this->forum=$forum;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
+	public function setError($error){
+		$this->error=$error;
 	}
 
 
@@ -266,11 +248,11 @@ class forumDiscussionRecord {
 
 
 	/**
-	* @param int $userid
+	* @param int $forum
 	* @return void
 	*/
-	public function setUserid($userid){
-		$this->userid=$userid;
+	public function setForum($forum){
+		$this->forum=$forum;
 	}
 
 
@@ -284,38 +266,29 @@ class forumDiscussionRecord {
 
 
 	/**
-	* @param int $assessed
+	* @param int $id
 	* @return void
 	*/
-	public function setAssessed($assessed){
-		$this->assessed=$assessed;
+	public function setId($id){
+		$this->id=$id;
 	}
 
 
 	/**
-	* @param int $timemodified
+	* @param string $name
 	* @return void
 	*/
-	public function setTimemodified($timemodified){
-		$this->timemodified=$timemodified;
+	public function setName($name){
+		$this->name=$name;
 	}
 
 
 	/**
-	* @param int $usermodified
+	* @param forumPostRecord $post
 	* @return void
 	*/
-	public function setUsermodified($usermodified){
-		$this->usermodified=$usermodified;
-	}
-
-
-	/**
-	* @param int $timestart
-	* @return void
-	*/
-	public function setTimestart($timestart){
-		$this->timestart=$timestart;
+	public function setPost($post){
+		$this->post=$post;
 	}
 
 
@@ -329,11 +302,38 @@ class forumDiscussionRecord {
 
 
 	/**
-	* @param forumPostRecord $post
+	* @param int $timemodified
 	* @return void
 	*/
-	public function setPost($post){
-		$this->post=$post;
+	public function setTimemodified($timemodified){
+		$this->timemodified=$timemodified;
+	}
+
+
+	/**
+	* @param int $timestart
+	* @return void
+	*/
+	public function setTimestart($timestart){
+		$this->timestart=$timestart;
+	}
+
+
+	/**
+	* @param int $userid
+	* @return void
+	*/
+	public function setUserid($userid){
+		$this->userid=$userid;
+	}
+
+
+	/**
+	* @param int $usermodified
+	* @return void
+	*/
+	public function setUsermodified($usermodified){
+		$this->usermodified=$usermodified;
 	}
 
 }

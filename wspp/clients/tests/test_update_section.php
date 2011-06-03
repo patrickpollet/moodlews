@@ -1,29 +1,27 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add a course section
+/**test code for update_section
 * @param int $client
 * @param string $sesskey
-* @param sectionDatum $section
+* @param sectionDatum $datum
 * @param string $idfield
-* @return  editSectionsOutput
+* @return  sectionRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$section= new sectionDatum();
-$section->setAction('');
-$section->setId(0);
-$section->setCourse(0);
-$section->setSection(0);
-$section->setSummary('');
-$section->setSequence('');
-$section->setVisible(0);
-$res=$client->update_section($lr->getClient(),$lr->getSessionKey(),$section,'');
+$datum= new sectionDatum();
+$datum->setAction('');
+$datum->setCourse(0);
+$datum->setId(0);
+$datum->setSection(0);
+$datum->setSequence('');
+$datum->setSummary('');
+$datum->setVisible(0);
+$res=$client->update_section($lr->getClient(),$lr->getSessionKey(),$datum,'');
 print_r($res);
-print($res->getSections());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit Categories Information
+/**test code for edit_categories
 * @param int $client
 * @param string $sesskey
-* @param editCategoriesInput $categories
-* @return  editCategoriesOutput
+* @param categoryDatum[] $categories
+* @return  categoryRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$categories= new editCategoriesInput();
-$categories->setCategories(array());
+$categories=array();
 $res=$client->edit_categories($lr->getClient(),$lr->getSessionKey(),$categories);
 print_r($res);
-print($res->getCategories());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

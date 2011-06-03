@@ -8,23 +8,23 @@ class messageRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
-	/** 
-	* @var int
-	*/
-	public $id;
-	/** 
-	* @var int
-	*/
-	public $useridfrom;
-	/** 
-	* @var int
-	*/
-	public $useridto;
+	public $contexturl;
 	/** 
 	* @var string
 	*/
-	public $subject;
+	public $contexturlname;
+	/** 
+	* @var string
+	*/
+	public $email;
+	/** 
+	* @var string
+	*/
+	public $error;
+	/** 
+	* @var string
+	*/
+	public $firstname;
 	/** 
 	* @var string
 	*/
@@ -38,9 +38,17 @@ class messageRecord {
 	*/
 	public $fullmessagehtml;
 	/** 
+	* @var int
+	*/
+	public $id;
+	/** 
 	* @var string
 	*/
-	public $smallmessage;
+	public $imagealt;
+	/** 
+	* @var string
+	*/
+	public $lastname;
 	/** 
 	* @var int
 	*/
@@ -48,79 +56,95 @@ class messageRecord {
 	/** 
 	* @var string
 	*/
-	public $contexturl;
+	public $picture;
 	/** 
 	* @var string
 	*/
-	public $contexturlname;
+	public $smallmessage;
+	/** 
+	* @var string
+	*/
+	public $subject;
 	/** 
 	* @var int
 	*/
 	public $timecreated;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $firstname;
+	public $useridfrom;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $lastname;
-	/** 
-	* @var string
-	*/
-	public $email;
-	/** 
-	* @var string
-	*/
-	public $picture;
-	/** 
-	* @var string
-	*/
-	public $imagealt;
+	public $useridto;
 
 	/**
 	* default constructor for class messageRecord
+	* @param string $contexturl
+	* @param string $contexturlname
+	* @param string $email
 	* @param string $error
-	* @param int $id
-	* @param int $useridfrom
-	* @param int $useridto
-	* @param string $subject
+	* @param string $firstname
 	* @param string $fullmessage
 	* @param int $fullmessageformat
 	* @param string $fullmessagehtml
-	* @param string $smallmessage
-	* @param int $notification
-	* @param string $contexturl
-	* @param string $contexturlname
-	* @param int $timecreated
-	* @param string $firstname
-	* @param string $lastname
-	* @param string $email
-	* @param string $picture
+	* @param int $id
 	* @param string $imagealt
+	* @param string $lastname
+	* @param int $notification
+	* @param string $picture
+	* @param string $smallmessage
+	* @param string $subject
+	* @param int $timecreated
+	* @param int $useridfrom
+	* @param int $useridto
 	* @return messageRecord
 	*/
-	 public function messageRecord($error='',$id=0,$useridfrom=0,$useridto=0,$subject='',$fullmessage='',$fullmessageformat=0,$fullmessagehtml='',$smallmessage='',$notification=0,$contexturl='',$contexturlname='',$timecreated=0,$firstname='',$lastname='',$email='',$picture='',$imagealt=''){
+	 public function messageRecord($contexturl='',$contexturlname='',$email='',$error='',$firstname='',$fullmessage='',$fullmessageformat=0,$fullmessagehtml='',$id=0,$imagealt='',$lastname='',$notification=0,$picture='',$smallmessage='',$subject='',$timecreated=0,$useridfrom=0,$useridto=0){
+		 $this->contexturl=$contexturl   ;
+		 $this->contexturlname=$contexturlname   ;
+		 $this->email=$email   ;
 		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->useridfrom=$useridfrom   ;
-		 $this->useridto=$useridto   ;
-		 $this->subject=$subject   ;
+		 $this->firstname=$firstname   ;
 		 $this->fullmessage=$fullmessage   ;
 		 $this->fullmessageformat=$fullmessageformat   ;
 		 $this->fullmessagehtml=$fullmessagehtml   ;
-		 $this->smallmessage=$smallmessage   ;
-		 $this->notification=$notification   ;
-		 $this->contexturl=$contexturl   ;
-		 $this->contexturlname=$contexturlname   ;
-		 $this->timecreated=$timecreated   ;
-		 $this->firstname=$firstname   ;
-		 $this->lastname=$lastname   ;
-		 $this->email=$email   ;
-		 $this->picture=$picture   ;
+		 $this->id=$id   ;
 		 $this->imagealt=$imagealt   ;
+		 $this->lastname=$lastname   ;
+		 $this->notification=$notification   ;
+		 $this->picture=$picture   ;
+		 $this->smallmessage=$smallmessage   ;
+		 $this->subject=$subject   ;
+		 $this->timecreated=$timecreated   ;
+		 $this->useridfrom=$useridfrom   ;
+		 $this->useridto=$useridto   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return string
+	*/
+	public function getContexturl(){
+		 return $this->contexturl;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getContexturlname(){
+		 return $this->contexturlname;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getEmail(){
+		 return $this->email;
+	}
+
 
 	/**
 	* @return string
@@ -131,34 +155,10 @@ class messageRecord {
 
 
 	/**
-	* @return int
-	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getUseridfrom(){
-		 return $this->useridfrom;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getUseridto(){
-		 return $this->useridto;
-	}
-
-
-	/**
 	* @return string
 	*/
-	public function getSubject(){
-		 return $this->subject;
+	public function getFirstname(){
+		 return $this->firstname;
 	}
 
 
@@ -187,10 +187,26 @@ class messageRecord {
 
 
 	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
 	* @return string
 	*/
-	public function getSmallmessage(){
-		 return $this->smallmessage;
+	public function getImagealt(){
+		 return $this->imagealt;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastname(){
+		 return $this->lastname;
 	}
 
 
@@ -205,16 +221,24 @@ class messageRecord {
 	/**
 	* @return string
 	*/
-	public function getContexturl(){
-		 return $this->contexturl;
+	public function getPicture(){
+		 return $this->picture;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getContexturlname(){
-		 return $this->contexturlname;
+	public function getSmallmessage(){
+		 return $this->smallmessage;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getSubject(){
+		 return $this->subject;
 	}
 
 
@@ -227,45 +251,48 @@ class messageRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getFirstname(){
-		 return $this->firstname;
+	public function getUseridfrom(){
+		 return $this->useridfrom;
 	}
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getLastname(){
-		 return $this->lastname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getEmail(){
-		 return $this->email;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getPicture(){
-		 return $this->picture;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getImagealt(){
-		 return $this->imagealt;
+	public function getUseridto(){
+		 return $this->useridto;
 	}
 
 	/*set accessors */
+
+	/**
+	* @param string $contexturl
+	* @return void
+	*/
+	public function setContexturl($contexturl){
+		$this->contexturl=$contexturl;
+	}
+
+
+	/**
+	* @param string $contexturlname
+	* @return void
+	*/
+	public function setContexturlname($contexturlname){
+		$this->contexturlname=$contexturlname;
+	}
+
+
+	/**
+	* @param string $email
+	* @return void
+	*/
+	public function setEmail($email){
+		$this->email=$email;
+	}
+
 
 	/**
 	* @param string $error
@@ -277,38 +304,11 @@ class messageRecord {
 
 
 	/**
-	* @param int $id
+	* @param string $firstname
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
-	* @param int $useridfrom
-	* @return void
-	*/
-	public function setUseridfrom($useridfrom){
-		$this->useridfrom=$useridfrom;
-	}
-
-
-	/**
-	* @param int $useridto
-	* @return void
-	*/
-	public function setUseridto($useridto){
-		$this->useridto=$useridto;
-	}
-
-
-	/**
-	* @param string $subject
-	* @return void
-	*/
-	public function setSubject($subject){
-		$this->subject=$subject;
+	public function setFirstname($firstname){
+		$this->firstname=$firstname;
 	}
 
 
@@ -340,56 +340,20 @@ class messageRecord {
 
 
 	/**
-	* @param string $smallmessage
+	* @param int $id
 	* @return void
 	*/
-	public function setSmallmessage($smallmessage){
-		$this->smallmessage=$smallmessage;
+	public function setId($id){
+		$this->id=$id;
 	}
 
 
 	/**
-	* @param int $notification
+	* @param string $imagealt
 	* @return void
 	*/
-	public function setNotification($notification){
-		$this->notification=$notification;
-	}
-
-
-	/**
-	* @param string $contexturl
-	* @return void
-	*/
-	public function setContexturl($contexturl){
-		$this->contexturl=$contexturl;
-	}
-
-
-	/**
-	* @param string $contexturlname
-	* @return void
-	*/
-	public function setContexturlname($contexturlname){
-		$this->contexturlname=$contexturlname;
-	}
-
-
-	/**
-	* @param int $timecreated
-	* @return void
-	*/
-	public function setTimecreated($timecreated){
-		$this->timecreated=$timecreated;
-	}
-
-
-	/**
-	* @param string $firstname
-	* @return void
-	*/
-	public function setFirstname($firstname){
-		$this->firstname=$firstname;
+	public function setImagealt($imagealt){
+		$this->imagealt=$imagealt;
 	}
 
 
@@ -403,11 +367,11 @@ class messageRecord {
 
 
 	/**
-	* @param string $email
+	* @param int $notification
 	* @return void
 	*/
-	public function setEmail($email){
-		$this->email=$email;
+	public function setNotification($notification){
+		$this->notification=$notification;
 	}
 
 
@@ -421,11 +385,47 @@ class messageRecord {
 
 
 	/**
-	* @param string $imagealt
+	* @param string $smallmessage
 	* @return void
 	*/
-	public function setImagealt($imagealt){
-		$this->imagealt=$imagealt;
+	public function setSmallmessage($smallmessage){
+		$this->smallmessage=$smallmessage;
+	}
+
+
+	/**
+	* @param string $subject
+	* @return void
+	*/
+	public function setSubject($subject){
+		$this->subject=$subject;
+	}
+
+
+	/**
+	* @param int $timecreated
+	* @return void
+	*/
+	public function setTimecreated($timecreated){
+		$this->timecreated=$timecreated;
+	}
+
+
+	/**
+	* @param int $useridfrom
+	* @return void
+	*/
+	public function setUseridfrom($useridfrom){
+		$this->useridfrom=$useridfrom;
+	}
+
+
+	/**
+	* @param int $useridto
+	* @return void
+	*/
+	public function setUseridto($useridto){
+		$this->useridto=$useridto;
 	}
 
 }

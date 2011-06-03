@@ -6,33 +6,37 @@
  */
 class groupRecord {
 	/** 
-	* @var string
-	*/
-	public $error;
-	/** 
-	* @var int
-	*/
-	public $id;
-	/** 
 	* @var int
 	*/
 	public $courseid;
 	/** 
 	* @var string
 	*/
-	public $name;
+	public $description;
 	/** 
 	* @var string
 	*/
-	public $description;
+	public $enrolmentkey;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $picture;
+	public $error;
 	/** 
 	* @var int
 	*/
 	public $hidepicture;
+	/** 
+	* @var int
+	*/
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $name;
+	/** 
+	* @var int
+	*/
+	public $picture;
 	/** 
 	* @var int
 	*/
@@ -41,54 +45,34 @@ class groupRecord {
 	* @var int
 	*/
 	public $timemodified;
-	/** 
-	* @var string
-	*/
-	public $enrolmentkey;
 
 	/**
 	* default constructor for class groupRecord
-	* @param string $error
-	* @param int $id
 	* @param int $courseid
-	* @param string $name
 	* @param string $description
-	* @param int $picture
+	* @param string $enrolmentkey
+	* @param string $error
 	* @param int $hidepicture
+	* @param int $id
+	* @param string $name
+	* @param int $picture
 	* @param int $timecreated
 	* @param int $timemodified
-	* @param string $enrolmentkey
 	* @return groupRecord
 	*/
-	 public function groupRecord($error='',$id=0,$courseid=0,$name='',$description='',$picture=0,$hidepicture=0,$timecreated=0,$timemodified=0,$enrolmentkey=''){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
+	 public function groupRecord($courseid=0,$description='',$enrolmentkey='',$error='',$hidepicture=0,$id=0,$name='',$picture=0,$timecreated=0,$timemodified=0){
 		 $this->courseid=$courseid   ;
-		 $this->name=$name   ;
 		 $this->description=$description   ;
-		 $this->picture=$picture   ;
+		 $this->enrolmentkey=$enrolmentkey   ;
+		 $this->error=$error   ;
 		 $this->hidepicture=$hidepicture   ;
+		 $this->id=$id   ;
+		 $this->name=$name   ;
+		 $this->picture=$picture   ;
 		 $this->timecreated=$timecreated   ;
 		 $this->timemodified=$timemodified   ;
-		 $this->enrolmentkey=$enrolmentkey   ;
 	}
 	/* get accessors */
-
-	/**
-	* @return string
-	*/
-	public function getError(){
-		 return $this->error;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getId(){
-		 return $this->id;
-	}
-
 
 	/**
 	* @return int
@@ -101,24 +85,24 @@ class groupRecord {
 	/**
 	* @return string
 	*/
-	public function getName(){
-		 return $this->name;
-	}
-
-
-	/**
-	* @return string
-	*/
 	public function getDescription(){
 		 return $this->description;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getPicture(){
-		 return $this->picture;
+	public function getEnrolmentkey(){
+		 return $this->enrolmentkey;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getError(){
+		 return $this->error;
 	}
 
 
@@ -127,6 +111,30 @@ class groupRecord {
 	*/
 	public function getHidepicture(){
 		 return $this->hidepicture;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getName(){
+		 return $this->name;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getPicture(){
+		 return $this->picture;
 	}
 
 
@@ -145,33 +153,7 @@ class groupRecord {
 		 return $this->timemodified;
 	}
 
-
-	/**
-	* @return string
-	*/
-	public function getEnrolmentkey(){
-		 return $this->enrolmentkey;
-	}
-
 	/*set accessors */
-
-	/**
-	* @param string $error
-	* @return void
-	*/
-	public function setError($error){
-		$this->error=$error;
-	}
-
-
-	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
 
 	/**
 	* @param int $courseid
@@ -179,15 +161,6 @@ class groupRecord {
 	*/
 	public function setCourseid($courseid){
 		$this->courseid=$courseid;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
 	}
 
 
@@ -201,11 +174,20 @@ class groupRecord {
 
 
 	/**
-	* @param int $picture
+	* @param string $enrolmentkey
 	* @return void
 	*/
-	public function setPicture($picture){
-		$this->picture=$picture;
+	public function setEnrolmentkey($enrolmentkey){
+		$this->enrolmentkey=$enrolmentkey;
+	}
+
+
+	/**
+	* @param string $error
+	* @return void
+	*/
+	public function setError($error){
+		$this->error=$error;
 	}
 
 
@@ -215,6 +197,33 @@ class groupRecord {
 	*/
 	public function setHidepicture($hidepicture){
 		$this->hidepicture=$hidepicture;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $name
+	* @return void
+	*/
+	public function setName($name){
+		$this->name=$name;
+	}
+
+
+	/**
+	* @param int $picture
+	* @return void
+	*/
+	public function setPicture($picture){
+		$this->picture=$picture;
 	}
 
 
@@ -233,15 +242,6 @@ class groupRecord {
 	*/
 	public function setTimemodified($timemodified){
 		$this->timemodified=$timemodified;
-	}
-
-
-	/**
-	* @param string $enrolmentkey
-	* @return void
-	*/
-	public function setEnrolmentkey($enrolmentkey){
-		$this->enrolmentkey=$enrolmentkey;
 	}
 
 }

@@ -1,21 +1,18 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get user info from Moodle user id
-				number
+/**test code for get_user_byidnumber
 * @param int $client
 * @param string $sesskey
 * @param string $userinfo
-* @return  getUsersReturn
+* @return  userRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_user_byidnumber($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
-print($res->getUsers());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

@@ -1,51 +1,49 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add on course
+/**test code for update_course
 * @param int $client
 * @param string $sesskey
-* @param courseDatum $course
-* @param string $idfield
-* @return  editCoursesOutput
+* @param courseDatum $datum
+* @param string $courseidfield
+* @return  courseRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$course= new courseDatum();
-$course->setAction('');
-$course->setId(0);
-$course->setCategory(0);
-$course->setSortorder(0);
-$course->setPassword('');
-$course->setFullname('');
-$course->setShortname('');
-$course->setIdnumber('');
-$course->setSummary('');
-$course->setFormat('');
-$course->setShowgrades(0);
-$course->setNewsitems(0);
-$course->setTeacher('');
-$course->setTeachers('');
-$course->setStudent('');
-$course->setStudents('');
-$course->setGuest(0);
-$course->setStartdate(0);
-$course->setEnrolperiod(0);
-$course->setMarker(0);
-$course->setMaxbytes(0);
-$course->setVisible(0);
-$course->setHiddensections(0);
-$course->setGroupmode(0);
-$course->setGroupmodeforce(0);
-$course->setLang('');
-$course->setTheme('');
-$course->setCost('');
-$course->setMetacourse(0);
-$res=$client->update_course($lr->getClient(),$lr->getSessionKey(),$course,'');
+$datum= new courseDatum();
+$datum->setAction('');
+$datum->setCategory(0);
+$datum->setCost('');
+$datum->setEnrolperiod(0);
+$datum->setFormat('');
+$datum->setFullname('');
+$datum->setGroupmode(0);
+$datum->setGroupmodeforce(0);
+$datum->setGuest(0);
+$datum->setHiddensections(0);
+$datum->setId(0);
+$datum->setIdnumber('');
+$datum->setLang('');
+$datum->setMarker(0);
+$datum->setMaxbytes(0);
+$datum->setMetacourse(0);
+$datum->setNewsitems(0);
+$datum->setPassword('');
+$datum->setShortname('');
+$datum->setShowgrades(0);
+$datum->setSortorder(0);
+$datum->setStartdate(0);
+$datum->setStudent('');
+$datum->setStudents('');
+$datum->setSummary('');
+$datum->setTeacher('');
+$datum->setTeachers('');
+$datum->setTheme('');
+$datum->setVisible(0);
+$res=$client->update_course($lr->getClient(),$lr->getSessionKey(),$datum,'');
 print_r($res);
-print($res->getCourses());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

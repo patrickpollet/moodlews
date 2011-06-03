@@ -8,7 +8,7 @@ class fileRecord {
 	/** 
 	* @var string
 	*/
-	public $fileurl;
+	public $filecontent;
 	/** 
 	* @var string
 	*/
@@ -24,31 +24,31 @@ class fileRecord {
 	/** 
 	* @var string
 	*/
-	public $filecontent;
+	public $fileurl;
 
 	/**
 	* default constructor for class fileRecord
-	* @param string $fileurl
+	* @param string $filecontent
 	* @param string $filename
 	* @param string $filepath
 	* @param int $filesize
-	* @param string $filecontent
+	* @param string $fileurl
 	* @return fileRecord
 	*/
-	 public function fileRecord($fileurl='',$filename='',$filepath='',$filesize=0,$filecontent=''){
-		 $this->fileurl=$fileurl   ;
+	 public function fileRecord($filecontent='',$filename='',$filepath='',$filesize=0,$fileurl=''){
+		 $this->filecontent=$filecontent   ;
 		 $this->filename=$filename   ;
 		 $this->filepath=$filepath   ;
 		 $this->filesize=$filesize   ;
-		 $this->filecontent=$filecontent   ;
+		 $this->fileurl=$fileurl   ;
 	}
 	/* get accessors */
 
 	/**
 	* @return string
 	*/
-	public function getFileurl(){
-		 return $this->fileurl;
+	public function getFilecontent(){
+		 return $this->filecontent;
 	}
 
 
@@ -79,18 +79,18 @@ class fileRecord {
 	/**
 	* @return string
 	*/
-	public function getFilecontent(){
-		 return $this->filecontent;
+	public function getFileurl(){
+		 return $this->fileurl;
 	}
 
 	/*set accessors */
 
 	/**
-	* @param string $fileurl
+	* @param string $filecontent
 	* @return void
 	*/
-	public function setFileurl($fileurl){
-		$this->fileurl=$fileurl;
+	public function setFilecontent($filecontent){
+		$this->filecontent=$filecontent;
 	}
 
 
@@ -122,11 +122,11 @@ class fileRecord {
 
 
 	/**
-	* @param string $filecontent
+	* @param string $fileurl
 	* @return void
 	*/
-	public function setFilecontent($filecontent){
-		$this->filecontent=$filecontent;
+	public function setFileurl($fileurl){
+		$this->fileurl=$fileurl;
 	}
 
 }

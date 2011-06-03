@@ -12,35 +12,35 @@ class groupingDatum {
 	/** 
 	* @var int
 	*/
-	public $id;
-	/** 
-	* @var int
-	*/
 	public $courseid;
 	/** 
 	* @var string
 	*/
-	public $name;
+	public $description;
+	/** 
+	* @var int
+	*/
+	public $id;
 	/** 
 	* @var string
 	*/
-	public $description;
+	public $name;
 
 	/**
 	* default constructor for class groupingDatum
 	* @param string $action
-	* @param int $id
 	* @param int $courseid
-	* @param string $name
 	* @param string $description
+	* @param int $id
+	* @param string $name
 	* @return groupingDatum
 	*/
-	 public function groupingDatum($action='',$id=0,$courseid=0,$name='',$description=''){
+	 public function groupingDatum($action='',$courseid=0,$description='',$id=0,$name=''){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
 		 $this->courseid=$courseid   ;
-		 $this->name=$name   ;
 		 $this->description=$description   ;
+		 $this->id=$id   ;
+		 $this->name=$name   ;
 	}
 	/* get accessors */
 
@@ -55,14 +55,6 @@ class groupingDatum {
 	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getCourseid(){
 		 return $this->courseid;
 	}
@@ -71,16 +63,24 @@ class groupingDatum {
 	/**
 	* @return string
 	*/
-	public function getName(){
-		 return $this->name;
+	public function getDescription(){
+		 return $this->description;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getDescription(){
-		 return $this->description;
+	public function getName(){
+		 return $this->name;
 	}
 
 	/*set accessors */
@@ -95,15 +95,6 @@ class groupingDatum {
 
 
 	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
 	* @param int $courseid
 	* @return void
 	*/
@@ -113,20 +104,29 @@ class groupingDatum {
 
 
 	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
-	}
-
-
-	/**
 	* @param string $description
 	* @return void
 	*/
 	public function setDescription($description){
 		$this->description=$description;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $name
+	* @return void
+	*/
+	public function setName($name){
+		$this->name=$name;
 	}
 
 }

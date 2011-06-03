@@ -1,21 +1,18 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get Course Information
+/**test code for get_cohort_byidnumber
 * @param int $client
 * @param string $sesskey
-* @param string $info
-* @param int $courseid
-* @return  getCohortsReturn
+* @param string $cohortidnumber
+* @return  cohortRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_cohort_byidnumber($lr->getClient(),$lr->getSessionKey(),'',0);
+$res=$client->get_cohort_byidnumber($lr->getClient(),$lr->getSessionKey(),'');
 print_r($res);
-print($res->getCohorts());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

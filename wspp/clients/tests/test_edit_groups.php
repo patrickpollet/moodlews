@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit Groups Information
+/**test code for edit_groups
 * @param int $client
 * @param string $sesskey
-* @param editGroupsInput $groups
-* @return  editGroupsOutput
+* @param groupDatum[] $groups
+* @return  groupRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$groups= new editGroupsInput();
-$groups->setGroups(array());
+$groups=array();
 $res=$client->edit_groups($lr->getClient(),$lr->getSessionKey(),$groups);
 print_r($res);
-print($res->getGroups());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

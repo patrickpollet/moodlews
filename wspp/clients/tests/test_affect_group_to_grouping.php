@@ -1,9 +1,9 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Affect a group to grouping
+/**test code for affect_group_to_grouping
 * @param int $client
 * @param string $sesskey
 * @param int $groupid

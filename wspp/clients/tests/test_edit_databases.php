@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit databases Information
+/**test code for edit_databases
 * @param int $client
 * @param string $sesskey
-* @param editDatabasesInput $databases
-* @return  editDatabasesOutput
+* @param databaseDatum[] $databases
+* @return  databaseRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$databases= new editDatabasesInput();
-$databases->setDatabases(array());
+$databases=array();
 $res=$client->edit_databases($lr->getClient(),$lr->getSessionKey(),$databases);
 print_r($res);
-print($res->getDatabases());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

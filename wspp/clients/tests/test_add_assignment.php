@@ -1,41 +1,39 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add an assignment
+/**test code for add_assignment
 * @param int $client
 * @param string $sesskey
-* @param assignmentDatum $assignment
-* @return  editAssignmentsOutput
+* @param assignmentDatum $datum
+* @return  assignmentRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$assignment= new assignmentDatum();
-$assignment->setAction('');
-$assignment->setId(0);
-$assignment->setCourse(0);
-$assignment->setName('');
-$assignment->setDescription('');
-$assignment->setFormat(0);
-$assignment->setAssignmenttype('');
-$assignment->setResubmit(0);
-$assignment->setPreventlate(0);
-$assignment->setEmailteachers(0);
-$assignment->setVar1(0);
-$assignment->setVar2(0);
-$assignment->setVar3(0);
-$assignment->setVar4(0);
-$assignment->setVar5(0);
-$assignment->setMaxbytes(0);
-$assignment->setTimedue(0);
-$assignment->setTimeavailable(0);
-$assignment->setGrade(0);
-$assignment->setTimemodified(0);
-$res=$client->add_assignment($lr->getClient(),$lr->getSessionKey(),$assignment);
+$datum= new assignmentDatum();
+$datum->setAction('');
+$datum->setAssignmenttype('');
+$datum->setCourse(0);
+$datum->setDescription('');
+$datum->setEmailteachers(0);
+$datum->setFormat(0);
+$datum->setGrade(0);
+$datum->setId(0);
+$datum->setMaxbytes(0);
+$datum->setName('');
+$datum->setPreventlate(0);
+$datum->setResubmit(0);
+$datum->setTimeavailable(0);
+$datum->setTimedue(0);
+$datum->setTimemodified(0);
+$datum->setVar1(0);
+$datum->setVar2(0);
+$datum->setVar3(0);
+$datum->setVar4(0);
+$datum->setVar5(0);
+$res=$client->add_assignment($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getAssignments());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

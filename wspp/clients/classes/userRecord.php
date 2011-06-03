@@ -8,23 +8,27 @@ class userRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
+	public $address;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $id;
+	public $aim;
 	/** 
 	* @var string
 	*/
 	public $auth;
 	/** 
+	* @var string
+	*/
+	public $city;
+	/** 
 	* @var int
 	*/
 	public $confirmed;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $policyagreed;
+	public $country;
 	/** 
 	* @var int
 	*/
@@ -32,27 +36,15 @@ class userRecord {
 	/** 
 	* @var string
 	*/
-	public $username;
+	public $department;
 	/** 
 	* @var string
 	*/
-	public $idnumber;
-	/** 
-	* @var string
-	*/
-	public $firstname;
-	/** 
-	* @var string
-	*/
-	public $lastname;
+	public $description;
 	/** 
 	* @var string
 	*/
 	public $email;
-	/** 
-	* @var string
-	*/
-	public $icq;
 	/** 
 	* @var int
 	*/
@@ -60,15 +52,43 @@ class userRecord {
 	/** 
 	* @var string
 	*/
-	public $skype;
+	public $error;
 	/** 
 	* @var string
 	*/
-	public $yahoo;
+	public $firstname;
 	/** 
 	* @var string
 	*/
-	public $aim;
+	public $icq;
+	/** 
+	* @var int
+	*/
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $idnumber;
+	/** 
+	* @var string
+	*/
+	public $institution;
+	/** 
+	* @var string
+	*/
+	public $lang;
+	/** 
+	* @var string
+	*/
+	public $lastip;
+	/** 
+	* @var string
+	*/
+	public $lastname;
+	/** 
+	* @var int
+	*/
+	public $mnethostid;
 	/** 
 	* @var string
 	*/
@@ -82,41 +102,21 @@ class userRecord {
 	*/
 	public $phone2;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $institution;
+	public $policyagreed;
 	/** 
-	* @var string
+	* @var profileitemRecord[]
 	*/
-	public $department;
-	/** 
-	* @var string
-	*/
-	public $address;
-	/** 
-	* @var string
-	*/
-	public $city;
-	/** 
-	* @var string
-	*/
-	public $country;
-	/** 
-	* @var string
-	*/
-	public $lang;
+	public $profile;
 	/** 
 	* @var int
 	*/
-	public $timezone;
-	/** 
-	* @var int
-	*/
-	public $mnethostid;
+	public $role;
 	/** 
 	* @var string
 	*/
-	public $lastip;
+	public $skype;
 	/** 
 	* @var string
 	*/
@@ -124,101 +124,101 @@ class userRecord {
 	/** 
 	* @var string
 	*/
-	public $description;
+	public $timezone;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $role;
+	public $username;
 	/** 
-	* @var profileitemRecord[]
+	* @var string
 	*/
-	public $profile;
+	public $yahoo;
 
 	/**
 	* default constructor for class userRecord
-	* @param string $error
-	* @param int $id
-	* @param string $auth
-	* @param int $confirmed
-	* @param int $policyagreed
-	* @param int $deleted
-	* @param string $username
-	* @param string $idnumber
-	* @param string $firstname
-	* @param string $lastname
-	* @param string $email
-	* @param string $icq
-	* @param int $emailstop
-	* @param string $skype
-	* @param string $yahoo
+	* @param string $address
 	* @param string $aim
+	* @param string $auth
+	* @param string $city
+	* @param int $confirmed
+	* @param string $country
+	* @param int $deleted
+	* @param string $department
+	* @param string $description
+	* @param string $email
+	* @param int $emailstop
+	* @param string $error
+	* @param string $firstname
+	* @param string $icq
+	* @param int $id
+	* @param string $idnumber
+	* @param string $institution
+	* @param string $lang
+	* @param string $lastip
+	* @param string $lastname
+	* @param int $mnethostid
 	* @param string $msn
 	* @param string $phone1
 	* @param string $phone2
-	* @param string $institution
-	* @param string $department
-	* @param string $address
-	* @param string $city
-	* @param string $country
-	* @param string $lang
-	* @param int $timezone
-	* @param int $mnethostid
-	* @param string $lastip
-	* @param string $theme
-	* @param string $description
-	* @param int $role
+	* @param int $policyagreed
 	* @param profileitemRecord[] $profile
+	* @param int $role
+	* @param string $skype
+	* @param string $theme
+	* @param string $timezone
+	* @param string $username
+	* @param string $yahoo
 	* @return userRecord
 	*/
-	 public function userRecord($error='',$id=0,$auth='',$confirmed=0,$policyagreed=0,$deleted=0,$username='',$idnumber='',$firstname='',$lastname='',$email='',$icq='',$emailstop=0,$skype='',$yahoo='',$aim='',$msn='',$phone1='',$phone2='',$institution='',$department='',$address='',$city='',$country='',$lang='',$timezone=0,$mnethostid=0,$lastip='',$theme='',$description='',$role=0,$profile=array()){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->auth=$auth   ;
-		 $this->confirmed=$confirmed   ;
-		 $this->policyagreed=$policyagreed   ;
-		 $this->deleted=$deleted   ;
-		 $this->username=$username   ;
-		 $this->idnumber=$idnumber   ;
-		 $this->firstname=$firstname   ;
-		 $this->lastname=$lastname   ;
-		 $this->email=$email   ;
-		 $this->icq=$icq   ;
-		 $this->emailstop=$emailstop   ;
-		 $this->skype=$skype   ;
-		 $this->yahoo=$yahoo   ;
+	 public function userRecord($address='',$aim='',$auth='',$city='',$confirmed=0,$country='',$deleted=0,$department='',$description='',$email='',$emailstop=0,$error='',$firstname='',$icq='',$id=0,$idnumber='',$institution='',$lang='',$lastip='',$lastname='',$mnethostid=0,$msn='',$phone1='',$phone2='',$policyagreed=0,$profile=array(),$role=0,$skype='',$theme='',$timezone='',$username='',$yahoo=''){
+		 $this->address=$address   ;
 		 $this->aim=$aim   ;
+		 $this->auth=$auth   ;
+		 $this->city=$city   ;
+		 $this->confirmed=$confirmed   ;
+		 $this->country=$country   ;
+		 $this->deleted=$deleted   ;
+		 $this->department=$department   ;
+		 $this->description=$description   ;
+		 $this->email=$email   ;
+		 $this->emailstop=$emailstop   ;
+		 $this->error=$error   ;
+		 $this->firstname=$firstname   ;
+		 $this->icq=$icq   ;
+		 $this->id=$id   ;
+		 $this->idnumber=$idnumber   ;
+		 $this->institution=$institution   ;
+		 $this->lang=$lang   ;
+		 $this->lastip=$lastip   ;
+		 $this->lastname=$lastname   ;
+		 $this->mnethostid=$mnethostid   ;
 		 $this->msn=$msn   ;
 		 $this->phone1=$phone1   ;
 		 $this->phone2=$phone2   ;
-		 $this->institution=$institution   ;
-		 $this->department=$department   ;
-		 $this->address=$address   ;
-		 $this->city=$city   ;
-		 $this->country=$country   ;
-		 $this->lang=$lang   ;
-		 $this->timezone=$timezone   ;
-		 $this->mnethostid=$mnethostid   ;
-		 $this->lastip=$lastip   ;
-		 $this->theme=$theme   ;
-		 $this->description=$description   ;
-		 $this->role=$role   ;
+		 $this->policyagreed=$policyagreed   ;
 		 $this->profile=$profile   ;
+		 $this->role=$role   ;
+		 $this->skype=$skype   ;
+		 $this->theme=$theme   ;
+		 $this->timezone=$timezone   ;
+		 $this->username=$username   ;
+		 $this->yahoo=$yahoo   ;
 	}
 	/* get accessors */
 
 	/**
 	* @return string
 	*/
-	public function getError(){
-		 return $this->error;
+	public function getAddress(){
+		 return $this->address;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getId(){
-		 return $this->id;
+	public function getAim(){
+		 return $this->aim;
 	}
 
 
@@ -231,6 +231,14 @@ class userRecord {
 
 
 	/**
+	* @return string
+	*/
+	public function getCity(){
+		 return $this->city;
+	}
+
+
+	/**
 	* @return int
 	*/
 	public function getConfirmed(){
@@ -239,10 +247,10 @@ class userRecord {
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getPolicyagreed(){
-		 return $this->policyagreed;
+	public function getCountry(){
+		 return $this->country;
 	}
 
 
@@ -257,32 +265,16 @@ class userRecord {
 	/**
 	* @return string
 	*/
-	public function getUsername(){
-		 return $this->username;
+	public function getDepartment(){
+		 return $this->department;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getIdnumber(){
-		 return $this->idnumber;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getFirstname(){
-		 return $this->firstname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLastname(){
-		 return $this->lastname;
+	public function getDescription(){
+		 return $this->description;
 	}
 
 
@@ -291,14 +283,6 @@ class userRecord {
 	*/
 	public function getEmail(){
 		 return $this->email;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getIcq(){
-		 return $this->icq;
 	}
 
 
@@ -313,24 +297,80 @@ class userRecord {
 	/**
 	* @return string
 	*/
-	public function getSkype(){
-		 return $this->skype;
+	public function getError(){
+		 return $this->error;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getYahoo(){
-		 return $this->yahoo;
+	public function getFirstname(){
+		 return $this->firstname;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getAim(){
-		 return $this->aim;
+	public function getIcq(){
+		 return $this->icq;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getIdnumber(){
+		 return $this->idnumber;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getInstitution(){
+		 return $this->institution;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLang(){
+		 return $this->lang;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastip(){
+		 return $this->lastip;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getLastname(){
+		 return $this->lastname;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getMnethostid(){
+		 return $this->mnethostid;
 	}
 
 
@@ -359,74 +399,34 @@ class userRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getInstitution(){
-		 return $this->institution;
+	public function getPolicyagreed(){
+		 return $this->policyagreed;
 	}
 
 
 	/**
-	* @return string
+	* @return profileitemRecord[]
 	*/
-	public function getDepartment(){
-		 return $this->department;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getAddress(){
-		 return $this->address;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getCity(){
-		 return $this->city;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getCountry(){
-		 return $this->country;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLang(){
-		 return $this->lang;
+	public function getProfile(){
+		 return $this->profile;
 	}
 
 
 	/**
 	* @return int
 	*/
-	public function getTimezone(){
-		 return $this->timezone;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getMnethostid(){
-		 return $this->mnethostid;
+	public function getRole(){
+		 return $this->role;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getLastip(){
-		 return $this->lastip;
+	public function getSkype(){
+		 return $this->skype;
 	}
 
 
@@ -441,43 +441,43 @@ class userRecord {
 	/**
 	* @return string
 	*/
-	public function getDescription(){
-		 return $this->description;
+	public function getTimezone(){
+		 return $this->timezone;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getRole(){
-		 return $this->role;
+	public function getUsername(){
+		 return $this->username;
 	}
 
 
 	/**
-	* @return profileitemRecord[]
+	* @return string
 	*/
-	public function getProfile(){
-		 return $this->profile;
+	public function getYahoo(){
+		 return $this->yahoo;
 	}
 
 	/*set accessors */
 
 	/**
-	* @param string $error
+	* @param string $address
 	* @return void
 	*/
-	public function setError($error){
-		$this->error=$error;
+	public function setAddress($address){
+		$this->address=$address;
 	}
 
 
 	/**
-	* @param int $id
+	* @param string $aim
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
+	public function setAim($aim){
+		$this->aim=$aim;
 	}
 
 
@@ -491,6 +491,15 @@ class userRecord {
 
 
 	/**
+	* @param string $city
+	* @return void
+	*/
+	public function setCity($city){
+		$this->city=$city;
+	}
+
+
+	/**
 	* @param int $confirmed
 	* @return void
 	*/
@@ -500,11 +509,11 @@ class userRecord {
 
 
 	/**
-	* @param int $policyagreed
+	* @param string $country
 	* @return void
 	*/
-	public function setPolicyagreed($policyagreed){
-		$this->policyagreed=$policyagreed;
+	public function setCountry($country){
+		$this->country=$country;
 	}
 
 
@@ -518,38 +527,20 @@ class userRecord {
 
 
 	/**
-	* @param string $username
+	* @param string $department
 	* @return void
 	*/
-	public function setUsername($username){
-		$this->username=$username;
+	public function setDepartment($department){
+		$this->department=$department;
 	}
 
 
 	/**
-	* @param string $idnumber
+	* @param string $description
 	* @return void
 	*/
-	public function setIdnumber($idnumber){
-		$this->idnumber=$idnumber;
-	}
-
-
-	/**
-	* @param string $firstname
-	* @return void
-	*/
-	public function setFirstname($firstname){
-		$this->firstname=$firstname;
-	}
-
-
-	/**
-	* @param string $lastname
-	* @return void
-	*/
-	public function setLastname($lastname){
-		$this->lastname=$lastname;
+	public function setDescription($description){
+		$this->description=$description;
 	}
 
 
@@ -563,15 +554,6 @@ class userRecord {
 
 
 	/**
-	* @param string $icq
-	* @return void
-	*/
-	public function setIcq($icq){
-		$this->icq=$icq;
-	}
-
-
-	/**
 	* @param int $emailstop
 	* @return void
 	*/
@@ -581,29 +563,92 @@ class userRecord {
 
 
 	/**
-	* @param string $skype
+	* @param string $error
 	* @return void
 	*/
-	public function setSkype($skype){
-		$this->skype=$skype;
+	public function setError($error){
+		$this->error=$error;
 	}
 
 
 	/**
-	* @param string $yahoo
+	* @param string $firstname
 	* @return void
 	*/
-	public function setYahoo($yahoo){
-		$this->yahoo=$yahoo;
+	public function setFirstname($firstname){
+		$this->firstname=$firstname;
 	}
 
 
 	/**
-	* @param string $aim
+	* @param string $icq
 	* @return void
 	*/
-	public function setAim($aim){
-		$this->aim=$aim;
+	public function setIcq($icq){
+		$this->icq=$icq;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $idnumber
+	* @return void
+	*/
+	public function setIdnumber($idnumber){
+		$this->idnumber=$idnumber;
+	}
+
+
+	/**
+	* @param string $institution
+	* @return void
+	*/
+	public function setInstitution($institution){
+		$this->institution=$institution;
+	}
+
+
+	/**
+	* @param string $lang
+	* @return void
+	*/
+	public function setLang($lang){
+		$this->lang=$lang;
+	}
+
+
+	/**
+	* @param string $lastip
+	* @return void
+	*/
+	public function setLastip($lastip){
+		$this->lastip=$lastip;
+	}
+
+
+	/**
+	* @param string $lastname
+	* @return void
+	*/
+	public function setLastname($lastname){
+		$this->lastname=$lastname;
+	}
+
+
+	/**
+	* @param int $mnethostid
+	* @return void
+	*/
+	public function setMnethostid($mnethostid){
+		$this->mnethostid=$mnethostid;
 	}
 
 
@@ -635,101 +680,20 @@ class userRecord {
 
 
 	/**
-	* @param string $institution
+	* @param int $policyagreed
 	* @return void
 	*/
-	public function setInstitution($institution){
-		$this->institution=$institution;
+	public function setPolicyagreed($policyagreed){
+		$this->policyagreed=$policyagreed;
 	}
 
 
 	/**
-	* @param string $department
+	* @param profileitemRecord[] $profile
 	* @return void
 	*/
-	public function setDepartment($department){
-		$this->department=$department;
-	}
-
-
-	/**
-	* @param string $address
-	* @return void
-	*/
-	public function setAddress($address){
-		$this->address=$address;
-	}
-
-
-	/**
-	* @param string $city
-	* @return void
-	*/
-	public function setCity($city){
-		$this->city=$city;
-	}
-
-
-	/**
-	* @param string $country
-	* @return void
-	*/
-	public function setCountry($country){
-		$this->country=$country;
-	}
-
-
-	/**
-	* @param string $lang
-	* @return void
-	*/
-	public function setLang($lang){
-		$this->lang=$lang;
-	}
-
-
-	/**
-	* @param int $timezone
-	* @return void
-	*/
-	public function setTimezone($timezone){
-		$this->timezone=$timezone;
-	}
-
-
-	/**
-	* @param int $mnethostid
-	* @return void
-	*/
-	public function setMnethostid($mnethostid){
-		$this->mnethostid=$mnethostid;
-	}
-
-
-	/**
-	* @param string $lastip
-	* @return void
-	*/
-	public function setLastip($lastip){
-		$this->lastip=$lastip;
-	}
-
-
-	/**
-	* @param string $theme
-	* @return void
-	*/
-	public function setTheme($theme){
-		$this->theme=$theme;
-	}
-
-
-	/**
-	* @param string $description
-	* @return void
-	*/
-	public function setDescription($description){
-		$this->description=$description;
+	public function setProfile($profile){
+		$this->profile=$profile;
 	}
 
 
@@ -743,11 +707,47 @@ class userRecord {
 
 
 	/**
-	* @param profileitemRecord[] $profile
+	* @param string $skype
 	* @return void
 	*/
-	public function setProfile($profile){
-		$this->profile=$profile;
+	public function setSkype($skype){
+		$this->skype=$skype;
+	}
+
+
+	/**
+	* @param string $theme
+	* @return void
+	*/
+	public function setTheme($theme){
+		$this->theme=$theme;
+	}
+
+
+	/**
+	* @param string $timezone
+	* @return void
+	*/
+	public function setTimezone($timezone){
+		$this->timezone=$timezone;
+	}
+
+
+	/**
+	* @param string $username
+	* @return void
+	*/
+	public function setUsername($username){
+		$this->username=$username;
+	}
+
+
+	/**
+	* @param string $yahoo
+	* @return void
+	*/
+	public function setYahoo($yahoo){
+		$this->yahoo=$yahoo;
 	}
 
 }

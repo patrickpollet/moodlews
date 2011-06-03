@@ -1,24 +1,22 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: UnEnrol students in a course
+/**test code for unenrol_students
 * @param int $client
 * @param string $sesskey
 * @param string $courseid
 * @param string $courseidfield
 * @param string[] $userids
-* @param string $useridfield
-* @return  enrolStudentsReturn
+* @param string $idfield
+* @return  enrolRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $userids=array();
 $res=$client->unenrol_students($lr->getClient(),$lr->getSessionKey(),'','',$userids,'');
 print_r($res);
-print($res->getStudents());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

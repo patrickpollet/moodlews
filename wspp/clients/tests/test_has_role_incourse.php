@@ -1,17 +1,16 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: check if user has a given role in a
-				given course
+/**test code for has_role_incourse
 * @param int $client
 * @param string $sesskey
-* @param string $iduser
-* @param string $iduserfield
-* @param string $idcourse
-* @param string $idcoursefield
-* @param int $idrole
+* @param string $userid
+* @param string $useridfield
+* @param string $courseid
+* @param string $courseidfield
+* @param int $roleid
 * @return  boolean
 */
 

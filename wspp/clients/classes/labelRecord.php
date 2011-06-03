@@ -8,11 +8,7 @@ class labelRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
-	/** 
-	* @var int
-	*/
-	public $id;
+	public $content;
 	/** 
 	* @var int
 	*/
@@ -20,11 +16,15 @@ class labelRecord {
 	/** 
 	* @var string
 	*/
-	public $name;
+	public $error;
+	/** 
+	* @var int
+	*/
+	public $id;
 	/** 
 	* @var string
 	*/
-	public $content;
+	public $name;
 	/** 
 	* @var int
 	*/
@@ -32,23 +32,39 @@ class labelRecord {
 
 	/**
 	* default constructor for class labelRecord
+	* @param string $content
+	* @param int $course
 	* @param string $error
 	* @param int $id
-	* @param int $course
 	* @param string $name
-	* @param string $content
 	* @param int $timemodified
 	* @return labelRecord
 	*/
-	 public function labelRecord($error='',$id=0,$course=0,$name='',$content='',$timemodified=0){
+	 public function labelRecord($content='',$course=0,$error='',$id=0,$name='',$timemodified=0){
+		 $this->content=$content   ;
+		 $this->course=$course   ;
 		 $this->error=$error   ;
 		 $this->id=$id   ;
-		 $this->course=$course   ;
 		 $this->name=$name   ;
-		 $this->content=$content   ;
 		 $this->timemodified=$timemodified   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return string
+	*/
+	public function getContent(){
+		 return $this->content;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCourse(){
+		 return $this->course;
+	}
+
 
 	/**
 	* @return string
@@ -67,26 +83,10 @@ class labelRecord {
 
 
 	/**
-	* @return int
-	*/
-	public function getCourse(){
-		 return $this->course;
-	}
-
-
-	/**
 	* @return string
 	*/
 	public function getName(){
 		 return $this->name;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getContent(){
-		 return $this->content;
 	}
 
 
@@ -98,6 +98,24 @@ class labelRecord {
 	}
 
 	/*set accessors */
+
+	/**
+	* @param string $content
+	* @return void
+	*/
+	public function setContent($content){
+		$this->content=$content;
+	}
+
+
+	/**
+	* @param int $course
+	* @return void
+	*/
+	public function setCourse($course){
+		$this->course=$course;
+	}
+
 
 	/**
 	* @param string $error
@@ -118,29 +136,11 @@ class labelRecord {
 
 
 	/**
-	* @param int $course
-	* @return void
-	*/
-	public function setCourse($course){
-		$this->course=$course;
-	}
-
-
-	/**
 	* @param string $name
 	* @return void
 	*/
 	public function setName($name){
 		$this->name=$name;
-	}
-
-
-	/**
-	* @param string $content
-	* @return void
-	*/
-	public function setContent($content){
-		$this->content=$content;
 	}
 
 

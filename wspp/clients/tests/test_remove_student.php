@@ -1,15 +1,15 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: remove a student in the course
+/**test code for remove_student
 * @param int $client
 * @param string $sesskey
-* @param string $value1
-* @param string $id1
-* @param string $value2
-* @param string $id2
+* @param string $courseid
+* @param string $courseidfield
+* @param string $userid
+* @param string $useridfield
 * @return  affectRecord
 */
 

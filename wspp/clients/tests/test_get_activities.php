@@ -1,25 +1,22 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get user most recent activities in
-				a Moodle course
+/**test code for get_activities
 * @param int $client
 * @param string $sesskey
-* @param string $iduser
-* @param string $iduserfield
-* @param string $idcourse
-* @param string $idcoursefield
-* @param int $idlimit
-* @return  getActivitiesReturn
+* @param string $userid
+* @param string $useridfield
+* @param string $courseid
+* @param string $courseidfield
+* @param int $limit
+* @return  activityRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_activities($lr->getClient(),$lr->getSessionKey(),'','','','',0);
 print_r($res);
-print($res->getActivities());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

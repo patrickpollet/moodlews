@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit Courses Information
+/**test code for edit_courses
 * @param int $client
 * @param string $sesskey
-* @param editCoursesInput $courses
-* @return  editCoursesOutput
+* @param courseDatum[] $courses
+* @return  courseRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$courses= new editCoursesInput();
-$courses->setCourses(array());
+$courses=array();
 $res=$client->edit_courses($lr->getClient(),$lr->getSessionKey(),$courses);
 print_r($res);
-print($res->getCourses());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

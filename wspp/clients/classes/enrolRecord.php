@@ -8,19 +8,19 @@ class enrolRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
-	/** 
-	* @var string
-	*/
-	public $userid;
-	/** 
-	* @var string
-	*/
 	public $course;
+	/** 
+	* @var string
+	*/
+	public $enrol;
+	/** 
+	* @var string
+	*/
+	public $error;
 	/** 
 	* @var int
 	*/
-	public $timestart;
+	public $timeaccess;
 	/** 
 	* @var int
 	*/
@@ -28,49 +28,33 @@ class enrolRecord {
 	/** 
 	* @var int
 	*/
-	public $timeaccess;
+	public $timestart;
 	/** 
 	* @var string
 	*/
-	public $enrol;
+	public $userid;
 
 	/**
 	* default constructor for class enrolRecord
-	* @param string $error
-	* @param string $userid
 	* @param string $course
-	* @param int $timestart
-	* @param int $timeend
-	* @param int $timeaccess
 	* @param string $enrol
+	* @param string $error
+	* @param int $timeaccess
+	* @param int $timeend
+	* @param int $timestart
+	* @param string $userid
 	* @return enrolRecord
 	*/
-	 public function enrolRecord($error='',$userid='',$course='',$timestart=0,$timeend=0,$timeaccess=0,$enrol=''){
-		 $this->error=$error   ;
-		 $this->userid=$userid   ;
+	 public function enrolRecord($course='',$enrol='',$error='',$timeaccess=0,$timeend=0,$timestart=0,$userid=''){
 		 $this->course=$course   ;
-		 $this->timestart=$timestart   ;
-		 $this->timeend=$timeend   ;
-		 $this->timeaccess=$timeaccess   ;
 		 $this->enrol=$enrol   ;
+		 $this->error=$error   ;
+		 $this->timeaccess=$timeaccess   ;
+		 $this->timeend=$timeend   ;
+		 $this->timestart=$timestart   ;
+		 $this->userid=$userid   ;
 	}
 	/* get accessors */
-
-	/**
-	* @return string
-	*/
-	public function getError(){
-		 return $this->error;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getUserid(){
-		 return $this->userid;
-	}
-
 
 	/**
 	* @return string
@@ -81,10 +65,26 @@ class enrolRecord {
 
 
 	/**
+	* @return string
+	*/
+	public function getEnrol(){
+		 return $this->enrol;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getError(){
+		 return $this->error;
+	}
+
+
+	/**
 	* @return int
 	*/
-	public function getTimestart(){
-		 return $this->timestart;
+	public function getTimeaccess(){
+		 return $this->timeaccess;
 	}
 
 
@@ -99,37 +99,19 @@ class enrolRecord {
 	/**
 	* @return int
 	*/
-	public function getTimeaccess(){
-		 return $this->timeaccess;
+	public function getTimestart(){
+		 return $this->timestart;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getEnrol(){
-		 return $this->enrol;
+	public function getUserid(){
+		 return $this->userid;
 	}
 
 	/*set accessors */
-
-	/**
-	* @param string $error
-	* @return void
-	*/
-	public function setError($error){
-		$this->error=$error;
-	}
-
-
-	/**
-	* @param string $userid
-	* @return void
-	*/
-	public function setUserid($userid){
-		$this->userid=$userid;
-	}
-
 
 	/**
 	* @param string $course
@@ -141,20 +123,20 @@ class enrolRecord {
 
 
 	/**
-	* @param int $timestart
+	* @param string $enrol
 	* @return void
 	*/
-	public function setTimestart($timestart){
-		$this->timestart=$timestart;
+	public function setEnrol($enrol){
+		$this->enrol=$enrol;
 	}
 
 
 	/**
-	* @param int $timeend
+	* @param string $error
 	* @return void
 	*/
-	public function setTimeend($timeend){
-		$this->timeend=$timeend;
+	public function setError($error){
+		$this->error=$error;
 	}
 
 
@@ -168,11 +150,29 @@ class enrolRecord {
 
 
 	/**
-	* @param string $enrol
+	* @param int $timeend
 	* @return void
 	*/
-	public function setEnrol($enrol){
-		$this->enrol=$enrol;
+	public function setTimeend($timeend){
+		$this->timeend=$timeend;
+	}
+
+
+	/**
+	* @param int $timestart
+	* @return void
+	*/
+	public function setTimestart($timestart){
+		$this->timestart=$timestart;
+	}
+
+
+	/**
+	* @param string $userid
+	* @return void
+	*/
+	public function setUserid($userid){
+		$this->userid=$userid;
 	}
 
 }

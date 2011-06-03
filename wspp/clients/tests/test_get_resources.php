@@ -1,22 +1,20 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get resources in courses
+/**test code for get_resources
 * @param int $client
 * @param string $sesskey
 * @param string[] $courseids
 * @param string $idfield
-* @return  getResourcesReturn
+* @return  resourceRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $courseids=array();
 $res=$client->get_resources($lr->getClient(),$lr->getSessionKey(),$courseids,'');
 print_r($res);
-print($res->getResources());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

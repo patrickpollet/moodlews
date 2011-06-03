@@ -1,52 +1,50 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add a course category
+/**test code for add_database
 * @param int $client
 * @param string $sesskey
-* @param databaseDatum $database
-* @return  editDatabasesOutput
+* @param databaseDatum $datum
+* @return  databaseRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$database= new databaseDatum();
-$database->setAction('');
-$database->setId(0);
-$database->setCourse(0);
-$database->setName('');
-$database->setIntro('');
-$database->setComments(0);
-$database->setTimeavailablefrom(0);
-$database->setTimeavailableto(0);
-$database->setTimeviewfrom(0);
-$database->setTimeviewto(0);
-$database->setRequiredentries(0);
-$database->setRequiredentriestoview(0);
-$database->setMaxentries(0);
-$database->setRessarticles(0);
-$database->setSingletemplate('');
-$database->setListtemplate('');
-$database->setListtemplateheader('');
-$database->setListtemplatefooter('');
-$database->setAddtemplatee('');
-$database->setRsstemplate('');
-$database->setRsstitletemplate('');
-$database->setCsstemplate('');
-$database->setJstemplate('');
-$database->setAsearchtemplate('');
-$database->setApproval(0);
-$database->setScale(0);
-$database->setAssessed(0);
-$database->setDefaultsort(0);
-$database->setDefaultsortdir(0);
-$database->setEditany(0);
-$database->setNotification(0);
-$res=$client->add_database($lr->getClient(),$lr->getSessionKey(),$database);
+$datum= new databaseDatum();
+$datum->setAction('');
+$datum->setAddtemplatee('');
+$datum->setApproval(0);
+$datum->setAsearchtemplate('');
+$datum->setAssessed(0);
+$datum->setComments(0);
+$datum->setCourse(0);
+$datum->setCsstemplate('');
+$datum->setDefaultsort(0);
+$datum->setDefaultsortdir(0);
+$datum->setEditany(0);
+$datum->setId(0);
+$datum->setIntro('');
+$datum->setJstemplate('');
+$datum->setListtemplate('');
+$datum->setListtemplatefooter('');
+$datum->setListtemplateheader('');
+$datum->setMaxentries(0);
+$datum->setName('');
+$datum->setNotification(0);
+$datum->setRequiredentries(0);
+$datum->setRequiredentriestoview(0);
+$datum->setRessarticles(0);
+$datum->setRsstemplate('');
+$datum->setRsstitletemplate('');
+$datum->setScale(0);
+$datum->setSingletemplate('');
+$datum->setTimeavailablefrom(0);
+$datum->setTimeavailableto(0);
+$datum->setTimeviewfrom(0);
+$datum->setTimeviewto(0);
+$res=$client->add_database($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getDatabases());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

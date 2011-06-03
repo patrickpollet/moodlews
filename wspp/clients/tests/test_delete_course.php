@@ -1,21 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add on course
+/**test code for delete_course
 * @param int $client
 * @param string $sesskey
-* @param string $value
-* @param string $id
-* @return  editCoursesOutput
+* @param string $courseid
+* @param string $courseidfield
+* @return  courseRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->delete_course($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
-print($res->getCourses());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

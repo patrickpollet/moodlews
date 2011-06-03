@@ -1,22 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Edit Assignment Information
+/**test code for edit_assignments
 * @param int $client
 * @param string $sesskey
-* @param editAssignmentsInput $assignments
-* @return  editAssignmentsOutput
+* @param assignmentDatum[] $assignments
+* @return  assignmentRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$assignments= new editAssignmentsInput();
-$assignments->setAssignments(array());
+$assignments=array();
 $res=$client->edit_assignments($lr->getClient(),$lr->getSessionKey(),$assignments);
 print_r($res);
-print($res->getAssignments());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

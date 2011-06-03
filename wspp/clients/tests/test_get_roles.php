@@ -1,19 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get All roles defined in Moodle
+/**test code for get_roles
 * @param int $client
 * @param string $sesskey
-* @return  getRolesReturn
+* @param string $roleid
+* @param string $idfield
+* @return  roleRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$res=$client->get_roles($lr->getClient(),$lr->getSessionKey());
+$res=$client->get_roles($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
-print($res->getRoles());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

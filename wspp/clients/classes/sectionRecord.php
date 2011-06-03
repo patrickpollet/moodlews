@@ -6,6 +6,10 @@
  */
 class sectionRecord {
 	/** 
+	* @var int
+	*/
+	public $course;
+	/** 
 	* @var string
 	*/
 	public $error;
@@ -13,10 +17,6 @@ class sectionRecord {
 	* @var int
 	*/
 	public $id;
-	/** 
-	* @var int
-	*/
-	public $course;
 	/** 
 	* @var int
 	*/
@@ -36,25 +36,33 @@ class sectionRecord {
 
 	/**
 	* default constructor for class sectionRecord
+	* @param int $course
 	* @param string $error
 	* @param int $id
-	* @param int $course
 	* @param int $section
 	* @param string $sequence
 	* @param string $summary
 	* @param int $visible
 	* @return sectionRecord
 	*/
-	 public function sectionRecord($error='',$id=0,$course=0,$section=0,$sequence='',$summary='',$visible=0){
+	 public function sectionRecord($course=0,$error='',$id=0,$section=0,$sequence='',$summary='',$visible=0){
+		 $this->course=$course   ;
 		 $this->error=$error   ;
 		 $this->id=$id   ;
-		 $this->course=$course   ;
 		 $this->section=$section   ;
 		 $this->sequence=$sequence   ;
 		 $this->summary=$summary   ;
 		 $this->visible=$visible   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return int
+	*/
+	public function getCourse(){
+		 return $this->course;
+	}
+
 
 	/**
 	* @return string
@@ -69,14 +77,6 @@ class sectionRecord {
 	*/
 	public function getId(){
 		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getCourse(){
-		 return $this->course;
 	}
 
 
@@ -114,6 +114,15 @@ class sectionRecord {
 	/*set accessors */
 
 	/**
+	* @param int $course
+	* @return void
+	*/
+	public function setCourse($course){
+		$this->course=$course;
+	}
+
+
+	/**
 	* @param string $error
 	* @return void
 	*/
@@ -128,15 +137,6 @@ class sectionRecord {
 	*/
 	public function setId($id){
 		$this->id=$id;
-	}
-
-
-	/**
-	* @param int $course
-	* @return void
-	*/
-	public function setCourse($course){
-		$this->course=$course;
 	}
 
 

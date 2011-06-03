@@ -1,54 +1,52 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add on course
+/**test code for update_user
 * @param int $client
 * @param string $sesskey
-* @param userDatum $user
-* @param string $idfield
-* @return  editUsersOutput
+* @param userDatum $datum
+* @param string $useridfield
+* @return  userRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$user= new userDatum();
-$user->setAction('');
-$user->setId(0);
-$user->setConfirmed(0);
-$user->setPolicyagreed(0);
-$user->setDeleted(0);
-$user->setUsername('');
-$user->setAuth('');
-$user->setPassword('');
-$user->setPasswordmd5('');
-$user->setIdnumber('');
-$user->setFirstname('');
-$user->setLastname('');
-$user->setEmail('');
-$user->setEmailstop(0);
-$user->setIcq('');
-$user->setSkype('');
-$user->setYahoo('');
-$user->setAim('');
-$user->setMsn('');
-$user->setPhone1('');
-$user->setPhone2('');
-$user->setInstitution('');
-$user->setDepartment('');
-$user->setAddress('');
-$user->setCity('');
-$user->setCountry('');
-$user->setLang('');
-$user->setTimezone(0);
-$user->setLastip('');
-$user->setTheme('');
-$user->setDescription('');
-$user->setMnethostid(0);
-$res=$client->update_user($lr->getClient(),$lr->getSessionKey(),$user,'');
+$datum= new userDatum();
+$datum->setAction('');
+$datum->setAddress('');
+$datum->setAim('');
+$datum->setAuth('');
+$datum->setCity('');
+$datum->setConfirmed(0);
+$datum->setCountry('');
+$datum->setDeleted(0);
+$datum->setDepartment('');
+$datum->setDescription('');
+$datum->setEmail('');
+$datum->setEmailstop(0);
+$datum->setFirstname('');
+$datum->setIcq('');
+$datum->setId(0);
+$datum->setIdnumber('');
+$datum->setInstitution('');
+$datum->setLang('');
+$datum->setLastip('');
+$datum->setLastname('');
+$datum->setMnethostid(0);
+$datum->setMsn('');
+$datum->setPassword('');
+$datum->setPasswordmd5('');
+$datum->setPhone1('');
+$datum->setPhone2('');
+$datum->setPolicyagreed(0);
+$datum->setSkype('');
+$datum->setTheme('');
+$datum->setTimezone('');
+$datum->setUsername('');
+$datum->setYahoo('');
+$res=$client->update_user($lr->getClient(),$lr->getSessionKey(),$datum,'');
 print_r($res);
-print($res->getUsers());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

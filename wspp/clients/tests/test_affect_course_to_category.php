@@ -1,9 +1,9 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Affect Course To Category
+/**test code for affect_course_to_category
 * @param int $client
 * @param string $sesskey
 * @param int $courseid

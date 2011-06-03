@@ -445,7 +445,7 @@ class MoodleWS {
   public function MoodleWS($wsdl = "http://localhost/moodle.195/wspp/wsdl_pp.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
-    };
+    }
     $this->client = new SoapClient($wsdl, $options);
   }
 
@@ -872,15 +872,19 @@ class MoodleWS {
    * @param int $client
    * @param string $sesskey
    * @param int $eventtype
-   * @param int $ownerid
+   * @param string $ownerid
+   * @param string $owneridfield
+   * @param int $datetimefrom
    * @return getEventsReturn
    */
-  public function get_events($client, $sesskey, $eventtype, $ownerid) {
+  public function get_events($client, $sesskey, $eventtype, $ownerid, $owneridfield, $datetimefrom) {
     $res= $this->client->__call('get_events', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
             new SoapParam($eventtype, 'eventtype'),
-            new SoapParam($ownerid, 'ownerid')
+            new SoapParam($ownerid, 'ownerid'),
+            new SoapParam($owneridfield, 'owneridfield'),
+            new SoapParam($datetimefrom, 'datetimefrom')
       ),
       array(
             'uri' => $this->uri ,

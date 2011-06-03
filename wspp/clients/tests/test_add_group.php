@@ -1,29 +1,27 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add on course
+/**test code for add_group
 * @param int $client
 * @param string $sesskey
-* @param groupDatum $group
-* @return  editGroupsOutput
+* @param groupDatum $datum
+* @return  groupRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$group= new groupDatum();
-$group->setAction('');
-$group->setId(0);
-$group->setCourseid(0);
-$group->setName('');
-$group->setDescription('');
-$group->setEnrolmentkey('');
-$group->setPicture(0);
-$group->setHidepicture(0);
-$res=$client->add_group($lr->getClient(),$lr->getSessionKey(),$group);
+$datum= new groupDatum();
+$datum->setAction('');
+$datum->setCourseid(0);
+$datum->setDescription('');
+$datum->setEnrolmentkey('');
+$datum->setHidepicture(0);
+$datum->setId(0);
+$datum->setName('');
+$datum->setPicture(0);
+$res=$client->add_group($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getGroups());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

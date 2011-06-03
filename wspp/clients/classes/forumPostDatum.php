@@ -8,31 +8,23 @@ class forumPostDatum {
 	/** 
 	* @var string
 	*/
-	public $subject;
+	public $message;
 	/** 
 	* @var string
 	*/
-	public $message;
+	public $subject;
 
 	/**
 	* default constructor for class forumPostDatum
-	* @param string $subject
 	* @param string $message
+	* @param string $subject
 	* @return forumPostDatum
 	*/
-	 public function forumPostDatum($subject='',$message=''){
-		 $this->subject=$subject   ;
+	 public function forumPostDatum($message='',$subject=''){
 		 $this->message=$message   ;
+		 $this->subject=$subject   ;
 	}
 	/* get accessors */
-
-	/**
-	* @return string
-	*/
-	public function getSubject(){
-		 return $this->subject;
-	}
-
 
 	/**
 	* @return string
@@ -41,16 +33,15 @@ class forumPostDatum {
 		 return $this->message;
 	}
 
-	/*set accessors */
 
 	/**
-	* @param string $subject
-	* @return void
+	* @return string
 	*/
-	public function setSubject($subject){
-		$this->subject=$subject;
+	public function getSubject(){
+		 return $this->subject;
 	}
 
+	/*set accessors */
 
 	/**
 	* @param string $message
@@ -58,6 +49,15 @@ class forumPostDatum {
 	*/
 	public function setMessage($message){
 		$this->message=$message;
+	}
+
+
+	/**
+	* @param string $subject
+	* @return void
+	*/
+	public function setSubject($subject){
+		$this->subject=$subject;
 	}
 
 }

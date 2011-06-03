@@ -1,15 +1,14 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: count users having a role in a
-				course
+/**test code for count_users_bycourse
 * @param int $client
 * @param string $sesskey
-* @param string $idcourse
+* @param string $courseid
 * @param string $idfield
-* @param int $idrole
+* @param int $roleid
 * @return  int
 */
 

@@ -12,11 +12,11 @@ class sectionDatum {
 	/** 
 	* @var int
 	*/
-	public $id;
+	public $course;
 	/** 
 	* @var int
 	*/
-	public $course;
+	public $id;
 	/** 
 	* @var int
 	*/
@@ -24,11 +24,11 @@ class sectionDatum {
 	/** 
 	* @var string
 	*/
-	public $summary;
+	public $sequence;
 	/** 
 	* @var string
 	*/
-	public $sequence;
+	public $summary;
 	/** 
 	* @var int
 	*/
@@ -37,21 +37,21 @@ class sectionDatum {
 	/**
 	* default constructor for class sectionDatum
 	* @param string $action
-	* @param int $id
 	* @param int $course
+	* @param int $id
 	* @param int $section
-	* @param string $summary
 	* @param string $sequence
+	* @param string $summary
 	* @param int $visible
 	* @return sectionDatum
 	*/
-	 public function sectionDatum($action='',$id=0,$course=0,$section=0,$summary='',$sequence='',$visible=0){
+	 public function sectionDatum($action='',$course=0,$id=0,$section=0,$sequence='',$summary='',$visible=0){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
 		 $this->course=$course   ;
+		 $this->id=$id   ;
 		 $this->section=$section   ;
-		 $this->summary=$summary   ;
 		 $this->sequence=$sequence   ;
+		 $this->summary=$summary   ;
 		 $this->visible=$visible   ;
 	}
 	/* get accessors */
@@ -67,16 +67,16 @@ class sectionDatum {
 	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
+	public function getCourse(){
+		 return $this->course;
 	}
 
 
 	/**
 	* @return int
 	*/
-	public function getCourse(){
-		 return $this->course;
+	public function getId(){
+		 return $this->id;
 	}
 
 
@@ -91,16 +91,16 @@ class sectionDatum {
 	/**
 	* @return string
 	*/
-	public function getSummary(){
-		 return $this->summary;
+	public function getSequence(){
+		 return $this->sequence;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getSequence(){
-		 return $this->sequence;
+	public function getSummary(){
+		 return $this->summary;
 	}
 
 
@@ -123,20 +123,20 @@ class sectionDatum {
 
 
 	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
 	* @param int $course
 	* @return void
 	*/
 	public function setCourse($course){
 		$this->course=$course;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
 	}
 
 
@@ -150,20 +150,20 @@ class sectionDatum {
 
 
 	/**
-	* @param string $summary
-	* @return void
-	*/
-	public function setSummary($summary){
-		$this->summary=$summary;
-	}
-
-
-	/**
 	* @param string $sequence
 	* @return void
 	*/
 	public function setSequence($sequence){
 		$this->sequence=$sequence;
+	}
+
+
+	/**
+	* @param string $summary
+	* @return void
+	*/
+	public function setSummary($summary){
+		$this->summary=$summary;
 	}
 
 

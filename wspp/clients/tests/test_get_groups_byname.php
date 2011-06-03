@@ -1,21 +1,19 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get Course Information
+/**test code for get_groups_byname
 * @param int $client
 * @param string $sesskey
-* @param string $info
+* @param string $groupname
 * @param int $courseid
-* @return  getGroupsReturn
+* @return  groupRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_groups_byname($lr->getClient(),$lr->getSessionKey(),'',0);
 print_r($res);
-print($res->getGroups());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

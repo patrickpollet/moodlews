@@ -12,15 +12,7 @@ class groupDatum {
 	/** 
 	* @var int
 	*/
-	public $id;
-	/** 
-	* @var int
-	*/
 	public $courseid;
-	/** 
-	* @var string
-	*/
-	public $name;
 	/** 
 	* @var string
 	*/
@@ -32,33 +24,41 @@ class groupDatum {
 	/** 
 	* @var int
 	*/
-	public $picture;
+	public $hidepicture;
 	/** 
 	* @var int
 	*/
-	public $hidepicture;
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $name;
+	/** 
+	* @var int
+	*/
+	public $picture;
 
 	/**
 	* default constructor for class groupDatum
 	* @param string $action
-	* @param int $id
 	* @param int $courseid
-	* @param string $name
 	* @param string $description
 	* @param string $enrolmentkey
-	* @param int $picture
 	* @param int $hidepicture
+	* @param int $id
+	* @param string $name
+	* @param int $picture
 	* @return groupDatum
 	*/
-	 public function groupDatum($action='',$id=0,$courseid=0,$name='',$description='',$enrolmentkey='',$picture=0,$hidepicture=0){
+	 public function groupDatum($action='',$courseid=0,$description='',$enrolmentkey='',$hidepicture=0,$id=0,$name='',$picture=0){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
 		 $this->courseid=$courseid   ;
-		 $this->name=$name   ;
 		 $this->description=$description   ;
 		 $this->enrolmentkey=$enrolmentkey   ;
-		 $this->picture=$picture   ;
 		 $this->hidepicture=$hidepicture   ;
+		 $this->id=$id   ;
+		 $this->name=$name   ;
+		 $this->picture=$picture   ;
 	}
 	/* get accessors */
 
@@ -73,24 +73,8 @@ class groupDatum {
 	/**
 	* @return int
 	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getCourseid(){
 		 return $this->courseid;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getName(){
-		 return $this->name;
 	}
 
 
@@ -113,16 +97,32 @@ class groupDatum {
 	/**
 	* @return int
 	*/
-	public function getPicture(){
-		 return $this->picture;
+	public function getHidepicture(){
+		 return $this->hidepicture;
 	}
 
 
 	/**
 	* @return int
 	*/
-	public function getHidepicture(){
-		 return $this->hidepicture;
+	public function getId(){
+		 return $this->id;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getName(){
+		 return $this->name;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getPicture(){
+		 return $this->picture;
 	}
 
 	/*set accessors */
@@ -137,29 +137,11 @@ class groupDatum {
 
 
 	/**
-	* @param int $id
-	* @return void
-	*/
-	public function setId($id){
-		$this->id=$id;
-	}
-
-
-	/**
 	* @param int $courseid
 	* @return void
 	*/
 	public function setCourseid($courseid){
 		$this->courseid=$courseid;
-	}
-
-
-	/**
-	* @param string $name
-	* @return void
-	*/
-	public function setName($name){
-		$this->name=$name;
 	}
 
 
@@ -182,20 +164,38 @@ class groupDatum {
 
 
 	/**
-	* @param int $picture
-	* @return void
-	*/
-	public function setPicture($picture){
-		$this->picture=$picture;
-	}
-
-
-	/**
 	* @param int $hidepicture
 	* @return void
 	*/
 	public function setHidepicture($hidepicture){
 		$this->hidepicture=$hidepicture;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $name
+	* @return void
+	*/
+	public function setName($name){
+		$this->name=$name;
+	}
+
+
+	/**
+	* @param int $picture
+	* @return void
+	*/
+	public function setPicture($picture){
+		$this->picture=$picture;
 	}
 
 }

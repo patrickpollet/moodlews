@@ -1,31 +1,31 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: export all data of a quiz
+/**test code for get_quiz
 * @param int $client
 * @param string $sesskey
 * @param int $quizid
-* @param string $quizformat
+* @param string $format
 * @return  quizRecord
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_quiz($lr->getClient(),$lr->getSessionKey(),0,'');
 print_r($res);
+print($res->getCourse());
+print($res->getData());
 print($res->getError());
 print($res->getId());
-print($res->getCourse());
-print($res->getName());
 print($res->getIntro());
-print($res->getTimeopen());
-print($res->getTimeclose());
-print($res->getShufflequestions());
-print($res->getShuffleanswers());
+print($res->getName());
 print($res->getQuestions());
+print($res->getShuffleanswers());
+print($res->getShufflequestions());
+print($res->getTimeclose());
 print($res->getTimelimit());
-print($res->getData());
+print($res->getTimeopen());
 
 $client->logout($lr->getClient(),$lr->getSessionKey());
 

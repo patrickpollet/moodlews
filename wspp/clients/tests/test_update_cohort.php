@@ -1,29 +1,27 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add on course
+/**test code for update_cohort
 * @param int $client
 * @param string $sesskey
-* @param cohortDatum $cohort
+* @param cohortDatum $datum
 * @param string $idfield
-* @return  editCohortsOutput
+* @return  cohortRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$cohort= new cohortDatum();
-$cohort->setAction('');
-$cohort->setId(0);
-$cohort->setCategoryid(0);
-$cohort->setName('');
-$cohort->setDescription('');
-$cohort->setComponent('');
-$cohort->setIdnumber('');
-$res=$client->update_cohort($lr->getClient(),$lr->getSessionKey(),$cohort,'');
+$datum= new cohortDatum();
+$datum->setAction('');
+$datum->setCategoryid(0);
+$datum->setComponent('');
+$datum->setDescription('');
+$datum->setId(0);
+$datum->setIdnumber('');
+$datum->setName('');
+$res=$client->update_cohort($lr->getClient(),$lr->getSessionKey(),$datum,'');
 print_r($res);
-print($res->getCohorts());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

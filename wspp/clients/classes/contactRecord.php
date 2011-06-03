@@ -130,7 +130,7 @@ class contactRecord {
 	*/
 	public $theme;
 	/** 
-	* @var int
+	* @var string
 	*/
 	public $timezone;
 	/** 
@@ -175,12 +175,12 @@ class contactRecord {
 	* @param int $role
 	* @param string $skype
 	* @param string $theme
-	* @param int $timezone
+	* @param string $timezone
 	* @param string $username
 	* @param string $yahoo
 	* @return contactRecord
 	*/
-	 public function contactRecord($address='',$aim='',$auth='',$city='',$confirmed=0,$country='',$deleted=0,$department='',$description='',$email='',$emailstop=0,$error='',$firstname='',$icq='',$id=0,$idnumber='',$institution='',$lang='',$lastip='',$lastname='',$messagecount=0,$mnethostid=0,$msn='',$online=0,$phone1='',$phone2='',$policyagreed=0,$profile=array(),$role=0,$skype='',$theme='',$timezone=0,$username='',$yahoo=''){
+	 public function contactRecord($address='',$aim='',$auth='',$city='',$confirmed=0,$country='',$deleted=0,$department='',$description='',$email='',$emailstop=0,$error='',$firstname='',$icq='',$id=0,$idnumber='',$institution='',$lang='',$lastip='',$lastname='',$messagecount=0,$mnethostid=0,$msn='',$online=0,$phone1='',$phone2='',$policyagreed=0,$profile=array(),$role=0,$skype='',$theme='',$timezone='',$username='',$yahoo=''){
 		 $this->address=$address   ;
 		 $this->aim=$aim   ;
 		 $this->auth=$auth   ;
@@ -467,7 +467,7 @@ class contactRecord {
 
 
 	/**
-	* @return int
+	* @return string
 	*/
 	public function getTimezone(){
 		 return $this->timezone;
@@ -771,7 +771,7 @@ class contactRecord {
 
 
 	/**
-	* @param int $timezone
+	* @param string $timezone
 	* @return void
 	*/
 	public function setTimezone($timezone){

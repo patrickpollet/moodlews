@@ -1,23 +1,20 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get last changes to a Moodle s
-				course
+/**test code for get_last_changes
 * @param int $client
 * @param string $sesskey
 * @param string $courseid
 * @param string $idfield
 * @param int $limit
-* @return  getLastChangesReturn
+* @return  changeRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_last_changes($lr->getClient(),$lr->getSessionKey(),'','',0);
 print_r($res);
-print($res->getChanges());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

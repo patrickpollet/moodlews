@@ -12,11 +12,7 @@ class categoryDatum {
 	/** 
 	* @var int
 	*/
-	public $id;
-	/** 
-	* @var string
-	*/
-	public $name;
+	public $depth;
 	/** 
 	* @var string
 	*/
@@ -24,53 +20,57 @@ class categoryDatum {
 	/** 
 	* @var int
 	*/
+	public $id;
+	/** 
+	* @var string
+	*/
+	public $name;
+	/** 
+	* @var int
+	*/
 	public $parent;
-	/** 
-	* @var int
-	*/
-	public $sortorder;
-	/** 
-	* @var int
-	*/
-	public $visible;
-	/** 
-	* @var int
-	*/
-	public $depth;
 	/** 
 	* @var string
 	*/
 	public $path;
 	/** 
+	* @var int
+	*/
+	public $sortorder;
+	/** 
 	* @var string
 	*/
 	public $theme;
+	/** 
+	* @var int
+	*/
+	public $visible;
 
 	/**
 	* default constructor for class categoryDatum
 	* @param string $action
+	* @param int $depth
+	* @param string $description
 	* @param int $id
 	* @param string $name
-	* @param string $description
 	* @param int $parent
-	* @param int $sortorder
-	* @param int $visible
-	* @param int $depth
 	* @param string $path
+	* @param int $sortorder
 	* @param string $theme
+	* @param int $visible
 	* @return categoryDatum
 	*/
-	 public function categoryDatum($action='',$id=0,$name='',$description='',$parent=0,$sortorder=0,$visible=0,$depth=0,$path='',$theme=''){
+	 public function categoryDatum($action='',$depth=0,$description='',$id=0,$name='',$parent=0,$path='',$sortorder=0,$theme='',$visible=0){
 		 $this->action=$action   ;
+		 $this->depth=$depth   ;
+		 $this->description=$description   ;
 		 $this->id=$id   ;
 		 $this->name=$name   ;
-		 $this->description=$description   ;
 		 $this->parent=$parent   ;
-		 $this->sortorder=$sortorder   ;
-		 $this->visible=$visible   ;
-		 $this->depth=$depth   ;
 		 $this->path=$path   ;
+		 $this->sortorder=$sortorder   ;
 		 $this->theme=$theme   ;
+		 $this->visible=$visible   ;
 	}
 	/* get accessors */
 
@@ -79,6 +79,22 @@ class categoryDatum {
 	*/
 	public function getAction(){
 		 return $this->action;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getDepth(){
+		 return $this->depth;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getDescription(){
+		 return $this->description;
 	}
 
 
@@ -99,42 +115,10 @@ class categoryDatum {
 
 
 	/**
-	* @return string
-	*/
-	public function getDescription(){
-		 return $this->description;
-	}
-
-
-	/**
 	* @return int
 	*/
 	public function getParent(){
 		 return $this->parent;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getSortorder(){
-		 return $this->sortorder;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getVisible(){
-		 return $this->visible;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getDepth(){
-		 return $this->depth;
 	}
 
 
@@ -147,10 +131,26 @@ class categoryDatum {
 
 
 	/**
+	* @return int
+	*/
+	public function getSortorder(){
+		 return $this->sortorder;
+	}
+
+
+	/**
 	* @return string
 	*/
 	public function getTheme(){
 		 return $this->theme;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getVisible(){
+		 return $this->visible;
 	}
 
 	/*set accessors */
@@ -161,6 +161,24 @@ class categoryDatum {
 	*/
 	public function setAction($action){
 		$this->action=$action;
+	}
+
+
+	/**
+	* @param int $depth
+	* @return void
+	*/
+	public function setDepth($depth){
+		$this->depth=$depth;
+	}
+
+
+	/**
+	* @param string $description
+	* @return void
+	*/
+	public function setDescription($description){
+		$this->description=$description;
 	}
 
 
@@ -183,47 +201,11 @@ class categoryDatum {
 
 
 	/**
-	* @param string $description
-	* @return void
-	*/
-	public function setDescription($description){
-		$this->description=$description;
-	}
-
-
-	/**
 	* @param int $parent
 	* @return void
 	*/
 	public function setParent($parent){
 		$this->parent=$parent;
-	}
-
-
-	/**
-	* @param int $sortorder
-	* @return void
-	*/
-	public function setSortorder($sortorder){
-		$this->sortorder=$sortorder;
-	}
-
-
-	/**
-	* @param int $visible
-	* @return void
-	*/
-	public function setVisible($visible){
-		$this->visible=$visible;
-	}
-
-
-	/**
-	* @param int $depth
-	* @return void
-	*/
-	public function setDepth($depth){
-		$this->depth=$depth;
 	}
 
 
@@ -237,11 +219,29 @@ class categoryDatum {
 
 
 	/**
+	* @param int $sortorder
+	* @return void
+	*/
+	public function setSortorder($sortorder){
+		$this->sortorder=$sortorder;
+	}
+
+
+	/**
 	* @param string $theme
 	* @return void
 	*/
 	public function setTheme($theme){
 		$this->theme=$theme;
+	}
+
+
+	/**
+	* @param int $visible
+	* @return void
+	*/
+	public function setVisible($visible){
+		$this->visible=$visible;
 	}
 
 }

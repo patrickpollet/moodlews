@@ -1,9 +1,9 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get a resource file by it instance id
+/**test code for get_resourcefile_byid
 * @param int $client
 * @param string $sesskey
 * @param int $resourceid
@@ -13,11 +13,11 @@ require_once ('../auth.php');
 $lr=$client->login(LOGIN,PASSWORD);
 $res=$client->get_resourcefile_byid($lr->getClient(),$lr->getSessionKey(),0);
 print_r($res);
-print($res->getFileurl());
+print($res->getFilecontent());
 print($res->getFilename());
 print($res->getFilepath());
 print($res->getFilesize());
-print($res->getFilecontent());
+print($res->getFileurl());
 
 $client->logout($lr->getClient(),$lr->getSessionKey());
 

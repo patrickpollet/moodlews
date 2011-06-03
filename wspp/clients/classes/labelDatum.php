@@ -10,37 +10,37 @@ class labelDatum {
 	*/
 	public $action;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $id;
+	public $content;
 	/** 
 	* @var int
 	*/
 	public $course;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $name;
+	public $id;
 	/** 
 	* @var string
 	*/
-	public $content;
+	public $name;
 
 	/**
 	* default constructor for class labelDatum
 	* @param string $action
-	* @param int $id
-	* @param int $course
-	* @param string $name
 	* @param string $content
+	* @param int $course
+	* @param int $id
+	* @param string $name
 	* @return labelDatum
 	*/
-	 public function labelDatum($action='',$id=0,$course=0,$name='',$content=''){
+	 public function labelDatum($action='',$content='',$course=0,$id=0,$name=''){
 		 $this->action=$action   ;
-		 $this->id=$id   ;
-		 $this->course=$course   ;
-		 $this->name=$name   ;
 		 $this->content=$content   ;
+		 $this->course=$course   ;
+		 $this->id=$id   ;
+		 $this->name=$name   ;
 	}
 	/* get accessors */
 
@@ -53,10 +53,10 @@ class labelDatum {
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getId(){
-		 return $this->id;
+	public function getContent(){
+		 return $this->content;
 	}
 
 
@@ -69,18 +69,18 @@ class labelDatum {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getName(){
-		 return $this->name;
+	public function getId(){
+		 return $this->id;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getContent(){
-		 return $this->content;
+	public function getName(){
+		 return $this->name;
 	}
 
 	/*set accessors */
@@ -95,11 +95,11 @@ class labelDatum {
 
 
 	/**
-	* @param int $id
+	* @param string $content
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
+	public function setContent($content){
+		$this->content=$content;
 	}
 
 
@@ -113,20 +113,20 @@ class labelDatum {
 
 
 	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
 	* @param string $name
 	* @return void
 	*/
 	public function setName($name){
 		$this->name=$name;
-	}
-
-
-	/**
-	* @param string $content
-	* @return void
-	*/
-	public function setContent($content){
-		$this->content=$content;
 	}
 
 }

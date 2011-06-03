@@ -1,26 +1,24 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add a label
+/**test code for add_label
 * @param int $client
 * @param string $sesskey
-* @param labelDatum $label
-* @return  editLabelsOutput
+* @param labelDatum $datum
+* @return  labelRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$label= new labelDatum();
-$label->setAction('');
-$label->setId(0);
-$label->setCourse(0);
-$label->setName('');
-$label->setContent('');
-$res=$client->add_label($lr->getClient(),$lr->getSessionKey(),$label);
+$datum= new labelDatum();
+$datum->setAction('');
+$datum->setContent('');
+$datum->setCourse(0);
+$datum->setId(0);
+$datum->setName('');
+$res=$client->add_label($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getLabels());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

@@ -8,35 +8,23 @@ class activityRecord {
 	/** 
 	* @var string
 	*/
-	public $error;
-	/** 
-	* @var int
-	*/
-	public $id;
-	/** 
-	* @var int
-	*/
-	public $time;
-	/** 
-	* @var int
-	*/
-	public $userid;
+	public $DATE;
 	/** 
 	* @var string
 	*/
-	public $ip;
+	public $DCL;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $course;
+	public $DFA;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $module;
+	public $DLA;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $cmid;
+	public $DLL;
 	/** 
 	* @var string
 	*/
@@ -44,7 +32,39 @@ class activityRecord {
 	/** 
 	* @var string
 	*/
-	public $url;
+	public $auth;
+	/** 
+	* @var int
+	*/
+	public $cmid;
+	/** 
+	* @var int
+	*/
+	public $course;
+	/** 
+	* @var int
+	*/
+	public $currentlogin;
+	/** 
+	* @var string
+	*/
+	public $email;
+	/** 
+	* @var string
+	*/
+	public $error;
+	/** 
+	* @var int
+	*/
+	public $firstaccess;
+	/** 
+	* @var string
+	*/
+	public $firstname;
+	/** 
+	* @var int
+	*/
+	public $id;
 	/** 
 	* @var string
 	*/
@@ -52,27 +72,7 @@ class activityRecord {
 	/** 
 	* @var string
 	*/
-	public $DATE;
-	/** 
-	* @var string
-	*/
-	public $auth;
-	/** 
-	* @var string
-	*/
-	public $firstname;
-	/** 
-	* @var string
-	*/
-	public $lastname;
-	/** 
-	* @var string
-	*/
-	public $email;
-	/** 
-	* @var int
-	*/
-	public $firstaccess;
+	public $ip;
 	/** 
 	* @var int
 	*/
@@ -82,143 +82,119 @@ class activityRecord {
 	*/
 	public $lastlogin;
 	/** 
+	* @var string
+	*/
+	public $lastname;
+	/** 
 	* @var int
 	*/
-	public $currentlogin;
+	public $module;
+	/** 
+	* @var int
+	*/
+	public $time;
 	/** 
 	* @var string
 	*/
-	public $DLA;
+	public $url;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $DFA;
-	/** 
-	* @var string
-	*/
-	public $DLL;
-	/** 
-	* @var string
-	*/
-	public $DCL;
+	public $userid;
 
 	/**
 	* default constructor for class activityRecord
-	* @param string $error
-	* @param int $id
-	* @param int $time
-	* @param int $userid
-	* @param string $ip
-	* @param int $course
-	* @param int $module
-	* @param int $cmid
-	* @param string $action
-	* @param string $url
-	* @param string $info
 	* @param string $DATE
+	* @param string $DCL
+	* @param string $DFA
+	* @param string $DLA
+	* @param string $DLL
+	* @param string $action
 	* @param string $auth
-	* @param string $firstname
-	* @param string $lastname
+	* @param int $cmid
+	* @param int $course
+	* @param int $currentlogin
 	* @param string $email
+	* @param string $error
 	* @param int $firstaccess
+	* @param string $firstname
+	* @param int $id
+	* @param string $info
+	* @param string $ip
 	* @param int $lastaccess
 	* @param int $lastlogin
-	* @param int $currentlogin
-	* @param string $DLA
-	* @param string $DFA
-	* @param string $DLL
-	* @param string $DCL
+	* @param string $lastname
+	* @param int $module
+	* @param int $time
+	* @param string $url
+	* @param int $userid
 	* @return activityRecord
 	*/
-	 public function activityRecord($error='',$id=0,$time=0,$userid=0,$ip='',$course=0,$module=0,$cmid=0,$action='',$url='',$info='',$DATE='',$auth='',$firstname='',$lastname='',$email='',$firstaccess=0,$lastaccess=0,$lastlogin=0,$currentlogin=0,$DLA='',$DFA='',$DLL='',$DCL=''){
-		 $this->error=$error   ;
-		 $this->id=$id   ;
-		 $this->time=$time   ;
-		 $this->userid=$userid   ;
-		 $this->ip=$ip   ;
-		 $this->course=$course   ;
-		 $this->module=$module   ;
-		 $this->cmid=$cmid   ;
-		 $this->action=$action   ;
-		 $this->url=$url   ;
-		 $this->info=$info   ;
+	 public function activityRecord($DATE='',$DCL='',$DFA='',$DLA='',$DLL='',$action='',$auth='',$cmid=0,$course=0,$currentlogin=0,$email='',$error='',$firstaccess=0,$firstname='',$id=0,$info='',$ip='',$lastaccess=0,$lastlogin=0,$lastname='',$module=0,$time=0,$url='',$userid=0){
 		 $this->DATE=$DATE   ;
+		 $this->DCL=$DCL   ;
+		 $this->DFA=$DFA   ;
+		 $this->DLA=$DLA   ;
+		 $this->DLL=$DLL   ;
+		 $this->action=$action   ;
 		 $this->auth=$auth   ;
-		 $this->firstname=$firstname   ;
-		 $this->lastname=$lastname   ;
+		 $this->cmid=$cmid   ;
+		 $this->course=$course   ;
+		 $this->currentlogin=$currentlogin   ;
 		 $this->email=$email   ;
+		 $this->error=$error   ;
 		 $this->firstaccess=$firstaccess   ;
+		 $this->firstname=$firstname   ;
+		 $this->id=$id   ;
+		 $this->info=$info   ;
+		 $this->ip=$ip   ;
 		 $this->lastaccess=$lastaccess   ;
 		 $this->lastlogin=$lastlogin   ;
-		 $this->currentlogin=$currentlogin   ;
-		 $this->DLA=$DLA   ;
-		 $this->DFA=$DFA   ;
-		 $this->DLL=$DLL   ;
-		 $this->DCL=$DCL   ;
+		 $this->lastname=$lastname   ;
+		 $this->module=$module   ;
+		 $this->time=$time   ;
+		 $this->url=$url   ;
+		 $this->userid=$userid   ;
 	}
 	/* get accessors */
 
 	/**
 	* @return string
 	*/
-	public function getError(){
-		 return $this->error;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getId(){
-		 return $this->id;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getTime(){
-		 return $this->time;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getUserid(){
-		 return $this->userid;
+	public function getDATE(){
+		 return $this->DATE;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getIp(){
-		 return $this->ip;
+	public function getDCL(){
+		 return $this->DCL;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getCourse(){
-		 return $this->course;
+	public function getDFA(){
+		 return $this->DFA;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getModule(){
-		 return $this->module;
+	public function getDLA(){
+		 return $this->DLA;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getCmid(){
-		 return $this->cmid;
+	public function getDLL(){
+		 return $this->DLL;
 	}
 
 
@@ -233,8 +209,72 @@ class activityRecord {
 	/**
 	* @return string
 	*/
-	public function getUrl(){
-		 return $this->url;
+	public function getAuth(){
+		 return $this->auth;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCmid(){
+		 return $this->cmid;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCourse(){
+		 return $this->course;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCurrentlogin(){
+		 return $this->currentlogin;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getEmail(){
+		 return $this->email;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getError(){
+		 return $this->error;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getFirstaccess(){
+		 return $this->firstaccess;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getFirstname(){
+		 return $this->firstname;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getId(){
+		 return $this->id;
 	}
 
 
@@ -249,48 +289,8 @@ class activityRecord {
 	/**
 	* @return string
 	*/
-	public function getDATE(){
-		 return $this->DATE;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getAuth(){
-		 return $this->auth;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getFirstname(){
-		 return $this->firstname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLastname(){
-		 return $this->lastname;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getEmail(){
-		 return $this->email;
-	}
-
-
-	/**
-	* @return int
-	*/
-	public function getFirstaccess(){
-		 return $this->firstaccess;
+	public function getIp(){
+		 return $this->ip;
 	}
 
 
@@ -311,115 +311,88 @@ class activityRecord {
 
 
 	/**
+	* @return string
+	*/
+	public function getLastname(){
+		 return $this->lastname;
+	}
+
+
+	/**
 	* @return int
 	*/
-	public function getCurrentlogin(){
-		 return $this->currentlogin;
+	public function getModule(){
+		 return $this->module;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getTime(){
+		 return $this->time;
 	}
 
 
 	/**
 	* @return string
 	*/
-	public function getDLA(){
-		 return $this->DLA;
+	public function getUrl(){
+		 return $this->url;
 	}
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getDFA(){
-		 return $this->DFA;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getDLL(){
-		 return $this->DLL;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getDCL(){
-		 return $this->DCL;
+	public function getUserid(){
+		 return $this->userid;
 	}
 
 	/*set accessors */
 
 	/**
-	* @param string $error
+	* @param string $DATE
 	* @return void
 	*/
-	public function setError($error){
-		$this->error=$error;
+	public function setDATE($DATE){
+		$this->DATE=$DATE;
 	}
 
 
 	/**
-	* @param int $id
+	* @param string $DCL
 	* @return void
 	*/
-	public function setId($id){
-		$this->id=$id;
+	public function setDCL($DCL){
+		$this->DCL=$DCL;
 	}
 
 
 	/**
-	* @param int $time
+	* @param string $DFA
 	* @return void
 	*/
-	public function setTime($time){
-		$this->time=$time;
+	public function setDFA($DFA){
+		$this->DFA=$DFA;
 	}
 
 
 	/**
-	* @param int $userid
+	* @param string $DLA
 	* @return void
 	*/
-	public function setUserid($userid){
-		$this->userid=$userid;
+	public function setDLA($DLA){
+		$this->DLA=$DLA;
 	}
 
 
 	/**
-	* @param string $ip
+	* @param string $DLL
 	* @return void
 	*/
-	public function setIp($ip){
-		$this->ip=$ip;
-	}
-
-
-	/**
-	* @param int $course
-	* @return void
-	*/
-	public function setCourse($course){
-		$this->course=$course;
-	}
-
-
-	/**
-	* @param int $module
-	* @return void
-	*/
-	public function setModule($module){
-		$this->module=$module;
-	}
-
-
-	/**
-	* @param int $cmid
-	* @return void
-	*/
-	public function setCmid($cmid){
-		$this->cmid=$cmid;
+	public function setDLL($DLL){
+		$this->DLL=$DLL;
 	}
 
 
@@ -433,33 +406,6 @@ class activityRecord {
 
 
 	/**
-	* @param string $url
-	* @return void
-	*/
-	public function setUrl($url){
-		$this->url=$url;
-	}
-
-
-	/**
-	* @param string $info
-	* @return void
-	*/
-	public function setInfo($info){
-		$this->info=$info;
-	}
-
-
-	/**
-	* @param string $DATE
-	* @return void
-	*/
-	public function setDATE($DATE){
-		$this->DATE=$DATE;
-	}
-
-
-	/**
 	* @param string $auth
 	* @return void
 	*/
@@ -469,20 +415,29 @@ class activityRecord {
 
 
 	/**
-	* @param string $firstname
+	* @param int $cmid
 	* @return void
 	*/
-	public function setFirstname($firstname){
-		$this->firstname=$firstname;
+	public function setCmid($cmid){
+		$this->cmid=$cmid;
 	}
 
 
 	/**
-	* @param string $lastname
+	* @param int $course
 	* @return void
 	*/
-	public function setLastname($lastname){
-		$this->lastname=$lastname;
+	public function setCourse($course){
+		$this->course=$course;
+	}
+
+
+	/**
+	* @param int $currentlogin
+	* @return void
+	*/
+	public function setCurrentlogin($currentlogin){
+		$this->currentlogin=$currentlogin;
 	}
 
 
@@ -496,11 +451,56 @@ class activityRecord {
 
 
 	/**
+	* @param string $error
+	* @return void
+	*/
+	public function setError($error){
+		$this->error=$error;
+	}
+
+
+	/**
 	* @param int $firstaccess
 	* @return void
 	*/
 	public function setFirstaccess($firstaccess){
 		$this->firstaccess=$firstaccess;
+	}
+
+
+	/**
+	* @param string $firstname
+	* @return void
+	*/
+	public function setFirstname($firstname){
+		$this->firstname=$firstname;
+	}
+
+
+	/**
+	* @param int $id
+	* @return void
+	*/
+	public function setId($id){
+		$this->id=$id;
+	}
+
+
+	/**
+	* @param string $info
+	* @return void
+	*/
+	public function setInfo($info){
+		$this->info=$info;
+	}
+
+
+	/**
+	* @param string $ip
+	* @return void
+	*/
+	public function setIp($ip){
+		$this->ip=$ip;
 	}
 
 
@@ -523,47 +523,47 @@ class activityRecord {
 
 
 	/**
-	* @param int $currentlogin
+	* @param string $lastname
 	* @return void
 	*/
-	public function setCurrentlogin($currentlogin){
-		$this->currentlogin=$currentlogin;
+	public function setLastname($lastname){
+		$this->lastname=$lastname;
 	}
 
 
 	/**
-	* @param string $DLA
+	* @param int $module
 	* @return void
 	*/
-	public function setDLA($DLA){
-		$this->DLA=$DLA;
+	public function setModule($module){
+		$this->module=$module;
 	}
 
 
 	/**
-	* @param string $DFA
+	* @param int $time
 	* @return void
 	*/
-	public function setDFA($DFA){
-		$this->DFA=$DFA;
+	public function setTime($time){
+		$this->time=$time;
 	}
 
 
 	/**
-	* @param string $DLL
+	* @param string $url
 	* @return void
 	*/
-	public function setDLL($DLL){
-		$this->DLL=$DLL;
+	public function setUrl($url){
+		$this->url=$url;
 	}
 
 
 	/**
-	* @param string $DCL
+	* @param int $userid
 	* @return void
 	*/
-	public function setDCL($DCL){
-		$this->DCL=$DCL;
+	public function setUserid($userid){
+		$this->userid=$userid;
 	}
 
 }

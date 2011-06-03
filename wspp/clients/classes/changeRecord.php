@@ -8,6 +8,18 @@ class changeRecord {
 	/** 
 	* @var string
 	*/
+	public $author;
+	/** 
+	* @var int
+	*/
+	public $courseid;
+	/** 
+	* @var string
+	*/
+	public $date;
+	/** 
+	* @var string
+	*/
 	public $error;
 	/** 
 	* @var int
@@ -16,23 +28,19 @@ class changeRecord {
 	/** 
 	* @var int
 	*/
-	public $courseid;
-	/** 
-	* @var int
-	*/
 	public $instance;
 	/** 
-	* @var int
+	* @var string
 	*/
-	public $resid;
+	public $link;
 	/** 
 	* @var string
 	*/
 	public $name;
 	/** 
-	* @var string
+	* @var int
 	*/
-	public $date;
+	public $resid;
 	/** 
 	* @var int
 	*/
@@ -44,14 +52,6 @@ class changeRecord {
 	/** 
 	* @var string
 	*/
-	public $author;
-	/** 
-	* @var string
-	*/
-	public $link;
-	/** 
-	* @var string
-	*/
 	public $url;
 	/** 
 	* @var int
@@ -60,37 +60,61 @@ class changeRecord {
 
 	/**
 	* default constructor for class changeRecord
+	* @param string $author
+	* @param int $courseid
+	* @param string $date
 	* @param string $error
 	* @param int $id
-	* @param int $courseid
 	* @param int $instance
-	* @param int $resid
+	* @param string $link
 	* @param string $name
-	* @param string $date
+	* @param int $resid
 	* @param int $timestamp
 	* @param string $type
-	* @param string $author
-	* @param string $link
 	* @param string $url
 	* @param int $visible
 	* @return changeRecord
 	*/
-	 public function changeRecord($error='',$id=0,$courseid=0,$instance=0,$resid=0,$name='',$date='',$timestamp=0,$type='',$author='',$link='',$url='',$visible=0){
+	 public function changeRecord($author='',$courseid=0,$date='',$error='',$id=0,$instance=0,$link='',$name='',$resid=0,$timestamp=0,$type='',$url='',$visible=0){
+		 $this->author=$author   ;
+		 $this->courseid=$courseid   ;
+		 $this->date=$date   ;
 		 $this->error=$error   ;
 		 $this->id=$id   ;
-		 $this->courseid=$courseid   ;
 		 $this->instance=$instance   ;
-		 $this->resid=$resid   ;
+		 $this->link=$link   ;
 		 $this->name=$name   ;
-		 $this->date=$date   ;
+		 $this->resid=$resid   ;
 		 $this->timestamp=$timestamp   ;
 		 $this->type=$type   ;
-		 $this->author=$author   ;
-		 $this->link=$link   ;
 		 $this->url=$url   ;
 		 $this->visible=$visible   ;
 	}
 	/* get accessors */
+
+	/**
+	* @return string
+	*/
+	public function getAuthor(){
+		 return $this->author;
+	}
+
+
+	/**
+	* @return int
+	*/
+	public function getCourseid(){
+		 return $this->courseid;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getDate(){
+		 return $this->date;
+	}
+
 
 	/**
 	* @return string
@@ -111,24 +135,16 @@ class changeRecord {
 	/**
 	* @return int
 	*/
-	public function getCourseid(){
-		 return $this->courseid;
-	}
-
-
-	/**
-	* @return int
-	*/
 	public function getInstance(){
 		 return $this->instance;
 	}
 
 
 	/**
-	* @return int
+	* @return string
 	*/
-	public function getResid(){
-		 return $this->resid;
+	public function getLink(){
+		 return $this->link;
 	}
 
 
@@ -141,10 +157,10 @@ class changeRecord {
 
 
 	/**
-	* @return string
+	* @return int
 	*/
-	public function getDate(){
-		 return $this->date;
+	public function getResid(){
+		 return $this->resid;
 	}
 
 
@@ -167,22 +183,6 @@ class changeRecord {
 	/**
 	* @return string
 	*/
-	public function getAuthor(){
-		 return $this->author;
-	}
-
-
-	/**
-	* @return string
-	*/
-	public function getLink(){
-		 return $this->link;
-	}
-
-
-	/**
-	* @return string
-	*/
 	public function getUrl(){
 		 return $this->url;
 	}
@@ -196,6 +196,33 @@ class changeRecord {
 	}
 
 	/*set accessors */
+
+	/**
+	* @param string $author
+	* @return void
+	*/
+	public function setAuthor($author){
+		$this->author=$author;
+	}
+
+
+	/**
+	* @param int $courseid
+	* @return void
+	*/
+	public function setCourseid($courseid){
+		$this->courseid=$courseid;
+	}
+
+
+	/**
+	* @param string $date
+	* @return void
+	*/
+	public function setDate($date){
+		$this->date=$date;
+	}
+
 
 	/**
 	* @param string $error
@@ -216,15 +243,6 @@ class changeRecord {
 
 
 	/**
-	* @param int $courseid
-	* @return void
-	*/
-	public function setCourseid($courseid){
-		$this->courseid=$courseid;
-	}
-
-
-	/**
 	* @param int $instance
 	* @return void
 	*/
@@ -234,11 +252,11 @@ class changeRecord {
 
 
 	/**
-	* @param int $resid
+	* @param string $link
 	* @return void
 	*/
-	public function setResid($resid){
-		$this->resid=$resid;
+	public function setLink($link){
+		$this->link=$link;
 	}
 
 
@@ -252,11 +270,11 @@ class changeRecord {
 
 
 	/**
-	* @param string $date
+	* @param int $resid
 	* @return void
 	*/
-	public function setDate($date){
-		$this->date=$date;
+	public function setResid($resid){
+		$this->resid=$resid;
 	}
 
 
@@ -275,24 +293,6 @@ class changeRecord {
 	*/
 	public function setType($type){
 		$this->type=$type;
-	}
-
-
-	/**
-	* @param string $author
-	* @return void
-	*/
-	public function setAuthor($author){
-		$this->author=$author;
-	}
-
-
-	/**
-	* @param string $link
-	* @return void
-	*/
-	public function setLink($link){
-		$this->link=$link;
 	}
 
 

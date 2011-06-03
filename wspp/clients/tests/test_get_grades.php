@@ -1,24 +1,22 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: Get User Grades in some courses
+/**test code for get_grades
 * @param int $client
 * @param string $sesskey
 * @param string $userid
-* @param string $userfield
+* @param string $useridfield
 * @param string[] $courseids
 * @param string $courseidfield
-* @return  getGradesReturn
+* @return  gradeRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
 $courseids=array();
 $res=$client->get_grades($lr->getClient(),$lr->getSessionKey(),'','',$courseids,'');
 print_r($res);
-print($res->getGrades());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>

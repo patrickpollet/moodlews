@@ -1,35 +1,33 @@
 <?php
-require_once ('../classes/MoodleWS.php');
+require_once ('../classes/mdl_soapserver.php');
 
-$client=new MoodleWS();
+$client=new mdl_soapserver();
 require_once ('../auth.php');
-/**test code for MoodleWS: add a course category
+/**test code for add_pagewiki
 * @param int $client
 * @param string $sesskey
-* @param pageWikiDatum $page
-* @return  editPagesWikiOutput
+* @param pageWikiDatum $datum
+* @return  pageWikiRecord[]
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$page= new pageWikiDatum();
-$page->setAction('');
-$page->setId(0);
-$page->setPagename('');
-$page->setVersion(0);
-$page->setFlags(0);
-$page->setContent('');
-$page->setAuthor('');
-$page->setUserid(0);
-$page->setCreated(0);
-$page->setLastmodified(0);
-$page->setRefs('');
-$page->setMeta('');
-$page->setHits(0);
-$page->setWiki(0);
-$res=$client->add_pagewiki($lr->getClient(),$lr->getSessionKey(),$page);
+$datum= new pageWikiDatum();
+$datum->setAction('');
+$datum->setAuthor('');
+$datum->setContent('');
+$datum->setCreated(0);
+$datum->setFlags(0);
+$datum->setHits(0);
+$datum->setId(0);
+$datum->setLastmodified(0);
+$datum->setMeta('');
+$datum->setPagename('');
+$datum->setRefs('');
+$datum->setUserid(0);
+$datum->setVersion(0);
+$datum->setWiki(0);
+$res=$client->add_pagewiki($lr->getClient(),$lr->getSessionKey(),$datum);
 print_r($res);
-print($res->getPagesWiki());
-
 $client->logout($lr->getClient(),$lr->getSessionKey());
 
 ?>
