@@ -1010,7 +1010,9 @@ EOC;
 	function __call (\$methodname, \$params) {
 		\$params['wsformatout']=\$this->formatout;
 		\$params['wsfunction']=\$methodname;
-		\$this->postdata = http_build_query(\$params);
+          // forcing the separator to '&' is capital with some php version that use otherwise &amp;
+        // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
+		\$this->postdata = http_build_query(\$params,'','&');
 
 		//print_r(\$this);
 		\$ch = curl_init();
@@ -1019,9 +1021,8 @@ EOC;
 		curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt(\$ch, CURLOPT_POST, true);
-        // forcing the separator to '&' is capital with some php version that use otherwise &amp;
-        // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
-		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata,'','&');
+
+		curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$this->postdata);
 		if (\$this->verbose)
 			curl_setopt(\$ch, CURLOPT_VERBOSE, true);
 		\$this->requestResponse = curl_exec(\$ch);
