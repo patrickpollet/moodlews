@@ -63,7 +63,7 @@ class oktech_assignmentDatum extends external_single_structure {
 	 'var5'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -101,7 +101,7 @@ class oktech_assignmentRecord extends external_single_structure {
 	 'var5'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -122,7 +122,7 @@ class oktech_categoryDatum extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -151,7 +151,7 @@ class oktech_categoryRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -169,7 +169,7 @@ class oktech_cohortDatum extends external_single_structure {
 	 'name'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -196,7 +196,7 @@ class oktech_cohortRecord extends external_single_structure {
 	 'timemodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -236,7 +236,7 @@ class oktech_courseDatum extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -287,7 +287,7 @@ class oktech_courseRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -329,7 +329,7 @@ class oktech_databaseDatum extends external_single_structure {
 	 'timeviewto'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -378,7 +378,7 @@ class oktech_databaseRecord extends external_single_structure {
 	 'timeviewto'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -408,7 +408,7 @@ class oktech_forumDatum extends external_single_structure {
 	 'warnafter'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -445,7 +445,7 @@ class oktech_forumRecord extends external_single_structure {
 	 'warnafter'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -464,7 +464,7 @@ class oktech_groupDatum extends external_single_structure {
 	 'picture'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -492,7 +492,7 @@ class oktech_groupRecord extends external_single_structure {
 	 'timemodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -508,7 +508,7 @@ class oktech_groupingDatum extends external_single_structure {
 	 'name'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -534,7 +534,7 @@ class oktech_groupingRecord extends external_single_structure {
 	 'timemodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -550,7 +550,7 @@ class oktech_labelDatum extends external_single_structure {
 	 'name'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -574,7 +574,7 @@ class oktech_labelRecord extends external_single_structure {
 	 'timemodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -587,7 +587,7 @@ class oktech_affectRecord extends external_single_structure {
 	 'status'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:boolean
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -612,7 +612,7 @@ class oktech_pageWikiDatum extends external_single_structure {
 	 'wiki'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -644,7 +644,7 @@ class oktech_pageWikiRecord extends external_single_structure {
 	 'wiki'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -662,7 +662,7 @@ class oktech_sectionDatum extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -687,7 +687,7 @@ class oktech_sectionRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -730,7 +730,7 @@ class oktech_userDatum extends external_single_structure {
 	 'yahoo'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -780,7 +780,7 @@ class oktech_userRecord extends external_single_structure {
 	 'yahoo'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -800,7 +800,7 @@ class oktech_profileitemRecord extends external_single_structure {
 	 'value'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -828,7 +828,7 @@ class oktech_wikiDatum extends external_single_structure {
 	 'wtype'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -863,7 +863,7 @@ class oktech_wikiRecord extends external_single_structure {
 	 'wtype'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -895,7 +895,7 @@ class oktech_enrolRecord extends external_single_structure {
 	 'userid'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -992,7 +992,7 @@ class oktech_forumDiscussionDatum extends external_single_structure {
 	 'subject'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1024,7 +1024,7 @@ class oktech_forumDiscussionRecord extends external_single_structure {
 	 'usermodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1056,7 +1056,7 @@ class oktech_forumPostRecord extends external_single_structure {
 	 'userid'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1076,7 +1076,7 @@ class oktech_forumPostDatum extends external_single_structure {
 	 'subject'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1118,7 +1118,7 @@ class oktech_activityRecord extends external_single_structure {
 	 'userid'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1148,7 +1148,7 @@ class oktech_quizRecord extends external_single_structure {
 	 'timeopen'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1186,7 +1186,7 @@ class oktech_assignmentSubmissionRecord extends external_single_structure {
 	 'userusername'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1209,7 +1209,7 @@ class oktech_fileRecord extends external_single_structure {
 	 'fileurl'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1239,7 +1239,7 @@ class oktech_gradeRecord extends external_single_structure {
 	 'str_grade'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1275,7 +1275,7 @@ class oktech_eventRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1319,7 +1319,7 @@ class oktech_resourceRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1357,7 +1357,7 @@ class oktech_changeRecord extends external_single_structure {
 	 'visible'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1409,7 +1409,7 @@ class oktech_contactRecord extends external_single_structure {
 	 'yahoo'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1445,7 +1445,7 @@ class oktech_messageRecord extends external_single_structure {
 	 'useridto'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1474,7 +1474,7 @@ class oktech_gradeItemRecord extends external_single_structure {
 	 'usermodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1498,7 +1498,7 @@ class oktech_roleRecord extends external_single_structure {
 	 'sortorder'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
@@ -1511,7 +1511,7 @@ class oktech_loginReturn extends external_single_structure {
 	 'sessionkey'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string
 
 	    );
-		parent::__construct($content, $desc,VALUE_OPTIONAL,null);
+		parent::__construct($content, $desc,VALUE_REQUIRED,null);
 	}
 }
 
