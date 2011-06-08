@@ -100,10 +100,12 @@ $wsdl = $_SERVER['argv'][1];
 if (isset ($_SERVER['argv'][2])) {
 	$server = $_SERVER['argv'][2] == "server";
 	$useNuSOAP = $_SERVER['argv'][2] == "nusoap";
+    $withLogin=$_SERVER['argv'][2] != "nologin";
 } else {
-	$server = $useNuSOAP = false;
+	$server = $useNuSOAP =false;
+    $withLogin=true; // OK tech specific
 }
-
+print ($withLogin);
 try {
 	$client = new SoapClient($wsdl);
 } catch (SoapFault $e) {
@@ -956,14 +958,15 @@ function gen_test_code($function, $withLogin = true) {
 }
 
 function gen_test_code_in_separate_file($function, $dir = 'tests') {
-	global $service;
+	global $service,$withLogin;
 	if (!is_dir($dir))
 		mkdir($dir);
 
 	$testcode = "require_once ('../classes/" . $service['class'] . ".php');\n\n\$client=new " . $service['class'] . "();\n";
-	$testcode .= "require_once ('../auth.php');\n";
+    if ($withLogin)
+	   $testcode .= "require_once ('../auth.php');\n";
 	if ($function['name'] != 'login' && $function['name'] != 'logout')
-		$testcode .= gen_test_code($function, true);
+		$testcode .= gen_test_code($function, $withLogin);
 	else
 		$testcode .= gen_test_code($function, false);
 	print "Writing $dir/test_" . $function['name'] . ".php...";
