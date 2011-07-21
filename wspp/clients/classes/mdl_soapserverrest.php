@@ -220,9 +220,9 @@ class mdl_soapserverrest {
 		 * @param string[] $options  Soap Client options array (see PHP5 documentation)
 		 * @return mdl_soapserverrest
 		 */
-  public function mdl_soapserverrest($serviceurl = "http://prope.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
+  public function mdl_soapserverrest($serviceurl = "http://cipcnet.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
      $this->serviceurl=$serviceurl;
-      $this->verbose=! empty($options['trace']);
+      $this->verbose=1; //! empty($options['trace']);
  		if (!empty($options['formatout']))
      			$this->setFormatout($options['formatout']);
   }
@@ -247,7 +247,7 @@ class mdl_soapserverrest {
 	function __call ($methodname, $params) {
 		$params['wsformatout']=$this->formatout;
 		$params['wsfunction']=$methodname;
-		$this->postdata = http_build_query($params);
+		$this->postdata = http_build_query($params,'','&');
 
 		//print_r($this);
 		$ch = curl_init();
@@ -258,7 +258,7 @@ class mdl_soapserverrest {
 		curl_setopt($ch, CURLOPT_POST, true);
         // forcing the separator to '&' is capital with some php version that use otherwise &amp;
         // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postdata,'','&');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postdata);
 		if ($this->verbose)
 			curl_setopt($ch, CURLOPT_VERBOSE, true);
 		$this->requestResponse = curl_exec($ch);

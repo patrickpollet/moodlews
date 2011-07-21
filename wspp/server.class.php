@@ -286,6 +286,7 @@ class server {
 
         $user = false;
 
+        /**
         //revision 1.6.1 try to use a custom auth plugin
         if (!exists_auth_plugin("webservice") || !is_enabled_auth("webservice")) {
             $this->debug_output('internal ');
@@ -305,6 +306,34 @@ class server {
             }
             $this->debug_output('return of a_u_l' . print_r($user, true));
         }
+        **/
+          /*
+           * rev july 2011
+           * previously if webservice auth was enabled, no user with another auth method could login
+           * this blocked smartphone clients
+           * now we check the auth method associated with the user trying to get in
+           */
+         if ($knownuser->auth !=='webservice') {
+            $this->debug_output('internal ');
+            /// also make sure internal_authentication is used  (a limitation to fix ...)
+            if (!is_internal_auth($knownuser->auth)) {  // no CAS nor shibooleth
+                return $this->error(get_string('ws_invaliduser', 'local_wspp'));
+            }
+            // regular manual/ldap/database  authentification
+            $user = authenticate_user_login(addslashes($username), $password);
+            $this->debug_output('return of a_u_l' . print_r($user, true));
+
+        } else {
+            if (exists_auth_plugin("webservice") &&is_enabled_auth("webservice")) {
+               $this->debug_output('auth plugin');
+                $auth = get_auth_plugin("webservice");
+                if ($auth->user_login_webservice($username, $password)) {
+                    $user = $knownuser;
+                }
+            }
+            $this->debug_output('return of a_u_l' . print_r($user, true));
+        }
+
 
         if (($user === false) || ($user && $user->id == 0) || isguestuser($user)) {
             return $this->error(get_string('ws_invaliduser', 'local_wspp'));
@@ -4441,7 +4470,9 @@ EOSS;
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
         }
-        return ws_forum_get_discussions($cm, $limit);
+        $ret= ws_forum_get_discussions($cm, $limit);
+  $this->debug_output(print_r($ret,true));
+return $ret;
 
     }
 
