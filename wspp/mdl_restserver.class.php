@@ -67,11 +67,11 @@ class mdl_restserver extends mdl_baseserver {
         	case 'xml':
             	$xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
             	$xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
-            	//$xml .= '<MESSAGE>'.htmlentities($info, ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
-                $xml .= '<MESSAGE>'.$info.'</MESSAGE>'."\n";
+                $xml .= '<MESSAGE>'.htmlspecialchars($info, ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
+                //$xml .= '<MESSAGE>'.$info.'</MESSAGE>'."\n";
             	if (debugging() and isset($ex->debuginfo)) {
-                	//$xml .= '<DEBUGINFO>'.htmlentities($debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
-                    $xml .= '<DEBUGINFO>'.$debuginfo.'</DEBUGINFO>'."\n";
+                	$xml .= '<DEBUGINFO>'.htmlspecialchars($debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+                    //$xml .= '<DEBUGINFO>'.$debuginfo.'</DEBUGINFO>'."\n";
             	}
             	$xml .= '</EXCEPTION>'."\n";
                 break;
