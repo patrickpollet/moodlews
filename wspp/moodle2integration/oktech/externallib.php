@@ -1313,7 +1313,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  count_activities_returns() {
-    	return new oktech_count_activitiesResponse('',VALUE_REQUIRED,false);
+    	return new oktech_count_activitiesResponse(PARAM_INT,VALUE_REQUIRED,false);
     }
     
 
@@ -1356,7 +1356,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  count_users_bycourse_returns() {
-    	return new oktech_count_users_bycourseResponse('',VALUE_REQUIRED,false);
+    	return new oktech_count_users_bycourseResponse(PARAM_INT,VALUE_REQUIRED,false);
     }
     
 
@@ -4074,9 +4074,11 @@ class oktech_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_my_id_parameters() {
+
     	$content=array(
-    	      	
+
     	);
+         pp_error_log('appel de get_my_id_parameters',$content);
     	return new external_function_parameters($content,'');
     }
     
@@ -4100,7 +4102,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  get_my_id_returns() {
-    	return new oktech_get_my_idResponse('',VALUE_REQUIRED,false);
+    	return new oktech_get_my_idResponse(PARAM_INT,VALUE_REQUIRED,false);
     }
     
 
@@ -4229,7 +4231,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  get_primaryrole_incourse_returns() {
-    	return new oktech_get_primaryrole_incourseResponse('',VALUE_REQUIRED,false);
+    	return new oktech_get_primaryrole_incourseResponse(PARAM_INT,VALUE_REQUIRED,false);
     }
     
 
@@ -4961,7 +4963,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  get_version_returns() {
-    	return new oktech_get_versionResponse('',VALUE_REQUIRED,false);
+    	return new oktech_get_versionResponse(PARAM_INT,VALUE_REQUIRED,false);
     }
     
 
@@ -5011,7 +5013,7 @@ class oktech_external extends external_api {
      * @return external_description
      */
     public static function  has_role_incourse_returns() {
-    	return new oktech_has_role_incourseResponse('True if Ok , False otherwise.',VALUE_REQUIRED,false);
+    	return new oktech_has_role_incourseResponse(PARAM_BOOL,VALUE_REQUIRED,false);
     }
     
 

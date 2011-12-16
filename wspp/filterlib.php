@@ -647,7 +647,7 @@ function filter_contact ($client, $user) {
     }
     // time which a user is counting as being active since
     $timefrom = time()-$timetoshowusers;
-    $user->online=$user->lastaccess >= $timefrom;
+    $user->online=$user->lastaccess >= $timefrom?1:0;
     return $user;
 
 }

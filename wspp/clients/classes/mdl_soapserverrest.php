@@ -220,7 +220,7 @@ class mdl_soapserverrest {
 		 * @param string[] $options  Soap Client options array (see PHP5 documentation)
 		 * @return mdl_soapserverrest
 		 */
-  public function mdl_soapserverrest($serviceurl = "http://cipcnet.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
+  public function mdl_soapserverrest($serviceurl = "http://prope.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
      $this->serviceurl=$serviceurl;
       $this->verbose=! empty($options['trace']);
  		if (!empty($options['formatout']))
