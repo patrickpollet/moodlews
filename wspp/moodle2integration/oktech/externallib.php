@@ -4078,7 +4078,7 @@ class oktech_external extends external_api {
     	$content=array(
 
     	);
-         pp_error_log('appel de get_my_id_parameters',$content);
+         //pp_error_log('appel de get_my_id_parameters',$content);
     	return new external_function_parameters($content,'');
     }
     
