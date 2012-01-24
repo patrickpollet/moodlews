@@ -3,6 +3,8 @@
       // translation file for Ok Tech WebServices (wspp) version 1.7
       // thanks to   "Stephen C. Scherer" <sscherer4@cox.net>
 
+$string['pluginname'] = 'OK Tech Webservices';
+
 $string['webservices'] = 'OK Tech Webservices ( aka wspp)';
 
 $string['ws_disable']='Disable Web Service';
