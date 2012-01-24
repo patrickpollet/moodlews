@@ -843,6 +843,7 @@ abstract class mdl_baseserver extends server {
      * @return int
      */
       public function get_my_id($client, $sesskey) {
+
          return  $this->send($this->to_primitive(parent :: get_my_id($client, $sesskey)));
       }
 
