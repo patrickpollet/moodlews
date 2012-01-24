@@ -2,6 +2,8 @@
       // wspp.php -
       // translation file for Ok Tech WebServices (wspp) version 1.6
 
+$string['pluginname'] = 'OK Tech Webservices';
+
 $string['webservices'] = 'OK Tech Webservices (aka wspp)';
 
 $string['ws_disable']='Désactiver le Web Service';
