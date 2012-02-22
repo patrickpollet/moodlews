@@ -979,6 +979,7 @@ class server {
 
             $res = ws_get_my_courses($uid, $sort, $extrafields);
         }
+$this->debug_output("courses of $uid =".print_r($res,true));
         if ($res) {
             //rev 1.6 return primary role for each course
             foreach ($res as $id => $value)
@@ -1694,6 +1695,7 @@ EOS;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return -1; //invalid Moodle's ID
         }
+        $this->debug_output("get_my_id ".print_r($USER,true));
         return (int) $USER->id; //cast to int required for proper json encoding
     }
 

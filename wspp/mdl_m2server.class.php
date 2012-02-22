@@ -75,9 +75,9 @@ class mdl_m2server extends mdl_baseserver {
     	
             	$xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
             	$xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
-            	$xml .= '<MESSAGE>'.htmlspecialchars($info, ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
+            	$xml .= '<MESSAGE>'.htmlentities($info, ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
             	if (debugging() and isset($ex->debuginfo)) {
-                	$xml .= '<DEBUGINFO>'.htmlspecialchars($debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+                	$xml .= '<DEBUGINFO>'.htmlentities($debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
             	}
             	$xml .= '</EXCEPTION>'."\n";
         

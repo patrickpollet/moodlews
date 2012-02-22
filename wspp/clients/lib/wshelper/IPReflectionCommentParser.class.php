@@ -52,7 +52,8 @@ class IPReflectionCommentParser{
 		$this->fullDescriptionDone = false;
 
 		//split lines
-		$lines = split("\n", $this->comment);
+		//$lines = split("\n", $this->comment);  depreacted as of PHP 5.3 
+		$lines = explode("\n", $this->comment);
 
 		//check lines for description or tags
 		foreach ($lines as $line) {

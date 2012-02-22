@@ -843,7 +843,6 @@ abstract class mdl_baseserver extends server {
      * @return int
      */
       public function get_my_id($client, $sesskey) {
-
          return  $this->send($this->to_primitive(parent :: get_my_id($client, $sesskey)));
       }
 
@@ -939,7 +938,8 @@ abstract class mdl_baseserver extends server {
         if (!empty ($te->error)) // cancel any errors if no teachers found
             $te = array ();
         $role = ws_get_record('role', 'shortname', 'teacher');
-        $net = parent :: get_users_bycourse($client, $sesskey, $idcourse, $idfield, $role->id);
+	// fixed by OF : idcourde != courseid
+        $net = parent :: get_users_bycourse($client, $sesskey, $courseid, $idfield, $role->id);
         if (!empty ($net->error)) // cancel any errors if no non editing teachers found
             $net = array ();
         return $this->send($this->to_array(array_merge($te, $net), 'users', 'userRecord', get_string('noteachers', 'local_wspp')));
