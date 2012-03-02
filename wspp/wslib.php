@@ -595,6 +595,9 @@ function ws_checkcourserecord(& $course, $newcourse) {
  */
 
 function ws_add_mod_to_section($modid, $modtype, $section, $groupmode = 0, $visible = 1) {
+    
+    global $CFG;
+    
 	if (!$module = ws_get_record("modules", "name", $modtype)) {
 		return get_string('ws_moduletypeunknown', 'local_wspp', $modtype);
 	}
@@ -615,6 +618,8 @@ function ws_add_mod_to_section($modid, $modtype, $section, $groupmode = 0, $visi
 	$course_module->section = $section->id;
 	$course_module->groupmode = $groupmode;
 	$course_module->visible = $visible;
+	// needed in Moodle 2.x, not in 1.9x 
+	require_once ($CFG->dirroot.'/course/lib.php');
 	if (!$course_module_id = add_course_module($course_module)) {
 		$a->course = $section->course;
 		return get_string('ws_erroraddingmoduletocourse', 'local_wspp', $a);
