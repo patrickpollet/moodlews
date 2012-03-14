@@ -632,6 +632,8 @@ function ws_add_mod_to_section($modid, $modtype, $section, $groupmode = 0, $visi
 		$a->section = $section->id;
 		return get_string('ws_erroraddingmoduletosection', 'local_wspp', $a);
 	}
+	 if ($CFG->wspp_using_moodle20)
+		rebuild_course_cache($section->course);
 	return "";
 }
 
