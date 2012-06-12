@@ -929,7 +929,8 @@ class server {
     */
     function has_role_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $roleid) {
         $tmp = server :: get_primaryrole_incourse($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield);
-        return ($tmp <= $roleid);
+        // june 2012 see https://github.com/patrickpollet/moodlews/issues/4 
+        return ($tmp>0 && $tmp <= $roleid);
     }
 
     /**
