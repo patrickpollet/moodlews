@@ -2415,7 +2415,7 @@ EOSS;
 
                         //GROS PB avec le record rempli de 0 !!!!
                         foreach ($course as $key => $value) {
-                            if (empty ($value))
+                            if (!is_int($value) && empty ($value))
                                 unset ($course-> $key);
                         }
                         // in Moodle 2.0 update_course returns nothing !
