@@ -1,7 +1,7 @@
 <?php
 /**
  * mdl_soapserverrest class file
- *
+ * 
  * @author    Patrick Pollet :<patrick.pollet@insa-lyon.fr>
  * @copyright (c) P.Pollet 2007 under GPL
  * @package   MoodleWS
@@ -197,9 +197,9 @@ require_once 'loginReturn.php';
  * mdl_soapserverrest class
 		* the two attributes are made public for debugging purpose
 		* i.e. accessing $client->client->__getLast* methods
- *
- *
- *
+ * 
+ *  
+ * 
  * @author    Patrick Pollet :<patrick.pollet@insa-lyon.fr>
  * @copyright (c) P.Pollet 2007 under GPL
  * @package   MoodleWS
@@ -220,7 +220,7 @@ class mdl_soapserverrest {
 		 * @param string[] $options  Soap Client options array (see PHP5 documentation)
 		 * @return mdl_soapserverrest
 		 */
-  public function mdl_soapserverrest($serviceurl = "http://prope.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
+  public function mdl_soapserverrest($serviceurl = "http://localhost/moodle24/wspp/service_pp2.php", $options = array()) {
      $this->serviceurl=$serviceurl;
       $this->verbose=! empty($options['trace']);
  		if (!empty($options['formatout']))
@@ -242,12 +242,12 @@ class mdl_soapserverrest {
 
 
 	/**
-	 * @param string
+	 * @param string 
 	 */
 	function __call ($methodname, $params) {
 		$params['wsformatout']=$this->formatout;
 		$params['wsfunction']=$methodname;
-        // forcing the separator to '&' is capital with some php version that use otherwise &amp;
+          // forcing the separator to '&' is capital with some php version that use otherwise &amp;
         // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
 		$this->postdata = http_build_query($params,'','&');
 
@@ -302,7 +302,7 @@ class mdl_soapserverrest {
 
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -319,7 +319,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -336,7 +336,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -353,7 +353,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -370,7 +370,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -387,7 +387,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -404,7 +404,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -421,7 +421,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -438,7 +438,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -455,7 +455,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -478,7 +478,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -495,7 +495,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -512,7 +512,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -535,7 +535,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -558,7 +558,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -575,7 +575,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -592,7 +592,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -613,7 +613,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -632,7 +632,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -651,7 +651,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -672,7 +672,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -691,7 +691,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -710,7 +710,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -729,7 +729,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -748,7 +748,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -767,7 +767,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -786,7 +786,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -805,7 +805,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -826,7 +826,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -845,7 +845,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -868,7 +868,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -891,7 +891,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -914,7 +914,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -939,7 +939,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -960,7 +960,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -979,7 +979,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -998,7 +998,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1017,7 +1017,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1036,7 +1036,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1055,7 +1055,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1072,7 +1072,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1089,7 +1089,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1106,7 +1106,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1123,7 +1123,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1140,7 +1140,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1157,7 +1157,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1174,7 +1174,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1191,7 +1191,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1208,7 +1208,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1225,7 +1225,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1242,7 +1242,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1259,7 +1259,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1282,9 +1282,9 @@ class mdl_soapserverrest {
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return void
    */
   public function exception_handler() {
@@ -1293,7 +1293,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1312,7 +1312,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1331,7 +1331,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1356,7 +1356,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1375,7 +1375,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1394,7 +1394,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1413,7 +1413,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1432,7 +1432,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1451,7 +1451,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1470,7 +1470,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1489,7 +1489,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1508,7 +1508,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1527,7 +1527,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1546,7 +1546,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1571,9 +1571,9 @@ class mdl_soapserverrest {
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return boolean[]
    */
   public function get_boolean_array() {
@@ -1582,7 +1582,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1601,7 +1601,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1618,7 +1618,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1635,7 +1635,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1652,7 +1652,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1669,7 +1669,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1688,7 +1688,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1705,7 +1705,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1724,7 +1724,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1741,7 +1741,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1758,7 +1758,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1777,7 +1777,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1796,7 +1796,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1813,7 +1813,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1830,7 +1830,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1853,7 +1853,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param float $n
    * @return float[]
@@ -1866,7 +1866,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1885,7 +1885,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1904,7 +1904,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1927,7 +1927,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1944,7 +1944,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1963,7 +1963,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1980,7 +1980,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1999,7 +1999,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2018,7 +2018,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2037,7 +2037,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2056,7 +2056,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2075,7 +2075,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2096,7 +2096,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $n
    * @return int[]
@@ -2109,7 +2109,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2130,7 +2130,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2149,7 +2149,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2168,7 +2168,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2191,7 +2191,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2214,7 +2214,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2231,7 +2231,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2250,7 +2250,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2269,7 +2269,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2288,7 +2288,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2307,7 +2307,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2330,7 +2330,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2349,7 +2349,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2364,7 +2364,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2383,7 +2383,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2400,7 +2400,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2423,7 +2423,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2442,7 +2442,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2459,7 +2459,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2478,7 +2478,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2495,7 +2495,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2512,7 +2512,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2531,7 +2531,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2550,9 +2550,9 @@ class mdl_soapserverrest {
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return string[]
    */
   public function get_string_array() {
@@ -2561,7 +2561,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2580,7 +2580,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2599,7 +2599,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2618,7 +2618,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2635,7 +2635,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2652,7 +2652,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2669,7 +2669,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2688,7 +2688,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2707,7 +2707,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2728,7 +2728,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2747,7 +2747,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2762,7 +2762,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2787,7 +2787,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param string $username
    * @param string $password
@@ -2802,7 +2802,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2817,7 +2817,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2838,7 +2838,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2857,7 +2857,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2880,7 +2880,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2903,7 +2903,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2926,7 +2926,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2945,7 +2945,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2966,7 +2966,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2985,7 +2985,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3008,7 +3008,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3031,7 +3031,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3052,7 +3052,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3075,7 +3075,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3094,7 +3094,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3113,7 +3113,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3132,7 +3132,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3151,7 +3151,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3170,7 +3170,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey

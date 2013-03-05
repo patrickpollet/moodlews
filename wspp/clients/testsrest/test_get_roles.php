@@ -12,7 +12,6 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-print_r($lr);
 $res=$client->get_roles($lr->getClient(),$lr->getSessionKey(),'','');
 print_r($res);
 $client->logout($lr->getClient(),$lr->getSessionKey());
