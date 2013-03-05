@@ -333,9 +333,9 @@ function ws_get_primaryrole_incourse($course, $userid) {
 	global $CFG;
 	$context = get_context_instance(CONTEXT_COURSE, $course->id);
 	$context_cat = get_context_instance(CONTEXT_COURSECAT, $course->category);
-	if (has_capability('moodle/category:manage', $context_cat, $userid))
+	if ($context_cat && has_capability('moodle/category:manage', $context_cat, $userid))
 		return 1;
-	if (has_capability('moodle/course:create', $context_cat, $userid))
+	if ($context_cat && has_capability('moodle/course:create', $context_cat, $userid))
 		return 2;
 	if (has_capability('moodle/course:update', $context, $userid))
 		return 3;

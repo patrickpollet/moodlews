@@ -229,15 +229,36 @@ class mdl_soapserver {
     $this->client = new SoapClient($wsdl, $options);
   }
 
+
+        
         private function castTo($className,$res){
-            if (class_exists($className)) {
+        	if (class_exists($className)) {
                 $aux= new $className();
+                // rev V2 don't get extra fields returned by WS
+                // and not anymore in our DB 
+                /* 
                 foreach ($res as $key=>$value)
                     $aux->$key=$value;
+                */
+                foreach ($aux as $key=>$tmp) 
+                    if (isset($res->$key))
+                        $aux->$key=$res->$key;
                 return $aux;
              } else
                 return $res;
         }
+        
+        private function castToArray ($className,$res) {
+           $aux=array();
+            if (! is_array($res))
+               $res=array($res);
+           foreach ($res as $element)
+               $aux[]=$this->castTo($className,$element);
+           return $aux;
+       } 
+        
+        
+        
   /**
    *  
    *
@@ -257,7 +278,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
@@ -279,7 +300,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
@@ -301,7 +322,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -323,7 +344,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -345,7 +366,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
@@ -367,7 +388,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
@@ -389,7 +410,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -411,7 +432,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -433,7 +454,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
@@ -483,7 +504,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
@@ -505,7 +526,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
@@ -583,7 +604,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -605,7 +626,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
@@ -951,7 +972,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -979,7 +1000,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -1087,7 +1108,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -1111,7 +1132,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -1135,7 +1156,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -1159,7 +1180,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -1183,7 +1204,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -1205,7 +1226,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
@@ -1227,7 +1248,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
@@ -1249,7 +1270,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -1271,7 +1292,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
@@ -1293,7 +1314,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
@@ -1315,7 +1336,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -1337,7 +1358,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -1359,7 +1380,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
@@ -1381,7 +1402,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
@@ -1403,7 +1424,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
@@ -1425,7 +1446,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -1447,7 +1468,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
@@ -1475,7 +1496,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -1515,7 +1536,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumDiscussionRecord',$res);
   }
 
   /**
@@ -1539,7 +1560,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumPostRecord',$res);
   }
 
   /**
@@ -1569,7 +1590,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('activityRecord',$res);
   }
 
   /**
@@ -1593,7 +1614,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
@@ -1617,7 +1638,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -1641,7 +1662,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
@@ -1665,7 +1686,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
@@ -1689,7 +1710,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -1713,7 +1734,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -1737,7 +1758,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
@@ -1761,7 +1782,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
@@ -1785,7 +1806,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('quizRecord',$res);
   }
 
   /**
@@ -1809,7 +1830,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
@@ -1839,7 +1860,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('assignmentSubmissionRecord',$res);
   }
 
   /**
@@ -1855,7 +1876,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('boolean',$res);
   }
 
   /**
@@ -1879,7 +1900,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
@@ -1901,7 +1922,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
@@ -1923,7 +1944,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
@@ -1945,7 +1966,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -1967,7 +1988,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -1991,7 +2012,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -2013,7 +2034,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -2037,7 +2058,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2059,7 +2080,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2081,7 +2102,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2105,7 +2126,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
@@ -2129,7 +2150,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2151,7 +2172,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2173,7 +2194,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2201,7 +2222,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('eventRecord',$res);
   }
 
   /**
@@ -2219,7 +2240,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('float',$res);
   }
 
   /**
@@ -2243,7 +2264,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumDiscussionRecord',$res);
   }
 
   /**
@@ -2267,7 +2288,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('forumPostRecord',$res);
   }
 
   /**
@@ -2295,7 +2316,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
@@ -2317,7 +2338,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2341,7 +2362,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -2363,7 +2384,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2387,7 +2408,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -2411,7 +2432,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -2435,7 +2456,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2459,7 +2480,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2483,7 +2504,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2509,7 +2530,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('resourceRecord',$res);
   }
 
   /**
@@ -2527,7 +2548,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('int',$res);
   }
 
   /**
@@ -2553,7 +2574,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('changeRecord',$res);
   }
 
   /**
@@ -2577,7 +2598,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('contactRecord',$res);
   }
 
   /**
@@ -2601,7 +2622,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('messageRecord',$res);
   }
 
   /**
@@ -2629,7 +2650,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('messageRecord',$res);
   }
 
   /**
@@ -2657,7 +2678,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
@@ -2679,7 +2700,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
@@ -2703,7 +2724,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -2727,7 +2748,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2751,7 +2772,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2775,7 +2796,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -2803,7 +2824,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2827,7 +2848,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -2871,7 +2892,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
@@ -2893,7 +2914,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
@@ -2991,7 +3012,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('resourceRecord',$res);
   }
 
   /**
@@ -3013,7 +3034,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
@@ -3035,7 +3056,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
@@ -3059,7 +3080,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
@@ -3083,7 +3104,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
@@ -3099,7 +3120,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('string',$res);
   }
 
   /**
@@ -3123,7 +3144,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3147,7 +3168,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3171,7 +3192,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3193,7 +3214,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3215,7 +3236,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3237,7 +3258,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3261,7 +3282,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
@@ -3285,7 +3306,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3311,7 +3332,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3335,7 +3356,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
@@ -3661,7 +3682,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -3689,7 +3710,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -3715,7 +3736,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('profileitemRecord',$res);
   }
 
   /**
@@ -3743,7 +3764,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
@@ -3767,7 +3788,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
@@ -3791,7 +3812,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
@@ -3815,7 +3836,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
@@ -3839,7 +3860,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
@@ -3863,7 +3884,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
@@ -3887,7 +3908,7 @@ class mdl_soapserver {
             'soapaction' => ''
            )
       );
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
 }
