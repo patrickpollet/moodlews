@@ -4936,7 +4936,9 @@ return $ret;
 	    if (!$this->using19)
 		    return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
-	    if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
+		// rev 04/04/2013 see https://moodle.org/mod/forum/post.php?reply=981346
+	    //if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
+	    if (!$cm = get_coursemodule_from_id($activitytype,$activityid, 0)) {
 		    $a=new StdClass();
 		    $a->type=$activitytype; $a->id=$activityid;
 		    return $this->error(get_string('ws_activityunknown', 'local_wspp',$a));
