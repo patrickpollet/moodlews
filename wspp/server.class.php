@@ -975,10 +975,12 @@ class server {
                 hiddensections,lang,theme,cost,timecreated,timemodified,metacourse";
             else
                 // some fields are not anymore defined in Moodle 2.0
+                // deleted since some of these fields have been also deleted in Moodle 2.4
                 $extrafields = "summary,format,showgrades,newsitems,numsections,marker,maxbytes,
                 hiddensections,lang,theme,timecreated,timemodified";
 
-            $res = ws_get_my_courses($uid, $sort, $extrafields);
+            //$res = ws_get_my_courses($uid, $sort, $extrafields); 
+            $res = ws_get_my_courses($uid, $sort);
         }
 $this->debug_output("courses of $uid =".print_r($res,true));
         if ($res) {

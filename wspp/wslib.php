@@ -248,7 +248,8 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
 				return $DB->get_records('course',array(),$sort);
     		}
 			// does not return annymore all courses for a site admin ...
-			return enrol_get_users_courses($uid, $onlyactive = false, $extrafields, $sort);
+			$ret=enrol_get_users_courses($uid, $onlyactive = false, $extrafields, $sort);
+			return $ret;
 		} catch (Exception $e) {
 			ws_error_log($e);
 			return array();
