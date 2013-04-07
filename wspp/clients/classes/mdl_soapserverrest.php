@@ -1,7 +1,7 @@
 <?php
 /**
  * mdl_soapserverrest class file
- *
+ * 
  * @author    Patrick Pollet :<patrick.pollet@insa-lyon.fr>
  * @copyright (c) P.Pollet 2007 under GPL
  * @package   MoodleWS
@@ -197,9 +197,9 @@ require_once 'loginReturn.php';
  * mdl_soapserverrest class
 		* the two attributes are made public for debugging purpose
 		* i.e. accessing $client->client->__getLast* methods
- *
- *
- *
+ * 
+ *  
+ * 
  * @author    Patrick Pollet :<patrick.pollet@insa-lyon.fr>
  * @copyright (c) P.Pollet 2007 under GPL
  * @package   MoodleWS
@@ -220,7 +220,7 @@ class mdl_soapserverrest {
 		 * @param string[] $options  Soap Client options array (see PHP5 documentation)
 		 * @return mdl_soapserverrest
 		 */
-  public function mdl_soapserverrest($serviceurl = "http://prope.insa-lyon.fr/moodle.195/wspp/service_pp2.php", $options = array()) {
+  public function mdl_soapserverrest($serviceurl = "http://localhost/moodle24/wspp/service_pp2.php", $options = array()) {
      $this->serviceurl=$serviceurl;
       $this->verbose=! empty($options['trace']);
  		if (!empty($options['formatout']))
@@ -228,26 +228,38 @@ class mdl_soapserverrest {
   }
 
 
+        
       private function castTo($className,$res){
-        	if ($this->formatout==='php') return $res;  //already done
+        	// if ($this->formatout==='php') return $res;  //NO todo on client side
             if (class_exists($className)) {
                 $aux= new $className();
+                // rev V2 don't get extra fields returned by WS
+                // and not anymore in our DB 
+                /* 
                 foreach ($res as $key=>$value)
                     $aux->$key=$value;
+                */
+                foreach ($aux as $key=>$tmp) 
+                    if (isset($res->$key))
+                        $aux->$key=$res->$key;
                 return $aux;
              } else
                 return $res;
-        }
-
-
-
-	/**
-	 * @param string
-	 */
+        }  
+        
+         private function castToArray ($className,$res) {
+           $aux=array();
+            if (! is_array($res))
+               $res=array($res);
+           foreach ($res as $element)
+               $aux[]=$this->castTo($className,$element);
+           return $aux;
+       } 
+  
 	function __call ($methodname, $params) {
 		$params['wsformatout']=$this->formatout;
 		$params['wsfunction']=$methodname;
-        // forcing the separator to '&' is capital with some php version that use otherwise &amp;
+          // forcing the separator to '&' is capital with some php version that use otherwise &amp;
         // in 'apache mode' but not in 'cli mode' and break parameter parsing on the server side ...
 		$this->postdata = http_build_query($params,'','&');
 
@@ -302,7 +314,7 @@ class mdl_soapserverrest {
 
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -315,11 +327,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -332,11 +344,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -349,11 +361,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -366,11 +378,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'coursedatum'=>$coursedatum
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -383,11 +395,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -400,11 +412,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -417,11 +429,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -434,11 +446,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -451,11 +463,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -478,7 +490,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -491,11 +503,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -508,11 +520,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -535,7 +547,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -558,7 +570,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -571,11 +583,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'userdatum'=>$userdatum
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -588,11 +600,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'datum'=>$datum
       ));
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -613,7 +625,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -632,7 +644,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -651,7 +663,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -672,7 +684,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -691,7 +703,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -710,7 +722,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -729,7 +741,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -748,7 +760,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -767,7 +779,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -786,7 +798,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -805,7 +817,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -826,7 +838,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -845,7 +857,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -864,11 +876,11 @@ class mdl_soapserverrest {
             'cohortid'=>$cohortid,
             'cohortidfield'=>$cohortidfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -887,11 +899,11 @@ class mdl_soapserverrest {
             'groupid'=>$groupid,
             'groupidfield'=>$groupidfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -914,7 +926,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -939,7 +951,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -960,7 +972,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -975,11 +987,11 @@ class mdl_soapserverrest {
             'id'=>$id,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -994,11 +1006,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'courseidfield'=>$courseidfield
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1013,11 +1025,11 @@ class mdl_soapserverrest {
             'id'=>$id,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1032,11 +1044,11 @@ class mdl_soapserverrest {
             'id'=>$id,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1051,11 +1063,11 @@ class mdl_soapserverrest {
             'userid'=>$userid,
             'useridfield'=>$useridfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1068,11 +1080,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'assignments'=>$assignments
       ));
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1085,11 +1097,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'categories'=>$categories
       ));
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1102,11 +1114,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'courses'=>$courses
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1119,11 +1131,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'databases'=>$databases
       ));
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1136,11 +1148,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'forums'=>$forums
       ));
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1153,11 +1165,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'groupings'=>$groupings
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1170,11 +1182,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'groups'=>$groups
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1187,11 +1199,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'labels'=>$labels
       ));
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1204,11 +1216,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'pageswiki'=>$pageswiki
       ));
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1221,11 +1233,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'sections'=>$sections
       ));
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1238,11 +1250,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'users'=>$users
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1255,11 +1267,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'wikis'=>$wikis
       ));
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1278,13 +1290,13 @@ class mdl_soapserverrest {
             'userids'=>$userids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return void
    */
   public function exception_handler() {
@@ -1293,7 +1305,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1308,11 +1320,11 @@ class mdl_soapserverrest {
             'forumid'=>$forumid,
             'discussion'=>$discussion
       ));
-   return $res;
+  return $this->castToArray ('forumDiscussionRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1327,11 +1339,11 @@ class mdl_soapserverrest {
             'parentid'=>$parentid,
             'post'=>$post
       ));
-   return $res;
+  return $this->castToArray ('forumPostRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1352,11 +1364,11 @@ class mdl_soapserverrest {
             'courseidfield'=>$courseidfield,
             'limit'=>$limit
       ));
-   return $res;
+  return $this->castToArray ('activityRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1371,11 +1383,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('assignmentRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1390,11 +1402,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1409,11 +1421,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('databaseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1428,11 +1440,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('forumRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1447,11 +1459,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1466,11 +1478,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1485,11 +1497,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('labelRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1504,11 +1516,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('pageWikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1523,11 +1535,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('quizRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1542,11 +1554,11 @@ class mdl_soapserverrest {
             'fieldname'=>$fieldname,
             'fieldvalue'=>$fieldvalue
       ));
-   return $res;
+  return $this->castToArray ('wikiRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1567,22 +1579,22 @@ class mdl_soapserverrest {
             'timemodified'=>$timemodified,
             'zipfiles'=>$zipfiles
       ));
-   return $res;
+  return $this->castToArray ('assignmentSubmissionRecord',$res);
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return boolean[]
    */
   public function get_boolean_array() {
     $res= $this->__call('get_boolean_array', array());
-   return $res;
+  return $this->castToArray ('boolean',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1597,11 +1609,11 @@ class mdl_soapserverrest {
             'catid'=>$catid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1614,11 +1626,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'catid'=>$catid
       ));
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1631,11 +1643,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'catname'=>$catname
       ));
-   return $res;
+  return $this->castToArray ('categoryRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1648,11 +1660,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'groupid'=>$groupid
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1665,11 +1677,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'cohortidnumber'=>$cohortidnumber
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1684,11 +1696,11 @@ class mdl_soapserverrest {
             'id'=>$id,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1701,11 +1713,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'cohortname'=>$cohortname
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1720,11 +1732,11 @@ class mdl_soapserverrest {
             'info'=>$info,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1737,11 +1749,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'info'=>$info
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1754,11 +1766,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'info'=>$info
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1773,11 +1785,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1792,11 +1804,11 @@ class mdl_soapserverrest {
             'courseids'=>$courseids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1809,11 +1821,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'catid'=>$catid
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1826,11 +1838,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'search'=>$search
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1849,11 +1861,11 @@ class mdl_soapserverrest {
             'owneridfield'=>$owneridfield,
             'datetimefrom'=>$datetimefrom
       ));
-   return $res;
+  return $this->castToArray ('eventRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param float $n
    * @return float[]
@@ -1862,11 +1874,11 @@ class mdl_soapserverrest {
     $res= $this->__call('get_float_array', array(
             'n'=>$n
       ));
-   return $res;
+  return $this->castToArray ('float',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1881,11 +1893,11 @@ class mdl_soapserverrest {
             'forumid'=>$forumid,
             'limit'=>$limit
       ));
-   return $res;
+  return $this->castToArray ('forumDiscussionRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1900,11 +1912,11 @@ class mdl_soapserverrest {
             'discussionid'=>$discussionid,
             'limit'=>$limit
       ));
-   return $res;
+  return $this->castToArray ('forumPostRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1923,11 +1935,11 @@ class mdl_soapserverrest {
             'courseids'=>$courseids,
             'courseidfield'=>$courseidfield
       ));
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1940,11 +1952,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'groupid'=>$groupid
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1959,11 +1971,11 @@ class mdl_soapserverrest {
             'groupid'=>$groupid,
             'groupidfield'=>$groupidfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1976,11 +1988,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'groupid'=>$groupid
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -1995,11 +2007,11 @@ class mdl_soapserverrest {
             'groupid'=>$groupid,
             'groupidfield'=>$groupidfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2014,11 +2026,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2033,11 +2045,11 @@ class mdl_soapserverrest {
             'groupname'=>$groupname,
             'courseid'=>$courseid
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2052,11 +2064,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2071,11 +2083,11 @@ class mdl_soapserverrest {
             'groupname'=>$groupname,
             'courseid'=>$courseid
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2092,11 +2104,11 @@ class mdl_soapserverrest {
             'idfield'=>$idfield,
             'type'=>$type
       ));
-   return $res;
+  return $this->castToArray ('resourceRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $n
    * @return int[]
@@ -2105,11 +2117,11 @@ class mdl_soapserverrest {
     $res= $this->__call('get_int_array', array(
             'n'=>$n
       ));
-   return $res;
+  return $this->castToArray ('int',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2126,11 +2138,11 @@ class mdl_soapserverrest {
             'idfield'=>$idfield,
             'limit'=>$limit
       ));
-   return $res;
+  return $this->castToArray ('changeRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2145,11 +2157,11 @@ class mdl_soapserverrest {
             'userid'=>$userid,
             'useridfield'=>$useridfield
       ));
-   return $res;
+  return $this->castToArray ('contactRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2164,11 +2176,11 @@ class mdl_soapserverrest {
             'userid'=>$userid,
             'useridfield'=>$useridfield
       ));
-   return $res;
+  return $this->castToArray ('messageRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2187,11 +2199,11 @@ class mdl_soapserverrest {
             'useridfrom'=>$useridfrom,
             'useridfromfield'=>$useridfromfield
       ));
-   return $res;
+  return $this->castToArray ('messageRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2210,11 +2222,11 @@ class mdl_soapserverrest {
             'userids'=>$userids,
             'useridfield'=>$useridfield
       ));
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2227,11 +2239,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'assignmentid'=>$assignmentid
       ));
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2246,11 +2258,11 @@ class mdl_soapserverrest {
             'uid'=>$uid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2265,11 +2277,11 @@ class mdl_soapserverrest {
             'uid'=>$uid,
             'sort'=>$sort
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2284,11 +2296,11 @@ class mdl_soapserverrest {
             'uid'=>$uid,
             'sort'=>$sort
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2303,11 +2315,11 @@ class mdl_soapserverrest {
             'uid'=>$uid,
             'sort'=>$sort
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2326,11 +2338,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'courseidfield'=>$courseidfield
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2345,11 +2357,11 @@ class mdl_soapserverrest {
             'uid'=>$uid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2364,7 +2376,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2379,11 +2391,11 @@ class mdl_soapserverrest {
             'activityid'=>$activityid,
             'activitytype'=>$activitytype
       ));
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2396,11 +2408,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'quizid'=>$quizid
       ));
-   return $res;
+  return $this->castToArray ('gradeItemRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2423,7 +2435,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2442,7 +2454,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2459,7 +2471,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2474,11 +2486,11 @@ class mdl_soapserverrest {
             'courseids'=>$courseids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('resourceRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2491,11 +2503,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'roleid'=>$roleid
       ));
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2508,11 +2520,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'rolename'=>$rolename
       ));
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2527,11 +2539,11 @@ class mdl_soapserverrest {
             'roleid'=>$roleid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('roleRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2546,22 +2558,22 @@ class mdl_soapserverrest {
             'courseids'=>$courseids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
+   *  
    *
-   *
-   * @param
+   * @param  
    * @return string[]
    */
   public function get_string_array() {
     $res= $this->__call('get_string_array', array());
-   return $res;
+  return $this->castToArray ('string',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2576,11 +2588,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2595,11 +2607,11 @@ class mdl_soapserverrest {
             'courseid'=>$courseid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2614,11 +2626,11 @@ class mdl_soapserverrest {
             'userinfo'=>$userinfo,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2631,11 +2643,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'userinfo'=>$userinfo
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2648,11 +2660,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'userinfo'=>$userinfo
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2665,11 +2677,11 @@ class mdl_soapserverrest {
             'sesskey'=>$sesskey,
             'userinfo'=>$userinfo
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2684,11 +2696,11 @@ class mdl_soapserverrest {
             'userid'=>$userid,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('gradeRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2703,11 +2715,11 @@ class mdl_soapserverrest {
             'userids'=>$userids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2724,11 +2736,11 @@ class mdl_soapserverrest {
             'idfield'=>$idfield,
             'idrole'=>$idrole
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2743,11 +2755,11 @@ class mdl_soapserverrest {
             'profilefieldname'=>$profilefieldname,
             'profilefieldvalue'=>$profilefieldvalue
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2762,7 +2774,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2787,7 +2799,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param string $username
    * @param string $password
@@ -2802,7 +2814,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2817,7 +2829,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2838,7 +2850,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2857,7 +2869,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2880,7 +2892,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2903,7 +2915,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2926,7 +2938,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2945,7 +2957,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2966,7 +2978,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -2985,7 +2997,7 @@ class mdl_soapserverrest {
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3004,11 +3016,11 @@ class mdl_soapserverrest {
             'cohortid'=>$cohortid,
             'cohortidfield'=>$cohortidfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3027,11 +3039,11 @@ class mdl_soapserverrest {
             'groupid'=>$groupid,
             'groupidfield'=>$groupidfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3048,11 +3060,11 @@ class mdl_soapserverrest {
             'useridfield'=>$useridfield,
             'values'=>$values
       ));
-   return $res;
+  return $this->castToArray ('profileitemRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3071,11 +3083,11 @@ class mdl_soapserverrest {
             'userids'=>$userids,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('enrolRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3090,11 +3102,11 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('cohortRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3109,11 +3121,11 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'courseidfield'=>$courseidfield
       ));
-   return $res;
+  return $this->castToArray ('courseRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3128,11 +3140,11 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3147,11 +3159,11 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('groupingRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3166,11 +3178,11 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'idfield'=>$idfield
       ));
-   return $res;
+  return $this->castToArray ('sectionRecord',$res);
   }
 
   /**
-   *
+   *  
    *
    * @param int $client
    * @param string $sesskey
@@ -3185,7 +3197,7 @@ class mdl_soapserverrest {
             'datum'=>$datum,
             'useridfield'=>$useridfield
       ));
-   return $res;
+  return $this->castToArray ('userRecord',$res);
   }
 
 }

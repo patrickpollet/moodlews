@@ -67,6 +67,10 @@ Génération des commentaires PHPDocs dans les classses proxy pour WSHelper
    Revision 0.3 17/12/2010 generates helper classes in a directory named classes (created if needed) and adjust all includes
 
    Revision 0.4 20/04/2011 also generates classes and stub for REST access
+   
+   Revision 0.5 21/02/2013 
+         improved casting to real object upon return (see generated castTo functions)
+         removed Standard notices with php 5.3 
 
 
   CAUTION: STILL uses SoapClient to retrieve the WSDL to parse,
@@ -105,14 +109,17 @@ if (isset ($_SERVER['argv'][2])) {
 	$server = $useNuSOAP =false;
     $withLogin=true; // OK tech specific
 }
-print ($withLogin);
+//print ($withLogin);
 try {
 	$client = new SoapClient($wsdl);
 } catch (SoapFault $e) {
 	die($e);
 }
 
-$dom = DOMDocument :: load($wsdl);
+//$dom = DOMDocument :: load($wsdl);
+// php 5.3 strict standard
+$dom= new DOMDocument();
+$dom->load ($wsdl);
 
 // get documentation
 $nodes = $dom->getElementsByTagName('documentation');
@@ -132,10 +139,10 @@ foreach ($nodes as $node) {
 }
 
 // get targetNamespace
-$targetNamespace = '';
+$targetNameSpace = '';
 $nodes = $dom->getElementsByTagName('definitions');
 foreach ($nodes as $node) {
-	$targetNamespace = $node->getAttribute('targetNamespace');
+	$targetNameSpace = $node->getAttribute('targetNamespace');
 }
 
 // declare service
@@ -223,6 +230,8 @@ if (class_exists($service['class'])) {
 	throw new Exception("Class '" . $service['class'] . "' already exists");
 }
 
+//print_r($doc);
+
 /*if(function_exists($service['class'])) {
   throw new Exception("Class '".$service['class']."' can't be used, a function with that name already exists");
 }*/
@@ -231,8 +240,8 @@ if (class_exists($service['class'])) {
 $operations = $client->__getFunctions();
 foreach ($operations as $operation) {
 
-	// print_r($operation);
-	// echo "\n";
+   // print_r($operation);
+   // echo "\n";
 
 	$matches = array ();
 	if (preg_match('/^(\w[\w\d_]*) (\w[\w\d_]*)\(([\w\$\d,_ ]*)\)$/', $operation, $matches)) {
@@ -259,7 +268,7 @@ foreach ($operations as $operation) {
 		'name' => $call,
 		'method' => $call,
 		'return' => $returns,
-		'doc' => $doc['operations'][$call],
+		'doc' => @$doc['operations'][$call], //there may be not doc so remove php notice
 		'params' => $paramsArr
 	);
 
@@ -369,8 +378,8 @@ foreach ($types as $type) {
 }
 //print_r($service);
 //print_r($members);
-//print_r($array_types);
-//print_r($custom_types);
+print_r($array_types);
+print_r($custom_types);
 
 if (!is_dir("classes"))
 	mkdir("classes");
@@ -479,7 +488,7 @@ EOC;
 		$code .= " /** \n * @var \n */\n";
 		$code .= "  public \$proxy;\n\n";
 	}
-	$code .= "  private \$uri = '" . $targetNamespace . "';\n\n";
+	$code .= "  private \$uri = '" . $targetNameSpace . "';\n\n";
 
 	$code .=<<<EOC
   /**
@@ -540,7 +549,10 @@ EOC;
 			if (!in_array('', $signature)) { // no arguments!
 				foreach ($signature as $param) {
 					if (strpos($param, ' ')) { // slice
-						$param = array_pop(explode(' ', $param));
+					    //donne une erreur Strict standard en php5 cf http://www.phpclasses.org/discuss/package/3747/thread/21/
+						//$param = array_pop(explode(' ', $param));
+						$tmp_array =explode(' ',$param);
+						$param = array_pop($tmp_array);						
 					}
 					$params[] = "      new SoapParam(" . $param . ", '" . substr($param, 1, strlen($param)) . "')";
 				}
@@ -559,6 +571,8 @@ EOC;
 		//cast the returned StdClass to the REAL datatype axs per the WSDL
 		if (in_array($function['return'], $custom_types))
 			$code .= "  return \$this->castTo ('" . $function['return'] . "',\$res);\n";
+		else if  (key_exists($function['return'], $array_types))
+		    $code .= "  return \$this->castToArray ('" . $array_types[$function['return']] . "',\$res);\n";		
 		else
 			$code .= "   return \$res;\n";
 		$code .= "  }\n\n";
@@ -681,7 +695,10 @@ EOC;
 		if (!in_array('', $signature)) { // no arguments!
 			foreach ($signature as $param) {
 				if (strpos($param, ' ')) { // slice
-					$param = array_pop(explode(' ', $param));
+				    //donne une erreur Strict standard en php5 cf http://www.phpclasses.org/discuss/package/3747/thread/21/
+				    //$param = array_pop(explode(' ', $param));
+				    $tmp_array =explode(' ',$param);
+				    $param = array_pop($tmp_array);
 				}
 				//$params[] = "      new SoapParam(" . $param . ", '" . substr($param, 1, strlen($param)) . "')";
 				$params[] = "      '" . substr($param, 1, strlen($param)) . "'=>" . $param;
@@ -695,6 +712,8 @@ EOC;
 		//cast the returned StdClass to the REAL datatype axs per the WSDL
 		if (in_array($function['return'], $custom_types))
 			$code .= "  return \$this->castTo ('" . $function['return'] . "',\$res);\n";
+		else if  (key_exists($function['return'], $array_types))
+		    $code .= "  return \$this->castToArray ('" . $array_types[$function['return']] . "',\$res);\n";
 		else
 			$code .= "   return \$res;\n";
 		$code .= "  }\n\n";
@@ -719,7 +738,7 @@ print ("Generated " . count($service['functions']) . " functions calls and " . c
 
 function parse_doc($prefix, $doc) {
 	$code = "";
-	$words = split(' ', $doc);
+	$words = explode(' ', $doc); //split is deprecated in php 5.3
 	$line = $prefix;
 	foreach ($words as $word) {
 		$line .= $word . ' ';
@@ -978,15 +997,36 @@ function gen_test_code_in_separate_file($function, $dir = 'tests') {
 
 function add_utils_fonctions($protocol = 'soap') {
 	$code =<<<EOC
+
+        
         private function castTo(\$className,\$res){
-            if (class_exists(\$className)) {
+        	if (class_exists(\$className)) {
                 \$aux= new \$className();
+                // rev V2 don't get extra fields returned by WS
+                // and not anymore in our DB 
+                /* 
                 foreach (\$res as \$key=>\$value)
                     \$aux->\$key=\$value;
+                */
+                foreach (\$aux as \$key=>\$tmp) 
+                    if (isset(\$res->\$key))
+                        \$aux->\$key=\$res->\$key;
                 return \$aux;
              } else
                 return \$res;
         }
+        
+        private function castToArray (\$className,\$res) {
+           \$aux=array();
+            if (! is_array(\$res))
+               \$res=array(\$res);
+           foreach (\$res as \$element)
+               \$aux[]=\$this->castTo(\$className,\$element);
+           return \$aux;
+       } 
+        
+        
+        
 
 EOC;
 	if ($protocol === 'soap')
@@ -994,22 +1034,34 @@ EOC;
 
 	$coderest =<<<EOR
 
+        
       private function castTo(\$className,\$res){
-        	if (\$this->formatout==='php') return \$res;  //already done
+        	// if (\$this->formatout==='php') return \$res;  //NO todo on client side
             if (class_exists(\$className)) {
                 \$aux= new \$className();
+                // rev V2 don't get extra fields returned by WS
+                // and not anymore in our DB 
+                /* 
                 foreach (\$res as \$key=>\$value)
                     \$aux->\$key=\$value;
+                */
+                foreach (\$aux as \$key=>\$tmp) 
+                    if (isset(\$res->\$key))
+                        \$aux->\$key=\$res->\$key;
                 return \$aux;
              } else
                 return \$res;
-        }
-
-
-
-	/**
-	 * @param string $postdata
-	 */
+        }  
+        
+         private function castToArray (\$className,\$res) {
+           \$aux=array();
+            if (! is_array(\$res))
+               \$res=array(\$res);
+           foreach (\$res as \$element)
+               \$aux[]=\$this->castTo(\$className,\$element);
+           return \$aux;
+       } 
+  
 	function __call (\$methodname, \$params) {
 		\$params['wsformatout']=\$this->formatout;
 		\$params['wsfunction']=\$methodname;
