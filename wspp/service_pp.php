@@ -12,8 +12,11 @@
 
 // get Moodle site config infos
 require_once('../config.php');
-// SOAP service class
 
+//DO not mess XML outputs with some php strict of deprecated warnings !!!!
+ini_set('display_errors', 0);
+
+// SOAP service class
 //$CFG->ws_uselocalwsdl=0;
 $CFG->wsdl_simplified=false;
 require('mdl_soapserver.class.php');

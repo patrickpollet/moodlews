@@ -16,6 +16,9 @@
 // get Moodle site config infos
 require_once ('../config.php');
 
+//DO not mess XML outputs with some php strict of deprecated warnings !!!!
+ini_set('display_errors', 0);
+
 $wsfunction = optional_param('wsfunction', '', PARAM_ALPHAEXT);  // letters+underscore
 $wsformatout =optional_param('wsformatout', '', PARAM_ALPHA);
 
