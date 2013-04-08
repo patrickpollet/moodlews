@@ -974,11 +974,10 @@ class server {
                 $extrafields = "password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
                 hiddensections,lang,theme,cost,timecreated,timemodified,metacourse";
             else
-                // some fields are not anymore defined in Moodle 2.0
-                // deleted since some of these fields have been also deleted in Moodle 2.4
+                // some fields are not anymore defined in Moodle 2.0              
                 $extrafields = "summary,format,showgrades,newsitems,numsections,marker,maxbytes,
                 hiddensections,lang,theme,timecreated,timemodified";
-
+            // extrafields deleted since some of these fields have been also deleted in Moodle 2.4
             //$res = ws_get_my_courses($uid, $sort, $extrafields); 
             $res = ws_get_my_courses($uid, $sort);
         }
@@ -1609,13 +1608,13 @@ EOS;
     * @param int $courseid The course's id
     * @return affectRecord
     */
-    function affect_group_to_course($client, $sesskey, $groupid, $courseid, $idfield = 'id') {
+    function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+        if (!$course = ws_get_record('course', 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', "id=" . $courseid));
         }
 
@@ -1653,13 +1652,13 @@ EOS;
     * @param int $courseid The course's id
     * @return affectRecord
     */
-    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid, $idfield = 'id') {
+    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid) {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+        if (!$course = ws_get_record('course', 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', "id=" . $courseid));
         }
 
@@ -1954,7 +1953,7 @@ EOS;
       * @param int $limit
       * @return activityRecord[]
       */
-    function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
+    function get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99, $docount=0) {
         global $USER, $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -3729,14 +3728,14 @@ EOSS;
     * @param int $courseid The course id
     * @return affectRecord
     */
-    function affect_section_to_course($client, $sesskey, $sectionid, $courseid, $idfield = 'id') {
+    function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
         global $CFG;
         require_once ($CFG->dirroot . '/course/lib.php');
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record("course", $idfield, $courseid)) {
+        if (!$course = ws_get_record("course", 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', $idfield . "=" . $courseid));
 
         }
@@ -4938,7 +4937,7 @@ return $ret;
 	    if (!$this->using19)
 		    return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
-	    if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
+	    if (!$cm = get_coursemodule_from_id($activitytype,$activityid, 0)) {
 		    $a=new StdClass();
 		    $a->type=$activitytype; $a->id=$activityid;
 		    return $this->error(get_string('ws_activityunknown', 'local_wspp',$a));
@@ -4947,15 +4946,14 @@ return $ret;
 	    if (!$context = get_context_instance(CONTEXT_COURSE, $cm->course))
 		    return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
 
-	    $fields = 'u.id,u.idnumber';
+	    $fields = 'id,idnumber';
         $roleid = ws_get_student_roleid() ; //student not always 5
 
         $moodleUserIds = array ();
         if (!empty ($userids)) {
             foreach ($userids as $userid) {
-                //$this->debug_output($userid.' '.$useridfield);
-                //caution :  alias u is not set in ws_get_record, so add it !!!
-                if ($user = ws_get_record('user u', $useridfield, $userid, '', '', '', '', $fields)) {
+                $this->debug_output($userid.' '.$useridfield);
+                if ($user = ws_get_record('user', $useridfield, $userid, '', '', '', '', $fields)) {
                     $moodleUserIds[$user->id] = $user;
                     // $this->debug_output(print_r($user,true));
                 }
@@ -4968,7 +4966,7 @@ return $ret;
             else
                 $moodleUserIds = groups_get_grouping_members($cm->groupingid, $fields);
         }
-
+        //$this->debug_output(print_r("GMG ".$moodleUserIds,true));
         /// Check for correct permissions.
         if ((count($moodleUserIds) == 1) && !empty ($moodleUserIds[$USER->id])) {
             // OK for an user to see its OWN grade
@@ -4979,9 +4977,9 @@ return $ret;
 	    //require_once ($CFG->dirroot . '/grade/lib.php');
         //require_once ($CFG->dirroot . '/grade/querylib.php');
         require_once ($CFG->libdir . '/gradelib.php');
-
-         //   $this->debug_output(print_r($moodleUserIds,true));
-	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$activityid,array_keys( $moodleUserIds));
+        //fixed 09/03/2013 !!! ($cm->instance and not $activityid )
+	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$cm->instance,array_keys( $moodleUserIds));
+	     
 	     $this->debug_output("GI".print_r($grading_info,true));
 
 	     $ret=array();
