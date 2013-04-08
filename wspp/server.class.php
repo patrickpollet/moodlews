@@ -943,7 +943,7 @@ class server {
      * @param string $sort requested order . Default fullname as per rev 1.5.11
      * @return courseRecord[]
      */
-    function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
+    protected function __get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
         global $CFG, $USER;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp') . " " . __FUNCTION__);
@@ -1953,7 +1953,8 @@ EOS;
       * @param int $limit
       * @return activityRecord[]
       */
-    function get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99, $docount=0) {
+    
+   protected function __get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99, $docount=0) {
         global $USER, $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -4323,7 +4324,7 @@ EOSS;
     * @return affectRecord[]
     */
 
-    function affect_users_to_cohort($client, $sesskey, $userids, $useridfield, $cohortid, $cohortidfield, $add) {
+    protected function __affect_users_to_cohort($client, $sesskey, $userids, $useridfield, $cohortid, $cohortidfield, $add) {
 
         global $CFG;
 
@@ -4388,7 +4389,7 @@ EOSS;
     * @param boolean $add    true to add users, false to remove users
     * @return affectRecord[]
     */
-    function affect_users_to_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield, $add) {
+    protected function __affect_users_to_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield, $add) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
