@@ -2261,7 +2261,7 @@ abstract class mdl_baseserver extends server {
      * @return enrolRecord[]
      */
     public function affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield) {
-         return $this->send($this->to_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+         return $this->send($this->to_array(parent :: __affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
 
     }
@@ -2277,7 +2277,7 @@ abstract class mdl_baseserver extends server {
      * @return enrolRecord[]
      */
     public function remove_users_from_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield) {
-            return $this->send($this->to_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,false), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+            return $this->send($this->to_array(parent :: __affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,false), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -2293,7 +2293,7 @@ abstract class mdl_baseserver extends server {
      */
 
     public function affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield='id') {
-            return $this->send($this->to_array(parent :: affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+            return $this->send($this->to_array(parent :: __affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
@@ -2308,7 +2308,7 @@ abstract class mdl_baseserver extends server {
      * @return enrolRecord[]
      */
     public function remove_users_from_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield='id') {
-             return $this->send($this->to_array(parent :: affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,false), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
+             return $this->send($this->to_array(parent :: __affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,false), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
     }
 
