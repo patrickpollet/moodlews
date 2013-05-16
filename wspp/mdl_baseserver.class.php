@@ -471,7 +471,7 @@ abstract class mdl_baseserver extends server {
      */
 
     private function _get_mycourses_by($client, $sesskey, $uinfo, $idfield, $sort) {
-        return $this->send($this->to_array(parent :: get_my_courses($client, $sesskey, $uinfo, $idfield, $sort), 'courses', 'courseRecord', get_string('nocourses', 'local_wspp')));
+        return $this->send($this->to_array(parent :: __get_my_courses($client, $sesskey, $uinfo, $idfield, $sort), 'courses', 'courseRecord', get_string('nocourses', 'local_wspp')));
 
     }
 
@@ -1079,9 +1079,9 @@ abstract class mdl_baseserver extends server {
      * @param int $limit
      * @return activityRecord[]
      */
-    public function get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99) {
+    public function get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99 ) {
         $res = $this->send($this->to_array(
-    parent :: get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 0), 'activities', 'activityRecord', get_string('noactivities', 'local_wspp')));
+    parent :: __get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 0), 'activities', 'activityRecord', get_string('noactivities', 'local_wspp')));
         return $res;
 
     }
@@ -1098,7 +1098,8 @@ abstract class mdl_baseserver extends server {
      */
     public function count_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = '', $courseidfield = 'idnumber', $limit = 0) {
         // save  a lot of memory with flag doCount=1
-        return  $this->send($this->to_primitive(parent :: get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 1)));
+        return  $this->send($this->to_primitive(
+        		parent :: __get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, 1)));
 
     }
 
@@ -1944,7 +1945,7 @@ abstract class mdl_baseserver extends server {
      * @return affectRecord
      */
     function affect_user_to_group($client, $sesskey, $userid, $groupid) {
-        return $this->send($this->to_single(parent :: affect_user_to_group($client, $sesskey, $userid, $groupid), "affectRecord"));
+        return $this->send($this->to_single(parent ::affect_user_to_group($client, $sesskey, $userid, $groupid), "affectRecord"));
     }
 
       /**
@@ -2262,6 +2263,7 @@ abstract class mdl_baseserver extends server {
     public function affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield) {
          return $this->send($this->to_array(parent :: affect_users_to_cohort($client,$sesskey,$userids,$useridfield,$cohortid,$cohortidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 
+
     }
 
           /**
@@ -2289,6 +2291,7 @@ abstract class mdl_baseserver extends server {
      * @param string $groupidfield
      * @return enrolRecord[]
      */
+
     public function affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield='id') {
             return $this->send($this->to_array(parent :: affect_users_to_group($client,$sesskey,$userids,$useridfield,$groupid,$groupidfield,true), 'students', 'enrolRecord', get_string('nothingtodo', 'local_wspp')));
 

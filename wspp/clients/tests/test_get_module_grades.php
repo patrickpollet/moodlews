@@ -14,8 +14,8 @@ require_once ('../auth.php');
 */
 
 $lr=$client->login(LOGIN,PASSWORD);
-$userids=array();
-$res=$client->get_module_grades($lr->getClient(),$lr->getSessionKey(),0,'',$userids,'');
+$userids=array('student');
+$res=$client->get_module_grades($lr->getClient(),$lr->getSessionKey(),4,'assign',$userids,'username');
 print_r($res);
 $client->logout($lr->getClient(),$lr->getSessionKey());
 

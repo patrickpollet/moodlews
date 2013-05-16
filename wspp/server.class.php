@@ -943,7 +943,7 @@ class server {
      * @param string $sort requested order . Default fullname as per rev 1.5.11
      * @return courseRecord[]
      */
-    function get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
+    protected function __get_my_courses($client, $sesskey, $uinfo = '', $idfield = 'id', $sort = '') {
         global $CFG, $USER;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp') . " " . __FUNCTION__);
@@ -974,13 +974,12 @@ class server {
                 $extrafields = "password,summary,format,showgrades,newsitems,enrolperiod,numsections,marker,maxbytes,
                 hiddensections,lang,theme,cost,timecreated,timemodified,metacourse";
             else
-                // some fields are not anymore defined in Moodle 2.0
-                // deleted since some of these fields have been also deleted in Moodle 2.4
-                $extrafields = "summary,format,showgrades,newsitems,numsections,marker,maxbytes,
-                hiddensections,lang,theme,timecreated,timemodified";
-
-            //$res = ws_get_my_courses($uid, $sort, $extrafields); 
-            $res = ws_get_my_courses($uid, $sort);
+                // some fields are not anymore defined in Moodle 2.0   
+                // removed numsections, hiddensections as in M 2.4           
+                $extrafields = "summary,format,showgrades,newsitems,marker,maxbytes,
+                lang,theme,timecreated,timemodified";
+            $res = ws_get_my_courses($uid, $sort, $extrafields); 
+           // $res = ws_get_my_courses($uid, $sort);
         }
 $this->debug_output("courses of $uid =".print_r($res,true));
         if ($res) {
@@ -1609,13 +1608,13 @@ EOS;
     * @param int $courseid The course's id
     * @return affectRecord
     */
-    function affect_group_to_course($client, $sesskey, $groupid, $courseid, $idfield = 'id') {
+    function affect_group_to_course($client, $sesskey, $groupid, $courseid) {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+        if (!$course = ws_get_record('course', 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', "id=" . $courseid));
         }
 
@@ -1653,13 +1652,13 @@ EOS;
     * @param int $courseid The course's id
     * @return affectRecord
     */
-    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid, $idfield = 'id') {
+    function affect_grouping_to_course($client, $sesskey, $groupid, $courseid) {
 
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record('course', $idfield, $courseid)) {
+        if (!$course = ws_get_record('course', 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', "id=" . $courseid));
         }
 
@@ -1954,7 +1953,8 @@ EOS;
       * @param int $limit
       * @return activityRecord[]
       */
-    function get_activities($client, $sesskey, $userid, $useridfield, $courseid, $courseidfield, $limit, $doCount = 0) {
+    
+   protected function __get_activities($client, $sesskey, $userid, $useridfield = 'idnumber', $courseid = 0, $courseidfield = 'idnumber', $limit = 99, $docount=0) {
         global $USER, $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -3729,14 +3729,14 @@ EOSS;
     * @param int $courseid The course id
     * @return affectRecord
     */
-    function affect_section_to_course($client, $sesskey, $sectionid, $courseid, $idfield = 'id') {
+    function affect_section_to_course($client, $sesskey, $sectionid, $courseid) {
         global $CFG;
         require_once ($CFG->dirroot . '/course/lib.php');
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
         }
 
-        if (!$course = ws_get_record("course", $idfield, $courseid)) {
+        if (!$course = ws_get_record("course", 'id', $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', $idfield . "=" . $courseid));
 
         }
@@ -4324,7 +4324,7 @@ EOSS;
     * @return affectRecord[]
     */
 
-    function affect_users_to_cohort($client, $sesskey, $userids, $useridfield, $cohortid, $cohortidfield, $add) {
+    protected function __affect_users_to_cohort($client, $sesskey, $userids, $useridfield, $cohortid, $cohortidfield, $add) {
 
         global $CFG;
 
@@ -4389,7 +4389,7 @@ EOSS;
     * @param boolean $add    true to add users, false to remove users
     * @return affectRecord[]
     */
-    function affect_users_to_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield, $add) {
+    protected function __affect_users_to_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield, $add) {
         global $CFG;
         if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
             return $this->error(get_string('ws_invalidclient', 'local_wspp'));
@@ -4938,6 +4938,7 @@ return $ret;
 	    if (!$this->using19)
 		    return $this->error(get_string(' ws_notsupportedgradebook', 'local_wspp'));
 
+
 		// rev 04/04/2013 see https://moodle.org/mod/forum/post.php?reply=981346
 	    //if (!$cm = get_coursemodule_from_instance($activitytype,$activityid, 0)) {
 	    if (!$cm = get_coursemodule_from_id($activitytype,$activityid, 0)) {
@@ -4949,15 +4950,14 @@ return $ret;
 	    if (!$context = get_context_instance(CONTEXT_COURSE, $cm->course))
 		    return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
 
-	    $fields = 'u.id,u.idnumber';
+	    $fields = 'id,idnumber';
         $roleid = ws_get_student_roleid() ; //student not always 5
 
         $moodleUserIds = array ();
         if (!empty ($userids)) {
             foreach ($userids as $userid) {
-                //$this->debug_output($userid.' '.$useridfield);
-                //caution :  alias u is not set in ws_get_record, so add it !!!
-                if ($user = ws_get_record('user u', $useridfield, $userid, '', '', '', '', $fields)) {
+                $this->debug_output($userid.' '.$useridfield);
+                if ($user = ws_get_record('user', $useridfield, $userid, '', '', '', '', $fields)) {
                     $moodleUserIds[$user->id] = $user;
                     // $this->debug_output(print_r($user,true));
                 }
@@ -4970,7 +4970,7 @@ return $ret;
             else
                 $moodleUserIds = groups_get_grouping_members($cm->groupingid, $fields);
         }
-
+        //$this->debug_output(print_r("GMG ".$moodleUserIds,true));
         /// Check for correct permissions.
         if ((count($moodleUserIds) == 1) && !empty ($moodleUserIds[$USER->id])) {
             // OK for an user to see its OWN grade
@@ -4981,9 +4981,9 @@ return $ret;
 	    //require_once ($CFG->dirroot . '/grade/lib.php');
         //require_once ($CFG->dirroot . '/grade/querylib.php');
         require_once ($CFG->libdir . '/gradelib.php');
-
-         //   $this->debug_output(print_r($moodleUserIds,true));
-	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$activityid,array_keys( $moodleUserIds));
+        //fixed 09/03/2013 !!! ($cm->instance and not $activityid )
+	     $grading_info = grade_get_grades($cm->course, 'mod', $activitytype,$cm->instance,array_keys( $moodleUserIds));
+	     
 	     $this->debug_output("GI".print_r($grading_info,true));
 
 	     $ret=array();
