@@ -222,7 +222,7 @@ class mdl_soapserver {
   * @param string[] $options  Soap Client options array (see PHP5 documentation)
   * @return mdl_soapserver
   */
-  public function mdl_soapserver($wsdl = "http://localhost/moodle24/wspp/wsdl_pp2.php", $uri=null, $options = array()) {
+  public function mdl_soapserver($wsdl = "http://vm107-04.insa-lyon.fr/moodle/wspp/wsdl_pp2.php", $uri=null, $options = array()) {
     if($uri != null) {
       $this->uri = $uri;
     }
