@@ -461,6 +461,7 @@ class oktech_groupDatum extends external_single_structure {
 	 'hidepicture'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'id'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'name'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string 
+	 'idnumber'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string 
 	 'picture'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
 
 	    );
@@ -487,6 +488,7 @@ class oktech_groupRecord extends external_single_structure {
 	 'hidepicture'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'id'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'name'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string 
+	 'idnumber'		=>	new external_value(PARAM_CLEAN,'',VALUE_OPTIONAL),//xsd:string 
 	 'picture'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'timecreated'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int 
 	 'timemodified'		=>	new external_value(PARAM_INT,'',VALUE_OPTIONAL),//xsd:int
