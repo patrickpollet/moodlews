@@ -373,6 +373,7 @@
           <xsd:element name="description" type="xsd:string"/>
           <xsd:element name="id" type="xsd:int"/>
           <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="idnumber" type="xsd:string"/>
         </xsd:all>
       </xsd:complexType>
       <xsd:complexType name="groupingRecordArray">
@@ -390,6 +391,7 @@
           <xsd:element name="error" type="xsd:string"/>
           <xsd:element name="id" type="xsd:int"/>
           <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="idnumber" type="xsd:string"/>
           <xsd:element name="timecreated" type="xsd:int"/>
           <xsd:element name="timemodified" type="xsd:int"/>
         </xsd:all>
