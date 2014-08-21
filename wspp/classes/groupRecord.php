@@ -24,6 +24,10 @@ class groupRecord {
 	/** 
 	* @var string
 	*/
+	public $idnumber;
+	/** 
+	* @var string
+	*/
 	public $description;
 	/** 
 	* @var integer
@@ -54,6 +58,7 @@ class groupRecord {
 		 $this->id=0;
 		 $this->courseid=0;
 		 $this->name='';
+		 $this->idnumber='';
 		 $this->description='';
 		 $this->picture=0;
 		 $this->hidepicture=0;
@@ -92,6 +97,14 @@ class groupRecord {
 	*/
 	public function getName(){
 		 return $this->name;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getIdnumber(){
+		 return $this->idnumber;
 	}
 
 
@@ -177,6 +190,15 @@ class groupRecord {
 	*/
 	public function setName($name){
 		$this->name=$name;
+	}
+
+
+	/**
+	* @param string $idnumber
+	* @return void
+	*/
+	public function setIdnumber($idnumber){
+		$this->idnumber=$idnumber;
 	}
 
 

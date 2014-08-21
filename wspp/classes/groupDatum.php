@@ -24,6 +24,10 @@ class groupDatum {
 	/** 
 	* @var string
 	*/
+	public $idnumber;
+	/** 
+	* @var string
+	*/
 	public $description;
 	/** 
 	* @var string
@@ -46,6 +50,7 @@ class groupDatum {
 		 $this->id=0;
 		 $this->courseid=0;
 		 $this->name='';
+		 $this->idnumber='';
 		 $this->description='';
 		 $this->enrolmentkey='';
 		 $this->picture=0;
@@ -82,6 +87,14 @@ class groupDatum {
 	*/
 	public function getName(){
 		 return $this->name;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getIdnumber(){
+		 return $this->idnumber;
 	}
 
 
@@ -151,6 +164,15 @@ class groupDatum {
 	*/
 	public function setName($name){
 		$this->name=$name;
+	}
+
+
+	/**
+	* @param string $idnumber
+	* @return void
+	*/
+	public function setIdnumber($idnumber){
+		$this->idnumber=$idnumber;
 	}
 
 

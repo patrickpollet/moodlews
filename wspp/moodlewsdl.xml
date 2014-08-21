@@ -126,6 +126,7 @@
 					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="picture" type="xsd:int" />
 					<xsd:element name="hidepicture" type="xsd:int" />
@@ -151,6 +152,7 @@
 					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="configdata" type="xsd:string" />
 					<xsd:element name="timecreated" type="xsd:int" />
@@ -1037,6 +1039,7 @@
 					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 					<xsd:element name="enrolmentkey" type="xsd:string" />
 					<xsd:element name="picture" type="xsd:int" />
@@ -1083,6 +1086,7 @@
 					<xsd:element name="id" type="xsd:int" />
 					<xsd:element name="courseid" type="xsd:int" />
 					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="idnumber" type="xsd:string" />
 					<xsd:element name="description" type="xsd:string" />
 
 				</xsd:all>

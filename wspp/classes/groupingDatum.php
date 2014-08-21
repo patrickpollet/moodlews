@@ -24,6 +24,10 @@ class groupingDatum {
 	/** 
 	* @var string
 	*/
+	public $idnumber;
+	/** 
+	* @var string
+	*/
 	public $description;
 
 	/**
@@ -34,6 +38,7 @@ class groupingDatum {
 		 $this->id=0;
 		 $this->courseid=0;
 		 $this->name='';
+		 $this->idnumber='';
 		 $this->description='';
 	}
 	/* get accessors */
@@ -67,6 +72,14 @@ class groupingDatum {
 	*/
 	public function getName(){
 		 return $this->name;
+	}
+
+
+	/**
+	* @return string
+	*/
+	public function getIdnumber(){
+		 return $this->idnumber;
 	}
 
 
@@ -112,6 +125,15 @@ class groupingDatum {
 	*/
 	public function setName($name){
 		$this->name=$name;
+	}
+
+
+	/**
+	* @param string $idnumber
+	* @return void
+	*/
+	public function setIdnumber($idnumber){
+		$this->idnumber=$idnumber;
 	}
 
 
