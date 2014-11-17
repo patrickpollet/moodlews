@@ -4417,7 +4417,7 @@ EOSS;
 
             $a = new StdClass();
             $a->user = $userid;
-            $a->course = $groupid;
+            $a->course = $group->courseid;
             if (!$user = ws_get_record('user', $useridfield, $userid)) {
                 $st->error = get_string('ws_userunknown', 'local_wspp', $useridfield . "=" . $userid);
             } else {
