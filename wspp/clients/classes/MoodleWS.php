@@ -3637,24 +3637,24 @@ class MoodleWS {
   }
 
   /**
-   * MoodleWS: Enrol students in a cohort 
+   * MoodleWS: Enrol students in a group
    *
    * @param int $client
    * @param string $sesskey
-   * @param string $courseid
-   * @param string $courseidfield
    * @param string[] $userids
    * @param string $useridfield
+   * @param string $groupid
+   * @param string $groupidfield
    * @return enrolStudentsReturn
    */
-  public function affect_users_to_group($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+  public function affect_users_to_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield) {
     $res= $this->client->__call('affect_users_to_group', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($courseidfield, 'courseidfield'),
             new SoapParam($userids, 'userids'),
-            new SoapParam($useridfield, 'useridfield')
+            new SoapParam($useridfield, 'useridfield'),
+            new SoapParam($groupid, 'groupid'),
+            new SoapParam($groupidfield, 'groupidfield')
       ),
       array(
             'uri' => $this->uri ,
@@ -3665,24 +3665,24 @@ class MoodleWS {
   }
 
   /**
-   * MoodleWS: Unenrol students in a cohort 
+   * MoodleWS: Unenrol students in a group
    *
    * @param int $client
    * @param string $sesskey
-   * @param string $courseid
-   * @param string $courseidfield
    * @param string[] $userids
    * @param string $useridfield
+   * @param string $groupid
+   * @param string $groupidfield
    * @return enrolStudentsReturn
    */
-  public function remove_users_from_group($client, $sesskey, $courseid, $courseidfield, $userids, $useridfield) {
+  public function remove_users_from_group($client, $sesskey, $userids, $useridfield, $groupid, $groupidfield) {
     $res= $this->client->__call('remove_users_from_group', array(
             new SoapParam($client, 'client'),
             new SoapParam($sesskey, 'sesskey'),
-            new SoapParam($courseid, 'courseid'),
-            new SoapParam($courseidfield, 'courseidfield'),
             new SoapParam($userids, 'userids'),
-            new SoapParam($useridfield, 'useridfield')
+            new SoapParam($useridfield, 'useridfield'),
+            new SoapParam($groupid, 'groupid'),
+            new SoapParam($groupidfield, 'groupidfield')
       ),
       array(
             'uri' => $this->uri ,
