@@ -4412,7 +4412,7 @@ EOSS;
 
         foreach ($userids as $userid) {
             $st = new enrolRecord();
-            $st->setCourse($cohort->id);
+            $st->setCourse($group->id);
             $st->setUserid($userid);
 
             $a = new StdClass();
@@ -4424,7 +4424,7 @@ EOSS;
                 /// Check user is enroled in course
                 if (!ws_is_enrolled($group->courseid, $user->id)) {
 
-                    $st->error(get_string('ws_user_notenroled', 'local_wspp', $a));
+                    $st->error = get_string('ws_user_notenroled', 'local_wspp', $a);
                 } else {
                     if ($add) {
                         if (ws_get_record('groups_members', 'groupid', $group->id, 'userid', $user->id))
