@@ -842,7 +842,7 @@ class server {
         $return = array ();
         //Get all student grades for course requested.
         if ($course = ws_get_record('course', $idfield, $courseid)) {
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
             if (has_capability('moodle/grade:viewall', $context)) {
                 $students = array ();
                 $students = get_role_users(5, $context, true, '');
@@ -1013,7 +1013,7 @@ $this->debug_output("courses of $uid =".print_r($res,true));
 
         if (!empty ($roleid) && !ws_record_exists('role', 'id', $idrole))
             return $this->error(get_string('ws_roleunknown', 'local_wspp', $idrole));
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         if ($res = get_role_users($idrole, $context, true, 'u.*')) {
             //rev 1.6 if $idrole is empty return primary role for each user
             if (empty ($idrole)) {
@@ -2038,7 +2038,7 @@ EOSS;
         if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id))
             return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
 
-        if (!$context = get_context_instance(CONTEXT_COURSE, $assignment->course))
+        if (!$context = context_course::instance($assignment->course))
             return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
 
         $ret = array ();
@@ -2165,7 +2165,7 @@ EOSS;
         if (!$course = ws_get_record('course', $courseidfield, $courseid)) {
             return $this->error(get_string('ws_courseunknown', 'local_wspp', $courseidfield . "=" . $courseid));
         }
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         if (!has_capability("moodle/role:assign", $context))
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
         //not anymore in Moodle 2.0 ...
@@ -2242,6 +2242,7 @@ EOSS;
             foreach ($users->users as $user) {
                 if (is_array($user)) $user=(object) $user; // required in NuSOAP or REST mode ...
                 $ruser = new stdClass();
+                $rcourse = new stdClass();
                 //$this->debug_output('traitement de ' . print_r($user, true));
                 switch (trim(strtolower($user->action))) {
                     case 'add' :
@@ -2727,7 +2728,7 @@ EOSS;
                                 $ret->error = get_string('ws_categoryunknown', 'local_wspp', "id=" . $group->categoryid);
                                 break;
                             }
-                            $context = get_context_instance(CONTEXT_COURSECAT, $group->categoryid);
+                            $context = context_category::instance($group->categoryid);
                             if (!has_capability('moodle/cohort:manage', $context)) {
                                 $ret->error = get_string('ws_operationnotallowed', 'local_wspp');
                                 break;
@@ -2765,7 +2766,7 @@ EOSS;
                                 break;
                             }
                         } else {
-                            $context = get_context_instance_by_id($oldgroup->contextid);
+                            $context = context::instance_by_id($oldgroup->contextid);
                             if (!has_capability('moodle/cohort:manage', $context)) {
                                 $ret->error = get_string('ws_operationnotallowed', 'local_wspp');
                                 break;
@@ -2798,7 +2799,7 @@ EOSS;
                                 break;
                             }
                         } else {
-                            $context = get_context_instance_by_id($oldgroup->contextid);
+                            $context = context::instance_by_id($oldgroup->contextid);
                             if (!has_capability('moodle/cohort:manage', $context)) {
                                 $ret->error = get_string('ws_operationnotallowed', 'local_wspp');
                                 break;
@@ -2866,7 +2867,7 @@ EOSS;
                             $ret->error = get_string('ws_errorcreatingcategory', 'local_wspp', $category->name);
                             break;
                         }
-                        $context = get_context_instance(CONTEXT_COURSECAT, $cid);
+                        $context = context_category::instance($cid);
                         mark_context_dirty($context->path);
                         fix_course_sortorder(); // Required to build course_categories.depth and .path.
 
@@ -2903,7 +2904,8 @@ EOSS;
                          }
                          **/
                         if ($oldcategory->parent != $category->parent) {
-                            if (!move_category($cid, $category->parent)) {
+
+                            if (!coursecat::get($cid)->change_parent($category->parent);) {
                                 $ret->error = get_string('ws_errorupdatingcategory', 'local_wspp', $cid);
                                 break;
                             }
@@ -2951,6 +2953,8 @@ EOSS;
             foreach ($labels->labels as $label) {
             	if (is_array($label)) $label=(object) $label; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($label, 'label');
+                $ret = new stdClass();
+
                 switch (trim(strtolower($label->action))) {
                     case 'add' :
                         /// Adding a new label.
@@ -3015,6 +3019,8 @@ EOSS;
             foreach ($sections->sections as $section) {
             	if (is_array($section)) $section=(object) $section; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($section, 'section');
+
+                $ret = new stdClass();
 
                 switch (trim(strtolower($section->action))) {
                     case 'add' :
@@ -3104,6 +3110,8 @@ EOSS;
             foreach ($forums->forums as $forum) {
             	if (is_array($forum)) $forum=(object) $forum; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($forum, 'forum');
+
+                $ret = new stdClass();
                 switch (trim(strtolower($forum->action))) {
                     case 'add' :
                         /// Adding a new forum.
@@ -3171,6 +3179,8 @@ EOSS;
             foreach ($assignments->assignments as $assignment) {
             	if (is_array($assignment)) $assignment=(object) $assignment; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($assignment, 'assignment');
+                $ret = new stdClass();
+
                 switch (trim(strtolower($assignment->action))) {
                     case 'add' :
                         //creation of the new assignment
@@ -3242,6 +3252,8 @@ EOSS;
             foreach ($databases->databases as $database) {
             	if (is_array($database)) $database=(object) $database; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($database, 'data');
+
+                $ret = new stdClass();
                 switch (trim(strtolower($database->action))) {
                     case 'add' :
                         //add a new database
@@ -3397,6 +3409,9 @@ EOSS;
             foreach ($pagesWiki->pagesWiki as $page) {
             	if (is_array($page)) $page=(object) $page; // required in NuSOAP or REST mode ...
                 ws_fix_renamed_fields($page, 'wiki_page');
+
+                $rpage = new stdClass();
+
                 switch (trim(strtolower($page->action))) {
                     case 'add' :
 
@@ -3683,7 +3698,7 @@ EOSS;
         if (($groupmode == SEPARATEGROUPS) || ($groupmode == VISIBLEGROUPS)) {
             if ($group = ws_get_record("groups", "courseid", $section->course)) {
 
-                $wiki2->groupid = $group->id;
+                $wiki->groupid = $group->id;
             } else {
                 $groupmode = 0;
             }
@@ -3737,7 +3752,7 @@ EOSS;
         }
 
         if (!$course = ws_get_record("course", 'id', $courseid)) {
-            return $this->error(get_string('ws_courseunknown', 'local_wspp', $idfield . "=" . $courseid));
+            return $this->error(get_string('ws_courseunknown', 'local_wspp', 'id' . "=" . $courseid));
 
         }
 
@@ -3750,7 +3765,7 @@ EOSS;
             return $this->error(get_string('ws_sectionunknown', 'local_wspp', 'id=' . $sectionid));
         }
 
-        if ($cur_section->section > $cur_course->numsections) {
+        if ($cur_section->section > $course->numsections) {
             return $this->error("AFFECT_SECTION_TO_COURSE:     Section index $cur_section->section too big. Maximum section number: $cur_course->numsections.");
         }
         //verify if current course has already assigned this section
@@ -4471,7 +4486,7 @@ EOSS;
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             return $this->error(get_string('missingparameter'));
         }
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
         }
@@ -4503,7 +4518,7 @@ return $ret;
         if (!$cm = get_coursemodule_from_instance("forum", $discussion->forum, $discussion->course)) {
             return $this->error(get_string('missingparameter'));
         }
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
         }
@@ -4605,7 +4620,7 @@ return $ret;
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             return $this->error(get_string('missingparameter'));
         }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext = context_module::instance($cm->id);
 
         // cd mod/forum/lib.php forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=NULL, $context=NULL) //195
         if (!forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
@@ -4665,7 +4680,7 @@ return $ret;
         if (!$user = ws_get_record("user", $useridfield, $userid)) {
             return $this->error(get_string('ws_userunknown', 'local_wspp', $useridfield.' = ' . $userid));
         }
-        if (!has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM)))
+        if (!has_capability('moodle/site:sendmessage', context_system::instance()))
             return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
 
         $ret = new affectRecord();
@@ -4675,7 +4690,7 @@ return $ret;
         /**TODO
          * /// Check that the user is not blocking us!!
          if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
-         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+         if ($contact->blocked and !has_capability('moodle/site:readallmessages', context_system::instance())) {
          print_heading(get_string('userisblockingyou', 'message'));
          exit;
          }
@@ -4947,7 +4962,7 @@ return $ret;
 		    return $this->error(get_string('ws_activityunknown', 'local_wspp',$a));
 	    }
 
-	    if (!$context = get_context_instance(CONTEXT_COURSE, $cm->course))
+	    if (!$context = context_course::instance($cm->course))
 		    return $this->error(get_string('ws_databaseinconsistent', 'local_wspp'));
 
 	    $fields = 'id,idnumber';

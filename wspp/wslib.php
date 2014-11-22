@@ -241,7 +241,7 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
 	global $CFG,$DB;
 	if ($CFG->wspp_using_moodle20) {
 		try {
-			 $context = get_context_instance(CONTEXT_SYSTEM);
+			 $context = context_system::instance();
 
     		if (has_capability('moodle/course:create' , $context, $uid,true)) {
 				//ws_error_log ("ok admin\n");
@@ -332,8 +332,8 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
  */
 function ws_get_primaryrole_incourse($course, $userid) {
 	global $CFG;
-	$context = get_context_instance(CONTEXT_COURSE, $course->id);
-	$context_cat = get_context_instance(CONTEXT_COURSECAT, $course->category);
+	$context = context_course::instance($course->id);
+	$context_cat = context_category::instance($course->category);
 	if ($context_cat && has_capability('moodle/category:manage', $context_cat, $userid))
 		return 1;
 	if ($context_cat && has_capability('moodle/course:create', $context_cat, $userid))
@@ -362,7 +362,7 @@ function ws_get_primaryrole_incourse($course, $userid) {
  */
 function ws_is_enrolled ($courseid,$userid) {
 	global $CFG;
-	$context = get_context_instance(CONTEXT_COURSE, $courseid);
+	$context = context_course::instance($courseid);
 	if (!$CFG->wspp_using_moodle20) {
 		return has_capability('moodle/course:view', $context, $userid, false);
 	} else {

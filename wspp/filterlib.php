@@ -25,7 +25,7 @@ function filter_forum($client, $forum) {
         return $forum;
     if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course))
         return false;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (!has_capability('mod/forum:viewdiscussion', $context))
         return false;
     return $forum;
@@ -49,7 +49,7 @@ function filter_wiki($client, $wiki) {
         return $wiki;
     if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $wiki->course))
         return false;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (!has_capability('mod/wiki:participate', $context))
         return false;
     return $wiki;
@@ -82,7 +82,7 @@ function filter_pagewiki($client, $pagewiki) {
     if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
         return false;
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (!has_capability('mod/wiki:participate', $context))
         return false;
 
@@ -107,7 +107,7 @@ function filter_assignment($client, $assignment) {
         return $assignment;
     if (!$cm = get_coursemodule_from_instance("assignment", $assignment->id, $assignment->course))
         return false;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (!has_capability('mod/assignment:view', $context))
         return false;
      //fields renamed in Moodle 2.0
@@ -136,7 +136,7 @@ function filter_database($client, $database) {
         return $database;
     if (!$cm = get_coursemodule_from_instance("data", $database->id, $database->course))
         return false;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (!has_capability('mod/data:viewentry', $context))
         return false;
     return $database;
@@ -158,7 +158,7 @@ function filter_label($client, $label) {
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($label->error))
         return $label;
-    $context = get_context_instance(CONTEXT_COURSE, $label->course);
+    $context = context_course::instance($label->course);
     if (!ws_is_enrolled($label->course, $USER->id)) {
         return $label;
     }
@@ -231,7 +231,7 @@ function filter_course($client, $course) {
     //return false if not visible to $client
     // check capability , course maybe non visible
     //TODO ajouter ici le role primaire ;-)
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     if (has_capability('moodle/course:update', $context))
         return $course;
     if (ws_is_enrolled($course->id, $USER->id)) {
@@ -257,7 +257,7 @@ function filter_category($client, $category) {
     if (!empty ($category->error))
         return $category;
     //return false if not visible to $client
-    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    $context = context_category::instance($category->id);
     if (!$category->visible) {
         if (!has_capability('moodle/category:viewhiddencategories', $context))
             return false;
@@ -283,7 +283,7 @@ function filter_group($client, $group) {
     if (!empty ($group->error))
         return $group;
     // check user's membership to this group ?
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    $context = context_course::instance($group->courseid);
     if (has_capability('moodle/course:update', $context))
         return $group;
     if (!ws_is_enrolled($group->courseid, $USER->id))
@@ -308,7 +308,7 @@ function filter_grouping($client, $group) {
     if (!empty ($group->error))
         return $group;
     // check user's membership to this group ?
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    $context = context_course::instance($group->courseid);
     if (has_capability('moodle/course:update', $context))
         return $group;
     if (!ws_is_enrolled($group->courseid, $USER->id))
@@ -332,7 +332,7 @@ function filter_cohort($client, $group) {
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($group->error))
         return $group;
-    $context = get_context_instance_by_id($group->contextid);
+    $context = context::instance_by_id($group->contextid);
     if (has_capability('moodle/cohort:manage', $context))
         return $group;
     return false;
@@ -363,7 +363,7 @@ function filter_resource($client, $resource) {
     }
 
     //return false if resource->visible is false AND $client not "teacher"
-    $context = get_context_instance(CONTEXT_COURSE, $resource->course);
+    $context = context_course::instance($resource->course);
     //if (has_capability('moodle/course:update', $context))
     // 1.6.3  there is a special capability for hiddensection
     if (has_capability('moodle/course:viewhiddenactivities', $context))
@@ -403,7 +403,7 @@ function filter_instance($client, $resource,$type) {
     }
 
     //return false if resource->visible is false AND $client not "teacher"
-    $context = get_context_instance(CONTEXT_COURSE, $resource->course);
+    $context = context_course::instance($resource->course);
     //if (has_capability('moodle/course:update', $context))
     // 1.6.3  there is a special capability for hiddensection
      if (has_capability('moodle/course:viewhiddenactivities', $context))
@@ -444,7 +444,7 @@ function filter_section($client, $section) {
     global $CFG,$USER;
     if (!empty ($section->error))
         return $section;
-    $context = get_context_instance(CONTEXT_COURSE, $section->course);
+    $context = context_course::instance($section->course);
     //if (has_capability('moodle/course:update', $context))
     // 1.6.3  there is a special capability for hiddensection
     if (has_capability('moodle/course:viewhiddensections', $context))
@@ -518,7 +518,7 @@ function filter_change($client, $change) {
     if (!empty ($change->error))
         return $change;
     //return false if ressource changed is not visible to $client
-    $context = get_context_instance(CONTEXT_COURSE, $change->courseid);
+    $context = context_course::instance($change->courseid);
     if (has_capability('moodle/course:update', $context))
         return $change;
     return $change->visible ? $change : false;
@@ -539,14 +539,14 @@ function filter_event($client, $eventype, $event) {
     // rev. 1.7 Moodle 2.0 now throw an execption if context is invalid (ie courseid==0)
     if (!empty ($event->error))
         return $event;
-    if (has_capability("moodle/calendar:manageentries", get_context_instance(CONTEXT_SYSTEM))) // admin user
+    if (has_capability("moodle/calendar:manageentries", context_system::instance())) // admin user
         return $event;
     switch ($eventype) {
         case cal_show_user :
             if ($event->userid != $USER->id)
                 return false;
             else {
-                if (has_capability("moodle/calendar:manageownentries", get_context_instance(CONTEXT_SYSTEM)))
+                if (has_capability("moodle/calendar:manageownentries", context_system::instance()))
                     return $event;
                 else
                     return false;
