@@ -2868,7 +2868,7 @@ EOSS;
                             break;
                         }
                         $context = context_category::instance($cid);
-                        mark_context_dirty($context->path);
+                        $context->mark_dirty();
                         fix_course_sortorder(); // Required to build course_categories.depth and .path.
 
                         $ret = ws_get_record('course_categories', 'id', $cid);
