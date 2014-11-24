@@ -837,6 +837,27 @@ class mdl_soapserverrest {
   return $this->castTo ('affectRecord',$res);
   }
 
+    /**
+     *
+     *
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $courseid
+     * @param string $rolename
+     * @return affectRecord
+     */
+    public function affect_user_to_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        $res= $this->__call('affect_user_to_category', array(
+            'client'=>$client,
+            'sesskey'=>$sesskey,
+            'userid'=>$userid,
+            'categoryid'=>$categoryid,
+            'rolename'=>$rolename
+        ));
+        return $this->castTo ('affectRecord',$res);
+    }
+
   /**
    *  
    *
@@ -2976,6 +2997,27 @@ class mdl_soapserverrest {
       ));
   return $this->castTo ('affectRecord',$res);
   }
+
+    /**
+     *
+     *
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $categoryid
+     * @param string $rolename
+     * @return affectRecord
+     */
+    public function remove_user_from_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        $res= $this->__call('remove_user_from_category', array(
+            'client'=>$client,
+            'sesskey'=>$sesskey,
+            'userid'=>$userid,
+            'categoryid'=>$categoryid,
+            'rolename'=>$rolename
+        ));
+        return $this->castTo ('affectRecord',$res);
+    }
 
   /**
    *  

@@ -1413,6 +1413,16 @@
   <message name="affect_user_to_courseResponse">
     <part name="affect_user_to_courseReturn" type="tns:affectRecord"/>
   </message>
+    <message name="affect_user_to_categoryRequest">
+        <part name="client" type="xsd:int"/>
+        <part name="sesskey" type="xsd:string"/>
+        <part name="userid" type="xsd:int"/>
+        <part name="categoryid" type="xsd:int"/>
+        <part name="rolename" type="xsd:string"/>
+    </message>
+    <message name="affect_user_to_categoryResponse">
+        <part name="affect_user_to_categoryReturn" type="tns:affectRecord"/>
+    </message>
   <message name="affect_user_to_groupRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2420,6 +2430,16 @@
   <message name="remove_user_from_courseResponse">
     <part name="remove_user_from_courseReturn" type="tns:affectRecord"/>
   </message>
+    <message name="remove_user_from_categoryRequest">
+        <part name="client" type="xsd:int"/>
+        <part name="sesskey" type="xsd:string"/>
+        <part name="userid" type="xsd:int"/>
+        <part name="categoryid" type="xsd:int"/>
+        <part name="rolename" type="xsd:string"/>
+    </message>
+    <message name="remove_user_from_categoryResponse">
+        <part name="remove_user_from_categoryReturn" type="tns:affectRecord"/>
+    </message>
   <message name="remove_user_from_groupRequest">
     <part name="client" type="xsd:int"/>
     <part name="sesskey" type="xsd:string"/>
@@ -2639,6 +2659,10 @@
       <wsdl:input message="tns:affect_user_to_courseRequest"/>
       <wsdl:output message="tns:affect_user_to_courseResponse"/>
     </wsdl:operation>
+      <wsdl:operation name="affect_user_to_category">
+          <wsdl:input message="tns:affect_user_to_categoryRequest"/>
+          <wsdl:output message="tns:affect_user_to_categoryResponse"/>
+      </wsdl:operation>
     <wsdl:operation name="affect_user_to_group">
       <wsdl:input message="tns:affect_user_to_groupRequest"/>
       <wsdl:output message="tns:affect_user_to_groupResponse"/>
@@ -3094,6 +3118,10 @@
       <wsdl:input message="tns:remove_user_from_courseRequest"/>
       <wsdl:output message="tns:remove_user_from_courseResponse"/>
     </wsdl:operation>
+      <wsdl:operation name="remove_user_from_category">
+          <wsdl:input message="tns:remove_user_from_categoryRequest"/>
+          <wsdl:output message="tns:remove_user_from_categoryResponse"/>
+      </wsdl:operation>
     <wsdl:operation name="remove_user_from_group">
       <wsdl:input message="tns:remove_user_from_groupRequest"/>
       <wsdl:output message="tns:remove_user_from_groupResponse"/>
@@ -3393,6 +3421,15 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+      <wsdl:operation name="affect_user_to_category">
+          <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=affect_user_to_category" style="rpc"/>
+          <wsdl:input>
+              <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          </wsdl:input>
+          <wsdl:output>
+              <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          </wsdl:output>
+      </wsdl:operation>
     <wsdl:operation name="affect_user_to_group">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=affect_user_to_group" style="rpc"/>
       <wsdl:input>
@@ -4416,6 +4453,15 @@
         <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+      <wsdl:operation name="remove_user_from_category">
+          <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=remove_user_from_category" style="rpc"/>
+          <wsdl:input>
+              <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          </wsdl:input>
+          <wsdl:output>
+              <soap:body use="encoded" namespace="CFGWWWROOT/wspp/wsdl2" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          </wsdl:output>
+      </wsdl:operation>
     <wsdl:operation name="remove_user_from_group">
       <soap:operation soapAction="CFGWWWROOT/wspp/service_pp2.php&amp;method=remove_user_from_group" style="rpc"/>
       <wsdl:input>

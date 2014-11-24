@@ -923,6 +923,32 @@ class mdl_soapserver {
   return $this->castTo ('affectRecord',$res);
   }
 
+    /**
+     *
+     *
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $categoryid
+     * @param string $rolename
+     * @return affectRecord
+     */
+    public function affect_user_to_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        $res= $this->client->__call('affect_user_to_category', array(
+                new SoapParam($client, 'client'),
+                new SoapParam($sesskey, 'sesskey'),
+                new SoapParam($userid, 'userid'),
+                new SoapParam($categoryid, 'categoryid'),
+                new SoapParam($rolename, 'rolename')
+            ),
+            array(
+                'uri' => $this->uri ,
+                'soapaction' => ''
+            )
+        );
+        return $this->castTo ('affectRecord',$res);
+    }
+
   /**
    *  
    *
@@ -3632,6 +3658,32 @@ class mdl_soapserver {
       );
   return $this->castTo ('affectRecord',$res);
   }
+
+    /**
+     *
+     *
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $categoryid
+     * @param string $rolename
+     * @return affectRecord
+     */
+    public function remove_user_from_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        $res= $this->client->__call('remove_user_from_category', array(
+                new SoapParam($client, 'client'),
+                new SoapParam($sesskey, 'sesskey'),
+                new SoapParam($userid, 'userid'),
+                new SoapParam($categoryid, 'categoryid'),
+                new SoapParam($rolename, 'rolename')
+            ),
+            array(
+                'uri' => $this->uri ,
+                'soapaction' => ''
+            )
+        );
+        return $this->castTo ('affectRecord',$res);
+    }
 
   /**
    *  
