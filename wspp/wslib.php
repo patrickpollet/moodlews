@@ -333,7 +333,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 function ws_get_primaryrole_incourse($course, $userid) {
 	global $CFG;
 	$context = context_course::instance($course->id);
-	$context_cat = context_category::instance($course->category);
+	$context_cat = context_coursecat::instance($course->category);
 	if ($context_cat && has_capability('moodle/category:manage', $context_cat, $userid))
 		return 1;
 	if ($context_cat && has_capability('moodle/course:create', $context_cat, $userid))

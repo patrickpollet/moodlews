@@ -2219,6 +2219,88 @@ EOSS;
     }
 
     /**
+     * Enrol users with the given role name in the given category
+     * Usefull for access to category's courses without the need of being enrolled (monitoring purposes)
+     * @ see affect_user_to_category, remove_user_from_category ... in mdl_soapserver class
+     * @param $client The client session ID.
+     * @param $sesskey The client session key
+     * @param $rolename shortname of role to affect
+     * @param $categoryid The category ID number to enrol role in...
+     * @param $categoryidfield field to use to identify category (idnumber,id, shortname)
+     * @param $userids An array of input user id values for enrolment.
+     * @param string $useridfield identifier used for users .
+     * @param bool $enrol
+     * @throws coding_exception
+     * @return enrolRecord[]
+     */
+    protected function affect_role_incategory($client, $sesskey, $rolename, $categoryid, $categoryidfield, $userids, $useridfield = 'idnumber', $enrol = true) {
+        if (!$this->validate_client($client, $sesskey, __FUNCTION__)) {
+            return $this->error(get_string('ws_invalidclient', 'local_wspp'));
+        }
+        global $CFG;
+
+        if (!($role = ws_get_record('role', 'shortname', $rolename))) {
+            return $this->error(get_string('ws_roleunknown', 'local_wspp', $rolename));
+        }
+
+        //$groupid = 0; // for the role_assign function (what does this ? not anymore in Moodle 2.0
+        if (!$category = ws_get_record('course_categories', $categoryidfield, $categoryid)) {
+            return $this->error(get_string('ws_categoryunknown', 'local_wspp', $categoryidfield . "=" . $categoryid));
+        }
+        $context = context_coursecat::instance($category->id);
+        if (!has_capability("moodle/role:assign", $context))
+            return $this->error(get_string('ws_operationnotallowed', 'local_wspp'));
+        //not anymore in Moodle 2.0 ...
+        if (!empty ($category->enrolperiod)) {
+            $timestart = time();
+            $timeend = $timestart + $category->enrolperiod;
+        } else {
+            $timestart = $timeend = 0;
+        }
+        //$this->debug_output("IDS=" . print_r($userids, true) . "\n" . $enrol ."\n ctx=".$context->id);
+        $return = array ();
+        if (!empty ($userids)) {
+            foreach ($userids as $userid) {
+                $st = new enrolRecord();
+                if (!$leuser = ws_get_record('user', $useridfield, $userid)) {
+                    $st->error = get_string('ws_userunknown', 'local_wspp', $useridfield . "=" . $userid);
+                } else {
+                    $st->userid = $leuser-> $useridfield; //return the sent value
+                    $st->course = $category-> $categoryidfield;
+                    $st->timestart = $timestart;
+                    $st->timeend = $timeend;
+                    if ($enrol) {
+                        if (!ws_role_assign($role->id, $leuser->id, $context->id, $timestart, $timeend, $category)) {
+                            $st->error = "error enroling";
+                            $op = "error enroling " . $st->userid . " to category " . $st->course;
+                        } else {
+                            $st->enrol = "webservice";
+                            $op = $rolename . " " . $st->userid . " added to to category " . $st->course;
+                        }
+                    } else {
+                        if (!ws_role_unassign($role->id, $leuser->id, $context->id, $category)) {
+                            $st->error = "error unenroling";
+                            $op = "error unenroling " . $st->userid . " from " . $st->course;
+                        } else {
+                            $st->enrol = "no";
+                            $op = $rolename . " " . $st->userid . " removed from category " . $st->course;
+                        }
+                    }
+                }
+                $return[] = $st;
+                if ($CFG->ws_logdetailedoperations)
+                    add_to_log(SITEID, 'webservice', 'webservice pp', '', $op);
+            }
+        } else {
+            $st = new enrolRecord();
+            $st->error = get_string('ws_nothingtodo', 'local_wspp');
+            $return[] = $st;
+        }
+
+        return $return;
+    }
+
+    /**
     * Edit user records (add/update/delete).
     * FIXED in rev 1.5.8
     * @uses $CFG
@@ -2728,7 +2810,7 @@ EOSS;
                                 $ret->error = get_string('ws_categoryunknown', 'local_wspp', "id=" . $group->categoryid);
                                 break;
                             }
-                            $context = context_category::instance($group->categoryid);
+                            $context = context_coursecat::instance($group->categoryid);
                             if (!has_capability('moodle/cohort:manage', $context)) {
                                 $ret->error = get_string('ws_operationnotallowed', 'local_wspp');
                                 break;
@@ -2867,7 +2949,7 @@ EOSS;
                             $ret->error = get_string('ws_errorcreatingcategory', 'local_wspp', $category->name);
                             break;
                         }
-                        $context = context_category::instance($cid);
+                        $context = context_coursecat::instance($cid);
                         $context->mark_dirty();
                         fix_course_sortorder(); // Required to build course_categories.depth and .path.
 
@@ -2905,7 +2987,7 @@ EOSS;
                          **/
                         if ($oldcategory->parent != $category->parent) {
 
-                            if (!coursecat::get($cid)->change_parent($category->parent);) {
+                            if (!coursecat::get($cid)->change_parent($category->parent)) {
                                 $ret->error = get_string('ws_errorupdatingcategory', 'local_wspp', $cid);
                                 break;
                             }
@@ -3968,6 +4050,27 @@ EOSS;
     }
 
     /**
+     * add a user to a category, giving him the role specified as parameter, to access all category's courses without being enrolled
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @param int $userid The user's id
+     * @param int $categoryid The category's id
+     * @param string $rolename Specify the name of the role
+     * @return affectRecord
+     */
+    function affect_user_to_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        //if it isn't specified the role name, this will be set as Teacher
+        $rolename = empty ($rolename) ? "teacher" : $rolename;
+        $res = $this->affect_role_incategory($client, $sesskey, $rolename, $categoryid, 'id', array (
+            $userid
+        ), 'id', true);
+
+        $r = new stdClass();
+        $r->status = empty ($res->error);
+        return $r;
+    }
+
+    /**
     * remove a user's role from a course;  the role  specified as parameter
     * @param int $client The client session ID.
     * @param string $sesskey The client session key.
@@ -3981,6 +4084,29 @@ EOSS;
         //if it isn't specified the role name, this will be set as Student
         $rolename = empty ($rolename) ? "Student" : $rolename;
         $res = $this->affect_role_incourse($client, $sesskey, $rolename, $courseid, 'id', array (
+            $userid
+        ), 'id', false);
+
+        $r = new stdClass();
+        $r->status = empty ($res->error);
+        return $r;
+
+    }
+
+    /**
+     * remove a user from a category, giving him the role specified as parameter
+     * @param int $client The client session ID.
+     * @param string $sesskey The client session key.
+     * @param int $userid The user's id
+     * @param int $categoryid The course's id
+     * @param string $rolename Specify the name of the role
+     * @return affectRecord
+     */
+    function remove_user_from_category($client, $sesskey, $userid, $categoryid, $rolename) {
+
+        //if it isn't specified the role name, this will be set as Teacher
+        $rolename = empty ($rolename) ? "teacher" : $rolename;
+        $res = $this->affect_role_incategory($client, $sesskey, $rolename, $categoryid, 'id', array (
             $userid
         ), 'id', false);
 

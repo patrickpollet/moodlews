@@ -257,7 +257,7 @@ function filter_category($client, $category) {
     if (!empty ($category->error))
         return $category;
     //return false if not visible to $client
-    $context = context_category::instance($category->id);
+    $context = context_coursecat::instance($category->id);
     if (!$category->visible) {
         if (!has_capability('moodle/category:viewhiddencategories', $context))
             return false;
