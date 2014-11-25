@@ -11,7 +11,7 @@
  // required Moodle 2.0
  define('CLI_SCRIPT', true);
 
- require_once ('../config.php');
+require(dirname(dirname(__FILE__)).'/config.php');
 
 define ('LIB_PATH','clients/lib/');
 require_once(LIB_PATH.'wshelper/WSDLStruct.class.php');

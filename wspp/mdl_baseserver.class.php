@@ -2020,6 +2020,20 @@ abstract class mdl_baseserver extends server {
     }
 
     /**
+     * Assign role in category
+     * @param $client
+     * @param $sesskey
+     * @param $userid
+     * @param $categoryid
+     * @param $rolename
+     * @return affectRecord
+     */
+    function affect_user_to_category($client,$sesskey, $userid, $categoryid, $rolename) {
+        $rest = parent :: affect_user_to_category($client, $sesskey, $userid, $categoryid, $rolename);
+        return $this->send($this->to_single($rest, 'affectRecord'));
+    }
+
+    /**
      * @param int $client
      * @param string $sesskey
      * @param int $pageid
@@ -2041,6 +2055,19 @@ abstract class mdl_baseserver extends server {
      */
     function remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename) {
         $rest = parent :: remove_user_from_course($client, $sesskey, $userid, $courseid, $rolename);
+        return $this->send($this->to_single($rest, 'affectRecord'));
+    }
+
+    /**
+     * @param int $client
+     * @param string $sesskey
+     * @param int $userid
+     * @param int $categoryid
+     * @param string $rolename
+     * @return affectRecord
+     */
+    function remove_user_from_category($client, $sesskey, $userid, $categoryid, $rolename) {
+        $rest = parent :: remove_user_from_category($client, $sesskey, $userid, $categoryid, $rolename);
         return $this->send($this->to_single($rest, 'affectRecord'));
     }
 

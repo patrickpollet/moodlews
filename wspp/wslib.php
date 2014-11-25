@@ -241,7 +241,7 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
 	global $CFG,$DB;
 	if ($CFG->wspp_using_moodle20) {
 		try {
-			 $context = get_context_instance(CONTEXT_SYSTEM);
+			 $context = context_system::instance();
 
     		if (has_capability('moodle/course:create' , $context, $uid,true)) {
 				//ws_error_log ("ok admin\n");
@@ -262,10 +262,10 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
  * furthermore in Moodle 2.0 we MUST also enrol the user to the course if needed
  */
-function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$course){
+function ws_role_assign($roleid, $userid, $context, $timestart, $timeend,$course){
 	global $CFG,$DB;
-	ws_error_log("rid=$roleid uid=$userid cid=$contextid\n");
-	if ($CFG->wspp_using_moodle20) {
+	ws_error_log("rid=$roleid uid=$userid cid=$context->id\n");
+	if ($CFG->wspp_using_moodle20 && $context->contextlevel != CONTEXT_COURSECAT) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_assign($roleid, $userid, $contextid);
 		try{
@@ -286,7 +286,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 
 
 	} else {
-		return role_assign($roleid, $userid, 0, $contextid, $timestart, $timeend,false,'webservice');
+		return role_assign($roleid, $userid, $context->id);
 	}
 }
 
@@ -294,9 +294,9 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
  *  furthermore in Moodle 2.0 we MUST also unenrol the user to the course
  */
- function ws_role_unassign($roleid, $userid, $contextid,$course) {
+ function ws_role_unassign($roleid, $userid, $context,$course) {
  	global $CFG,$DB;
-	if ($CFG->wspp_using_moodle20) {
+	if ($CFG->wspp_using_moodle20 && $context->contextlevel != CONTEXT_COURSECAT) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_unassign($roleid, $userid, $contextid);
 		try{
@@ -319,7 +319,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 
 
 	} else {
-		return role_unassign($roleid, $userid, 0, $contextid);
+		return role_unassign($roleid, $userid, $context->id);
 	}
 
  }
@@ -332,8 +332,8 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
  */
 function ws_get_primaryrole_incourse($course, $userid) {
 	global $CFG;
-	$context = get_context_instance(CONTEXT_COURSE, $course->id);
-	$context_cat = get_context_instance(CONTEXT_COURSECAT, $course->category);
+	$context = context_course::instance($course->id);
+	$context_cat = context_coursecat::instance($course->category);
 	if ($context_cat && has_capability('moodle/category:manage', $context_cat, $userid))
 		return 1;
 	if ($context_cat && has_capability('moodle/course:create', $context_cat, $userid))
@@ -362,7 +362,7 @@ function ws_get_primaryrole_incourse($course, $userid) {
  */
 function ws_is_enrolled ($courseid,$userid) {
 	global $CFG;
-	$context = get_context_instance(CONTEXT_COURSE, $courseid);
+	$context = context_course::instance($courseid);
 	if (!$CFG->wspp_using_moodle20) {
 		return has_capability('moodle/course:view', $context, $userid, false);
 	} else {
