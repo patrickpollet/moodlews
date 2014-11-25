@@ -262,10 +262,10 @@ function ws_get_my_courses($uid, $sort='',$extrafields=array()) {
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
  * furthermore in Moodle 2.0 we MUST also enrol the user to the course if needed
  */
-function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$course){
+function ws_role_assign($roleid, $userid, $context, $timestart, $timeend,$course){
 	global $CFG,$DB;
-	ws_error_log("rid=$roleid uid=$userid cid=$contextid\n");
-	if ($CFG->wspp_using_moodle20) {
+	ws_error_log("rid=$roleid uid=$userid cid=$context->id\n");
+	if ($CFG->wspp_using_moodle20 && $context->contextlevel != CONTEXT_COURSECAT) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_assign($roleid, $userid, $contextid);
 		try{
@@ -286,7 +286,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 
 
 	} else {
-		return role_assign($roleid, $userid, 0, $contextid, $timestart, $timeend,false,'webservice');
+		return role_assign($roleid, $userid, $context->id);
 	}
 }
 
@@ -294,9 +294,9 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
  * added rev 1.7 since role_assign has changed order of parameters in Moodle 2.0
  *  furthermore in Moodle 2.0 we MUST also unenrol the user to the course
  */
- function ws_role_unassign($roleid, $userid, $contextid,$course) {
+ function ws_role_unassign($roleid, $userid, $context,$course) {
  	global $CFG,$DB;
-	if ($CFG->wspp_using_moodle20) {
+	if ($CFG->wspp_using_moodle20 && $context->contextlevel != CONTEXT_COURSECAT) {
 		//moodle 2.0 no more groupid, timestart, timeend, hidden ...
 		//return role_unassign($roleid, $userid, $contextid);
 		try{
@@ -319,7 +319,7 @@ function ws_role_assign($roleid, $userid, $contextid, $timestart, $timeend,$cour
 
 
 	} else {
-		return role_unassign($roleid, $userid, 0, $contextid);
+		return role_unassign($roleid, $userid, $context->id);
 	}
 
  }

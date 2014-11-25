@@ -2188,7 +2188,7 @@ EOSS;
                     $st->timestart = $timestart;
                     $st->timeend = $timeend;
                     if ($enrol) {
-                        if (!ws_role_assign($role->id, $leuser->id, $context->id, $timestart, $timeend, $course)) {
+                        if (!ws_role_assign($role->id, $leuser->id, $context, $timestart, $timeend, $course)) {
                             $st->error = "error enroling";
                             $op = "error enroling " . $st->userid . " to " . $st->course;
                         } else {
@@ -2196,7 +2196,7 @@ EOSS;
                             $op = $rolename . " " . $st->userid . " added to " . $st->course;
                         }
                     } else {
-                        if (!ws_role_unassign($role->id, $leuser->id, $context->id, $course)) {
+                        if (!ws_role_unassign($role->id, $leuser->id, $context, $course)) {
                             $st->error = "error unenroling";
                             $op = "error unenroling " . $st->userid . " from " . $st->course;
                         } else {
@@ -2270,7 +2270,7 @@ EOSS;
                     $st->timestart = $timestart;
                     $st->timeend = $timeend;
                     if ($enrol) {
-                        if (!ws_role_assign($role->id, $leuser->id, $context->id, $timestart, $timeend, $category)) {
+                        if (!ws_role_assign($role->id, $leuser->id, $context, $timestart, $timeend, $category)) {
                             $st->error = "error enroling";
                             $op = "error enroling " . $st->userid . " to category " . $st->course;
                         } else {
@@ -2278,7 +2278,7 @@ EOSS;
                             $op = $rolename . " " . $st->userid . " added to to category " . $st->course;
                         }
                     } else {
-                        if (!ws_role_unassign($role->id, $leuser->id, $context->id, $category)) {
+                        if (!ws_role_unassign($role->id, $leuser->id, $context, $category)) {
                             $st->error = "error unenroling";
                             $op = "error unenroling " . $st->userid . " from " . $st->course;
                         } else {
@@ -4816,7 +4816,7 @@ return $ret;
         /**TODO
          * /// Check that the user is not blocking us!!
          if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
-         if ($contact->blocked and !has_capability('moodle/site:readallmessages', context_system::instance())) {
+         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
          print_heading(get_string('userisblockingyou', 'message'));
          exit;
          }
